@@ -1,0 +1,390 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-              This file is part of the Buildbotics firmware.               //
+//-                                                                           //
+//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
+//-                           All rights reserved.                            //
+//-                                                                           //
+//-   This file ("the software") is free software: you can redistribute it    //
+//-   and/or modify it under the terms of the GNU General Public License,     //
+//-    version 2 as published by the Free Software Foundation. You should     //
+//-    have received a copy of the GNU General Public License, version 2      //
+//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
+//-                                                                           //
+//-   The software is distributed in the hope that it will be useful, but     //
+//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
+//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
+//-             Lesser General Public License for more details.               //
+//-                                                                           //
+//-     You should have received a copy of the GNU Lesser General Public      //
+//-              License along with the software.  If not, see                //
+//-                     <http://www.gnu.org/licenses/>.                       //
+//-                                                                           //
+//-              For information regarding this software email:               //
+//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#control-view-template(type="text/x-template")
+  #control
+
+    table(width="99%")
+      tr
+        td(style="white-space: nowrap;")
+          table(table-layout="fixed")
+            colgroup
+               col(style="width:100px")
+               col(style="width:100px")
+               col(style="width:100px")
+               col(style="width:5px")
+               col(style="width:100px")
+            tr
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(-1,1,0,0)") &#x2b01
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(0,1,0,0)") Y+
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(1,1,0,0)") &#x2b00
+              td
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",,@click="jog_fn(0,0,1,0)") Z+
+            tr
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(-1,0,0,0)") X-
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="goto_zero(1,1,0,0)")
+                  .fa.fa-bullseye
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(1,0,0,0)") X+
+              td
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="goto_zero(0,0,1,0)") Z0
+            tr
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(-1,-1,0,0)") &#x2b03
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(0,-1,0,0)") Y-
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(1,-1,0,0)") &#x2b02
+              td
+              td(style="height:100px",align="center")
+                button(style="height:100px;width:100px",@click="jog_fn(0,0,-1,0)") Z-
+        td(width="99%")
+          table.axes
+            tr(:class="axes.klass")
+              th.name Axis
+              th.position Position
+              th.absolute Absolute
+              th.offset Offset
+              th.state State
+              th.actions
+                button.pure-button(:disabled="!can_set_axis",
+                  title="Zero all axis offsets.", @click="zero()",style="height:60px;width:60px") &empty;
+
+                button.pure-button(title="Home all axes.", @click="home()",
+                  :disabled="!is_idle",style="height:60px;width:60px")
+                  .fa.fa-home
+
+            each axis in 'xyzabc'
+              tr.axis(:class=`${axis}.klass`, v-if=`${axis}.enabled`,
+                :title=`${axis}.title`)
+                th.name= axis
+                td.position: unit-value(:value=`${axis}.pos`, precision=4)
+                td.absolute: unit-value(:value=`${axis}.abs`, precision=3)
+                td.offset: unit-value(:value=`${axis}.off`, precision=3)
+                td.state
+                  .fa(:class=`'fa-' + ${axis}.icon`)
+                  | {{#{axis}.state}}
+
+                th.actions
+                  button.pure-button(:disabled="!can_set_axis",
+                    title=`Set {{'${axis}' | upper}} axis position.`,
+                    @click=`show_set_position('${axis}')`,style="height:60px;width:60px")
+                    .fa.fa-cog
+
+                  button.pure-button(:disabled="!can_set_axis",
+                    title=`Zero {{'${axis}' | upper}} axis offset.`,
+                   @click=`zero('${axis}')`,style="height:60px;width:60px") &empty;
+
+                  button.pure-button(:disabled="!is_idle", @click=`home('${axis}')`,
+                    title=`Home {{'${axis}' | upper}} axis.`,style="height:60px;width:60px")
+                    .fa.fa-home
+
+                  message(:show.sync=`position_msg['${axis}']`)
+                    h3(slot="header") Set {{'#{axis}' | upper}} axis position
+
+                    div(slot="body")
+                      .pure-form
+                        .pure-control-group
+                          label Position
+                          input(v-model="axis_position",
+                            @keyup.enter=`set_position('${axis}', axis_position)`)
+                      p
+
+                    div(slot="footer")
+                      button.pure-button(@click=`position_msg['${axis}'] = false`)
+                        | Cancel
+
+                      button.pure-button(v-if=`${axis}.homed`,
+                        @click=`unhome('${axis}')`) Unhome
+
+                      button.pure-button.button-success(
+                        @click=`set_position('${axis}', axis_position)`) Set
+
+
+                  message(:show.sync=`manual_home['${axis}']`)
+                    h3(slot="header") Manually home {{'#{axis}' | upper}} axis
+
+                    div(slot="body")
+                      p Set axis absolute position.
+
+                      .pure-form
+                        .pure-control-group
+                          label Absolute
+                          input(v-model="axis_position",
+                            @keyup.enter=`set_home('${axis}', axis_position)`)
+
+                      p
+
+                    div(slot="footer")
+                      button.pure-button(@click=`manual_home['${axis}'] = false`)
+                        | Cancel
+
+                      button.pure-button.button-success(
+                        title=`Home {{'${axis}' | upper}} axis.`,
+                        @click=`set_home('${axis}', axis_position)`) Set
+      tr
+        td(style="white-space: nowrap;")
+          button(style="height:100px;width:100px;font-weight:normal",id="jog_button_fine",@click=`set_jog_incr('fine')`) 0.1
+          button(style="height:100px;width:100px;font-weight:bold",id="jog_button_small",@click=`set_jog_incr('small')`) 1.0
+          button(style="height:100px;width:100px;font-weight:normal",id="jog_button_medium",@click=`set_jog_incr('medium')`) 10
+          button(style="height:100px;width:100px;font-weight:normal",id="jog_button_large",@click=`set_jog_incr('large')`) 100
+        td(rowspan="2")
+
+          table(width="100%")
+            tr
+              td(style="text-align:center")
+                table.info
+                  tr
+                    th State
+                    td(:class="{attention: highlight_state}") {{mach_state}}
+
+                  tr
+                    th Message
+                    td.message(:class="{attention: highlight_state}")
+                      | {{message.replace(/^#/, '')}}
+
+                  tr(title="Active machine units")
+                    th Units
+                    td.mach_units
+                      select(v-model="mach_units", :disabled="!is_idle")
+                        option(value="METRIC") METRIC
+                        option(value="IMPERIAL") IMPERIAL
+
+                  tr(title="Active tool")
+                    th Tool
+                    td {{state.tool || 0}}
+
+              td
+                table.info
+                  tr(
+                    title="Current velocity in {{metric ? 'meters' : 'inches'}} per minute")
+                    th Velocity
+                    td
+                      unit-value(:value="state.v", precision="2", unit="", iunit="",
+                        scale="0.0254")
+                      | {{metric ? ' m/min' : ' IPM'}}
+
+                  tr(title="Programmed feed rate.")
+                    th Feed
+                    td
+                      unit-value(:value="state.feed", precision="2", unit="", iunit="")
+                      | {{metric ? ' mm/min' : ' IPM'}}
+
+                  tr(title="Programed and actual speed.")
+                    th Speed
+                    td
+                      | {{state.speed || 0 | fixed 0}}
+                      span(v-if="!isNaN(state.s)") &nbsp;({{state.s | fixed 0}})
+                      = ' RPM'
+
+                  tr(title="Load switch states.")
+                    th Loads
+                    td
+                      span(:class="state['1oa'] ? 'load-on' : ''")
+                        | 1:{{state['1oa'] ? 'On' : 'Off'}}
+                      | &nbsp;
+                      span(:class="state['2oa'] ? 'load-on' : ''")
+                        | 2:{{state['2oa'] ? 'On' : 'Off'}}
+
+              td
+                table.info
+                  tr
+                    th Remaining
+                    td(title="Total run time (days:hours:mins:secs)").
+                      #[span(v-if="plan_time_remaining") {{plan_time_remaining | time}} of]
+                      {{toolpath.time | time}}
+                  tr
+                    th ETA
+                    td.eta {{eta}}
+                  tr
+                    th Line
+                    td
+                      | {{0 <= state.line ? state.line : 0 | number}}
+                      span(v-if="toolpath.lines")
+                        | &nbsp;of {{toolpath.lines | number}}
+                  tr
+                    th Progress
+                    td.progress
+                      label {{(progress || 0) | percent}}
+                      .bar(:style="'width:' + (progress || 0) * 100 + '%'")
+      tr
+        td(style="white-space: nowrap;text-align:center")
+          button(style="height:100px;width:200px",@click="tool_msg = true",) Probe XYZ
+
+          message(:show.sync=`tool_msg`)
+            h3(slot="header") Enter probe tool information
+
+            div(slot="body")
+              .pure-form
+                .pure-control-group
+                  label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
+                  input(v-model="tool_diameter",
+                    @keyup.enter=`set_tool_diameter(tool_diameter)`)
+              p
+
+            div(slot="footer")
+              button.pure-button(@click=`tool_msg = false`)
+                | Cancel
+
+              button.pure-button.button-success(
+                @click=`set_tool_diameter(tool_diameter)`) Set
+
+
+          button(style="height:100px;width:200px",@click="probe_z()") Probe Z
+
+    .tabs
+     
+      input#tab1(type="radio", name="tabs",checked="" @click="tab = 'auto'")
+      label(for="tab1", title="Run GCode programs",style="height:50px;width:100px") Auto
+
+      input#tab2(type="radio", name="tabs", @click="tab = 'mdi'")
+      label(for="tab2", title="Manual GCode entry",style="height:50px;width:100px") MDI
+
+      input#tab3(type="radio", name="tabs", @click="tab = 'messages'")
+      label(for="tab3",style="height:50px;width:100px") Messages
+
+      input#tab4(type="radio", name="tabs", @click="tab = 'indicators'")
+      label(for="tab4",style="height:50px;width:100px") Indicators
+
+
+
+      
+      section#content1.tab-content.pure-form
+        .toolbar.pure-control-group
+          button.pure-button(:class="{'attention': is_holding}",
+            title="{{is_running ? 'Pause' : 'Start'}} program.",
+            @click="start_pause", :disabled="!state.selected",
+            style="height:100px;width:100px;font-weight:normal")
+            .fa(:class="is_running ? 'fa-pause' : 'fa-play'")
+
+          button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-stop
+
+          button.pure-button(title="Pause program at next optional stop (M1).",
+            @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-stop-circle-o
+
+          button.pure-button(title="Execute one program step.", @click="step",
+            :disabled="(!is_ready && !is_holding) || !state.selected",
+            v-if="false", style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-step-forward
+
+          button.pure-button(title="Upload a new GCode program.", @click="open",
+            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-folder-open
+
+          form.gcode-file-input.file-upload
+            input(type="file", @change="upload", :disabled="!is_ready",
+              accept="text/*,.nc,.gcode,.gc,.ngc,.txt,.tap,.cnc")
+
+          a.pure-button(:disabled="!state.selected", download,
+            :href="'/api/file/' + state.selected",
+            title="Download the selected GCode program.",style="height:100px;width:100px")
+            br
+            br
+            .fa.fa-download
+
+          button.pure-button(title="Delete current GCode program.",
+            @click="deleteGCode = true",
+            :disabled="!state.selected || !is_ready",style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-trash
+
+          message(:show.sync="deleteGCode")
+            h3(slot="header") Delete GCode?
+            p(slot="body")
+            div(slot="footer")
+              button.pure-button(@click="deleteGCode = false") Cancel
+              button.pure-button.button-error(@click="delete_all")
+                .fa.fa-trash
+                | &nbsp;all
+              button.pure-button.button-success(@click="delete_current")
+                .fa.fa-trash
+                | &nbsp;selected
+
+          select(title="Select previously uploaded GCode programs.",
+            v-model="state.selected", @change="load", :disabled="!is_ready")
+            option(v-for="file in state.files", :value="file") {{file}}
+
+          .progress(v-if="toolpath_progress && toolpath_progress < 1",
+            title="Simulating GCode to check for errors, calculate ETA and " +
+              "generate 3D view.  You can run GCode before the simulation " +
+              "finishes.")
+            div(:style="'width:' + (toolpath_progress || 0) * 100 + '%'")
+              label Simulating {{(toolpath_progress || 0) | percent}}
+
+        path-viewer(:toolpath="toolpath", :state="state", :config="config")
+        gcode-viewer
+
+      section#content2.tab-content
+        .mdi.pure-form(title="Manual GCode entry.")
+          button.pure-button(:disabled="!can_mdi",
+            :class="{'attention': is_holding}",
+            title="{{is_running ? 'Pause' : 'Start'}} command.",
+            @click="mdi_start_pause",style="height:100px;width:100px")
+            .fa(:class="is_running ? 'fa-pause' : 'fa-play'")
+
+          button.pure-button(title="Stop command.", @click="stop",style="height:100px;width:100px")
+            .fa.fa-stop
+
+          input(v-model="mdi", :disabled="!can_mdi", @keyup.enter="submit_mdi")
+
+        .history(:class="{placeholder: !history}")
+          span(v-if="!history.length") MDI history displays here.
+          ul
+            li(v-for="item in history", @click="load_history($index)",
+               track-by="$index")
+              | {{item}}
+
+      section#content3.tab-content
+        console
+
+      section#content4.tab-content
+        indicators(:state="state", :template="template")
+
+
+
+
+    .override(title="Feed rate override.")
+      label Feed
+      input(type="range", min="0", max="2", step="0.01",
+        v-model="feed_override", @change="override_feed")
+      span.percent {{feed_override | percent 0}}
+
+    .override(title="Spindle speed override.")
+      label Speed
+      input(type="range", min="0", max="2", step="0.01",
+        v-model="speed_override", @change="override_speed")
+      span.percent {{speed_override | percent 0}}
+
+    

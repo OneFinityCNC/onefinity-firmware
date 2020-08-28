@@ -1,0 +1,118 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-              This file is part of the Buildbotics firmware.               //
+//-                                                                           //
+//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
+//-                           All rights reserved.                            //
+//-                                                                           //
+//-   This file ("the software") is free software: you can redistribute it    //
+//-   and/or modify it under the terms of the GNU General Public License,     //
+//-    version 2 as published by the Free Software Foundation. You should     //
+//-    have received a copy of the GNU General Public License, version 2      //
+//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
+//-                                                                           //
+//-   The software is distributed in the hope that it will be useful, but     //
+//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
+//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
+//-             Lesser General Public License for more details.               //
+//-                                                                           //
+//-     You should have received a copy of the GNU Lesser General Public      //
+//-              License along with the software.  If not, see                //
+//-                     <http://www.gnu.org/licenses/>.                       //
+//-                                                                           //
+//-              For information regarding this software email:               //
+//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#estop-template(type="text/x-template")
+  svg(version="1.1", xmlns:svg="http://www.w3.org/2000/svg",
+    xmlns="http://www.w3.org/2000/svg",
+    xmlns:xlink="http://www.w3.org/1999/xlink",
+    width="130", height="130")
+      defs
+        path#text-path-1(d="m 73.735,673.129 c 0,55.107 44.673,99.780 99.780,99.780 55.107,0 99.780,-44.673 99.780,-99.780 0,-55.107 -44.673,-99.780 -99.780,-99.780 -55.107,0 -99.780,44.673 -99.780,99.780 z")
+
+        path#text-path-2(d="m 258.714,673.129 c 0,47.053 -38.144,85.198 -85.198,85.198 -47.053,0 -85.198,-38.144 -85.198,-85.198 0,-47.053 38.144,-85.198 85.198,-85.198 47.053,0 85.198,38.144 85.198,85.198 z")
+
+        filter#filter5134(style="color-interpolation-filters:sRGB")
+          feflood(flood-opacity="0.431", flood-color="rgb(0,0,0)")
+          fecomposite(in2="SourceGraphic", operator="in")
+          fegaussianblur(stddeviation="4", result="blur")
+          feoffset(dx="4", dy="4", result="offset")
+          fecomposite(in="SourceGraphic", in2="offset", operator="over",
+            result="fbSourceGraphic")
+          fecolormatrix(result="fbSourceGraphicAlpha", in="fbSourceGraphic",
+            values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0")
+          feflood(flood-opacity="0.431", flood-color="rgb(0,0,0)",
+            in="fbSourceGraphic")
+          fecomposite(in2="fbSourceGraphic", operator="out")
+          fegaussianblur(stddeviation="4", result="blur")
+          feoffset(dx="-4", dy="-4", result="offset")
+          fecomposite(in2="fbSourceGraphic", in="offset", operator="atop",
+            result="fbSourceGraphic")
+          fecolormatrix(result="fbSourceGraphicAlpha", in="fbSourceGraphic",
+            values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0")
+          feflood(flood-opacity="0.431", flood-color="rgb(0,0,0)",
+            in="fbSourceGraphic")
+          fecomposite(in2="fbSourceGraphic", operator="in")
+          fegaussianblur(stddeviation="4", result="blur")
+          feoffset(dx="4", dy="4", result="offset")
+          fecomposite(in2="offset", in="fbSourceGraphic", operator="over")
+
+        filter#filter5158(style="color-interpolation-filters:sRGB",)
+          feflood(flood-opacity="0.431", flood-color="rgb(0,0,0)")
+          fecomposite(in2="SourceGraphic", operator="out")
+          fegaussianblur(stddeviation="7", result="blur")
+          feoffset(dx="4", dy="4")
+          fecomposite(in2="SourceGraphic", operator="atop")
+
+        filter#filter5266(style="color-interpolation-filters:sRGB")
+          feflood(flood-opacity="0.372", flood-color="rgb(0,0,0)")
+          fecomposite(in2="SourceGraphic", operator="in")
+          fegaussianblur(stddeviation="2", result="blur")
+          feoffset(dx="1", dy="1", result="offset")
+          fecomposite(in="SourceGraphic", in2="offset", operator="over")
+
+        filter#filter5278(style="color-interpolation-filters:sRGB")
+          feflood(flood-opacity="0.372", flood-color="rgb(0,0,0)")
+          fecomposite(in2="SourceGraphic", operator="out")
+          fegaussianblur(stddeviation="2", result="blur")
+          feoffset(dx="2", dy="2", result="offset")
+          fecomposite(in="offset", in2="SourceGraphic", operator="atop")
+
+
+      g(transform="scale(0.6, 0.6), translate(-65, -526)")
+        // Yellow ring
+        circle.ring(style="fill:#f5e138;filter:url(#filter5266)",
+          cx="173", cy="633", r="100")
+
+        // Text
+        g(style="font-weight:bold;font-size:20px;font-family:Sans;fill:#666")
+          text(transform="matrix(-0.733,-0.679,0.679,-0.733,-156.726,1250.703)")
+            textpath(xlink:href="#text-path-2") EMERGENCY
+
+          text(transform="matrix(0.276,-0.961,0.961,0.276,-523.818,609.026)")
+            textpath(xlink:href="#text-path-1") STOP
+
+        g.button
+          circle(style="fill:#c42626;filter:url(#filter5134)",
+            cx="173", cy="633", r="74")
+
+          // Inner circle
+          circle(style="fill:#c42626;filter:url(#filter5158)",
+            cx="173", cy="633", r="37")
+
+          // Arrows
+          g(transform="matrix(0.327,0,0,0.327,50.806,478.966)", style="stroke:#fff;stroke-width:13;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;filter:url(#filter5278);fill:none")
+            g
+              path(transform="matrix(1.946,0,0,1.946,-359.987,-383.373)", d="m 411.696,521.147 c -10.574,4.472 -22.200,6.945 -34.404,6.945 -12.203,0 -23.830,-2.473 -34.404,-6.945 -10.574,-4.472 -20.097,-10.944 -28.095,-18.942 -7.997,-7.997 -12.913,-13.504 -17.386,-24.078")
+              path(d="m 221.801,582.657 -2.991,-35.524 28.482,14.166 z")
+
+            g(transform="matrix(-0.5,-0.866,0.866,-0.5,149.811,1033.447)")
+              path(transform="matrix(1.946,0,0,1.946,-359.987,-383.373)", d="m 411.696,521.147 c -10.574,4.472 -22.200,6.945 -34.404,6.945 -12.203,0 -23.830,-2.473 -34.404,-6.945 -10.574,-4.472 -20.097,-10.944 -28.095,-18.942 -7.997,-7.997 -11.525,-14.205 -17.386,-24.078")
+              path(d="m 221.801,582.657 -2.991,-35.524 28.482,14.166 z")
+
+            g(transform="matrix(-0.5,0.866,-0.866,-0.5,971.430,383.185)")
+              path(transform="matrix(1.946,0,0,1.946,-359.987,-383.373)", d="m 411.696,521.147 c -10.574,4.472 -22.200,6.945 -34.404,6.945 -12.203,0 -23.830,-2.473 -34.404,-6.945 -10.574,-4.472 -20.097,-10.944 -28.095,-18.942 -7.997,-7.997 -9.562,-8.624 -14.034,-19.199")
+              path(d="m 221.801,582.657 -2.991,-35.524 28.482,14.166 z")

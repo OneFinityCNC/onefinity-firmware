@@ -1,0 +1,264 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-              This file is part of the Buildbotics firmware.               //
+//-                                                                           //
+//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
+//-                           All rights reserved.                            //
+//-                                                                           //
+//-   This file ("the software") is free software: you can redistribute it    //
+//-   and/or modify it under the terms of the GNU General Public License,     //
+//-    version 2 as published by the Free Software Foundation. You should     //
+//-    have received a copy of the GNU General Public License, version 2      //
+//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
+//-                                                                           //
+//-   The software is distributed in the hope that it will be useful, but     //
+//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
+//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
+//-             Lesser General Public License for more details.               //
+//-                                                                           //
+//-     You should have received a copy of the GNU Lesser General Public      //
+//-              License along with the software.  If not, see                //
+//-                     <http://www.gnu.org/licenses/>.                       //
+//-                                                                           //
+//-              For information regarding this software email:               //
+//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#indicators-template(type="text/x-template")
+  .indicators
+    table.legend
+      tr
+        th.header(colspan=100) Legend
+
+      tr
+        td
+         .fa.fa-plus-circle.io
+        th Hi/+3.3v
+        th.separator
+        td
+         .fa.fa-minus-circle.io
+        th Lo/Gnd
+        th.separator
+        td
+         .fa.fa-circle.io.active
+        th Active
+        th.separator
+        td
+         .fa.fa-circle.io.inactive
+        th Inactive
+        th.separator
+        td
+         .fa.fa-circle-o.io
+        th Tristated/Disabled
+
+    table.inputs
+      tr
+        th.header(colspan=7) Inputs
+
+      tr
+        th State
+        th Pin
+        th Name
+        th.separator
+        th State
+        th Pin
+        th Name
+
+      each motor in '0123'
+        tr
+          td: io-indicator(name=`min-switch-${motor}`, :state="state")
+          td {{get_min_pin(#{motor})}}
+          th Motor #{motor} Min
+          th.separator
+          td: io-indicator(name=`max-switch-${motor}`, :state="state")
+          td {{get_max_pin(#{motor})}}
+          th Motor #{motor} Max
+
+      tr
+        td: io-indicator(name="estop", :state="state")
+        td 23
+        th EStop
+        th.separator
+        td: io-indicator(name="probe", :state="state")
+        td 22
+        th Probe
+
+      tr(v-if="false")
+        td {{state['1ai'] | percent 0}}
+        td 24
+        th Analog 1
+        th.separator
+        td {{state['2ai'] | percent 0}}
+        td 18
+        th Analog 2
+
+    table.outputs
+      tr
+        th.header(colspan=7) Outputs
+
+      tr
+        th State
+        th Pin
+        th Name
+        th.separator
+        th State
+        th Pin
+        th Name
+
+      tr
+        td: io-indicator(name="tool-enable-mode", :state="state")
+        td 15
+        th Tool Enable
+        th.separator
+        td: io-indicator(name="load-1", :state="state")
+        td 2
+        th Load 1
+
+      tr
+        td: io-indicator(name="tool-direction-mode", :state="state")
+        td 16
+        th Tool Direction
+        th.separator
+        td: io-indicator(name="load-2", :state="state")
+        td 1
+        th Load 2
+
+      tr
+        td {{state.pd | percent 0}}
+        td 17
+        th Tool PWM
+        th.separator
+        td: io-indicator(name="fault", :state="state")
+        td 21
+        th Fault
+
+    table.pwr_fault
+      tr
+        th.header(colspan=5)
+          | Power Faults
+          span(v-if="state.pwr_version") &nbsp(Version {{state.pwr_version}})
+      tr
+        th(:class="{error: state.under_voltage}") Under voltage
+        td(:class="{error: state.under_voltage}")
+          | {{state.under_voltage ? 'True' : 'False'}}
+        th.separator
+        th(:class="{error: state.over_voltage}") Over voltage
+        td(:class="{error: state.over_voltage}")
+          | {{state.over_voltage ? 'True' : 'False'}}
+      tr
+        th(:class="{error: state.over_current}") Over current
+        td(:class="{error: state.over_current}")
+          | {{state.over_current ? 'True' : 'False'}}
+        th.separator
+        th(:class="{error: state.sense_error}", :title="sense_error")
+          | Sense error
+        td(:class="{error: state.sense_error}")
+          | {{state.sense_error ? 'True' : 'False'}}
+      tr
+        th(:class="{error: state.shunt_overload}") Shunt overload
+        td(:class="{error: state.shunt_overload}")
+          | {{state.shunt_overload ? 'True' : 'False'}}
+        th.separator
+        th(:class="{error: state.shunt_error}") Shunt error
+        td(:class="{error: state.shunt_error}")
+          | {{state.shunt_error ? 'True' : 'False'}}
+      tr
+        th(:class="{error: state.load1_shutdown}") Load 1 shutdown
+        td(:class="{error: state.load1_shutdown}")
+          | {{state.load1_shutdown ? 'True' : 'False'}}
+        th.separator
+        th(:class="{error: state.load2_shutdown}") Load 2 shutdown
+        td(:class="{error: state.load2_shutdown}")
+          | {{state.load2_shutdown ? 'True' : 'False'}}
+      tr
+        th(:class="{error: state.motor_under_voltage}") Motor under volt
+        td(:class="{error: state.motor_under_voltage}")
+          | {{state.motor_under_voltage ? 'True' : 'False'}}
+        th.separator
+        th(:class="{error: state.motor_overload}") Motor overload
+        td(:class="{error: state.motor_overload}")
+          | {{state.motor_overload ? 'True' : 'False'}}
+
+      tr
+        th(:class="{error: state.power_shutdown}") Power shutdown
+        td(:class="{error: state.power_shutdown}")
+          | {{state.power_shutdown ? 'True' : 'False'}}
+        th.separator
+        th
+        td
+
+    table.motor_fault
+      tr
+        th.header(colspan=99)
+          | Motor Faults
+          .fa(:class="motor_fault_class()", title="General motor driver fault")
+
+      tr
+        th Motor
+        th(title="Overtemperature fault"): .fa.fa-thermometer-full
+        th(title="Overcurrent motor channel A") A #[.fa.fa-bolt]
+        th(title="Predriver fault motor channel A")
+          | A #[.fa.fa-exclamation-triangle]
+        th(title="Overcurrent motor channel B") B #[.fa.fa-bolt]
+        th(title="Predriver fault motor channel B")
+          | B #[.fa.fa-exclamation-triangle]
+        th(title="Driver communication failure"): .fa.fa-handshake-o
+        th(title="Reset all motor flags")
+          .fa.fa-eraser(@click="motor_reset()")
+
+      tr(v-for="motor in [0, 1, 2, 3]")
+        td {{motor}}
+        td: .fa(:class="motor_fault_class(motor, 0)",
+          title="Overtemperature fault")
+        td: .fa(:class="motor_fault_class(motor, 1)",
+          title="Overcurrent motor channel A")
+        td: .fa(:class="motor_fault_class(motor, 3)",
+          title="Predriver fault motor channel A")
+        td: .fa(:class="motor_fault_class(motor, 2)",
+          title="Overcurrent motor channel B")
+        td: .fa(:class="motor_fault_class(motor, 4)",
+          title="Predriver fault motor channel B")
+        td: .fa(:class="motor_fault_class(motor, 8)",
+          title="Driver communication failure")
+        td(:title="'Reset motor ' + motor + ' flags'")
+          .fa.fa-eraser(@click="motor_reset(motor)")
+
+    table.measurements
+      tr
+        th.header(colspan=5) Measurements
+
+      tr
+        td {{state.vin | fixed 1}} V
+        th Input
+        th.separator
+        td {{state.vout | fixed 1}} V
+        th Output
+
+      tr
+        td {{state.motor | fixed 2}} A
+        th Motor
+        th.separator
+        td {{state.vdd | fixed 2}} A
+        th Low-side
+
+      tr
+        td {{state.load1 | fixed 2}} A
+        th Load 1
+        th.separator
+        td {{state.load2 | fixed 2}} A
+        th Load 2
+
+      tr
+        td {{state.temp | fixed 0}} ℃
+        th Temp
+        th.separator
+        td(:class="{'error': 80 <= state.rpi_temp}")
+          | {{state.rpi_temp | fixed 0}} ℃
+        th RPi Temp
+
+    h2 DB25 breakout box
+    img(src="images/DB25_breakout_box.png")
+
+    h2 DB25-M2 breakout
+    img(src="images/DB25-M2_breakout.png")

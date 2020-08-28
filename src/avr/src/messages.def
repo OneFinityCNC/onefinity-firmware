@@ -1,0 +1,62 @@
+/******************************************************************************\
+
+                 This file is part of the Buildbotics firmware.
+
+                   Copyright (c) 2015 - 2018, Buildbotics LLC
+                              All rights reserved.
+
+      This file ("the software") is free software: you can redistribute it
+      and/or modify it under the terms of the GNU General Public License,
+       version 2 as published by the Free Software Foundation. You should
+       have received a copy of the GNU General Public License, version 2
+      along with the software. If not, see <http://www.gnu.org/licenses/>.
+
+      The software is distributed in the hope that it will be useful, but
+           WITHOUT ANY WARRANTY; without even the implied warranty of
+       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+                Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public
+                 License along with the software.  If not, see
+                        <http://www.gnu.org/licenses/>.
+
+                 For information regarding this software email:
+                   "Joseph Coffland" <joseph@buildbotics.com>
+
+\******************************************************************************/
+
+STAT_MSG(OK,                    "OK")
+STAT_MSG(AGAIN,                 "Run command again")
+STAT_MSG(NOP,                   "No op")
+STAT_MSG(INTERNAL_ERROR,        "Internal error")
+STAT_MSG(ESTOP_USER,            "User triggered EStop")
+STAT_MSG(ESTOP_SWITCH,          "Switch triggered EStop")
+STAT_MSG(POWER_SHUTDOWN,        "Power shutdown")
+STAT_MSG(UNRECOGNIZED_NAME,     "Unrecognized command or variable name")
+STAT_MSG(INVALID_COMMAND,       "Invalid command")
+STAT_MSG(INVALID_ARGUMENTS,     "Invalid arguments")
+STAT_MSG(TOO_MANY_ARGUMENTS,    "Too many arguments")
+STAT_MSG(TOO_FEW_ARGUMENTS,     "Too few arguments")
+STAT_MSG(MACHINE_ALARMED,       "Machine alarmed - Command not processed")
+STAT_MSG(EXPECTED_MOVE,         "A move expected but none queued")
+STAT_MSG(BAD_FLOAT,             "Failed to parse float")
+STAT_MSG(BAD_INT,               "Failed to parse integer")
+STAT_MSG(INVALID_VALUE,         "Invalid value")
+STAT_MSG(INVALID_TYPE,          "Invalid type")
+STAT_MSG(READ_ONLY,             "Variable is read only")
+STAT_MSG(ALL_ZERO_SCURVE_TIMES, "All zero s-curve times")
+STAT_MSG(NEGATIVE_SCURVE_TIME,  "Negative s-curve time")
+STAT_MSG(SEEK_NOT_ENABLED,      "Switch not enabled")
+STAT_MSG(SEEK_NOT_FOUND,        "Switch not found")
+STAT_MSG(MOTOR_ID_INVALID,      "Invalid motor ID")
+STAT_MSG(MOTOR_NOT_PREPPED,     "Motor move not prepped")
+STAT_MSG(MOTOR_NOT_READY,       "Motor not ready for move")
+STAT_MSG(MOTOR_FAULT,           "Motor fault")
+STAT_MSG(STEPPER_NULL_MOVE,     "Null move in stepper driver")
+STAT_MSG(STEPPER_NOT_READY,     "Stepper driver not ready for move")
+STAT_MSG(LONG_SEG_TIME,         "Long segment time")
+STAT_MSG(MODBUS_BUF_LENGTH,     "Modbus invalid buffer length")
+STAT_MSG(INVALID_QCMD,          "Invalid command in queue")
+STAT_MSG(Q_OVERRUN,             "Command queue overrun")
+STAT_MSG(Q_UNDERRUN,            "Command queue underrun")
+STAT_MSG(Q_INVALID_PUSH,        "Invalid command pushed to queue")

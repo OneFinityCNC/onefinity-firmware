@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Mount /boot read only
+mount -o remount,ro /boot
+
+# Load bbserial
+echo 3f201000.serial > /sys/bus/amba/drivers/uart-pl011/unbind
+modprobe -r bbserial
+modprobe bbserial
+
+# Set SPI GPIO mode
+gpio mode 27 alt3
+
+# Create browser memory limited cgroup
+if [ -d sys/fs/cgroup/memory ]; then
+    CGROUP=/sys/fs/cgroup/memory/chrome
+    mkdir $CGROUP
+    chown -R pi:pi $CGROUP
+    echo 650000000 > $CGROUP/memory.soft_limit_in_bytes
+    echo 750000000 > $CGROUP/memory.limit_in_bytes
+fi
+
+# Reload udev
+/etc/init.d/udev restart
+
+# Stop boot splash so it doesn't interfere with X if GPU enabled and to save CPU
+plymouth quit
+
+# Start X in /home/pi
+cd /home/pi
+sudo -u pi startx

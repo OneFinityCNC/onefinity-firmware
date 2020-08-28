@@ -1,0 +1,60 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-              This file is part of the Buildbotics firmware.               //
+//-                                                                           //
+//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
+//-                           All rights reserved.                            //
+//-                                                                           //
+//-   This file ("the software") is free software: you can redistribute it    //
+//-   and/or modify it under the terms of the GNU General Public License,     //
+//-    version 2 as published by the Free Software Foundation. You should     //
+//-    have received a copy of the GNU General Public License, version 2      //
+//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
+//-                                                                           //
+//-   The software is distributed in the hope that it will be useful, but     //
+//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
+//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
+//-             Lesser General Public License for more details.               //
+//-                                                                           //
+//-     You should have received a copy of the GNU Lesser General Public      //
+//-              License along with the software.  If not, see                //
+//-                     <http://www.gnu.org/licenses/>.                       //
+//-                                                                           //
+//-              For information regarding this software email:               //
+//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#templated-input-template(type="text/x-template")
+  .pure-control-group(class="tmpl-input-{{name}}", :title="title")
+    label(:for="name") {{name}}
+
+    select(v-if="template.type == 'enum' || template.values", v-model="view",
+      :name="name", @change="change")
+      option(v-for="opt in template.values", :value="opt") {{opt}}
+
+    input(v-if="template.type == 'bool'", type="checkbox", v-model="view",
+      :name="name", @change="change")
+
+    input(v-if="template.type == 'float'", v-model.number="view", number,
+      :min="template.min", :max="template.max", :step="template.step || 'any'",
+      type="number", :name="name", @change="change")
+
+    input(v-if="template.type == 'int' && !template.values", number,
+      v-model.number="view", :min="template.min", :max="template.max",
+      type="number", :name="name", @change="change")
+
+    input(v-if="template.type == 'string'", v-model="view", type="text",
+      :name="name", @change="change")
+
+    textarea(v-if="template.type == 'text'", v-model="view", :name="name",
+      @change="change")
+
+    span.range(v-if="template.type == 'percent'")
+      input(type="range", v-model="view", :name="name", number, min="0",
+        max="100", step="1", @change="change")
+      | {{view}}
+
+    label.units {{units}}
+
+    slot(name="extra")

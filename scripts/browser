@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import subprocess
+
+
+def enter_cgroup():
+    with open('/sys/fs/cgroup/memory/chrome/tasks', 'w') as f:
+        f.write(str(os.getpid()))
+
+
+# Start browser
+args = ['/usr/lib/chromium-browser/chromium-browser'] + sys.argv[1:]
+subprocess.Popen(args, preexec_fn = enter_cgroup).wait()

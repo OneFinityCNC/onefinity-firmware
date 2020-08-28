@@ -1,0 +1,213 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-              This file is part of the Buildbotics firmware.               //
+//-                                                                           //
+//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
+//-                           All rights reserved.                            //
+//-                                                                           //
+//-   This file ("the software") is free software: you can redistribute it    //
+//-   and/or modify it under the terms of the GNU General Public License,     //
+//-    version 2 as published by the Free Software Foundation. You should     //
+//-    have received a copy of the GNU General Public License, version 2      //
+//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
+//-                                                                           //
+//-   The software is distributed in the hope that it will be useful, but     //
+//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
+//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
+//-             Lesser General Public License for more details.               //
+//-                                                                           //
+//-     You should have received a copy of the GNU Lesser General Public      //
+//-              License along with the software.  If not, see                //
+//-                     <http://www.gnu.org/licenses/>.                       //
+//-                                                                           //
+//-              For information regarding this software email:               //
+//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+    title Onefinity CNC - Web interface
+
+    style: include ../static/css/pure-min.css
+    style: include ../static/css/side-menu.css
+
+    style: include ../static/css/font-awesome.min.css
+    style: include ../static/css/Audiowide.css
+    style: include ../static/css/clusterize.css
+    style: include:stylus ../stylus/style.styl
+
+
+  body(v-cloak)
+    #overlay(v-if="status != 'connected'")
+      span {{status}}
+    #layout
+      a#menuLink.menu-link(href="#menu"): span
+
+      #menu
+        button.save.pure-button.button-success(:disabled="!modified",
+          @click="save") Save
+
+        .pure-menu
+          ul.pure-menu-list
+            li.pure-menu-heading
+              a.pure-menu-link(href="#control") Control
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#settings") Settings
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#motor:0") Motors
+
+            li.pure-menu-item(v-for="motor in config.motors")
+              a.pure-menu-link(:href="'#motor:' + $index") Motor {{$index}}
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#tool") Tool
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#io") I/O
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#admin-general") Admin
+
+            li.pure-menu-item
+              a.pure-menu-link(href="#admin-general") General
+
+            li.pure-menu-item
+              a.pure-menu-link(href="#admin-network") Network
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#cheat-sheet") Cheat Sheet
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#help") Help
+
+      #main
+        .header
+          .header-content
+            .banner
+              img(src="/images/onefinity_logo.png")
+              .title
+                .fa.fa-thermometer-full(class="error",
+                  v-if="80 <= state.rpi_temp",
+                  title="Raspberry Pi temperature too high.")
+              .subtitle
+                | CNC Controller #[b {{state.demo ? 'Demo ' : ''}}]
+                | v{{config.version}}
+                a.upgrade-version(v-if="show_upgrade()", href="#admin-general")
+                  | Upgrade to v{{latestVersion}}
+                .fa.fa-check(v-if="!show_upgrade() && latestVersion",
+                  title="Firmware up to date")
+              .p {{get_ip_address()}} {{get_ssid()}}
+
+            .estop(:class="{active: state.es}")
+              estop(@click="estop")
+
+            .video(title="Plug camera into USB.\n" +
+              "Left click to toggle video size.\n" +
+              "Right click to toggle crosshair.", @click="toggle_video",
+              @contextmenu="toggle_crosshair", :class="video_size")
+              .crosshair(v-if="crosshair")
+                .vertical
+                .horizontal
+                .box
+              img(src="/api/video")
+
+        .clear
+
+        .content(class="{{currentView}}-view")
+          component(:is="currentView + '-view'", :index="index",
+            :config="config", :template="template", :state="state", keep-alive)
+
+    message.error-message(:show.sync="errorShow")
+      div(slot="header")
+        .estop(:class="{active: state.es}"): estop(@click="estop")
+        h3 ERROR: {{errorMessage}}
+
+      div(slot="body")
+        console
+
+        button.pure-button(@click="block_error_dialog")
+          .fa.fa-ban
+          | &nbsp;Stop
+        label showing errors for
+        input(style="width: 50px", v-model="errorTimeout", number)
+        label seconds.
+
+      div(slot="footer")
+        button.pure-button.pure-button-primary(@click="errorShow = false") Ok
+
+    message(:show.sync="confirmUpgrade")
+      h3(slot="header") Upgrade Firmware?
+      div(slot="body")
+        p
+          | Are you sure you want to upgrade the firmware to version
+          | {{latestVersion}}?
+
+        p.pure-control-group
+          label(for="pass") Password
+          input(name="pass", v-model="password", type="password",
+            @keyup.enter="upgrade_confirmed")
+
+      div(slot="footer")
+        button.pure-button(@click="confirmUpgrade=false") Cancel
+        button.pure-button.pure-button-primary(@click="upgrade_confirmed")
+          | Upgrade
+
+    message(:show.sync="confirmUpload")
+      h3(slot="header") Upload Firmware?
+      div(slot="body")
+        p Are you sure you want to upload firmware #[em {{firmwareName}}]?
+
+        p.pure-control-group
+          label(for="pass") Password
+          input(name="pass", v-model="password", type="password",
+            @keyup.enter="upload_confirmed")
+
+      div(slot="footer")
+        button.pure-button(@click="confirmUpload=false") Cancel
+        button.pure-button.pure-button-primary(@click="upload_confirmed")
+          | Upload
+
+    message(:show.sync="firmwareUpgrading")
+      h3(slot="header") Firmware upgrading
+      div(slot="body")
+        h3 Please wait...
+        p Loss of power during an upgrade may damage the controller.
+      div(slot="footer")
+
+    message(v-if="popupMessages.length", :show="true")
+      h3(slot="header") GCode message
+
+      div(slot="body")
+        ul
+          li(v-for="msg in popupMessages", track-by="$index") {{msg}}
+
+      div(slot="footer")
+        button.pure-button.button-success(v-if="state.xx != 'HOLDING'",
+          @click="close_messages('ok')") OK
+
+        div(v-if="state.xx == 'HOLDING'")
+          button.pure-button(@click="close_messages('stop')")
+            | Stop
+            .fa.fa-stop
+
+          button.pure-button(@click="close_messages('continue')")
+            | Continue
+            .fa.fa-play
+
+    #templates: include ../../build/templates.pug
+    iframe#download-target(style="display:none")
+
+    script: include ../static/js/jquery-1.11.3.min.js
+    script: include ../static/js/vue.js
+    script: include ../static/js/sockjs.min.js
+    script: include ../static/js/clusterize.min.js
+    script: include ../static/js/three.min.js
+    script: include:browserify ../js/main.js
+    script: include ../static/js/ui.js

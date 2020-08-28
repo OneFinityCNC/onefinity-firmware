@@ -1,0 +1,14 @@
+# Backup files
+*~
+\#*
+
+build
+.dep
+
+/*.eep
+/*.hex
+/*.elf
+/*.lss
+/*.map
+
+*.o
