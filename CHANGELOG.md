@@ -1,3 +1,35 @@
+OneFinity CNC Controller Firmware Changelog
+===========================================
+
+Note: This firmware was forked from version 0.4.14 of the Buildbotics firmware
+Buildbotics Changelog is provided below
+
+## v1.0.5
+ - Changed the jog commands so that save/restore modal states are not used to avoid situation where spindle/loads could
+   turn back on if the stop button was used instead of the M5/M9 gcode commands.
+ - Added tool path status to control page
+ - Moved over/under/no-fit warnings to tool status from machine status
+ - Added "home machine" pop up on start if the machine is not homed
+ - Added confirmation for X0Y0 and Z0 buttons
+
+## v1.0.4
+ - Fixed text sticking out of some dialog boxes
+ - Added changes to PWR microcontroller to support new precharge circuitry on V3 of the PCB
+ - Added a Shutdown button under the menu
+ - Added confirmation dialog to shutdown
+ - Fixed Reset Defaults for OneFinity settings
+ - Probe buttons now turn green when probe input is active
+ - Added defaults for both machinist and woodworker machines
+ - Re-activated "Upgrade" button under Admin to grab updates directly from the web
+
+## v1.0.3
+ - Changed upgrade scripts to point at OneFinity github repository
+ - Upgrade function not yet fully implemented 
+
+## v1.0.2
+ - Initial release of customized OneFinity firmware
+ - Includes GUI customizations, stall homing
+
 Buildbotics CNC Controller Firmware Changelog
 =============================================
 

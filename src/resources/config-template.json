@@ -485,14 +485,14 @@
     },
     "probe-fast-seek": {
       "type": "float",
-      "unit": "mm/s",
+      "unit": "mm/m",
       "min": 0,
       "max": 1000,
       "default": 200
     },
     "probe-slow-seek": {
       "type": "float",
-      "unit": "mm/s",
+      "unit": "mm/m",
       "min": 0,
       "max": 1000,
       "default": 25

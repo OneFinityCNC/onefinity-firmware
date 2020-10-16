@@ -60,8 +60,7 @@ module.exports = {
       speed_override: 1,
       feed_override: 1,
       manual_home: {x: false, y: false, z: false, a: false, b: false, c: false},
-      position_msg:
-      {x: false, y: false, z: false, a: false, b: false, c: false},
+      position_msg: {x: false, y: false, z: false, a: false, b: false, c: false},
       axis_position: 0,
       jog_step: cookie.get_bool('jog-step'),
       jog_adjust: parseInt(cookie.get('jog-adjust', 2)),
@@ -69,7 +68,12 @@ module.exports = {
       tab: 'auto',
       jog_incr: 1.0,
       tool_msg: false,
-      tool_diameter: 6.35
+      tool_diameter: 6.35,
+      toolpath_msg: {x: false, y: false, z: false, a: false, b: false, c: false},
+      ask_home: true,
+      ask_home_msg: false,
+      ask_zero_xy_msg: false,
+      ask_zero_z_msg: false
     }
   },
 
@@ -303,7 +307,10 @@ module.exports = {
       if(zero_z) zcmd = "Z0";
       if(zero_a) acmd = "A0";
 
-      this.send('M70\nG90\nG0' + xcmd + ycmd + zcmd + acmd + '\nM72');
+      this.ask_zero_xy_msg = false;
+      this.ask_zero_z_msg = false;
+
+      this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
     probe_xyz() {
@@ -470,7 +477,7 @@ module.exports = {
       console.log("Jog command: " + this.jog_incr);
       //debugger;
 
-      this.send('M70\nG91\nG0' + xcmd + ycmd + zcmd + acmd + '\nM72');
+      this.send('G91\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
     send: function (msg) {this.$dispatch('send', msg)},
@@ -581,6 +588,10 @@ module.exports = {
 
 
     home: function (axis) {
+      
+      this.ask_home = false;
+      this.ask_home_msg = false;
+      
       if (typeof axis == 'undefined') api.put('home');
 
       else {
@@ -605,6 +616,10 @@ module.exports = {
     show_set_position: function (axis) {
       this.axis_position = 0;
       this.position_msg[axis] = true;
+    },
+    
+    show_toolpath_msg : function(axis) {
+      this.toolpath_msg[axis] = true;
     },
 
 

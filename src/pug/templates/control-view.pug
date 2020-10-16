@@ -52,13 +52,13 @@ script#control-view-template(type="text/x-template")
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(-1,0,0,0)") X-
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="goto_zero(1,1,0,0)")
+                button(style="height:100px;width:100px",@click="ask_zero_xy_msg = true")
                   .fa.fa-bullseye
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(1,0,0,0)") X+
               td
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="goto_zero(0,0,1,0)") Z0
+                button(style="height:100px;width:100px",@click='ask_zero_z_msg = true') Z0
             tr
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(-1,-1,0,0)") &#x2b03
@@ -77,6 +77,9 @@ script#control-view-template(type="text/x-template")
               th.absolute Absolute
               th.offset Offset
               th.state State
+              th.tstate Toolpath
+              //th.tstate Min
+              //th.tstate Max
               th.actions
                 button.pure-button(:disabled="!can_set_axis",
                   title="Zero all axis offsets.", @click="zero()",style="height:60px;width:60px") &empty;
@@ -95,6 +98,60 @@ script#control-view-template(type="text/x-template")
                 td.state
                   .fa(:class=`'fa-' + ${axis}.icon`)
                   | {{#{axis}.state}}
+                td.tstate(:class=`${axis}.tklass`, :title=`${axis}.toolmsg`, @click=`show_toolpath_msg('${axis}')`)
+                  .fa(:class=`'fa-' + ${axis}.ticon`)
+                  | {{#{axis}.tstate}}
+                //td.tstate: unit-value(:value=`${axis}.pathMin`, precision=4)
+                //td.tstate: unit-value(:value=`${axis}.pathMax`, precision=4)
+                  
+                message(:show.sync=`toolpath_msg['${axis}']`)
+                    h3(slot="header") Tool path info {{'#{axis}' | upper}} axis
+                
+                    div(slot="body")
+                      p {{#{axis}.toolmsg}}
+                
+                    div(slot="footer")
+                      button.pure-button(@click=`toolpath_msg['${axis}'] = false`)
+                        | OK
+                        
+                message(:show.sync=`ask_home_msg`)
+                    h3(slot="header") Home Machine
+
+                    div(slot="body")
+                      p Home the machine?
+
+                    div(slot="footer")
+                      button.pure-button(@click="home()")
+                        | OK
+                        
+                      button.pure-button(@click='ask_home_msg = false; ask_home = false')
+                        | Cancel
+                
+                message(:show.sync=`ask_zero_xy_msg`)
+                    h3(slot="header") XY Origin
+
+                    div(slot="body")
+                      p Move to XY origin?
+
+                    div(slot="footer")
+                      button.pure-button(@click="goto_zero(1,1,0,0)")
+                        | Confirm
+                        
+                      button.pure-button(@click='ask_zero_xy_msg = false')
+                        | Cancel
+                
+                message(:show.sync=`ask_zero_z_msg`)
+                    h3(slot="header") Z Origin
+
+                    div(slot="body")
+                      p Move to Z origin?
+
+                    div(slot="footer")
+                      button.pure-button(@click="goto_zero(0,0,1,0)")
+                        | Confirm
+                        
+                      button.pure-button(@click='ask_zero_z_msg = false')
+                        | Cancel
 
                 th.actions
                   button.pure-button(:disabled="!can_set_axis",
@@ -240,7 +297,7 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
       tr
         td(style="white-space: nowrap;text-align:center")
-          button(style="height:100px;width:200px",@click="tool_msg = true",) Probe XYZ
+          button(:class="state['pw'] ? '' : 'load-on'",style="height:100px;width:200px",@click="tool_msg = true",) Probe XYZ
 
           message(:show.sync=`tool_msg`)
             h3(slot="header") Enter probe tool information
@@ -249,7 +306,7 @@ script#control-view-template(type="text/x-template")
               .pure-form
                 .pure-control-group
                   label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
-                  input(v-model="tool_diameter",
+                  input(v-model="tool_diameter",size="8",
                     @keyup.enter=`set_tool_diameter(tool_diameter)`)
               p
 
@@ -261,7 +318,8 @@ script#control-view-template(type="text/x-template")
                 @click=`set_tool_diameter(tool_diameter)`) Set
 
 
-          button(style="height:100px;width:200px",@click="probe_z()") Probe Z
+          button(:class="state['pw'] ? '' : 'load-on'",style="height:100px;width:200px",@click="probe_z()") Probe Z
+          
 
     .tabs
      
@@ -333,7 +391,8 @@ script#control-view-template(type="text/x-template")
                 | &nbsp;selected
 
           select(title="Select previously uploaded GCode programs.",
-            v-model="state.selected", @change="load", :disabled="!is_ready")
+            v-model="state.selected", @change="load", :disabled="!is_ready",
+            style="max-width:100%")
             option(v-for="file in state.files", :value="file") {{file}}
 
           .progress(v-if="toolpath_progress && toolpath_progress < 1",

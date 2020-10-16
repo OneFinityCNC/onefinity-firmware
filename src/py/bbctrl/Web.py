@@ -80,6 +80,10 @@ class RebootHandler(bbctrl.APIHandler):
     def put_ok(self):
         self.get_ctrl().lcd.goodbye('Rebooting...')
         subprocess.Popen('reboot')
+        
+class ShutdownHandler(bbctrl.APIHandler):
+    def put_ok(self):
+        subprocess.Popen(['shutdown','-h','now'])
 
 
 class LogHandler(bbctrl.RequestHandler):
@@ -516,6 +520,7 @@ class Web(tornado.web.Application):
             (r'/api/message/(\d+)/ack', MessageAckHandler),
             (r'/api/bugreport', BugReportHandler),
             (r'/api/reboot', RebootHandler),
+            (r'/api/shutdown', ShutdownHandler),
             (r'/api/hostname', HostnameHandler),
             (r'/api/wifi', WifiHandler),
             (r'/api/remote/username', UsernameHandler),

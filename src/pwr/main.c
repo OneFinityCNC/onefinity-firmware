@@ -368,6 +368,13 @@ static void validate_input_voltage() {
 
 static void charge_caps() {
   IO_PORT_SET(SHUNT_PIN); // Disable shunt (hi)
+  
+  delay(5);
+  IO_PORT_SET(PC2_PIN); //Enable pre-charge circuit
+  delay(CAP_PRECHARGE_PERIOD); //Wait for Vs caps to charge
+  IO_PORT_CLR(PC2_PIN); //Disable pre-charge circuit
+  delay(1);
+  
   IO_PORT_SET(MOTOR_PIN); // Motor voltage on
   delay(CAP_CHARGE_TIME);
 }
@@ -407,6 +414,8 @@ void init() {
   IO_PUE_SET(PWR_RESET);  // Pull up reset line
   IO_PORT_CLR(SHUNT_PIN); // Enable shunt
   IO_DDR_SET(SHUNT_PIN);  // Output
+  IO_PORT_CLR(PC2_PIN);   // Disable cap precharge circuit
+  IO_DDR_SET(PC2_PIN);    //Output
 
   // Disable digital IO on ADC lines
   DIDR0 = (1 << ADC4D) | (1 << ADC3D) | (1 << ADC2D) | (1 << ADC1D) |

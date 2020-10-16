@@ -42,7 +42,8 @@ module.exports = {
       confirmReset: false,
       configReset: false,
       latest: '',
-      autoCheckUpgrade: true
+      autoCheckUpgrade: true,
+      default_config: ''
     }
   },
 
@@ -72,13 +73,14 @@ module.exports = {
 
 
     restore: function (e) {
+      debugger;
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
 
       var fr = new FileReader();
       fr.onload = function (e) {
         var config;
-
+        debugger;
         try {
           config = JSON.parse(e.target.result);
         } catch (ex) {
@@ -96,6 +98,82 @@ module.exports = {
       }.bind(this);
 
       fr.readAsText(files[0]);
+    },
+
+    onefinity_woodworker_reset : function () {
+      var fr = new FileReader();
+      
+      $.ajax({
+        type: 'GET',
+        url: 'onefinity_woodworker_defaults.json',
+        data: {hid: this.state.hid},
+        dataType: 'text',
+        cache: false
+
+      }).done(function (data) {
+        debugger;
+	//console.debug('>', data);
+	//this.default_config = data;
+	var config;
+	try {
+	  config = JSON.parse(data);
+	} catch(ex) {
+	  api.alert("Invalid default config file");
+	  return;
+	}
+	
+	api.put('config/save', config).done(function (data) {
+          this.confirmReset = false;
+          
+          this.$dispatch('update');
+          this.configRestored = true;
+          
+        }.bind(this)).fail(function (error) {
+          api.alert('Restore failed', error);
+        })
+	
+	
+      }.bind(this))
+     
+      
+    },
+    
+    onefinity_machinist_reset : function () {
+      var fr = new FileReader();
+      
+      $.ajax({
+        type: 'GET',
+        url: 'onefinity_machinist_defaults.json',
+        data: {hid: this.state.hid},
+        dataType: 'text',
+        cache: false
+
+      }).done(function (data) {
+        debugger;
+	//console.debug('>', data);
+	//this.default_config = data;
+	var config;
+	try {
+	  config = JSON.parse(data);
+	} catch(ex) {
+	  api.alert("Invalid default config file");
+	  return;
+	}
+	
+	api.put('config/save', config).done(function (data) {
+          this.confirmReset = false;
+          
+          this.$dispatch('update');
+          this.configRestored = true;
+          
+        }.bind(this)).fail(function (error) {
+          api.alert('Restore failed', error);
+        })
+	
+	
+      }.bind(this))
+     
+      
     },
 
 

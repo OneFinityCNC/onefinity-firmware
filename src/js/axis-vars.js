@@ -80,47 +80,41 @@ module.exports = {
       var fault      = this.state[motor_id + 'df'] & 0x1f;
       var shutdown   = this.state.power_shutdown;
       var title;
+      var ticon      = 'question-circle';
+      var tstate     = 'NO FILE';
+      var toolmsg;
+      var tklass     = (homed ? 'homed' : 'unhomed') + ' axis-' + axis;
 
       if (fault || shutdown) {
         state = shutdown ? 'SHUTDOWN' : 'FAULT';
         klass += ' error';
         icon = 'exclamation-circle';
 
-      } else if (0 < dim && dim < pathDim) {
-        state = 'NO FIT';
-        klass += ' error';
-        icon = 'ban';
-
-      } else if (homed) {
-        state = 'HOMED'
+      }  else if(homed) {
+        state = 'HOMED';
         icon = 'check-circle';
+      }
+      
+      if (0 < dim && dim < pathDim) {
+        tstate = 'NO FIT';
+        tklass += ' error';
+        ticon = 'ban';
+
+      } else {
 
         if (over || under) {
-          state = over ? 'OVER' : 'UNDER';
-          klass += ' warn';
-          icon = 'exclamation-circle';
+          tstate = over ? 'OVER' : 'UNDER';
+          tklass += ' warn';
+          ticon = 'exclamation-circle';
+        } else {
+          tstate = 'OK';
+          ticon = 'check-circle';
         }
       }
 
       switch (state) {
       case 'UNHOMED': title = 'Click the home button to home axis.'; break;
       case 'HOMED': title = 'Axis successfuly homed.'; break;
-
-      case 'OVER':
-        title = 'Tool path would move ' +
-          this._length_str(pathMax + off - max) + ' beyond axis bounds.';
-        break;
-
-      case 'UNDER':
-        title = 'Tool path would move ' +
-          this._length_str(min - pathMin - off) + ' below axis bounds.';
-        break;
-
-      case 'NO FIT':
-        title = 'Tool path dimensions exceed axis dimensions by ' +
-          this._length_str(pathDim - dim) + '.';
-        break;
-
       case 'FAULT':
         title = 'Motor driver fault.  A potentially damaging electrical ' +
           'condition was detected and the motor driver was shutdown.  ' +
@@ -128,12 +122,37 @@ module.exports = {
           'See the "Motor Faults" table on the "Indicators" tab for more ' +
           'information.';
         break;
-
       case 'SHUTDOWN':
         title = 'Motor power fault.  All motors in shutdown.  ' +
           'See the "Power Faults" table on the "Indicators" tab for more ' +
           'information.  Reboot controller to reset.';
       }
+      
+      switch(tstate) {
+      
+      case 'OVER':
+        toolmsg = 'Caution: The current tool path file would move ' +
+          this._length_str(pathMax + off - max) + ' above axis limit with the current offset.';
+        break;
+
+      case 'UNDER':
+        toolmsg = 'Caution: The current tool path file would move ' +
+          this._length_str(min - pathMin - off) + ' below limit with the current offset.';
+        break;
+
+      case 'NO FIT':
+        toolmsg = 'Warning: The current tool path dimensions (' +
+          this._length_str(pathDim) + ') exceed axis dimensions (' +
+          this._length_str(dim) + ') by ' +
+          this._length_str(pathDim - dim) + '.';
+        break;
+        
+      default:
+      	toolmsg = 'Tool path ' + axis + ' dimensions OK.';
+      	break;
+      
+      }
+      
 
       return {
         pos: abs - off,
@@ -152,7 +171,11 @@ module.exports = {
         klass: klass,
         state: state,
         icon: icon,
-        title: title
+        title: title,
+        ticon: ticon,
+        tstate: tstate,
+        toolmsg: toolmsg,
+        tklass: tklass
       }
     },
 
@@ -193,6 +216,12 @@ module.exports = {
       var klass = homed ? 'homed' : 'unhomed';
       if (error) klass += ' error';
       else if (warn) klass += ' warn';
+
+      if(!homed && this.ask_home)
+      {
+      	this.ask_home_msg = true;
+      	this.ask_home = false;
+      }
 
       return {
         homed: homed,

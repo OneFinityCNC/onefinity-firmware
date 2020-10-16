@@ -117,7 +117,8 @@ module.exports = new Vue({
       latestVersion: '',
       password: '',
       ipAddress: '0.0.0.0',
-      wifiSSID: ''
+      wifiSSID: '',
+      confirmShutdown: false
     }
   },
 
@@ -162,7 +163,7 @@ module.exports = new Vue({
 
       $.ajax({
         type: 'GET',
-        url: 'https://https://raw.githubusercontent.com/OneFinityCNC/onefinity/master/latest.txt',
+        url: 'https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/latest.txt',
         data: {hid: this.state.hid},
         cache: false
 
@@ -308,6 +309,7 @@ module.exports = new Vue({
 
 	this.check_ip_address();
 	this.check_ssid();
+	
 
       }.bind(this))
     },
@@ -321,7 +323,7 @@ module.exports = new Vue({
 
       }).done(function (data) {
 	console.debug('>', data);
-	this.ipAddress = data;
+	this.ipAddress = 'IP:' + data;
 	this.$broadcast('ipAddress', data);
       }.bind(this))	
     },
@@ -335,7 +337,7 @@ module.exports = new Vue({
 
       }).done(function (data) {
 	console.debug('>', data);
-	this.wifiSSID = data;
+	this.wifiSSID = 'SSID:' + data;
 	this.$broadcast('wifiSSID', data);
       }.bind(this))	
     },
@@ -348,6 +350,12 @@ module.exports = new Vue({
     get_ssid : function() {
 	console.debug('get_ssid>', this.wifiSSID);
 	return this.wifiSSID;
+    },
+    
+    shutdown : function() {
+      this.confirmShutdown = false;
+      api.put('shutdown');
+    
     },
 
     connect: function () {

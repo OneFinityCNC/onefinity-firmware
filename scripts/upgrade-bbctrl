@@ -3,12 +3,12 @@
 (
     flock -n 9
 
-    VERSION=$(curl -s https://raw.githubusercontent.com/OneFinityCNC/onefinity/master/latest.txt)
+    VERSION=$(curl -s https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/latest.txt)
     PKG_NAME=onefinity-$VERSION
     PKG=/var/lib/bbctrl/firmware/update.tar.bz2
-    PKG_URL=https://https://raw.githubusercontent.com/OneFinityCNC/onefinity/master/release/$PKG_NAME.tar.bz2
+    PKG_URL=https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/$PKG_NAME.tar.bz2
 
-    logger Installing bbctrl firmware $VERSION
+    logger Installing onefinity firmware $VERSION
 
     cd /var/lib/bbctrl
     mkdir -p firmware
