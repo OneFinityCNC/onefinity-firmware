@@ -369,7 +369,7 @@ static void validate_input_voltage() {
 static void charge_caps() {
   IO_PORT_SET(SHUNT_PIN); // Disable shunt (hi)
   
-  delay(5);
+  delay(1000);
   IO_PORT_SET(PC2_PIN); //Enable pre-charge circuit
   delay(CAP_PRECHARGE_PERIOD); //Wait for Vs caps to charge
   IO_PORT_CLR(PC2_PIN); //Disable pre-charge circuit

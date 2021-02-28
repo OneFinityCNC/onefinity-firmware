@@ -73,7 +73,8 @@ module.exports = {
       ask_home: true,
       ask_home_msg: false,
       ask_zero_xy_msg: false,
-      ask_zero_z_msg: false
+      ask_zero_z_msg: false,
+      showGcodeMessage: false
     }
   },
 
@@ -89,6 +90,19 @@ module.exports = {
     'state.imperial': {
       handler: function (imperial) {
         this.mach_units = imperial ? 'IMPERIAL' : 'METRIC';
+      },
+      immediate: true
+    },
+    
+    'state.bitDiameter': {
+      handler: function (bitDiameter) {
+        console.log("New bitDiameter " + bitDiameter);
+        console.log("Units: " + this.mach_units);
+        if(this.mach_units == 'IMPERIAL')
+          this.tool_diameter = bitDiameter / 25.4;
+        else
+          this.tool_diameter = bitDiameter;
+        console.log("Tool diameter: " + this.tool_diameter);
       },
       immediate: true
     },
@@ -508,6 +522,7 @@ module.exports = {
         if (typeof toolpath.progress == 'undefined') {
           toolpath.filename = file;
           this.toolpath_progress = 1;
+          this.showGcodeMessage = false;
           this.toolpath = toolpath;
 
           var state = this.$root.state;
@@ -518,6 +533,7 @@ module.exports = {
           }
 
         } else {
+          this.showGcodeMessage = true;
           this.toolpath_progress = toolpath.progress;
           this.load_toolpath(file, file_time); // Try again
         }
@@ -590,7 +606,7 @@ module.exports = {
     home: function (axis) {
       
       this.ask_home = false;
-      this.ask_home_msg = false;
+      this.ask_home_msg = false;     
       
       if (typeof axis == 'undefined') api.put('home');
 

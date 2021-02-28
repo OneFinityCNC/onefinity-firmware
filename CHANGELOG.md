@@ -4,6 +4,14 @@ OneFinity CNC Controller Firmware Changelog
 Note: This firmware was forked from version 0.4.14 of the Buildbotics firmware
 Buildbotics Changelog is provided below
 
+## v1.0.6
+ - Tweaked stall homing procedure to clear stepper stall condition before homing
+ - Modified motor homing parameters (8 microsteps, 1.688 m/min search velocity, 2 stall volts, 1 stall current, 1.5mm zero backoff)
+ - Added pop up message while loading/simulating file on upload
+ - Decreased max velocity in default settings for X and Y axes
+ - Restored jerk to 1000 on all axes
+ - Fixed issue with default units not displaying on Control page (thanks to Robin Goldstone)
+
 ## v1.0.5
  - Changed the jog commands so that save/restore modal states are not used to avoid situation where spindle/loads could
    turn back on if the stop button was used instead of the M5/M9 gcode commands.

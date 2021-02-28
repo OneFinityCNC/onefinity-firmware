@@ -51,6 +51,10 @@ axis_homing_procedure = '''
 '''
 
 stall_homing_procedure = '''
+  G91 G1 %(axis)s [#<_%(axis)s_zero_backoff> * -1] F[#<_%(axis)s_search_velocity>]
+  G4 250
+  G91 G1 %(axis)s [#<_%(axis)s_zero_backoff>] F[#<_%(axis)s_search_velocity>]
+  G4 250
   G28.2 %(axis)s0 F[#<_%(axis)s_search_velocity>]
   G38.6 %(axis)s[#<_%(axis)s_home_travel>]
   G91 G1 G53 %(axis)s[#<_%(axis)s_zero_backoff>] F100

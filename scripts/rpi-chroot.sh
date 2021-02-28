@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 ROOT="$PWD/rpi-root"
-LOOP=9
+LOOP=12
 
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <image> <exec>"

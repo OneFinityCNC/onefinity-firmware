@@ -113,6 +113,17 @@ script#control-view-template(type="text/x-template")
                     div(slot="footer")
                       button.pure-button(@click=`toolpath_msg['${axis}'] = false`)
                         | OK
+                
+                
+                message(:show.sync="showGcodeMessage")
+                  h3(slot="header") Processing New File
+      
+                  div(slot="body")
+                    h3 Please wait..
+                    p Simulating GCode to check for errors, calculate ETA and generate 3D view.
+                   
+                  div(slot="footer")
+                    label Simulating {{(toolpath_progress || 0) | percent}}
                         
                 message(:show.sync=`ask_home_msg`)
                     h3(slot="header") Home Machine

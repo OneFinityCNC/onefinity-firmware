@@ -101,6 +101,7 @@ class Ctrl(object):
     def configure(self):
         # Indirectly configures state via calls to config() and the AVR
         self.config.reload()
+        self.state.init()
 
 
     def ready(self):

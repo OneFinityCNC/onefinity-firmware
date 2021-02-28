@@ -462,6 +462,13 @@
   },
 
   "probe": {
+    "probe-diameter": {
+      "type": "float",
+      "min": 0,
+      "max": 10,
+      "unit": "mm",
+      "default": 6.35
+    },
     "probe-xdim": {
       "type": "float",
       "unit": "mm",

@@ -24,6 +24,7 @@ if [ ! -e $GPLAN_IMG ]; then
     # Init image
     mkdir -p rpi-share
     cp ./scripts/gplan-init-dev-img.sh rpi-share
+    chmod +x ./rpi-share/gplan-init-dev-img.sh
     sudo ./scripts/rpi-chroot.sh $GPLAN_IMG.tmp /mnt/host/gplan-init-dev-img.sh
 
     # Move image

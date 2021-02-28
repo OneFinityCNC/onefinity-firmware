@@ -29,8 +29,8 @@ script#admin-general-view-template(type="text/x-template")
   #admin-general
     h2 Firmware
     button.pure-button.pure-button-primary(@click="check") Check
-    button.pure-button.pure-button-primary(@click="upgrade") Upgrade
-    label.pure-button.pure-button-primary(@click="upload_firmware") Upload
+    button.pure-button.pure-button-primary(@click="upgrade") Upgrade via Web
+    label.pure-button.pure-button-primary(@click="upload_firmware") Upgrade via File
     form.upload-firmware.file-upload
       input(type="file", accept=".bz2", @change="upload")
 

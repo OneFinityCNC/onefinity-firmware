@@ -62,7 +62,9 @@ $(GPLAN_MOD): $(GPLAN_IMG)
 	git -C rpi-share/cbang reset --hard FETCH_HEAD
 	git -C rpi-share/camotics fetch
 	git -C rpi-share/camotics reset --hard FETCH_HEAD
+	git -C rpi-share/camotics checkout ec876c80d20fc19837133087cef0c447df5a939d
 	cp ./scripts/gplan-build.sh rpi-share/
+	chmod +x rpi-share/gplan-build.sh
 	sudo ./scripts/rpi-chroot.sh $(GPLAN_IMG) /mnt/host/gplan-build.sh
 
 $(GPLAN_IMG):

@@ -118,7 +118,8 @@ module.exports = new Vue({
       password: '',
       ipAddress: '0.0.0.0',
       wifiSSID: '',
-      confirmShutdown: false
+      confirmShutdown: false,
+      diskSpace: ''
     }
   },
 
@@ -309,6 +310,7 @@ module.exports = new Vue({
 
 	this.check_ip_address();
 	this.check_ssid();
+	//.check_disk_space();
 	
 
       }.bind(this))
@@ -341,6 +343,20 @@ module.exports = new Vue({
 	this.$broadcast('wifiSSID', data);
       }.bind(this))	
     },
+    
+//    check_disk_space : function() {
+//    	$.ajax({
+//        type: 'GET',
+//        url: 'diskinfo.txt',
+//        data: {hid: this.state.hid},
+//        cache: false
+//
+//      }).done(function (data) {
+//	console.debug('>', data);
+//	this.diskSpace = data;
+//	this.$broadcast('diskSpace', data);
+//     }.bind(this))
+//    },
 
     get_ip_address : function() {
 	console.debug('get_ip>', this.ipAddress);
@@ -352,10 +368,20 @@ module.exports = new Vue({
 	return this.wifiSSID;
     },
     
+//    get_disk_space : function() {
+//    	console.debug('get_disk>', this.diskSpace);
+//    	return this.diskSpace;
+//    },
+    
     shutdown : function() {
       this.confirmShutdown = false;
       api.put('shutdown');
     
+    },
+    
+    reboot : function() {
+    	this.confirmShutdown = false;
+    	api.put('reboot');
     },
 
     connect: function () {

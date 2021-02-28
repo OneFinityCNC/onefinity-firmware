@@ -1,4 +1,5 @@
 hostinfo.sh &
+
 ratpoison &
 
 xset -dpms
