@@ -308,7 +308,21 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
       tr
         td(style="white-space: nowrap;text-align:center")
-          button(:class="state['pw'] ? '' : 'load-on'",style="height:100px;width:200px",@click="tool_msg = true",) Probe XYZ
+          message(:show.sync=`probe_test`)
+            h3(slot="header") Test probe connection
+
+            div(slot="body")
+              .pure-form
+                p Attach the probe magnet to the collet.
+                p Touch the probe block to the bit.
+
+            div(slot="footer")
+              button.pure-button(@click=`probe_test = false`)
+                | Cancel
+
+              button.pure-button.button-success(
+                :disabled=`!state.probe_connected`
+                @click=`finish_probe_test()`) Continue
 
           message(:show.sync=`tool_msg`)
             h3(slot="header") Enter probe tool information
@@ -328,9 +342,9 @@ script#control-view-template(type="text/x-template")
               button.pure-button.button-success(
                 @click=`set_tool_diameter(tool_diameter)`) Set
 
+          button(:class="state['pw'] ? '' : 'load-on'", style="height:100px;width:200px", @click=`start_probe_test(show_tool_diameter_prompt)`) Probe XYZ
+          button(:class="state['pw'] ? '' : 'load-on'", style="height:100px;width:200px", @click=`start_probe_test(probe_z)`) Probe Z
 
-          button(:class="state['pw'] ? '' : 'load-on'",style="height:100px;width:200px",@click="probe_z()") Probe Z
-          
 
     .tabs
      
