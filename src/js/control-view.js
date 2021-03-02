@@ -332,6 +332,7 @@ module.exports = {
       var xoffset = this.config.probe["probe-xdim"];
       var yoffset = this.config.probe["probe-ydim"];
       var zoffset = this.config.probe["probe-zdim"];
+      var zprobedrop = zoffset * 0.75;
       var fastSeek = this.config.probe["probe-fast-seek"];
       var slowSeek = this.config.probe["probe-slow-seek"];
       debugger;
@@ -355,7 +356,7 @@ module.exports = {
       
         pcmd += "G91 G0 Z 3.175\n";
         pcmd += "G91 G0 X 19.05\n";
-        pcmd += "G91 G0 Z -12.7\n";
+        pcmd += "G91 G0 Z " + zprobedrop + "\n";
         pcmd += "G38.2 X -19.05 " + fastSeek + "\n";
         pcmd += "G91 G1 X 1.27 " + fastSeek +"\n";
         pcmd += "G38.2 X -4 " + slowSeek + "\n";
