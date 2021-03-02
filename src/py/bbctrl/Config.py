@@ -137,7 +137,9 @@ class Config(object):
 
 
     def upgrade(self, config):
-        version = tuple(map(int, config['version'].split('.')))
+        version = config['version']
+        version = version.split('b')[0] # Strip off any "beta" suffix
+        version = tuple(map(int, version.split('.'))) # Break it into a tuple of integers
 
         if version < (0, 2, 4):
             for motor in config['motors']:
@@ -177,7 +179,7 @@ class Config(object):
         self._update(config, False)
 
         with open(self.ctrl.get_path('config.json'), 'w') as f:
-            json.dump(config, f)
+            json.dump(config, f, indent=2)
 
         os.sync()
 
