@@ -73,14 +73,12 @@ module.exports = {
 
 
     restore: function (e) {
-      debugger;
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
 
       var fr = new FileReader();
       fr.onload = function (e) {
         var config;
-        debugger;
         try {
           config = JSON.parse(e.target.result);
         } catch (ex) {
@@ -111,18 +109,15 @@ module.exports = {
         cache: false
 
       }).done(function (data) {
-        debugger;
-	//console.debug('>', data);
-	//this.default_config = data;
-	var config;
-	try {
-	  config = JSON.parse(data);
-	} catch(ex) {
-	  api.alert("Invalid default config file");
-	  return;
-	}
-	
-	api.put('config/save', config).done(function (data) {
+        var config;
+        try {
+          config = JSON.parse(data);
+        } catch(ex) {
+          api.alert("Invalid default config file");
+          return;
+        }
+        
+        api.put('config/save', config).done(function (data) {
           this.confirmReset = false;
           
           this.$dispatch('update');
@@ -149,18 +144,15 @@ module.exports = {
         cache: false
 
       }).done(function (data) {
-        debugger;
-	//console.debug('>', data);
-	//this.default_config = data;
-	var config;
-	try {
-	  config = JSON.parse(data);
-	} catch(ex) {
-	  api.alert("Invalid default config file");
-	  return;
-	}
-	
-	api.put('config/save', config).done(function (data) {
+        var config;
+        try {
+          config = JSON.parse(data);
+        } catch(ex) {
+          api.alert("Invalid default config file");
+          return;
+        }
+        
+        api.put('config/save', config).done(function (data) {
           this.confirmReset = false;
           
           this.$dispatch('update');

@@ -381,7 +381,7 @@ class Planner():
 
         except RuntimeError as e:
             # Pass on the planner message
-            self.log.error(str(e));
+            self.log.error(str(e))
             self.stop()
 
         except:
