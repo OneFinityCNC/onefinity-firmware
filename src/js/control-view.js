@@ -67,6 +67,7 @@ module.exports = {
       deleteGCode: false,
       tab: 'auto',
       jog_incr: 1.0,
+      probe_test: false,
       tool_msg: false,
       tool_diameter: 6.35,
       toolpath_msg: {x: false, y: false, z: false, a: false, b: false, c: false},
@@ -259,8 +260,27 @@ module.exports = {
 
     },
 
-    set_tool_diameter : function (new_diameter) {
+    start_probe_test: function(on_finish) {
+      this.probe_test = true;
+      Vue.set(this.state, "probe_connected", false);
+      Vue.set(this.state, "on_probe_finish", on_finish);
+    },
 
+    finish_probe_test: function() {
+      this.probe_test = false;
+      Vue.set(this.state, "probe_connected", false);
+
+      const on_finish = this.state.on_probe_finish;
+      Vue.set(this.state, "on_probe_finish", undefined);
+
+      on_finish();
+    },
+
+    show_tool_diameter_prompt: function() {
+      this.tool_msg = true;
+    },
+
+    set_tool_diameter : function (new_diameter) {
       if(isNaN(new_diameter))
         return;
 
@@ -269,7 +289,6 @@ module.exports = {
       this.tool_diameter = parseFloat(new_diameter);
       
       this.probe_xyz();
-
     },
 
     set_jog_incr: function(newValue) {
@@ -435,9 +454,6 @@ module.exports = {
       var zcmd = "Z" + z_jog * this.jog_incr;
       var acmd = "A" + a_jog * this.jog_incr;
 
-      console.log("Jog command: " + this.jog_incr);
-      //debugger;
-
       this.send('G91\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
@@ -458,15 +474,20 @@ module.exports = {
     },
 
 
-    load_toolpath: function (file, file_time) {
+    load_toolpath: async function (file, file_time) {
       this.toolpath = {};
 
       if (!file) return;
-
-      api.get('path/' + file).done(function (toolpath) {
         if (this.last_file_time != file_time) return;
 
+      this.showGcodeMessage = true;
+
+      let done = false;
+      while (!done) {
+        const toolpath = await api.get(`path/${file}`);
+
         if (typeof toolpath.progress == 'undefined') {
+          done = true;
           toolpath.filename = file;
           this.toolpath_progress = 1;
           this.showGcodeMessage = false;
@@ -478,13 +499,10 @@ module.exports = {
             Vue.set(state, 'path_min_' + axis, bounds.min[axis]);
             Vue.set(state, 'path_max_' + axis, bounds.max[axis]);
           }
-
         } else {
-          this.showGcodeMessage = true;
           this.toolpath_progress = toolpath.progress;
-          this.load_toolpath(file, file_time); // Try again
         }
-      }.bind(this));
+      }
     },
 
 

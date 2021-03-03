@@ -359,13 +359,13 @@ module.exports = new Vue({
 //    },
 
     get_ip_address : function() {
-	console.debug('get_ip>', this.ipAddress);
-	return this.ipAddress;
+  console.debug('get_ip>', this.ipAddress);
+  return this.ipAddress;
     },
 
     get_ssid : function() {
-	console.debug('get_ssid>', this.wifiSSID);
-	return this.wifiSSID;
+  console.debug('get_ssid>', this.wifiSSID);
+  return this.wifiSSID;
     },
     
 //    get_disk_space : function() {
@@ -408,6 +408,11 @@ module.exports = new Vue({
         }
 
         update_object(this.state, e.data, false);
+
+        if (this.state.pw === 0) {
+          Vue.set(this.state, "probe_connected", true);
+        }
+
         this.$broadcast('update');
 
       }.bind(this)

@@ -105,7 +105,7 @@ class State(object):
 
 
     def load_files(self):
-        self.files = []
+        files = []
 
         upload = self.ctrl.get_upload()
 
@@ -116,37 +116,38 @@ class State(object):
 
         for path in os.listdir(upload):
             if os.path.isfile(upload + '/' + path):
-                self.files.append(path)
+                files.append(path)
 
-        self.files.sort()
-        self.set('files', self.files)
+        files.sort()
+        self.set('files', files)
 
-        if len(self.files): self.select_file(self.files[0])
+        if len(files): self.select_file(files[0])
         else: self.select_file('')
 
 
     def clear_files(self):
         self.select_file('')
-        self.files = []
-        self.changes['files'] = self.files
+        self.set('files', [])
 
 
     def add_file(self, filename):
-        if not filename in self.files:
-            self.files.append(filename)
-            self.files.sort()
-            self.changes['files'] = self.files
+        files = copy.deepcopy(self.get('files'))
+        if not filename in files:
+            files.append(filename)
+            files.sort()
+            self.set('files', files)
 
         self.select_file(filename)
 
 
     def remove_file(self, filename):
-        if filename in self.files:
-            self.files.remove(filename)
-            self.changes['files'] = self.files
+        files = copy.deepcopy(self.get('files'))
+        if filename in files:
+            files.remove(filename)
+            self.set('files', files)
 
         if self.get('selected', filename) == filename:
-            if len(self.files): self.select_file(self.files[0])
+            if len(files): self.select_file(files[0])
             else: self.select_file('')
 
 
