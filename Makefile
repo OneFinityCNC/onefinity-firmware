@@ -60,6 +60,7 @@ $(GPLAN_MOD): $(GPLAN_IMG)
 	./scripts/gplan-init-build.sh
 	git -C rpi-share/cbang fetch
 	git -C rpi-share/cbang reset --hard FETCH_HEAD
+	git -C rpi-share/cbang checkout 18f1e963107ef26abe750c023355a5c40dd07853
 	git -C rpi-share/camotics fetch
 	git -C rpi-share/camotics reset --hard FETCH_HEAD
 	git -C rpi-share/camotics checkout ec876c80d20fc19837133087cef0c447df5a939d
