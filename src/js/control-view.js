@@ -97,13 +97,12 @@ module.exports = {
     
     'state.bitDiameter': {
       handler: function (bitDiameter) {
-        console.log("New bitDiameter " + bitDiameter);
-        console.log("Units: " + this.mach_units);
-        if(this.mach_units == 'IMPERIAL')
+        if(this.mach_units == 'IMPERIAL') {
           this.tool_diameter = bitDiameter / 25.4;
-        else
+        }
+        else {
           this.tool_diameter = bitDiameter;
-        console.log("Tool diameter: " + this.tool_diameter);
+        }
       },
       immediate: true
     },
@@ -372,11 +371,11 @@ module.exports = {
       let plunge = Math.min(12.7, zoffset * 0.75);
       plunge += zlift;  // Compensate for the fact that we lift after probing Z
       
-        xoffset = xoffset.toFixed(5);
-        yoffset = yoffset.toFixed(5);
+      xoffset = xoffset.toFixed(5);
+      yoffset = yoffset.toFixed(5);
       zoffset = zoffset.toFixed(5);
-        slowSeek = slowSeek.toFixed(5);
-        fastSeek = fastSeek.toFixed(5);
+      slowSeek = slowSeek.toFixed(5);
+      fastSeek = fastSeek.toFixed(5);
       plunge = plunge.toFixed(5);
         
       slowSeek = `F${slowSeek}`;
@@ -427,8 +426,8 @@ module.exports = {
       }
 
       zoffset = zoffset.toFixed(5);
-        slowSeek = slowSeek.toFixed(5);
-        fastSeek = fastSeek.toFixed(5);
+      slowSeek = slowSeek.toFixed(5);
+      fastSeek = fastSeek.toFixed(5);
 
       slowSeek = `F${slowSeek}`;
       fastSeek = `F${fastSeek}`;
@@ -478,29 +477,27 @@ module.exports = {
       this.toolpath = {};
 
       if (!file) return;
-        if (this.last_file_time != file_time) return;
+      if (this.last_file_time != file_time) return;
 
       this.showGcodeMessage = true;
 
-      let done = false;
-      while (!done) {
+      while (this.showGcodeMessage) {
         const toolpath = await api.get(`path/${file}`);
+        this.toolpath_progress = toolpath.progress;
 
         if (typeof toolpath.progress == 'undefined') {
-          done = true;
+          this.showGcodeMessage = false
+
           toolpath.filename = file;
           this.toolpath_progress = 1;
-          this.showGcodeMessage = false;
           this.toolpath = toolpath;
 
-          var state = this.$root.state;
-          var bounds = toolpath.bounds;
-          for (var axis of 'xyzabc') {
+          const state = this.$root.state;
+          const bounds = toolpath.bounds;
+          for (let axis of 'xyzabc') {
             Vue.set(state, 'path_min_' + axis, bounds.min[axis]);
             Vue.set(state, 'path_max_' + axis, bounds.max[axis]);
           }
-        } else {
-          this.toolpath_progress = toolpath.progress;
         }
       }
     },
