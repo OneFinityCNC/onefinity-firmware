@@ -511,15 +511,23 @@ module.exports = {
     },
 
 
-    load_toolpath: function (file, file_time) {
+    load_toolpath: async function (file, file_time) {
       this.toolpath = {};
 
       if (!file) return;
-
-      api.get('path/' + file).done(function (toolpath) {
         if (this.last_file_time != file_time) return;
 
+      this.showGcodeMessage = true;
+
+      let done;
+      while (!done) {
+        const toolpath = await api.get(`path/${file}`);
+
+        console.log("toolpath progress: ", toolpath.progress);
+
         if (typeof toolpath.progress == 'undefined') {
+          console.log("done loading toolpath");
+          done = true;
           toolpath.filename = file;
           this.toolpath_progress = 1;
           this.showGcodeMessage = false;
@@ -531,13 +539,11 @@ module.exports = {
             Vue.set(state, 'path_min_' + axis, bounds.min[axis]);
             Vue.set(state, 'path_max_' + axis, bounds.max[axis]);
           }
-
         } else {
-          this.showGcodeMessage = true;
+          console.log("Still loading toolpath");
           this.toolpath_progress = toolpath.progress;
-          this.load_toolpath(file, file_time); // Try again
         }
-      }.bind(this));
+      }
     },
 
 
