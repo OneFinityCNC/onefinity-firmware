@@ -4,6 +4,16 @@ OneFinity CNC Controller Firmware Changelog
 Note: This firmware was forked from version 0.4.14 of the Buildbotics firmware
 Buildbotics Changelog is provided below
 
+## v1.0.7
+ - General code cleanup
+ - Added probe continuity test before probing (pop-up dialog)
+ - Fixed file drop-down menu showing old files
+ - Improved support for large gcode files, improves performance on Raspi
+ - Fixed a bug where the UI could become unresponsive when uploading the first gcode file
+ - Changed default max-deviation to 0.001 to reduce issues with chattering while cutting arcs and circles
+ - Fixed dwell parameter in stall homing procedure to smooth out motion
+ 
+
 ## v1.0.6
  - Tweaked stall homing procedure to clear stepper stall condition before homing
  - Modified motor homing parameters (8 microsteps, 1.688 m/min search velocity, 2 stall volts, 1 stall current, 1.5mm zero backoff)

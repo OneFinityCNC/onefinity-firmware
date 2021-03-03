@@ -28,7 +28,7 @@
   },
   "settings": {
     "junction-accel": 199999.999,
-    "max-deviation": 0.05,
+    "max-deviation": 0.001,
     "units": "METRIC"
   },
   "motors": [
