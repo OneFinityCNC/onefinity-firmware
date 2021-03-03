@@ -31,7 +31,7 @@ WATCH := src/pug src/pug/templates src/stylus src/js src/resources Makefile
 WATCH += src/static
 
 ifndef HOST
-HOST=onefinity.local
+HOST=onefinity
 endif
 
 ifndef PASSWORD
