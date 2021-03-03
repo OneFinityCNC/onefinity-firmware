@@ -80,33 +80,29 @@ module.exports = {
 
 
   methods: {
-    load: function (file) {
+    load: async function(file) {
       if (file == this.file) return;
       this.clear();
       this.file = file;
 
       if (!file) return;
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/api/file/' + file + '?' + Math.random(), true);
-      xhr.responseType = 'text';
+      const response = await fetch(`/api/file/${file}?${Math.random()}`);
+      const text = await response.text();
 
-      xhr.onload = function (e) {
-        if (this.file != file) return;
-        var lines = escapeHTML(xhr.response.trimRight()).split(/\r?\n/);
-
-        for (var i = 0; i < lines.length; i++) {
-          lines[i] = '<li class="ln' + (i + 1) + '">' +
-            '<b>' + (i + 1) + '</b>' + lines[i] + '</li>';
-        }
+      if (text.length > 20e6) {
+        this.clusterize.update(['File is large - gcode view disabled']);
+      } else {
+        const lines = escapeHTML(text.trimRight())
+          .split(/[\r\n]/)
+          .map((line, i) => `<li class="ln${i + 1}"><b>${i + 1}</b>${line}</li>`);
 
         this.clusterize.update(lines);
-        this.empty = false;
+      }
 
-        Vue.nextTick(this.update_line);
-      }.bind(this)
+      this.empty = false;
 
-      xhr.send();
+      Vue.nextTick(this.update_line);
     },
 
 
