@@ -31,11 +31,11 @@ WATCH := src/pug src/pug/templates src/stylus src/js src/resources Makefile
 WATCH += src/static
 
 ifndef HOST
-HOST=bbctrl.local
+HOST=onefinity.local
 endif
 
 ifndef PASSWORD
-PASSWORD=buildbotics
+PASSWORD=onefinity
 endif
 
 
