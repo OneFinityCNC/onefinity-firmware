@@ -67,6 +67,7 @@ module.exports = {
       deleteGCode: false,
       tab: 'auto',
       jog_incr: 1.0,
+      probe_test: false,
       tool_msg: false,
       tool_diameter: 6.35,
       toolpath_msg: {x: false, y: false, z: false, a: false, b: false, c: false},
@@ -259,8 +260,27 @@ module.exports = {
 
     },
 
-    set_tool_diameter : function (new_diameter) {
+    start_probe_test: function(on_finish) {
+      this.probe_test = true;
+      Vue.set(this.state, "probe_connected", false);
+      Vue.set(this.state, "on_probe_finish", on_finish);
+    },
 
+    finish_probe_test: function() {
+      this.probe_test = false;
+      Vue.set(this.state, "probe_connected", false);
+
+      const on_finish = this.state.on_probe_finish;
+      Vue.set(this.state, "on_probe_finish", undefined);
+
+      on_finish();
+    },
+
+    show_tool_diameter_prompt: function() {
+      this.tool_msg = true;
+    },
+
+    set_tool_diameter : function (new_diameter) {
       if(isNaN(new_diameter))
         return;
 
@@ -269,7 +289,6 @@ module.exports = {
       this.tool_diameter = parseFloat(new_diameter);
       
       this.probe_xyz();
-
     },
 
     set_jog_incr: function(newValue) {
@@ -328,158 +347,105 @@ module.exports = {
     },
 
     probe_xyz() {
-      var pcmd = "";
-      var xoffset = this.config.probe["probe-xdim"];
-      var yoffset = this.config.probe["probe-ydim"];
-      var zoffset = this.config.probe["probe-zdim"];
-      var fastSeek = this.config.probe["probe-fast-seek"];
-      var slowSeek = this.config.probe["probe-slow-seek"];
-      debugger;
+      let xoffset = this.config.probe["probe-xdim"];
+      let yoffset = this.config.probe["probe-ydim"];
+      let zoffset = this.config.probe["probe-zdim"];
+      let fastSeek = this.config.probe["probe-fast-seek"];
+      let slowSeek = this.config.probe["probe-slow-seek"];
 
-      if(this.mach_units == "METRIC") {
+      xoffset += this.tool_diameter / 2.0;
+      yoffset += this.tool_diameter / 2.0;
         
-        fastSeek = "F" + fastSeek;
-        slowSeek = "F" + slowSeek;
-        
-        //Metric Probing
-        pcmd += "G92 X0\n";
-        pcmd += "G92 Y0\n";
-        pcmd += "G92 Z0\n";
-        pcmd += "G21\n";
-        pcmd += "G38.2 Z-25.4 " + fastSeek + "\n";
-        pcmd += "G91 G0 Z1.5\n";
-        pcmd += "G38.2 Z-2.5 " + slowSeek + "\n";
-        
-        //var zoffset = 16.383;
-        pcmd += "G92 Z " + zoffset + "\n";
-      
-        pcmd += "G91 G0 Z 3.175\n";
-        pcmd += "G91 G0 X 19.05\n";
-        pcmd += "G91 G0 Z -12.7\n";
-        pcmd += "G38.2 X -19.05 " + fastSeek + "\n";
-        pcmd += "G91 G1 X 1.27 " + fastSeek +"\n";
-        pcmd += "G38.2 X -4 " + slowSeek + "\n";
-
-        xoffset += this.tool_diameter/2.0;
-        xoffset = xoffset.toFixed(5);
-        pcmd += "G92 X " + xoffset + "\n";
-
-        pcmd += "G91 G0 X 2.5\n";
-        pcmd += "G91 G0 Y 17\n";
-        pcmd += "G91 G0 X -13\n";
-        pcmd += "G38.2 Y -17 " + fastSeek + "\n";
-        pcmd += "G91 G0 Y 1.27\n";
-        pcmd += "G38.2 Y -4 " + slowSeek +"\n";
-
-        yoffset += this.tool_diameter/2.0;
-        yoffset = yoffset.toFixed(5);
-        pcmd += "G92 Y " + yoffset + "\n";
-
-        pcmd += "G91 G0 Y2.54\n";
-        pcmd += "G91 G0 Z 25.4\n";
-        pcmd += "G90 G0 X0 Y0\n";
-      } else {
-
-        //Imperial Probing
-        
-        xoffset = xoffset / 25.4;
-        yoffset = yoffset / 25.4;
-        zoffset = zoffset / 25.4;
-        slowSeek = slowSeek / 25.4;
-        slowSeek = slowSeek.toFixed(5);
-        slowSeek = "F" + slowSeek;
-        fastSeek = fastSeek / 25.4;
-        fastSeek = fastSeek.toFixed(5);
-        fastSeek = "F" + fastSeek;
-        
-        pcmd += "G92 X0\n";
-        pcmd += "G92 Y0\n";
-        pcmd += "G92 Z0\n";
-        pcmd += "G20\n";
-        pcmd += "G38.2 Z-1.0 " + fastSeek + "\n";
-        pcmd += "G91 G0 Z0.06\n";
-        pcmd += "G38.2 Z-0.1 " + slowSeek + "\n";
-        
-        //var zoffset = 0.645;
-        zoffset = zoffset.toFixed(5);
-        pcmd += "G92 Z " + zoffset + "\n";
-        
-      
-        pcmd += "G91 G0 Z 0.125\n";
-        pcmd += "G91 G0 X 0.75\n";
-        pcmd += "G91 G0 Z -0.5\n";
-        pcmd += "G38.2 X -0.75 " + fastSeek + "\n";
-        pcmd += "G91 G1 X 0.05 " + fastSeek + "\n";
-        pcmd += "G38.2 X -0.15 " + slowSeek + "\n";
-
-        xoffset +=  this.tool_diameter/2.0;
-        xoffset = xoffset.toFixed(5);
-        pcmd += "G92 X " + xoffset + "\n";
-
-        pcmd += "G91 G0 X 0.1\n";
-        pcmd += "G91 G0 Y 0.75\n";
-        pcmd += "G91 G0 X -0.5\n";
-        pcmd += "G38.2 Y -0.75 " + fastSeek + "\n";
-        pcmd += "G91 G0 Y 0.05\n";
-        pcmd += "G38.2 Y -0.15 " + slowSeek +"\n";
-
-        yoffset += this.tool_diameter/2.0;
-        yoffset = yoffset.toFixed(5);
-        pcmd += "G92 Y " + yoffset + "\n";
-
-        pcmd += "G91 G0 Y0.1\n";
-        pcmd += "G91 G0 Z1\n";
-        pcmd += "G90 G0 X0 Y0\n";
+      if (this.mach_units !== "METRIC") {
+        xoffset /= 25.4;
+        yoffset /= 25.4;
+        zoffset /= 25.4;
+        slowSeek /= 25.4;
+        fastSeek /= 25.4;
       }
+        
+      const zlift = 1;
+        
+      // After probing Z, we want to drop the bit down:
+      // Ideally, 12.7mm/0.5in
+      // And we don't want to be more than 75% down on the probe block
+      let plunge = Math.min(12.7, zoffset * 0.75);
+      plunge += zlift;  // Compensate for the fact that we lift after probing Z
+      
+        xoffset = xoffset.toFixed(5);
+        yoffset = yoffset.toFixed(5);
+      zoffset = zoffset.toFixed(5);
+        slowSeek = slowSeek.toFixed(5);
+        fastSeek = fastSeek.toFixed(5);
+      plunge = plunge.toFixed(5);
+        
+      slowSeek = `F${slowSeek}`;
+      fastSeek = `F${fastSeek}`;
+        
+      this.send(`
+        G21
+        G92 X0 Y0 Z0
+        
+        G38.2 Z -25.4 ${fastSeek}
+        G91 G1 Z 1
+        G38.2 Z -2 ${slowSeek}
+        G92 Z ${zoffset}
+      
+        G91 G0 Z ${zlift}
+        G91 G0 X 20
+        G91 G0 Z -${plunge}
+        G38.2 X -20 ${fastSeek}
+        G91 G1 X 1
+        G38.2 X -2 ${slowSeek}
+        G92 X ${xoffset}
 
-      this.send(pcmd);
+        G91 G0 X 1
+        G91 G0 Y 20
+        G91 G0 X -20
+        G38.2 Y -20 ${fastSeek}
+        G91 G1 Y 1
+        G38.2 Y -2 ${slowSeek}
+        G92 Y ${yoffset}
 
+        G91 G0 Y 3
+        G91 G0 Z 25.4
+        G90 G0 X0 Y0
+
+        M2
+      `);
     },
 
     probe_z() {
-      var pcmd = "";
-      var fastSeek = this.config.probe["probe-fast-seek"];
-      var slowSeek = this.config.probe["probe-slow-seek"];
-      var zoffset = this.config.probe["probe-zdim"];
-
-      debugger;    
-
-      if(this.mach_units == "METRIC") {
-        fastSeek = "F" + fastSeek;
-        slowSeek = "F" + slowSeek;
-        
-        
-        pcmd += "G92 Z0\n";
-        pcmd += "G21\n";
-        pcmd += "G38.2 Z-25 " + fastSeek + "\n";
-        pcmd += "G91 G0 Z1.5\n";
-        pcmd += "G38.2 Z-2.5 " + slowSeek + "\n";
-        pcmd += "G92 Z " + zoffset + "\n";
-        pcmd += "G91 G0 Z3\n";
+      let fastSeek = this.config.probe["probe-fast-seek"];
+      let slowSeek = this.config.probe["probe-slow-seek"];
+      let zoffset = this.config.probe["probe-zdim"];
       
-
-      }  else {
-        zoffset = zoffset / 25.4;
-        slowSeek = slowSeek / 25.4;
-        slowSeek = slowSeek.toFixed(5);
-        slowSeek = "F" + slowSeek;
-        fastSeek = fastSeek / 25.4;
-        fastSeek = fastSeek.toFixed(5);
-        fastSeek = "F" + fastSeek;
-        
-        pcmd += "G92 Z0\n";
-        pcmd += "G20\n";
-        pcmd += "G38.2 Z-1.0 " + fastSeek +"\n";
-        pcmd += "G91 G0 Z0.06\n";
-        pcmd += "G38.2 Z-0.1 " + slowSeek + "\n";
-        zoffset = zoffset.toFixed(5);
-        pcmd += "G92 Z " + zoffset + "\n";
-        pcmd += "G91 G0 Z0.125\n";
-      
+      if (this.mach_units !== "METRIC") {
+        zoffset /= 25.4;
+        slowSeek /= 25.4;
+        fastSeek /= 25.4;
       }
-      
-      this.send(pcmd);
 
+      zoffset = zoffset.toFixed(5);
+        slowSeek = slowSeek.toFixed(5);
+        fastSeek = fastSeek.toFixed(5);
+
+      slowSeek = `F${slowSeek}`;
+      fastSeek = `F${fastSeek}`;
+        
+      this.send(`
+        G21
+        G92 Z0
+      
+        G38.2 Z -25.4 ${fastSeek}
+        G91 G1 Z 1
+        G38.2 Z -2 ${slowSeek}
+        G92 Z ${zoffset}
+      
+        G91 G0 Z3
+
+        M2
+      `);
     },
 
     jog_fn: function (x_jog,y_jog,z_jog,a_jog) {
@@ -487,9 +453,6 @@ module.exports = {
       var ycmd = "Y" + y_jog * this.jog_incr;
       var zcmd = "Z" + z_jog * this.jog_incr;
       var acmd = "A" + a_jog * this.jog_incr;
-
-      console.log("Jog command: " + this.jog_incr);
-      //debugger;
 
       this.send('G91\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
@@ -511,15 +474,20 @@ module.exports = {
     },
 
 
-    load_toolpath: function (file, file_time) {
+    load_toolpath: async function (file, file_time) {
       this.toolpath = {};
 
       if (!file) return;
-
-      api.get('path/' + file).done(function (toolpath) {
         if (this.last_file_time != file_time) return;
 
+      this.showGcodeMessage = true;
+
+      let done = false;
+      while (!done) {
+        const toolpath = await api.get(`path/${file}`);
+
         if (typeof toolpath.progress == 'undefined') {
+          done = true;
           toolpath.filename = file;
           this.toolpath_progress = 1;
           this.showGcodeMessage = false;
@@ -531,13 +499,10 @@ module.exports = {
             Vue.set(state, 'path_min_' + axis, bounds.min[axis]);
             Vue.set(state, 'path_max_' + axis, bounds.max[axis]);
           }
-
         } else {
-          this.showGcodeMessage = true;
           this.toolpath_progress = toolpath.progress;
-          this.load_toolpath(file, file_time); // Try again
         }
-      }.bind(this));
+      }
     },
 
 

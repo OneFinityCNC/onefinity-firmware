@@ -19,7 +19,10 @@ __pycache__
 *.deb
 *.zip
 /rpi-share
+/rpi-root
 /package-lock.json
+/src/bbserial/linux-rpi-raspberrypi-kernel*
+/src/bbserial/raspberrypi-kernel*
 
 *.elf
 *.hex
