@@ -27,6 +27,54 @@
 
 script#control-view-template(type="text/x-template")
   #control
+    message(:show.sync="showGcodeMessage")
+      h3(slot="header") Processing New File
+
+      div(slot="body")
+        h3 Please wait..
+        p Simulating GCode to check for errors, calculate ETA and generate 3D view.
+        
+      div(slot="footer")
+        label Simulating {{(toolpath_progress || 0) | percent}}
+            
+    message(:show.sync=`ask_home_msg`)
+        h3(slot="header") Home Machine
+
+        div(slot="body")
+          p Home the machine?
+
+        div(slot="footer")
+          button.pure-button(@click="home()")
+            | OK
+            
+          button.pure-button(@click='ask_home_msg = false; ask_home = false')
+            | Cancel
+    
+    message(:show.sync=`ask_zero_xy_msg`)
+        h3(slot="header") XY Origin
+
+        div(slot="body")
+          p Move to XY origin?
+
+        div(slot="footer")
+          button.pure-button(@click="goto_zero(1,1,0,0)")
+            | Confirm
+            
+          button.pure-button(@click='ask_zero_xy_msg = false')
+            | Cancel
+    
+    message(:show.sync=`ask_zero_z_msg`)
+        h3(slot="header") Z Origin
+
+        div(slot="body")
+          p Move to Z origin?
+
+        div(slot="footer")
+          button.pure-button(@click="goto_zero(0,0,1,0)")
+            | Confirm
+            
+          button.pure-button(@click='ask_zero_z_msg = false')
+            | Cancel
 
     table(width="99%")
       tr
@@ -87,7 +135,7 @@ script#control-view-template(type="text/x-template")
                 button.pure-button(title="Home all axes.", @click="home()",
                   :disabled="!is_idle",style="height:60px;width:60px")
                   .fa.fa-home
-
+            
             each axis in 'xyzabc'
               tr.axis(:class=`${axis}.klass`, v-if=`${axis}.enabled`,
                 :title=`${axis}.title`)
@@ -114,56 +162,6 @@ script#control-view-template(type="text/x-template")
                       button.pure-button(@click=`toolpath_msg['${axis}'] = false`)
                         | OK
                 
-                
-                message(:show.sync="showGcodeMessage")
-                  h3(slot="header") Processing New File
-      
-                  div(slot="body")
-                    h3 Please wait..
-                    p Simulating GCode to check for errors, calculate ETA and generate 3D view.
-                   
-                  div(slot="footer")
-                    label Simulating {{(toolpath_progress || 0) | percent}}
-                        
-                message(:show.sync=`ask_home_msg`)
-                    h3(slot="header") Home Machine
-
-                    div(slot="body")
-                      p Home the machine?
-
-                    div(slot="footer")
-                      button.pure-button(@click="home()")
-                        | OK
-                        
-                      button.pure-button(@click='ask_home_msg = false; ask_home = false')
-                        | Cancel
-                
-                message(:show.sync=`ask_zero_xy_msg`)
-                    h3(slot="header") XY Origin
-
-                    div(slot="body")
-                      p Move to XY origin?
-
-                    div(slot="footer")
-                      button.pure-button(@click="goto_zero(1,1,0,0)")
-                        | Confirm
-                        
-                      button.pure-button(@click='ask_zero_xy_msg = false')
-                        | Cancel
-                
-                message(:show.sync=`ask_zero_z_msg`)
-                    h3(slot="header") Z Origin
-
-                    div(slot="body")
-                      p Move to Z origin?
-
-                    div(slot="footer")
-                      button.pure-button(@click="goto_zero(0,0,1,0)")
-                        | Confirm
-                        
-                      button.pure-button(@click='ask_zero_z_msg = false')
-                        | Cancel
-
                 th.actions
                   button.pure-button(:disabled="!can_set_axis",
                     title=`Set {{'${axis}' | upper}} axis position.`,
