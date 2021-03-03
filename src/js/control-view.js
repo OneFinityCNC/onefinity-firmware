@@ -519,14 +519,11 @@ module.exports = {
 
       this.showGcodeMessage = true;
 
-      let done;
+      let done = false;
       while (!done) {
         const toolpath = await api.get(`path/${file}`);
 
-        console.log("toolpath progress: ", toolpath.progress);
-
         if (typeof toolpath.progress == 'undefined') {
-          console.log("done loading toolpath");
           done = true;
           toolpath.filename = file;
           this.toolpath_progress = 1;
@@ -540,7 +537,6 @@ module.exports = {
             Vue.set(state, 'path_max_' + axis, bounds.max[axis]);
           }
         } else {
-          console.log("Still loading toolpath");
           this.toolpath_progress = toolpath.progress;
         }
       }
