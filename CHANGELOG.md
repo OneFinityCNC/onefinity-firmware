@@ -12,6 +12,7 @@ Buildbotics Changelog is provided below
  - Fixed a bug where the UI could become unresponsive when uploading the first gcode file
  - Changed default max-deviation to 0.001 to reduce issues with chattering while cutting arcs and circles
  - Fixed dwell parameter in stall homing procedure to smooth out motion
+ - Added a refresh button to the control view, to refresh the program list if changed outside of the UI directly (ex: SMB)
  
 
 ## v1.0.6
