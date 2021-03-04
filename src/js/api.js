@@ -91,6 +91,9 @@ module.exports = {
     return api_cb('DELETE', url, undefined, config);
   },
 
+  'refresh': function (url, config) {
+    return api_cb('GET', url, undefined, config);
+  },
 
   alert: function (msg, error) {
     if (typeof error != 'undefined') {

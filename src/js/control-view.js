@@ -564,6 +564,11 @@ module.exports = {
       this.deleteGCode = false;
     },
 
+    refresh: function () {
+      api.refresh('refreshfiles');
+      
+    },
+
 
     home: function (axis) {
       

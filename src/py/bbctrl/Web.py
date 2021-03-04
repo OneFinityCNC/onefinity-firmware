@@ -397,6 +397,8 @@ class ModbusWriteHandler(bbctrl.APIHandler):
         self.get_ctrl().mach.modbus_write(int(self.json['address']),
                                     int(self.json['value']))
 
+class RefreshFileHandler(bbctrl.APIHandler):
+    def put_ok(self): self.get_ctrl().state.load_files()
 
 class JogHandler(bbctrl.APIHandler):
     def put_ok(self):
@@ -532,6 +534,7 @@ class Web(tornado.web.Application):
             (r'/api/firmware/update', FirmwareUpdateHandler),
             (r'/api/upgrade', UpgradeHandler),
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
+            (r'/api/refreshfiles', RefreshFileHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
             (r'/api/start', StartHandler),

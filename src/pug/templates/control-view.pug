@@ -385,6 +385,10 @@ script#control-view-template(type="text/x-template")
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
             .fa.fa-folder-open
 
+          button.pure-button(title="Refresh list of GCode programs." @click="refresh",
+            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-refresh
+
           form.gcode-file-input.file-upload
             input(type="file", @change="upload", :disabled="!is_ready",
               accept="text/*,.nc,.gcode,.gc,.ngc,.txt,.tap,.cnc")
