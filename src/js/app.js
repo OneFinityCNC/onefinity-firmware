@@ -30,26 +30,26 @@
 var api = require('./api');
 var cookie = require('./cookie')('bbctrl-');
 var Sock = require('./sock');
-const { exec } = require('child_process');
 
-function compare_versions(a, b) {
-    var reStripTrailingZeros = /(\.0+)+$/;
-    var segsA = a.replace(reStripTrailingZeros, '').split('.');
-    var segsB = b.replace(reStripTrailingZeros, '').split('.');
-    var l = Math.min(segsA.length, segsB.length);
+function is_newer_version(current, latest) {
+	const pattern = /(\d+)\.(\d+)\.(\d+)(.*)/;
+	const currentParts = current.match(pattern);
+	const latestParts = latest.match(pattern);
 
-    for (var i = 0; i < l; i++) {
-      var diff = parseInt(segsA[i], 10) - parseInt(segsB[i], 10);
-      if (diff) return diff;
-    }
+	// Normal version comparisons
+	const major = latestParts[1] > currentParts[1];
+	const minor = latestParts[2] > currentParts[2];
+	const patch = latestParts[3] > currentParts[3];
 
-    return segsA.length - segsB.length;
+	// If current is a pre-release, and latest is a release
+	const prerelease = latestParts[4].length === 0 && currentParts[4].length > 0;
+
+  // 'latest' is newer than 'current' if any of them are true
+	return major || minor || patch || prerelease;
 }
-
 
 function is_object(o) {return o !== null && typeof o == 'object'}
 function is_array(o) {return Array.isArray(o)}
-
 
 function update_array(dst, src) {
   while (dst.length) dst.pop()
@@ -292,7 +292,7 @@ module.exports = new Vue({
 
     show_upgrade: function () {
       if (!this.latestVersion) return false;
-      return compare_versions(this.config.version, this.latestVersion) < 0;
+      return is_newer_version(this.config.version, this.latestVersion);
     },
 
     update: function () {
