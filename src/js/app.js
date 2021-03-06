@@ -36,16 +36,28 @@ function is_newer_version(current, latest) {
 	const currentParts = current.match(pattern);
 	const latestParts = latest.match(pattern);
 
+  if (!currentParts || !latestParts) {
+    return false;
+  }
+
 	// Normal version comparisons
-	const major = latestParts[1] > currentParts[1];
-	const minor = latestParts[2] > currentParts[2];
-	const patch = latestParts[3] > currentParts[3];
+	const major = latestParts[1] - currentParts[1];
+	const minor = latestParts[2] - currentParts[2];
+	const patch = latestParts[3] - currentParts[3];
 
 	// If current is a pre-release, and latest is a release
-	const prerelease = latestParts[4].length === 0 && currentParts[4].length > 0;
+	const betaToRelease = latestParts[4].length === 0 && currentParts[4].length > 0;
+  
+	switch (true) {
+    case major > 0:
+    case major === 0 && minor > 0:
+    case major === 0 && minor === 0 && patch > 0:
+    case major === 0 && minor === 0 && patch === 0 && betaToRelease:
+      return true;
 
-  // 'latest' is newer than 'current' if any of them are true
-	return major || minor || patch || prerelease;
+    default:
+      return false;
+  }
 }
 
 function is_object(o) {return o !== null && typeof o == 'object'}
