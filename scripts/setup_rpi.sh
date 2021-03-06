@@ -80,9 +80,8 @@ cp /mnt/host/xinitrc /home/pi/.xinitrc
 cp /mnt/host/ratpoisonrc /home/pi/.ratpoisonrc
 cp /mnt/host/xorg.conf /etc/X11/
 
-# Set screen resolution
+# Configure the screen to not do overscan (only necessary for TVs)
 sed -i 's/^#disable_overscan/disable_overscan/' /boot/config.txt
-sed -i 's/^#framebuffer_/framebuffer_/' /boot/config.txt
 
 # Boot splash
 mkdir -p /usr/share/plymouth/themes/buildbotics/
