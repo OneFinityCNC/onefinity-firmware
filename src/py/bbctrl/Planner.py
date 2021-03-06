@@ -96,6 +96,12 @@ class Planner():
             'junction-accel':  config.get('junction-accel'),
             }
 
+        # We place an upper limit of 1000 km/min^3 on jerk for MDI movements
+        if mdi:
+            for axis in 'xyzabc':
+                if axis in cfg['max-jerk']:
+                    cfg['max-jerk'][axis] = min(1000 * 1000000, cfg['max-jerk'][axis])
+
         if with_limits:
             minLimit = state.get_soft_limit_vector('tn', -math.inf)
             maxLimit = state.get_soft_limit_vector('tm', math.inf)

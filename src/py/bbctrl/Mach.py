@@ -50,9 +50,15 @@ axis_homing_procedure = '''
   G90 G28.3 %(axis)s[#<_%(axis)s_home_position>]
 '''
 
+# The stepper drivers have a stall flag that is reset
+# by moving the motors without a stall condition.
+# The "wiggle" in the stall procedure is to clear the flag.
+# This was to correct the issue where the stepper motors
+# may already be in a stall condition when homing is started.
+# For example, if a user tried to home twice in a row
+# the second homing attempt would immediately think it
+# was stalled if we didn't first back it up a bit
 stall_homing_procedure = '''
-  G91 G1 %(axis)s [#<_%(axis)s_zero_backoff> * -1] F[#<_%(axis)s_search_velocity>]
-  G4 P0.25
   G91 G1 %(axis)s [#<_%(axis)s_zero_backoff>] F[#<_%(axis)s_search_velocity>]
   G4 P0.25
   G28.2 %(axis)s0 F[#<_%(axis)s_search_velocity>]
@@ -275,11 +281,13 @@ class Mach(Comm):
             # Home axis
             self.mlog.info('Homing %s axis' % axis)
             self._begin_cycle('homing')
+
             if mode.startswith('stall-'): procedure = stall_homing_procedure
             else: procedure = axis_homing_procedure
-            self.planner.mdi(procedure % {'axis': axis}, False)
 
-            # self.planner.mdi(axis_homing_procedure % {'axis': axis}, False)
+            gcode = procedure % {'axis': axis}
+
+            self.planner.mdi(gcode, False)
             super().resume()
 
 
