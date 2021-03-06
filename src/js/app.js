@@ -385,10 +385,12 @@ module.exports = new Vue({
     },
 
     connect: function () {
-      this.sock = new Sock('//' + window.location.host + '/sockjs');
+      this.sock = new Sock(`//${location.host}/sockjs`);
 
-      this.sock.onmessage = function (e) {
-        if (typeof e.data != 'object') return;
+      this.sock.onmessage = (e) => {
+        if (typeof e.data != 'object') {
+          return;
+        }
 
         if ('log' in e.data) {
           this.$broadcast('log', e.data.log);
@@ -397,37 +399,44 @@ module.exports = new Vue({
 
         // Check for session ID change on controller
         if ('sid' in e.data) {
-          if (typeof this.sid == 'undefined') this.sid = e.data.sid;
-
-          else if (this.sid != e.data.sid) {
-            if (typeof this.hostname != 'undefined' &&
-                String(location.hostname) != 'localhost')
+          if (typeof this.sid == 'undefined') {
+            this.sid = e.data.sid;
+          } else if (this.sid != e.data.sid) {
+            if (typeof this.hostname !== 'undefined' && location.hostname !== 'localhost') {
               location.hostname = this.hostname;
-            location.reload(true);
+            }
+
+            location.reload();
           }
         }
 
         update_object(this.state, e.data, false);
 
         if (this.state.pw === 0) {
-          Vue.set(this.state, "probe_connected", true);
+          Vue.set(this.state, "saw_probe_connected", true);
+        }
+
+        if (this.state.cycle === 'idle') {
+          if (this.state.wait_for_probing_complete) {
+            Vue.set(this.state, "wait_for_probing_complete", false);
+            Vue.set(this.state, "show_probe_complete_modal", true);
+          }
         }
 
         this.$broadcast('update');
+      };
 
-      }.bind(this)
-
-      this.sock.onopen = function (e) {
+      this.sock.onopen = () => {
         this.status = 'connected';
         this.$emit(this.status);
         this.$broadcast(this.status);
-      }.bind(this)
+      };
 
-      this.sock.onclose = function (e) {
+      this.sock.onclose = () => {
         this.status = 'disconnected';
         this.$emit(this.status);
         this.$broadcast(this.status);
-      }.bind(this)
+      };
     },
 
 
