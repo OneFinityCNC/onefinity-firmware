@@ -141,35 +141,23 @@ class Config(object):
         version = version.split('b')[0] # Strip off any "beta" suffix
         version = tuple(map(int, version.split('.'))) # Break it into a tuple of integers
 
-        if version < (0, 2, 4):
+        if version < (1, 0, 7):
+            config['settings']['max-deviation'] = 0.001
+            config['settings']['junction-accel'] = 200000
             for motor in config['motors']:
-                for key in 'max-jerk max-velocity'.split():
-                    if key in motor: motor[key] /= 1000
-
-        if version < (0, 3, 4):
-            for motor in config['motors']:
-                for key in 'max-accel latch-velocity search-velocity'.split():
-                    if key in motor: motor[key] /= 1000
-
-        if version <= (0, 3, 22):
-            if 'tool' in config:
-                if 'spindle-type' in config['tool']:
-                    type = config['tool']['spindle-type']
-                    if type == 'PWM': type = 'PWM Spindle'
-                    if type == 'Huanyang': type = 'Huanyang VFD'
-                    config['tool']['tool-type'] = type
-                    del config['tool']['spindle-type']
-
-                if 'spin-reversed' in config['tool']:
-                    reversed = config['tool']['spin-reversed']
-                    config['tool']['tool-reversed'] = reversed
-                    del config['tool']['spin-reversed']
-
-        if version <= (0, 4, 6):
-            for motor in config['motors']:
-                if 2 < motor.get('idle-current', 0): motor['idle-current'] = 2
-                if 'enabled' not in motor:
-                    motor['enabled'] = motor.get('power-mode', '') != 'disabled'
+                motor['stall-microstep'] = 8
+                motor['stall-current'] = 1
+                motor['max-accel'] = 750
+                if motor['axis'] == 'X' or motor['axis'] == 'Y':
+                    motor['search-velocity'] = 1.688
+                    motor['max-velocity'] = 10
+                    motor['max-jerk'] = 15000
+                    motor['zero-backoff'] = 1.5
+                if motor['axis'] == 'Z':
+                    motor['search-velocity'] = 0.675
+                    motor['max-velocity'] = 3
+                    motor['max-jerk'] = 1000
+                    motor['zero-backoff'] = 1
 
         config['version'] = self.version
 
