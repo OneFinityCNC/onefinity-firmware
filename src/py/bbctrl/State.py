@@ -30,6 +30,15 @@ import copy
 import uuid
 import os
 import bbctrl
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+class UploadChangeHandler(FileSystemEventHandler):
+    def __init__(self, state):
+        self.state = state
+
+    def on_any_event(self, event): 
+        self.state.load_files()
 
 
 class State(object):
@@ -78,6 +87,10 @@ class State(object):
 
         self.reset()
         self.load_files()
+
+        observer = Observer()
+        observer.schedule(UploadChangeHandler(self), self.ctrl.get_upload(), recursive=True)
+        observer.start()
 
 
     #def is_metric(self): return self.get('units', 'METRIC') == 'METRIC'

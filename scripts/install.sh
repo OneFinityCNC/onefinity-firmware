@@ -118,6 +118,12 @@ fi
 # Install rc.local
 cp scripts/rc.local /etc/
 
+# Ensure that the watchdog python library is installed
+pip3 list --format=columns | grep watchdog >/dev/null
+if [ $? -ne 0 ]; then
+    pip3 install scripts/watchdog-v0.10.6.tar.gz
+fi
+
 # Install bbctrl
 if $UPDATE_PY; then
     rm -rf /usr/local/lib/python*/dist-packages/bbctrl-*
