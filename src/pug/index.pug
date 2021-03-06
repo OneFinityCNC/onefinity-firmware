@@ -113,7 +113,7 @@ html(lang="en")
                 a.upgrade-version(v-if="show_upgrade()", href="#admin-general")
                   | Upgrade to v{{latestVersion}}
                 .fa.fa-check(v-if="!show_upgrade() && latestVersion",
-                  title="Firmware up to date")
+                  title="Firmware up to date" style="font-size: inherit")
               .p {{get_ip_address()}} {{get_ssid()}}
 
             .estop(:class="{active: state.es}")

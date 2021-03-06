@@ -79,7 +79,7 @@ script#control-view-template(type="text/x-template")
     table(width="99%")
       tr
         td(style="white-space: nowrap;")
-          table(table-layout="fixed")
+          table.control-buttons(table-layout="fixed")
             colgroup
                col(style="width:100px")
                col(style="width:100px")
@@ -88,11 +88,13 @@ script#control-view-template(type="text/x-template")
                col(style="width:100px")
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,1,0,0)") &#x2b01
+                button(style="height:100px;width:100px",@click="jog_fn(-1,1,0,0)")
+                  .fa.fa-arrow-right(style="transform: rotate(-135deg);")
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(0,1,0,0)") Y+
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,1,0,0)") &#x2b00
+                button(style="height:100px;width:100px",@click="jog_fn(1,1,0,0)")
+                  .fa.fa-arrow-right(style="transform: rotate(-45deg);")
               td
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",,@click="jog_fn(0,0,1,0)") Z+
@@ -101,7 +103,7 @@ script#control-view-template(type="text/x-template")
                 button(style="height:100px;width:100px",@click="jog_fn(-1,0,0,0)") X-
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="ask_zero_xy_msg = true")
-                  .fa.fa-bullseye
+                  .fa.fa-bullseye(style="font-size: 172%")
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(1,0,0,0)") X+
               td
@@ -109,11 +111,13 @@ script#control-view-template(type="text/x-template")
                 button(style="height:100px;width:100px",@click='ask_zero_z_msg = true') Z0
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,-1,0,0)") &#x2b03
+                button(style="height:100px;width:100px",@click="jog_fn(-1,-1,0,0)")
+                  .fa.fa-arrow-right(style="transform: rotate(135deg);")
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(0,-1,0,0)") Y-
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,-1,0,0)") &#x2b02
+                button(style="height:100px;width:100px",@click="jog_fn(1,-1,0,0)")
+                  .fa.fa-arrow-right(style="transform: rotate(45deg);")
               td
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(0,0,-1,0)") Z-
@@ -130,7 +134,8 @@ script#control-view-template(type="text/x-template")
               //th.tstate Max
               th.actions
                 button.pure-button(:disabled="!can_set_axis",
-                  title="Zero all axis offsets.", @click="zero()",style="height:60px;width:60px") &empty;
+                  title="Zero all axis offsets.", @click="zero()",style="height:60px;width:60px")
+                  .fa.fa-map-marker
 
                 button.pure-button(title="Home all axes.", @click="home()",
                   :disabled="!is_idle",style="height:60px;width:60px")
@@ -170,7 +175,8 @@ script#control-view-template(type="text/x-template")
 
                   button.pure-button(:disabled="!can_set_axis",
                     title=`Zero {{'${axis}' | upper}} axis offset.`,
-                   @click=`zero('${axis}')`,style="height:60px;width:60px") &empty;
+                   @click=`zero('${axis}')`,style="height:60px;width:60px")
+                    .fa.fa-map-marker
 
                   button.pure-button(:disabled="!is_idle", @click=`home('${axis}')`,
                     title=`Home {{'${axis}' | upper}} axis.`,style="height:60px;width:60px")
@@ -220,7 +226,7 @@ script#control-view-template(type="text/x-template")
                         title=`Home {{'${axis}' | upper}} axis.`,
                         @click=`set_home('${axis}', axis_position)`) Set
       tr
-        td(style="white-space: nowrap;")
+        td.control-buttons(style="white-space: nowrap;")
           button(style="height:100px;width:100px;font-weight:normal",id="jog_button_fine",@click=`set_jog_incr('fine')`) 0.1
           button(style="height:100px;width:100px;font-weight:bold",id="jog_button_small",@click=`set_jog_incr('small')`) 1.0
           button(style="height:100px;width:100px;font-weight:normal",id="jog_button_medium",@click=`set_jog_incr('medium')`) 10
@@ -305,7 +311,7 @@ script#control-view-template(type="text/x-template")
                       label {{(progress || 0) | percent}}
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
       tr
-        td(style="white-space: nowrap;text-align:center")
+        td.control-buttons(style="white-space: nowrap;text-align:center")
           message(:show.sync=`probe_test`)
             h3(slot="header") Test probe connection
 
@@ -389,12 +395,11 @@ script#control-view-template(type="text/x-template")
             input(type="file", @change="upload", :disabled="!is_ready",
               accept="text/*,.nc,.gcode,.gc,.ngc,.txt,.tap,.cnc")
 
-          a.pure-button(:disabled="!state.selected", download,
-            :href="'/api/file/' + state.selected",
-            title="Download the selected GCode program.",style="height:100px;width:100px")
-            br
-            br
-            .fa.fa-download
+          a(:disabled="!state.selected", download,
+              :href="'/api/file/' + state.selected",
+              title="Download the selected GCode program.")
+            button.pure-button(style="height:100px;width:100px")
+              .fa.fa-download
 
           button.pure-button(title="Delete current GCode program.",
             @click="deleteGCode = true",
