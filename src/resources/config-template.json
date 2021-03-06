@@ -12,8 +12,6 @@
       "min": 0.001,
       "max": 100,
       "unit": "mm",
-      "iunit": "in",
-      "scale": 25.4,
       "default": 0.1
     },
     "junction-accel": {
@@ -23,8 +21,6 @@
       "min": 10000,
       "max": 100000000,
       "unit": "mm/min²",
-      "iunit": "in/min²",
-      "scale": 25.4,
       "default": 200000
     }
   },
