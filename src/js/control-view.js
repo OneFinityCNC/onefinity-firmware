@@ -30,22 +30,9 @@
 var api    = require('./api');
 var cookie = require('./cookie')('bbctrl-');
 
-
-function _is_array(x) {
-  return Object.prototype.toString.call(x) === '[object Array]';
-}
-
-
-function escapeHTML(s) {
-  var entityMap = {'&': '&amp;', '<': '&lt;', '>': '&gt;'};
-  return String(s).replace(/[&<>]/g, function (s) {return entityMap[s];});
-}
-
-
 module.exports = {
   template: '#control-view-template',
   props: ['config', 'template', 'state'],
-
 
   data: function () {
     return {
@@ -59,18 +46,40 @@ module.exports = {
       history: [],
       speed_override: 1,
       feed_override: 1,
-      manual_home: {x: false, y: false, z: false, a: false, b: false, c: false},
-      position_msg: {x: false, y: false, z: false, a: false, b: false, c: false},
+      manual_home: {
+        x: false,
+        y: false,
+        z: false,
+        a: false,
+        b: false,
+        c: false
+      },
+      position_msg: {
+        x: false,
+        y: false,
+        z: false,
+        a: false,
+        b: false,
+        c: false
+      },
       axis_position: 0,
       jog_step: cookie.get_bool('jog-step'),
       jog_adjust: parseInt(cookie.get('jog-adjust', 2)),
       deleteGCode: false,
       tab: 'auto',
       jog_incr: 1.0,
-      probe_test: false,
-      tool_msg: false,
       tool_diameter: 6.35,
-      toolpath_msg: {x: false, y: false, z: false, a: false, b: false, c: false},
+      show_probe_test_modal: false,
+      show_tool_diameter_modal: false,
+      show_probe_complete_modal: false,
+      toolpath_msg: {
+        x: false,
+        y: false,
+        z: false,
+        a: false,
+        b: false,
+        c: false
+      },
       ask_home: true,
       ask_home_msg: false,
       ask_zero_xy_msg: false,
@@ -78,7 +87,6 @@ module.exports = {
       showGcodeMessage: false
     }
   },
-
 
   components: {
     'axis-control': require('./axis-control'),
@@ -256,18 +264,17 @@ module.exports = {
       }
 
       this.set_jog_incr('small');
-
     },
 
     start_probe_test: function(on_finish) {
-      this.probe_test = true;
-      Vue.set(this.state, "probe_connected", false);
+      this.show_probe_test_modal = true;
+      Vue.set(this.state, "saw_probe_connected", false);
       Vue.set(this.state, "on_probe_finish", on_finish);
     },
 
     finish_probe_test: function() {
-      this.probe_test = false;
-      Vue.set(this.state, "probe_connected", false);
+      this.show_probe_test_modal = false;
+      Vue.set(this.state, "saw_probe_connected", false);
 
       const on_finish = this.state.on_probe_finish;
       Vue.set(this.state, "on_probe_finish", undefined);
@@ -275,15 +282,11 @@ module.exports = {
       on_finish();
     },
 
-    show_tool_diameter_prompt: function() {
-      this.tool_msg = true;
-    },
-
     set_tool_diameter : function (new_diameter) {
       if(isNaN(new_diameter))
         return;
 
-      this.tool_msg = false;
+      this.show_tool_diameter_modal = false;
 
       this.tool_diameter = parseFloat(new_diameter);
       
@@ -298,31 +301,30 @@ module.exports = {
       document.getElementById("jog_button_medium").style.fontWeight = 'normal';
       document.getElementById("jog_button_large").style.fontWeight = 'normal';
 
-      if(newValue == 'fine')
-      {
+      if (newValue == 'fine') {
         document.getElementById("jog_button_fine").style.fontWeight = 'bold';
         if(this.mach_units == 'METRIC')
           this.jog_incr = 0.1;
         else
           this.jog_incr = 0.005;
-      } else if(newValue == 'small') {
+      } else if (newValue == 'small') {
         document.getElementById("jog_button_small").style.fontWeight = 'bold';
         if(this.mach_units == 'METRIC')
           this.jog_incr = 1.0;
         else
           this.jog_incr = 0.05;
-      } else if(newValue == 'medium') {
+      } else if (newValue == 'medium') {
         document.getElementById("jog_button_medium").style.fontWeight = 'bold';
         if(this.mach_units == 'METRIC')
           this.jog_incr = 10;
         else
           this.jog_incr = 0.5;
-      } else if(newValue == 'large') {
+      } else if (newValue == 'large') {
         document.getElementById("jog_button_large").style.fontWeight = 'bold';
-        if(this.mach_units == 'METRIC')
-          this.jog_incr = 100;
-        else
-          this.jog_incr = 5;
+
+        this.jog_incr = (this.mach_units == 'METRIC')
+          ? 100
+          : 5;
       }
 
 
@@ -398,6 +400,8 @@ module.exports = {
 
         M2
       `);
+
+      setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
     },
 
     probe_z() {
@@ -426,6 +430,8 @@ module.exports = {
 
         M2
       `);
+
+      setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
     },
 
     jog_fn: function (x_jog,y_jog,z_jog,a_jog) {
