@@ -27,22 +27,11 @@
 
 var orbit = require('./orbit');
 var cookie = require('./cookie')('bbctrl-');
-var api = require('./api');
 var font = require('./helvetiker_regular.typeface.json')
-
-
-function get(obj, name, defaultValue) {
-  return typeof obj[name] == 'undefined' ? defaultValue : obj[name];
-}
-
-
-var surfaceModes = ['cut', 'wire', 'solid', 'off'];
-
 
 module.exports = {
   template: '#path-viewer-template',
   props: ['toolpath'],
-
 
   data: function () {
     return {
@@ -62,7 +51,22 @@ module.exports = {
 
 
   computed: {
-    target: function () {return $(this.$el).find('.path-viewer-content')[0]}
+    target: function () {
+      return $(this.$el).find('.path-viewer-content')[0]
+    },
+
+    webglAvailable: function() {
+      // Create canvas element. The canvas is not added to the
+      // document itself, so it is never displayed in the
+      // browser window.
+      const canvas = document.createElement("canvas");
+
+      // Get WebGLRenderingContext from canvas element.
+      const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+
+      // Report the result.
+      return gl && gl instanceof WebGLRenderingContext;
+    }
   },
 
 
@@ -122,6 +126,10 @@ module.exports = {
 
   methods: {
     update: function () {
+      if (!this.webglAvailable) {
+        return;
+      }
+      
       if (!this.state.selected) {
         this.dirty = true;
         this.scene = new THREE.Scene();
@@ -269,6 +277,10 @@ module.exports = {
 
 
     graphics: function () {
+      if (!this.webglAvailable) {
+        return;
+      }
+
       try {
         // Renderer
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
@@ -280,6 +292,7 @@ module.exports = {
         console.log('WebGL not supported: ', e);
         return;
       }
+
       this.enabled = true;
 
       // Camera
