@@ -16,7 +16,7 @@
   "probe": {
     "probe-ydim": 53.975,
     "probe-slow-seek": 25,
-    "probe-fast-seek": 100,
+    "probe-fast-seek": 75,
     "probe-zdim": 15.4,
     "probe-xdim": 53.975
   },
@@ -27,7 +27,7 @@
     "load-2": "disabled"
   },
   "settings": {
-    "junction-accel": 199999.999,
+    "junction-accel": 200000,
     "max-deviation": 0.001,
     "units": "METRIC"
   },

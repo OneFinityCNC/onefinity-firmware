@@ -348,68 +348,54 @@ module.exports = {
     },
 
     probe_xyz() {
-      let xoffset = this.config.probe["probe-xdim"];
-      let yoffset = this.config.probe["probe-ydim"];
-      let zoffset = this.config.probe["probe-zdim"];
-      let fastSeek = this.config.probe["probe-fast-seek"];
-      let slowSeek = this.config.probe["probe-slow-seek"];
+      const xdim = this.config.probe["probe-xdim"];
+      const ydim = this.config.probe["probe-ydim"];
+      const zdim = this.config.probe["probe-zdim"];
+      const slowSeek = this.config.probe["probe-slow-seek"];
+      const fastSeek = this.config.probe["probe-fast-seek"];
 
-      xoffset += this.tool_diameter / 2.0;
-      yoffset += this.tool_diameter / 2.0;
-        
-      if (this.mach_units !== "METRIC") {
-        xoffset /= 25.4;
-        yoffset /= 25.4;
-        zoffset /= 25.4;
-        slowSeek /= 25.4;
-        fastSeek /= 25.4;
-      }
-        
       const zlift = 1;
-        
+      const xoffset = xdim + (this.tool_diameter / 2.0);
+      const yoffset = ydim + (this.tool_diameter / 2.0);
+      const zoffset = zdim;
+
+      const metric = this.mach_units == "METRIC";
+      const mm = n => (metric ? n : n / 25.4).toFixed(5);
+      const speed = s => `F${mm(s)}`;
+
       // After probing Z, we want to drop the bit down:
       // Ideally, 12.7mm/0.5in
       // And we don't want to be more than 75% down on the probe block
-      let plunge = Math.min(12.7, zoffset * 0.75);
-      plunge += zlift;  // Compensate for the fact that we lift after probing Z
-      
-      xoffset = xoffset.toFixed(5);
-      yoffset = yoffset.toFixed(5);
-      zoffset = zoffset.toFixed(5);
-      slowSeek = slowSeek.toFixed(5);
-      fastSeek = fastSeek.toFixed(5);
-      plunge = plunge.toFixed(5);
-        
-      slowSeek = `F${slowSeek}`;
-      fastSeek = `F${fastSeek}`;
-        
+      // Also, add zlift to compensate for the fact that we lift after probing Z
+      const plunge = Math.min(12.7, zoffset * 0.75) + zlift;
+
       this.send(`
-        G21
+        ${metric ? "G21" : "G20"}
         G92 X0 Y0 Z0
         
-        G38.2 Z -25.4 ${fastSeek}
-        G91 G1 Z 1
-        G38.2 Z -2 ${slowSeek}
-        G92 Z ${zoffset}
+        G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
+        G91 G1 Z ${mm(1)}
+        G38.2 Z ${mm(-2)} ${speed(slowSeek)}
+        G92 Z ${mm(zoffset)}
       
-        G91 G0 Z ${zlift}
-        G91 G0 X 20
-        G91 G0 Z -${plunge}
-        G38.2 X -20 ${fastSeek}
-        G91 G1 X 1
-        G38.2 X -2 ${slowSeek}
-        G92 X ${xoffset}
+        G91 G0 Z ${mm(zlift)}
+        G91 G0 X ${mm(20)}
+        G91 G0 Z ${mm(-plunge)}
+        G38.2 X ${mm(-20)} ${speed(fastSeek)}
+        G91 G1 X ${mm(1)}
+        G38.2 X ${mm(-2)} ${speed(slowSeek)}
+        G92 X ${mm(xoffset)}
 
-        G91 G0 X 1
-        G91 G0 Y 20
-        G91 G0 X -20
-        G38.2 Y -20 ${fastSeek}
-        G91 G1 Y 1
-        G38.2 Y -2 ${slowSeek}
-        G92 Y ${yoffset}
+        G91 G0 X ${mm(1)}
+        G91 G0 Y ${mm(20)}
+        G91 G0 X ${mm(-20)}
+        G38.2 Y ${mm(-20)} ${speed(fastSeek)}
+        G91 G1 Y ${mm(1)}
+        G38.2 Y ${mm(-2)} ${speed(slowSeek)}
+        G92 Y ${mm(yoffset)}
 
-        G91 G0 Y 3
-        G91 G0 Z 25.4
+        G91 G0 Y ${mm(3)}
+        G91 G0 Z ${mm(25.4)}
         G90 G0 X0 Y0
 
         M2
@@ -419,33 +405,28 @@ module.exports = {
     },
 
     probe_z() {
-      let fastSeek = this.config.probe["probe-fast-seek"];
-      let slowSeek = this.config.probe["probe-slow-seek"];
-      let zoffset = this.config.probe["probe-zdim"];
-      
-      if (this.mach_units !== "METRIC") {
-        zoffset /= 25.4;
-        slowSeek /= 25.4;
-        fastSeek /= 25.4;
-      }
+      const xdim = this.config.probe["probe-xdim"];
+      const ydim = this.config.probe["probe-ydim"];
+      const zdim = this.config.probe["probe-zdim"];
+      const slowSeek = this.config.probe["probe-slow-seek"];
+      const fastSeek = this.config.probe["probe-fast-seek"];
 
-      zoffset = zoffset.toFixed(5);
-      slowSeek = slowSeek.toFixed(5);
-      fastSeek = fastSeek.toFixed(5);
+      const zoffset = zdim;
 
-      slowSeek = `F${slowSeek}`;
-      fastSeek = `F${fastSeek}`;
+      const metric = this.mach_units == "METRIC";
+      const mm = n => (metric ? n : n / 25.4).toFixed(5);
+      const speed = s => `F${mm(s)}`;
         
       this.send(`
-        G21
+        ${metric ? "G21" : "G20"}
         G92 Z0
       
-        G38.2 Z -25.4 ${fastSeek}
-        G91 G1 Z 1
-        G38.2 Z -2 ${slowSeek}
-        G92 Z ${zoffset}
+        G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
+        G91 G1 Z ${mm(1)}
+        G38.2 Z ${mm(-2)} ${speed(slowSeek)}
+        G92 Z ${mm(zoffset)}
       
-        G91 G0 Z3
+        G91 G0 Z ${mm(3)}
 
         M2
       `);

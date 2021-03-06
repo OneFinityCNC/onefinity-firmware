@@ -120,6 +120,12 @@ tt
 .success
   background green
 
+.fa
+  font-size 150%
+
+.modal-mask .fa
+  font-size inherit
+
 .fa.error
   background inherit
   color red
@@ -252,6 +258,17 @@ span.unit
   table
     border-collapse collapse
 
+    // Make sure buttons don't turn into circles
+    button
+      -webkit-appearance none
+      border-radius 2px
+      border-width 1px
+      border-color darkgrey
+
+    // The jogging buttons, etc.
+    .control-buttons button
+      font-size 150%
+
     &:first-child
       margin 0.5em 0
 
@@ -330,7 +347,6 @@ span.unit
         text-align left
 
         .fa
-          font-size 140%
           margin-left 2px
           margin-right 6px
 
@@ -341,7 +357,6 @@ span.unit
         text-align left
 
         .fa
-          font-size 140%
           margin-left 2px
           margin-right 6px
 
