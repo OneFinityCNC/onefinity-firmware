@@ -36,6 +36,15 @@ fi
 #./scripts/edit-boot-config gpu_mem=16
 #chmod ug+s /usr/lib/xorg/Xorg
 
+# Use the full screen resolution
+grep "^framebuffer_width=1280$" /boot/config.txt >/dev/null
+if [ $? -eq 0 ]; then
+    mount -o remount,rw /boot &&
+    sed -i 's/^\(framebuffer_.*\)$/#\1/g' /boot/config.txt
+    mount -o remount,ro /boot
+    REBOOT=true
+fi
+
 # Fix camera
 grep dwc_otg.fiq_fsm_mask /boot/cmdline.txt >/dev/null
 if [ $? -ne 0 ]; then
@@ -88,6 +97,13 @@ fi
 cp scripts/xinitrc ~pi/.xinitrc
 chmod +x ~pi/.xinitrc
 chown pi:pi ~pi/.xinitrc
+
+#Configure the "ratpoison" window manager
+if [ ! -e ~pi/.ratpoisonrc ]; then
+    cp scripts/ratpoisonrc ~pi/.ratpoisonrc
+    chmod 644 ~pi/.ratpoisonrc
+    chown pi:pi ~pi/.ratpoisonrc
+fi
 
 # Install bbserial
 MODSRC=src/bbserial/bbserial.ko

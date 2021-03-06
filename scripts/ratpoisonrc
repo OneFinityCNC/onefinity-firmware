@@ -1,1 +1,6 @@
 startup_message off
+set bgcolor black
+set fgcolor white
+
+unbind c
+bind c exec x-terminal-emulator -fg white -bg black
