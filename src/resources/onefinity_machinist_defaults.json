@@ -27,7 +27,7 @@
     "load-2": "disabled"
   },
   "settings": {
-    "junction-accel": 199999.999,
+    "junction-accel": 200000,
     "max-deviation": 0.001,
     "units": "METRIC"
   },
