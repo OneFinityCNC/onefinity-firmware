@@ -93,7 +93,9 @@ if [ $? -ne 0 ]; then
     REBOOT=true
 fi
 
-# Install xinitrc
+# Install .Xresources & .xinitrc
+cp scripts/Xresources ~pi/.Xresources
+chown pi:pi ~pi/.Xresources
 cp scripts/xinitrc ~pi/.xinitrc
 chmod +x ~pi/.xinitrc
 chown pi:pi ~pi/.xinitrc
@@ -131,6 +133,13 @@ if $UPDATE_PY; then
     service bbctrl restart
     HTTP_DIR=$(find /usr/local/lib/ -type d -name "http")
     chmod 777 $HTTP_DIR
+fi
+
+# Expand the file system if necessary
+chmod +x ./scripts/resize_root_fs.sh
+./scripts/resize_root_fs.sh
+if [ $? -eq 0 ]; then
+    REBOOT=true
 fi
 
 sync
