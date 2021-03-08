@@ -311,55 +311,54 @@ script#control-view-template(type="text/x-template")
                       label {{(progress || 0) | percent}}
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
       tr
+        message(:show.sync=`show_probe_test_modal`)
 
-        td(style="white-space: nowrap;text-align:center")
-          message(:show.sync=`show_probe_test_modal`)
+          h3(slot="header") Test probe connection
 
-            h3(slot="header") Test probe connection
+          div(slot="body")
+            .pure-form
+              p Attach the probe magnet to the collet.
+              p Touch the probe block to the bit.
 
-            div(slot="body")
-              .pure-form
-                p Attach the probe magnet to the collet.
-                p Touch the probe block to the bit.
+          div(slot="footer")
+            button.pure-button(@click=`show_probe_test_modal = false`)
+              | Cancel
 
-            div(slot="footer")
-              button.pure-button(@click=`show_probe_test_modal = false`)
-                | Cancel
+            button.pure-button.button-success(
+              :disabled=`!state.saw_probe_connected`
+              @click=`finish_probe_test()`) Continue
 
-              button.pure-button.button-success(
-                :disabled=`!state.saw_probe_connected`
-                @click=`finish_probe_test()`) Continue
+        message(:show.sync=`show_tool_diameter_modal`)
+          h3(slot="header") Enter probe tool information
 
-          message(:show.sync=`show_tool_diameter_modal`)
-            h3(slot="header") Enter probe tool information
+          div(slot="body")
+            .pure-form
+              .pure-control-group
+                label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
+                input(v-model="tool_diameter",size="8",
+                  @keyup.enter=`set_tool_diameter(tool_diameter)`)
+            p
 
-            div(slot="body")
-              .pure-form
-                .pure-control-group
-                  label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
-                  input(v-model="tool_diameter",size="8",
-                    @keyup.enter=`set_tool_diameter(tool_diameter)`)
-              p
+          div(slot="footer")
+            button.pure-button(@click=`show_tool_diameter_modal = false`)
+              | Cancel
 
-            div(slot="footer")
-              button.pure-button(@click=`show_tool_diameter_modal = false`)
-                | Cancel
+            button.pure-button.button-success(
+              @click=`set_tool_diameter(tool_diameter)`)
+              | Set
 
-              button.pure-button.button-success(
-                @click=`set_tool_diameter(tool_diameter)`)
-                | Set
+        message(:show.sync=`state.show_probe_complete_modal`)
+          h3(slot="header") Probing complete!
 
-          message(:show.sync=`state.show_probe_complete_modal`)
-            h3(slot="header") Probing complete!
+          div(slot="body")
+            .pure-form
+              p Don't forget to put away the probe!
 
-            div(slot="body")
-              .pure-form
-                p Don't forget to put away the probe!
+          div(slot="footer")
+            button.pure-button.button-success(@click=`state.show_probe_complete_modal = false`)
+              | Done
 
-            div(slot="footer")
-              button.pure-button.button-success(@click=`state.show_probe_complete_modal = false`)
-                | Done
-
+        td.control-buttons(style="white-space: nowrap;text-align:center")
           button(:class="state['pw'] ? '' : 'load-on'",
             style="height:100px;width:200px",
             @click=`start_probe_test(() => { show_tool_diameter_modal = true })`)
