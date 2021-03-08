@@ -12,5 +12,6 @@ include scripts/bbctrl.service
 include scripts/11-automount.rules
 include scripts/resize_root_fs.sh
 include scripts/resize2fs_once
+include scripts/bbctrl-logrotate
 recursive-include src/py/camotics *
 global-exclude .gitignore
