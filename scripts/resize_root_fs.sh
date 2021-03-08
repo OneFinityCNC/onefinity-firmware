@@ -25,8 +25,6 @@ get_fs_resize_variables () {
 should_resize_root_partition() {
     get_fs_resize_variables
 
-    ( set -o posix ; set )
-   
     if [ "$BOOT_DEV_NAME" != "$ROOT_DEV_NAME" ]; then
         FAIL_REASON="Boot and root partitions are on different devices"
         return 1
