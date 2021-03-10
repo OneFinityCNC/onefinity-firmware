@@ -114,7 +114,11 @@ module.exports = new Vue({
         motors: [{}, {}, {}, {}],
         version: '<loading>'
       },
-      state: {messages: []},
+      state: {
+        messages: [],
+        wait_for_probing_complete: false,
+        show_probe_complete_modal: false
+      },
       video_size: cookie.get('video-size', 'small'),
       crosshair: cookie.get('crosshair', 'false') != 'false',
       errorTimeout: 30,

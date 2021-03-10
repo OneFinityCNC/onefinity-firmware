@@ -37,13 +37,13 @@ fi
 #chmod ug+s /usr/lib/xorg/Xorg
 
 # Use the full screen resolution
-grep "^framebuffer_width=1280$" /boot/config.txt >/dev/null
-if [ $? -eq 0 ]; then
-    mount -o remount,rw /boot &&
-    sed -i 's/^\(framebuffer_.*\)$/#\1/g' /boot/config.txt
-    mount -o remount,ro /boot
-    REBOOT=true
-fi
+# grep "^framebuffer_width=1280$" /boot/config.txt >/dev/null
+# if [ $? -eq 0 ]; then
+#     mount -o remount,rw /boot &&
+#     sed -i 's/^\(framebuffer_.*\)$/#\1/g' /boot/config.txt
+#     mount -o remount,ro /boot
+#     REBOOT=true
+# fi
 
 # Fix camera
 grep dwc_otg.fiq_fsm_mask /boot/cmdline.txt >/dev/null
@@ -93,7 +93,9 @@ if [ $? -ne 0 ]; then
     REBOOT=true
 fi
 
-# Install xinitrc
+# Install .Xresources & .xinitrc
+cp scripts/Xresources ~pi/.Xresources
+chown pi:pi ~pi/.Xresources
 cp scripts/xinitrc ~pi/.xinitrc
 chmod +x ~pi/.xinitrc
 chown pi:pi ~pi/.xinitrc
@@ -121,7 +123,7 @@ cp scripts/rc.local /etc/
 # Ensure that the watchdog python library is installed
 pip3 list --format=columns | grep watchdog >/dev/null
 if [ $? -ne 0 ]; then
-    pip3 install scripts/watchdog-v0.10.6.tar.gz
+    pip3 install scripts/pathtools-0.1.2.tar.gz scripts/watchdog-v0.10.6.tar.gz
 fi
 
 # Install bbctrl
@@ -132,6 +134,54 @@ if $UPDATE_PY; then
     HTTP_DIR=$(find /usr/local/lib/ -type d -name "http")
     chmod 777 $HTTP_DIR
 fi
+
+# Expand the file system if necessary
+chmod +x ./scripts/resize_root_fs.sh
+./scripts/resize_root_fs.sh
+if [ $? -eq 0 ]; then
+    REBOOT=true
+fi
+
+# Install our logrotate config
+cp ./scripts/bbctrl-logrotate /etc/logrotate.d/bbctrl
+chown root:root /etc/logrotate.d/bbctrl
+
+# Ensure logrotate runs on every boot (for systems with no network, thus bad clock)
+if [ ! -e /etc/cron.d/reboot ]; then
+    cp ./scripts/cron_d_reboot /etc/cron.d/reboot
+    mkdir -p /etc/cron.reboot
+    cp ./scripts/cron_reboot_logrotate /etc/cron.reboot/logrotate
+fi
+
+##########################################
+# Begin one-time cleanup tasks for 1.0.7
+##########################################
+
+# Delete the entire local Chromium configuration. Start clean.
+rm -rf /home/pi/.config/chromium
+
+# Get rid of some old files that were left behind
+rm -rf /home/pi/hostinfo.txt
+rm -rf /home/pi/ssidinfo.txt
+rm -rf /home/bbmc/bbctrl-1.0.0.tar.bz2
+rm -rf /home/bbmc/hostinfo.sh
+rm -rf /home/bbmc/index.html
+rm -rf /home/bbmc/favicon.ico
+
+# Force a logrotate to get everything into a known state
+logrotate -f /etc/logrotate.conf
+
+# Clean up the log directory - get rid of everything old
+rm -rf /var/log/*.gz
+rm -rf /var/log/*.1
+rm -rf /var/log/*.old
+rm -rf /var/log/bbctrl.2019*.install
+rm -rf /var/log/bbctrl.2020*.install
+rm -rf /var/log/bbctrl.log.*
+
+##########################################
+# End one-time cleanup tasks for 1.0.7
+##########################################
 
 sync
 

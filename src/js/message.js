@@ -36,6 +36,12 @@ module.exports = {
       type: Boolean,
       required: true,
       twoWay: true
+    },
+
+    class: {
+      type: String,
+      required: false,
+      twoWay: false
     }
   }
 }

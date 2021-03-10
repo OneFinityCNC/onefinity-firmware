@@ -175,10 +175,14 @@ script#control-view-template(type="text/x-template")
                 button#jog_button_large(style="height:100px;width:100px", @click=`set_jog_incr('large')`) 100
             tr
               td(style="height:100px", align="center", colspan="2")
-                button(style="height:100px;width:200px", :class="state['pw'] ? '' : 'load-on'", @click=`start_probe_test(() => { show_tool_diameter_modal = true })`)
+                button(:class="state['pw'] ? '' : 'load-on'",
+                  style="height:100px;width:200px",
+                  @click=`start_probe_test(() => { show_tool_diameter_modal = true })`)
                   | Probe XYZ
               td(style="height:100px", align="center", colspan="2")
-                button(style="height:100px;width:200px", :class="state['pw'] ? '' : 'load-on'", @click=`start_probe_test(probe_z)`)
+                button(:class="state['pw'] ? '' : 'load-on'",
+                  style="height:100px;width:200px",
+                  @click=`start_probe_test(probe_z)`)
                   | Probe Z
 
         td(style="vertical-align: top;")

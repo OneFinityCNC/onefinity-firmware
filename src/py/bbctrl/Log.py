@@ -170,7 +170,7 @@ class Log(object):
         if self.path is None: return
         if self.f is not None: self.f.close()
         self._rotate(self.path)
-        self.f = open(self.path, 'w')
+        self.f = open(self.path, 'a')
         self.bytes_written = 0
 
 
