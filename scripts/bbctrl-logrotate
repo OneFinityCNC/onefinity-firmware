@@ -1,0 +1,8 @@
+/var/log/bbctrl.log {
+  rotate 4
+  weekly
+  compress
+  missingok
+  notifempty
+  copytruncate
+}
