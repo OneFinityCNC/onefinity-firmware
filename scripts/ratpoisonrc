@@ -4,3 +4,4 @@ set fgcolor white
 
 unbind c
 bind c exec x-terminal-emulator -fg white -bg black
+bind C-c exec x-terminal-emulator -fg white -bg black

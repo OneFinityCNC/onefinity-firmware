@@ -5,9 +5,13 @@ include src/bbserial/bbserial.ko
 include scripts/avr109-flash.py
 include scripts/buildbotics.gc
 include scripts/xinitrc
+include scripts/Xresources
 include scripts/ratpoisonrc
 include scripts/rc.local
 include scripts/bbctrl.service
 include scripts/11-automount.rules
+include scripts/resize_root_fs.sh
+include scripts/resize2fs_once
+include scripts/bbctrl-logrotate
 recursive-include src/py/camotics *
 global-exclude .gitignore
