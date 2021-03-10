@@ -1,0 +1,1 @@
+@reboot root run-parts  /etc/cron.reboot

@@ -146,6 +146,13 @@ fi
 cp ./scripts/bbctrl-logrotate /etc/logrotate.d/bbctrl
 chown root:root /etc/logrotate.d/bbctrl
 
+# Ensure logrotate runs on every boot (for systems with no network, thus bad clock)
+if [ ! -e /etc/cron.d/reboot ]; then
+    cp ./scripts/cron_d_reboot /etc/cron.d/reboot
+    mkdir -p /etc/cron.reboot
+    cp ./scripts/cron_reboot_logrotate /etc/cron.reboot/logrotate
+fi
+
 ##########################################
 # Begin one-time cleanup tasks for 1.0.7
 ##########################################
