@@ -252,7 +252,6 @@ span.unit
       filter brightness(120%)
 
 .control-view
-
   max-width 95%
 
   table
@@ -261,7 +260,7 @@ span.unit
     // Make sure buttons don't turn into circles
     button
       -webkit-appearance none
-      border-radius 2px
+      border-radius 0px
       border-width 1px
       border-color darkgrey
 
@@ -273,7 +272,7 @@ span.unit
       margin 0.5em 0
 
     td, th
-      border 1px solid #ddd
+      border none
 
     .radio-toolbar
       input
@@ -313,6 +312,7 @@ span.unit
     td, th
       padding 2px
       white-space nowrap
+      border 1px solid #ddd
 
     th
       text-align center
@@ -411,6 +411,7 @@ span.unit
       overflow hidden
       text-overflow ellipsis
       white-space nowrap
+      border 1px solid #ddd
 
     th
       min-width 5.25em
