@@ -26,7 +26,7 @@
 //-/////////////////////////////////////////////////////////////////////////////
 
 script#message-template(type="text/x-template")
-  .modal-mask(v-if="show")
+  .modal-mask(v-if="show", :class="class")
     .modal-wrapper
       .modal-container
         .modal-header
