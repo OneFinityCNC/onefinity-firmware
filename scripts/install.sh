@@ -123,7 +123,7 @@ cp scripts/rc.local /etc/
 # Ensure that the watchdog python library is installed
 pip3 list --format=columns | grep watchdog >/dev/null
 if [ $? -ne 0 ]; then
-    pip3 install scripts/watchdog-v0.10.6.tar.gz
+    pip3 install scripts/pathtools-0.1.2.tar.gz scripts/watchdog-v0.10.6.tar.gz
 fi
 
 # Install bbctrl
