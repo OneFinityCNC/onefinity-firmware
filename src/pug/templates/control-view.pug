@@ -76,15 +76,61 @@ script#control-view-template(type="text/x-template")
           button.pure-button(@click='ask_zero_z_msg = false')
             | Cancel
 
-    table(width="99%")
-      tr
-        td(style="white-space: nowrap;")
+    message(:show.sync=`show_probe_test_modal`)
+
+      h3(slot="header") Test probe connection
+
+      div(slot="body")
+        .pure-form
+          p Attach the probe magnet to the collet.
+          p Touch the probe block to the bit.
+
+      div(slot="footer")
+        button.pure-button(@click=`show_probe_test_modal = false`)
+          | Cancel
+
+        button.pure-button.button-success(
+          :disabled=`!state.saw_probe_connected`
+          @click=`finish_probe_test()`) Continue
+
+    message(:show.sync=`show_tool_diameter_modal`)
+      h3(slot="header") Enter probe tool information
+
+      div(slot="body")
+        .pure-form
+          .pure-control-group
+            label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
+            input(v-model="tool_diameter",size="8",
+              @keyup.enter=`set_tool_diameter(tool_diameter)`)
+        p
+
+      div(slot="footer")
+        button.pure-button(@click=`show_tool_diameter_modal = false`)
+          | Cancel
+
+        button.pure-button.button-success(
+          @click=`set_tool_diameter(tool_diameter)`)
+          | Set
+
+    message(:show.sync=`state.show_probe_complete_modal`)
+      h3(slot="header") Probing complete!
+
+      div(slot="body")
+        .pure-form
+          p Don't forget to put away the probe!
+
+      div(slot="footer")
+        button.pure-button.button-success(@click=`state.show_probe_complete_modal = false`)
+          | Done
+
+    table(style="table-layout: fixed; width: 100%;")
+      tr(style="height: fit-content;")
+        td(style="white-space: nowrap; width: 410px;", rowspan="2")
           table.control-buttons(table-layout="fixed")
             colgroup
                col(style="width:100px")
                col(style="width:100px")
                col(style="width:100px")
-               col(style="width:5px")
                col(style="width:100px")
             tr
               td(style="height:100px",align="center")
@@ -95,7 +141,6 @@ script#control-view-template(type="text/x-template")
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(1,1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(-45deg);")
-              td
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",,@click="jog_fn(0,0,1,0)") Z+
             tr
@@ -106,7 +151,6 @@ script#control-view-template(type="text/x-template")
                   .fa.fa-bullseye(style="font-size: 172%")
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(1,0,0,0)") X+
-              td
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click='ask_zero_z_msg = true') Z0
             tr
@@ -118,10 +162,26 @@ script#control-view-template(type="text/x-template")
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(1,-1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(45deg);")
-              td
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="jog_fn(0,0,-1,0)") Z-
-        td(width="99%")
+            tr
+              td(style="height:100px",align="center")
+                button#jog_button_fine(style="height:100px;width:100px", @click=`set_jog_incr('fine')`) 0.1
+              td(style="height:100px",align="center")
+                button#jog_button_small(style="height:100px;width:100px", @click=`set_jog_incr('small')`) 1.0
+              td(style="height:100px",align="center")
+                button#jog_button_medium(style="height:100px;width:100px", @click=`set_jog_incr('medium')`) 10
+              td(style="height:100px",align="center")
+                button#jog_button_large(style="height:100px;width:100px", @click=`set_jog_incr('large')`) 100
+            tr
+              td(style="height:100px", align="center", colspan="2")
+                button(style="height:100px;width:200px", :class="state['pw'] ? '' : 'load-on'", @click=`start_probe_test(() => { show_tool_diameter_modal = true })`)
+                  | Probe XYZ
+              td(style="height:100px", align="center", colspan="2")
+                button(style="height:100px;width:200px", :class="state['pw'] ? '' : 'load-on'", @click=`start_probe_test(probe_z)`)
+                  | Probe Z
+
+        td(style="vertical-align: top;")
           table.axes
             tr(:class="axes.klass")
               th.name Axis
@@ -133,6 +193,8 @@ script#control-view-template(type="text/x-template")
               //th.tstate Min
               //th.tstate Max
               th.actions
+                button.pure-button(disabled, style="height:60px;width:60px;display:none;")
+
                 button.pure-button(:disabled="!can_set_axis",
                   title="Zero all axis offsets.", @click="zero()",style="height:60px;width:60px")
                   .fa.fa-map-marker
@@ -203,7 +265,6 @@ script#control-view-template(type="text/x-template")
                       button.pure-button.button-success(
                         @click=`set_position('${axis}', axis_position)`) Set
 
-
                   message(:show.sync=`manual_home['${axis}']`)
                     h3(slot="header") Manually home {{'#{axis}' | upper}} axis
 
@@ -225,14 +286,9 @@ script#control-view-template(type="text/x-template")
                       button.pure-button.button-success(
                         title=`Home {{'${axis}' | upper}} axis.`,
                         @click=`set_home('${axis}', axis_position)`) Set
-      tr
-        td.control-buttons(style="white-space: nowrap;")
-          button(style="height:100px;width:100px;font-weight:normal",id="jog_button_fine",@click=`set_jog_incr('fine')`) 0.1
-          button(style="height:100px;width:100px;font-weight:bold",id="jog_button_small",@click=`set_jog_incr('small')`) 1.0
-          button(style="height:100px;width:100px;font-weight:normal",id="jog_button_medium",@click=`set_jog_incr('medium')`) 10
-          button(style="height:100px;width:100px;font-weight:normal",id="jog_button_large",@click=`set_jog_incr('large')`) 100
-        td(rowspan="2")
-
+      
+      tr(style="vertical-align: top;")
+        td
           table(width="100%")
             tr
               td(style="text-align:center")
@@ -310,64 +366,6 @@ script#control-view-template(type="text/x-template")
                     td.progress
                       label {{(progress || 0) | percent}}
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
-      tr
-
-        td(style="white-space: nowrap;text-align:center")
-          message(:show.sync=`show_probe_test_modal`)
-
-            h3(slot="header") Test probe connection
-
-            div(slot="body")
-              .pure-form
-                p Attach the probe magnet to the collet.
-                p Touch the probe block to the bit.
-
-            div(slot="footer")
-              button.pure-button(@click=`show_probe_test_modal = false`)
-                | Cancel
-
-              button.pure-button.button-success(
-                :disabled=`!state.saw_probe_connected`
-                @click=`finish_probe_test()`) Continue
-
-          message(:show.sync=`show_tool_diameter_modal`)
-            h3(slot="header") Enter probe tool information
-
-            div(slot="body")
-              .pure-form
-                .pure-control-group
-                  label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
-                  input(v-model="tool_diameter",size="8",
-                    @keyup.enter=`set_tool_diameter(tool_diameter)`)
-              p
-
-            div(slot="footer")
-              button.pure-button(@click=`show_tool_diameter_modal = false`)
-                | Cancel
-
-              button.pure-button.button-success(
-                @click=`set_tool_diameter(tool_diameter)`)
-                | Set
-
-          message(:show.sync=`state.show_probe_complete_modal`)
-            h3(slot="header") Probing complete!
-
-            div(slot="body")
-              .pure-form
-                p Don't forget to put away the probe!
-
-            div(slot="footer")
-              button.pure-button.button-success(@click=`state.show_probe_complete_modal = false`)
-                | Done
-
-          button(:class="state['pw'] ? '' : 'load-on'",
-            style="height:100px;width:200px",
-            @click=`start_probe_test(() => { show_tool_diameter_modal = true })`)
-              | Probe XYZ
-          button(:class="state['pw'] ? '' : 'load-on'",
-            style="height:100px;width:200px",
-            @click=`start_probe_test(probe_z)`)
-              | Probe Z
 
     .tabs
      
