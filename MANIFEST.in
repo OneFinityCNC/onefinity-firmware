@@ -1,13 +1,7 @@
-recursive-include src/py/bbctrl/http *
-include package.json README.md scripts/install.sh
+include package.json README.md
+graft scripts
+graft src/py/bbctrl/http
+graft src/py/camotics
 include src/avr/bbctrl-avr-firmware.hex
 include src/bbserial/bbserial.ko
-include scripts/avr109-flash.py
-include scripts/buildbotics.gc
-include scripts/xinitrc
-include scripts/ratpoisonrc
-include scripts/rc.local
-include scripts/bbctrl.service
-include scripts/11-automount.rules
-recursive-include src/py/camotics *
 global-exclude .gitignore
