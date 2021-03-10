@@ -147,7 +147,9 @@ class Config(object):
             for motor in config['motors']:
                 motor['stall-microstep'] = 8
                 motor['stall-current'] = 1
+                motor['idle-current'] = 1
                 motor['max-accel'] = 750
+                motor['latch-backoff'] = 5
                 if motor['axis'] == 'X' or motor['axis'] == 'Y':
                     motor['search-velocity'] = 1.688
                     motor['max-velocity'] = 10
