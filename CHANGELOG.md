@@ -1,18 +1,29 @@
 OneFinity CNC Controller Firmware Changelog
 ===========================================
 
-Note: This firmware was forked from version 0.4.14 of the Buildbotics firmware
-Buildbotics Changelog is provided below
-
 ## v1.0.7
- - General code cleanup
+ - Cleaned up UI layout a bit on the main screen
+ - Enabled auto expansion of partition and file system to fill SD card on first boot
  - Added probe continuity test before probing (pop-up dialog)
+ - Added a popup after probing, reminding the user to put away the probe
+ - Lowered default probe seek speed
  - Fixed file drop-down menu showing old files
+ - Added file system watcher for uploaded files
  - Improved support for large gcode files, improves performance on Raspi
- - Fixed a bug where the UI could become unresponsive when uploading the first gcode file
+ - Fixed a bug where the UI could become unresponsive at boot, or when uploading the first gcode file
  - Changed default max-deviation to 0.001 to reduce issues with chattering while cutting arcs and circles
- - Fixed dwell parameter in stall homing procedure to smooth out motion
- 
+ - Hides ratpoison (window manager) message during boot up
+ - Disabled G61, G61.1, G64 gcodes until the root cause of circle chatter is identified and fixed
+ - Increased icon size on the main GUI
+ - Improved version comparison logic for handling public beta releases in the future
+ - Changed default max-jerk to 1000 for X/Y axes
+ - Changed default idle current to 1A
+ - Force-set some critical configuration values to help with reliability
+ - Metric units only for junction-accel and max-deviation
+ - Rewrote the homing procedure to be more consistent
+ - Small improvements to the stall homing procedure
+ - Fixed error messages in the console (webgl)
+ - Fixed styling bug with error dialog
 
 ## v1.0.6
  - Tweaked stall homing procedure to clear stepper stall condition before homing
@@ -47,6 +58,8 @@ Buildbotics Changelog is provided below
 ## v1.0.2
  - Initial release of customized OneFinity firmware
  - Includes GUI customizations, stall homing
+
+Note: This firmware was forked from version 0.4.14 of the Buildbotics firmware
 
 Buildbotics CNC Controller Firmware Changelog
 =============================================
