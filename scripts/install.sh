@@ -157,27 +157,21 @@ fi
 # Begin one-time cleanup tasks for 1.0.7
 ##########################################
 
-# Delete the entire local Chromium configuration. Start clean.
-rm -rf /home/pi/.config/chromium
+# Delete cached login data
+rm -rf "/home/pi/.config/chromium/Login Data"
+rm -rf "/home/pi/.config/chromium/Login Data.journal"
 
 # Get rid of some old files that were left behind
 rm -rf /home/pi/hostinfo.txt
 rm -rf /home/pi/ssidinfo.txt
+rm -rf /home/Downloads/bbctrl-20200415.json
 rm -rf /home/bbmc/bbctrl-1.0.0.tar.bz2
 rm -rf /home/bbmc/hostinfo.sh
 rm -rf /home/bbmc/index.html
 rm -rf /home/bbmc/favicon.ico
 
-# Force a logrotate to get everything into a known state
+# Force a logrotate to get everything into a good state
 logrotate -f /etc/logrotate.conf
-
-# Clean up the log directory - get rid of everything old
-rm -rf /var/log/*.gz
-rm -rf /var/log/*.1
-rm -rf /var/log/*.old
-rm -rf /var/log/bbctrl.2019*.install
-rm -rf /var/log/bbctrl.2020*.install
-rm -rf /var/log/bbctrl.log.*
 
 ##########################################
 # End one-time cleanup tasks for 1.0.7
