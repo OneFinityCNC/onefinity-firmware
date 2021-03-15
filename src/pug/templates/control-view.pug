@@ -419,7 +419,7 @@ script#control-view-template(type="text/x-template")
           a(:disabled="!state.selected", download,
               :href="'/api/file/' + state.selected",
               title="Download the selected GCode program.")
-            button.pure-button(style="height:100px;width:100px")
+            button.pure-button(:disabled="!state.selected", style="height:100px;width:100px")
               .fa.fa-download
 
           button.pure-button(title="Delete current GCode program.",
