@@ -112,7 +112,8 @@ module.exports = new Vue({
       config: {
         settings: {units: 'METRIC'},
         motors: [{}, {}, {}, {}],
-        version: '<loading>'
+        version: '<loading>',
+        full_version: '<loading>'
       },
       state: {
         messages: [],
