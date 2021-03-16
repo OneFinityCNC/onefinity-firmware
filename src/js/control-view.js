@@ -267,6 +267,11 @@ module.exports = {
     },
 
     start_probe_test: function(on_finish) {
+      if (!this.config.settings['probing-prompts']) {
+        on_finish();
+        return;
+      }
+
       this.show_probe_test_modal = true;
       Vue.set(this.state, "saw_probe_connected", false);
       Vue.set(this.state, "on_probe_finish", on_finish);

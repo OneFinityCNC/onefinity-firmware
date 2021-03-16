@@ -22,6 +22,11 @@
       "max": 100000000,
       "unit": "mm/min²",
       "default": 200000
+    },
+    "probing-prompts": {
+      "help": "Enable or disable safety prompts during and after probing",
+      "type": "bool",
+      "default": true
     }
   },
   "motors": {
