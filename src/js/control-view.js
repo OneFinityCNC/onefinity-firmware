@@ -406,7 +406,9 @@ module.exports = {
         M2
       `);
 
-      setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
+      if (this.config.settings['probing-prompts']) {
+        setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
+      }
     },
 
     probe_z() {
@@ -436,7 +438,9 @@ module.exports = {
         M2
       `);
 
-      setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
+      if (this.config.settings['probing-prompts']) {
+        setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
+      }
     },
 
     jog_fn: function (x_jog,y_jog,z_jog,a_jog) {
