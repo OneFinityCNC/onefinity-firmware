@@ -145,6 +145,8 @@ class Config(object):
             config['settings']['max-deviation'] = 0.001
             config['settings']['junction-accel'] = 200000
             config['settings']['probing-prompts'] = True
+            config['probe']['probe-fast-seek'] = 75
+            config['probe']['probe-slow-seek'] = 25
             for motor in config['motors']:
                 motor['stall-microstep'] = 8
                 motor['stall-current'] = 1
@@ -162,8 +164,8 @@ class Config(object):
                     motor['max-jerk'] = 1000
                     motor['zero-backoff'] = 1
 
-        config['version'] = self.version
-
+        config['version'] = self.version.split('b')[0]
+        config['full_version'] = self.version
 
     def save(self, config):
         self.upgrade(config)

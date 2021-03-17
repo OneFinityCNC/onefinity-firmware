@@ -100,8 +100,7 @@ script#control-view-template(type="text/x-template")
         .pure-form
           .pure-control-group
             label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
-            input(v-model="tool_diameter",size="8",
-              @keyup.enter=`set_tool_diameter(tool_diameter)`)
+            input(v-model="tool_diameter_for_prompt", size="8")
         p
 
       div(slot="footer")
@@ -109,7 +108,7 @@ script#control-view-template(type="text/x-template")
           | Cancel
 
         button.pure-button.button-success(
-          @click=`set_tool_diameter(tool_diameter)`)
+          @click=`set_tool_diameter`)
           | Set
 
     message(:show.sync=`state.show_probe_complete_modal`)
@@ -177,7 +176,7 @@ script#control-view-template(type="text/x-template")
               td(style="height:100px", align="center", colspan="2")
                 button(:class="state['pw'] ? '' : 'load-on'",
                   style="height:100px;width:200px",
-                  @click=`start_probe_test(() => { show_tool_diameter_modal = true })`)
+                  @click=`start_probe_test(prep_and_show_tool_diameter_modal)`)
                   | Probe XYZ
               td(style="height:100px", align="center", colspan="2")
                 button(:class="state['pw'] ? '' : 'load-on'",
@@ -419,7 +418,7 @@ script#control-view-template(type="text/x-template")
           a(:disabled="!state.selected", download,
               :href="'/api/file/' + state.selected",
               title="Download the selected GCode program.")
-            button.pure-button(style="height:100px;width:100px")
+            button.pure-button(:disabled="!state.selected", style="height:100px;width:100px")
               .fa.fa-download
 
           button.pure-button(title="Delete current GCode program.",

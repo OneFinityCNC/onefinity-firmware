@@ -109,7 +109,7 @@ html(lang="en")
                   title="Raspberry Pi temperature too high.")
               .subtitle
                 | CNC Controller #[b {{state.demo ? 'Demo ' : ''}}]
-                | v{{config.version}}
+                | v{{config.full_version}}
                 a.upgrade-version(v-if="show_upgrade()", href="#admin-general")
                   | Upgrade to v{{latestVersion}}
                 .fa.fa-check(v-if="!show_upgrade() && latestVersion",
