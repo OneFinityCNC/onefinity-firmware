@@ -144,6 +144,8 @@ class Config(object):
         if version < (1, 0, 7):
             config['settings']['max-deviation'] = 0.001
             config['settings']['junction-accel'] = 200000
+            config['probe']['probe-fast-seek'] = 75
+            config['probe']['probe-slow-seek'] = 25
             for motor in config['motors']:
                 motor['stall-microstep'] = 8
                 motor['stall-current'] = 1
