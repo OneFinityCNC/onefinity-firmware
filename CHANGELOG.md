@@ -24,6 +24,7 @@ OneFinity CNC Controller Firmware Changelog
  - Small improvements to the stall homing procedure
  - Fixed error messages in the console (webgl)
  - Fixed styling bug with error dialog
+ - Added a setting to allow enable/disable of probing safety prompts
 
 ## v1.0.6
  - Tweaked stall homing procedure to clear stepper stall condition before homing
