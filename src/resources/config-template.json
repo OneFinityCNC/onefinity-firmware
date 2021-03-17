@@ -461,7 +461,7 @@
     "probe-diameter": {
       "type": "float",
       "min": 0,
-      "max": 10,
+      "max": 25.4,
       "unit": "mm",
       "default": 6.35
     },

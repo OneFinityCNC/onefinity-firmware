@@ -69,6 +69,7 @@ module.exports = {
       tab: 'auto',
       jog_incr: 1.0,
       tool_diameter: 6.35,
+      tool_diameter_for_prompt: 6.35,
       show_probe_test_modal: false,
       show_tool_diameter_modal: false,
       show_probe_complete_modal: false,
@@ -105,12 +106,7 @@ module.exports = {
     
     'state.bitDiameter': {
       handler: function (bitDiameter) {
-        if(this.mach_units == 'IMPERIAL') {
-          this.tool_diameter = bitDiameter / 25.4;
-        }
-        else {
           this.tool_diameter = bitDiameter;
-        }
       },
       immediate: true
     },
@@ -123,21 +119,29 @@ module.exports = {
         this.units_changed();
     },
 
-
     'state.line': function () {
       if (this.mach_state != 'HOMING')
         this.$broadcast('gcode-line', this.state.line);
     },
 
+    'state.selected_time': function () {
+      this.load();
+    },
 
-    'state.selected_time': function () {this.load()},
-    jog_step: function () {cookie.set_bool('jog-step', this.jog_step)},
-    jog_adjust: function () {cookie.set('jog-adjust', this.jog_adjust)}
+    jog_step: function () {
+      cookie.set_bool('jog-step', this.jog_step);
+  },
+
+    jog_adjust: function () {
+      cookie.set('jog-adjust', this.jog_adjust);
+    }
   },
 
 
   computed: {
-    metric: function () {return !this.state.imperial},
+    metric: function () {
+      return !this.state.imperial;
+    },
 
 
     mach_state: function () {
@@ -243,24 +247,17 @@ module.exports = {
 
 
   methods: {
-
     units_changed : function() {
-      console.log("Units changed!");
-
       if(this.mach_units == 'METRIC') {
         document.getElementById("jog_button_fine").innerHTML = "0.1";
         document.getElementById("jog_button_small").innerHTML = "1.0";
         document.getElementById("jog_button_medium").innerHTML = "10";
         document.getElementById("jog_button_large").innerHTML = "100";
-        this.tool_diameter = this.tool_diameter * 25.4;
-        this.tool_diameter = this.tool_diameter.toFixed(3);
       } else {
         document.getElementById("jog_button_fine").innerHTML = "0.005";
         document.getElementById("jog_button_small").innerHTML = "0.05";
         document.getElementById("jog_button_medium").innerHTML = "0.5";
         document.getElementById("jog_button_large").innerHTML = "5";
-        this.tool_diameter = this.tool_diameter / 25.4;
-        this.tool_diameter = this.tool_diameter.toFixed(3);
       }
 
       this.set_jog_incr('small');
@@ -282,13 +279,28 @@ module.exports = {
       on_finish();
     },
 
-    set_tool_diameter : function (new_diameter) {
-      if(isNaN(new_diameter))
+    prep_and_show_tool_diameter_modal() {
+      this.tool_diameter_for_prompt = (this.mach_units == 'METRIC')
+          ? this.tool_diameter
+          : this.tool_diameter / 25.4;
+
+      this.tool_diameter_for_prompt = this.tool_diameter_for_prompt.toFixed(3).replace(/0+$/, "");
+
+      this.show_tool_diameter_modal = true;
+    },
+
+    set_tool_diameter() {
+      this.tool_diameter = parseFloat(this.tool_diameter_for_prompt);
+
+      if (!isFinite(this.tool_diameter)) {
         return;
+      }
 
       this.show_tool_diameter_modal = false;
 
-      this.tool_diameter = parseFloat(new_diameter);
+      if (this.mach_units !== "METRIC") {
+        this.tool_diameter *= 25.4;
+      }
       
       this.probe_xyz();
     },
