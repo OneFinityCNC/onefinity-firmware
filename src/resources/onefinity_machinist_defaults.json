@@ -29,7 +29,8 @@
   "settings": {
     "junction-accel": 200000,
     "max-deviation": 0.001,
-    "units": "METRIC"
+    "units": "METRIC",
+    "probing-prompts": true
   },
   "motors": [
     {
