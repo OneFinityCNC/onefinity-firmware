@@ -493,18 +493,19 @@ module.exports = {
         const toolpath = await api.get(`path/${file}`);
         this.toolpath_progress = toolpath.progress;
 
-        if (typeof toolpath.progress == 'undefined') {
+        if (toolpath.progress === 1 || typeof toolpath.progress == 'undefined') {
           this.showGcodeMessage = false
 
-          toolpath.filename = file;
-          this.toolpath_progress = 1;
-          this.toolpath = toolpath;
+          if (toolpath.bounds) {
+            toolpath.filename = file;
+            this.toolpath_progress = 1;
+            this.toolpath = toolpath;
 
-          const state = this.$root.state;
-          const bounds = toolpath.bounds;
-          for (let axis of 'xyzabc') {
-            Vue.set(state, 'path_min_' + axis, bounds.min[axis]);
-            Vue.set(state, 'path_max_' + axis, bounds.max[axis]);
+            const state = this.$root.state;
+            for (let axis of 'xyzabc') {
+              Vue.set(state, 'path_min_' + axis, toolpath.bounds.min[axis]);
+              Vue.set(state, 'path_max_' + axis, toolpath.bounds.max[axis]);
+            }
           }
         }
       }
@@ -540,29 +541,47 @@ module.exports = {
     },
 
 
-    upload: function (e) {
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
+    upload: async function (e) {
+      const files = e.target.files || e.dataTransfer.files;
+      if (!files.length) {
+        return;
+      }
 
-      var file = files[0];
-      var fd = new FormData();
+      const file = files[0];
+
+      const extension = file.name.split(".").pop();
+      switch (extension.toLowerCase()) {
+        case "nc":
+        case "ngc":
+        case "gcode":
+        case "gc":
+          break;
+
+        default:
+          alert(`Unsupported file type: ${extension}`);
+          return;
+      }
+
+      const fd = new FormData();
 
       fd.append('gcode', file);
 
-      api.upload('file', fd)
-        .done(function () {
-          this.last_file_time = undefined; // Force reload
-          this.$broadcast('gcode-reload', file.name);
+      try {
+        await api.upload('file', fd);
 
-        }.bind(this)).fail(function (error) {
-          api.alert('Upload failed', error)
-        }.bind(this));
+        this.last_file_time = undefined; // Force reload
+        this.$broadcast('gcode-reload', file.name);
+      } catch (err) {
+        api.alert('Upload failed', err)
+      }
     },
 
 
     delete_current: function () {
-      if (this.state.selected)
+      if (this.state.selected) {
         api.delete('file/' + this.state.selected);
+      }
+
       this.deleteGCode = false;
     },
 

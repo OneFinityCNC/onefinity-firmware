@@ -67,7 +67,7 @@ class Ctrl(object):
 
             os.environ['GCODE_SCRIPT_PATH'] = self.get_upload()
 
-        except Exception: self.log.get('Ctrl').exception()
+        except Exception: self.log.get('Ctrl').exception('Internal error: Control initialization failed')
 
 
     def __del__(self): print('Ctrl deleted')

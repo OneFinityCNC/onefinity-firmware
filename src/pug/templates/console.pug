@@ -36,14 +36,8 @@ script#console-template(type="text/x-template")
       table
         tr
           th Level
-          th Source
-          th Location
-          th Repeat
           th Message
 
         tr(v-for="msg in messages", class="log-{{msg.level || 'info'}}")
           td {{msg.level  || 'info'}}
-          td {{msg.source || ''}}
-          td {{msg.where  || ''}}
-          td {{msg.repeat}}
           td.message {{msg.msg}}

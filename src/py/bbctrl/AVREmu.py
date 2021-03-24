@@ -128,7 +128,7 @@ class AVREmu(object):
 
         except Exception:
             self.close()
-            self.log.exception('Failed to start bbemu')
+            self.log.exception('Internal error: Failed to start bbemu')
 
 
     def set_handlers(self, read_cb, write_cb):
