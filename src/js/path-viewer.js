@@ -125,7 +125,7 @@ module.exports = {
 
 
   methods: {
-    update: function () {
+    update: async function () {
       if (!this.webglAvailable) {
         return;
       }
@@ -142,38 +142,28 @@ module.exports = {
 
       if (!this.enabled || !this.toolpath.filename) return;
 
-      function get(url) {
-        var d = $.Deferred();
-        var xhr = new XMLHttpRequest();
+      async function get(url) {
+        const response = await fetch(`${url}?${Math.random()}`);
+        const arrayBuffer = await response.arrayBuffer();
 
-        xhr.open('GET', url + '?' + Math.random(), true);
-        xhr.responseType = 'arraybuffer';
-
-        xhr.onload = function (e) {
-          if (xhr.response) d.resolve(new Float32Array(xhr.response));
-          else d.reject();
-        };
-
-        xhr.send();
-
-        return d.promise();
+        return new Float32Array(arrayBuffer);
       }
 
-      var d1 = get('/api/path/' + this.toolpath.filename + '/positions');
-      var d2 = get('/api/path/' + this.toolpath.filename + '/speeds');
+      const [positions, speeds] = await Promise.all([
+        get('/api/path/' + this.toolpath.filename + '/positions'),
+        get('/api/path/' + this.toolpath.filename + '/speeds')
+      ]);
 
-      $.when(d1, d2).done(function (positions, speeds) {
-        this.positions = positions
-        this.speeds = speeds;
-        this.loading = false;
+      this.positions = positions
+      this.speeds = speeds;
+      this.loading = false;
 
-        // Update scene
-        this.scene = new THREE.Scene();
-        this.draw(this.scene);
-        this.snap(this.snapView);
+      // Update scene
+      this.scene = new THREE.Scene();
+      this.draw(this.scene);
+      this.snap(this.snapView);
 
-        this.update_view();
-      }.bind(this))
+      this.update_view();
     },
 
 
@@ -264,8 +254,12 @@ module.exports = {
       }
 
       var bounds = new THREE.Box3(min, max);
-      if (bounds.isEmpty()) envelope.geometry = this.create_empty_geom();
-      else envelope.geometry = this.create_bbox_geom(bounds);
+      if (bounds.isEmpty()) {
+        envelope.geometry = this.create_empty_geom();
+      }
+      else {
+        envelope.geometry = this.create_bbox_geom(bounds);
+      }
     },
 
 
