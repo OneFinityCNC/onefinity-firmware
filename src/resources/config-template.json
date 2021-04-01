@@ -9,7 +9,7 @@
       "help":
       "Default allowed deviation from programmed path.  Also see G64 & G61.",
       "type": "float",
-      "min": 0.001,
+      "min": 0.05,
       "max": 100,
       "unit": "mm",
       "default": 0.1

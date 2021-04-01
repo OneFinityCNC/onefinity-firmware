@@ -28,7 +28,7 @@
   },
   "settings": {
     "junction-accel": 200000,
-    "max-deviation": 0.001,
+    "max-deviation": 0.05,
     "units": "METRIC",
     "probing-prompts": true
   },

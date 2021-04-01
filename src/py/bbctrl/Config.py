@@ -164,6 +164,10 @@ class Config(object):
                     motor['max-jerk'] = 1000
                     motor['zero-backoff'] = 1
 
+        if version < (1, 0, 8):
+            config['settings']['max-deviation'] = 0.05
+            config['settings']['junction-accel'] = 200000
+
         config['version'] = self.version.split('b')[0]
         config['full_version'] = self.version
 
