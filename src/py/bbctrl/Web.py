@@ -312,7 +312,7 @@ class PathHandler(bbctrl.APIHandler):
                 self.write_json(meta)
                 return
 
-            filename = filename + '-' + dataType[1:] + '.gz'
+            filename = filename + '-' + dataType[1:]
             self.set_header('Content-Disposition', 'filename="%s"' % filename)
             self.set_header('Content-Type', 'application/octet-stream')
             self.set_header('Content-Encoding', 'gzip')
