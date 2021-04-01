@@ -357,7 +357,7 @@ class Planner():
             self.cmdq.clear()
 
         except:
-            self.log.exception()
+            self.log.exception('Internal error: Planner stop')
             self.reset()
 
 
@@ -374,7 +374,7 @@ class Planner():
             self.planner.restart(id, position)
 
         except:
-            self.log.exception()
+            self.log.exception('Internal error: Planner restart')
             self.stop()
 
 
@@ -391,5 +391,5 @@ class Planner():
             self.stop()
 
         except:
-            self.log.exception()
+            self.log.exception('Internal error: Planner next')
             self.stop()

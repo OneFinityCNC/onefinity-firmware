@@ -99,6 +99,6 @@ class MonitorTemp(object):
             self.update_camera(temp)
             self.log_warnings(temp)
 
-        except: self.log.exception()
+        except: self.log.exception('Internal error: Temperature status')
 
         self.ioloop.call_later(5, self.callback)

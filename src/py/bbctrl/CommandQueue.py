@@ -72,7 +72,7 @@ class CommandQueue():
             try:
                 if cb is not None: cb(*args, **kwargs)
             except Exception:
-                self.log.exception('During command queue callback')
+                self.log.exception('Internal error: Command queue callback error')
 
 
 

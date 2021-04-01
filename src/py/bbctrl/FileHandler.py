@@ -79,7 +79,11 @@ class FileHandler(bbctrl.APIHandler):
         if not filename: raise HTTPError(400, 'Missing filename')
         filename = os.path.basename(filename)
 
-        with open(self.get_upload(filename).encode('utf8'), 'r') as f:
-            self.write(f.read())
+        try:
+            with open(self.get_upload(filename).encode('utf8'), 'r') as f:
+                self.write(f.read())
+        except Exception:
+            self.get_ctrl().state.select_file('')
+            raise HTTPError(400, "Unable to read file - doesn't appear to be GCode.")
 
         self.get_ctrl().state.select_file(filename)

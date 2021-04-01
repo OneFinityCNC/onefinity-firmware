@@ -134,7 +134,7 @@ class Plan(object):
             return meta, positions, speeds
 
         except:
-            self.preplanner.log.exception()
+            self.preplanner.log.exception('Internal error: Preplanner read')
 
             # Clean
             for path in self.files:
@@ -203,8 +203,7 @@ class Plan(object):
             self.future.set_result(self._read())
 
         except:
-            self.preplanner.log.exception()
-
+            self.preplanner.log.exception("Failed to load file - doesn't appear to be GCode.")
 
 
 class Preplanner(object):

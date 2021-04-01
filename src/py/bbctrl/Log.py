@@ -101,8 +101,8 @@ class Logger(object):
     def exception(self, *args, **kwargs):
         msg = traceback.format_exc()
         if len(args): msg = args[0] % args[1:] + '\n' + msg
-        self._log(ERROR, msg, **kwargs)
-
+        self._log(INFO, msg, **kwargs)
+        self._log(ERROR, *args, **kwargs)
 
 class Log(object):
     def __init__(self, args, ioloop, path):

@@ -429,7 +429,7 @@ class Camera(object):
             self._close_dev()
             self.log.info('Closed camera')
 
-        except: self.log.exception('Exception while closing camera')
+        except: self.log.exception('Internal error: Exception while closing camera')
         finally: self.dev = None
 
 
