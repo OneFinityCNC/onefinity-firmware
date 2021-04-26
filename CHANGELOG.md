@@ -1,6 +1,14 @@
 OneFinity CNC Controller Firmware Changelog
 ===========================================
 
+## v1.0.8
+ - Fixed chatter and lost steps issues (most commonly seen by Fusion users), re-enabled support for G61, G61.1, G64.
+ - Fixed 3d preview on Safari-based web browsers (MacOS & iOS)
+ - Made it less likely for a user to upload a non-gcode file
+ - Fixed problems with UI freezing when attempting to process a non-gcode file
+ - Simplified error popup to make it less confusing
+ - Improved error messages for most internal errors
+
 ## v1.0.7
  - Cleaned up UI layout a bit on the main screen
  - Enabled auto expansion of partition and file system to fill SD card on first boot
