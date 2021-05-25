@@ -72,7 +72,6 @@ module.exports = {
       tool_diameter_for_prompt: 6.35,
       show_probe_test_modal: false,
       show_tool_diameter_modal: false,
-      show_probe_complete_modal: false,
       toolpath_msg: {
         x: false,
         y: false,
@@ -239,11 +238,31 @@ module.exports = {
 
     step: function (axis, value) {
       this.send('M70\nG91\nG0' + axis + value + '\nM72');
+    },
+
+    probing_complete: function() {
+      if (this.config.settings['probing-prompts']) {
+        Vue.set(this.state, "show_probe_complete_modal", true);
+      } else {
+        this.$emit("finalize_probe");
+      }
+    },
+
+    finalize_probe: function() {
+      Vue.set(this.state, "show_probe_complete_modal", false);
+
+      if (this.state.goto_xy_zero_after_probe) {
+        this.goto_zero(1, 1, 0, 0);
+      }
+
+      Vue.set(this.state, "goto_xy_zero_after_probe", false);
     }
   },
 
 
-  ready: function () {this.load()},
+  ready: function () {
+    this.load()
+  },
 
 
   methods: {
@@ -310,9 +329,91 @@ module.exports = {
       this.probe_xyz();
     },
 
-    set_jog_incr: function(newValue) {
-      //this.jog_incr = newValue;
+    probe(zOnly = false) {
+      const xdim = this.config.probe["probe-xdim"];
+      const ydim = this.config.probe["probe-ydim"];
+      const zdim = this.config.probe["probe-zdim"];
+      const slowSeek = this.config.probe["probe-slow-seek"];
+      const fastSeek = this.config.probe["probe-fast-seek"];
 
+      const zlift = 1;
+      const xoffset = xdim + (this.tool_diameter / 2.0);
+      const yoffset = ydim + (this.tool_diameter / 2.0);
+      const zoffset = zdim;
+
+      const metric = this.mach_units == "METRIC";
+      const mm = n => (metric ? n : n / 25.4).toFixed(5);
+      const speed = s => `F${mm(s)}`;
+
+      // After probing Z, we want to drop the bit down:
+      // Ideally, 12.7mm/0.5in
+      // And we don't want to be more than 75% down on the probe block
+      // Also, add zlift to compensate for the fact that we lift after probing Z
+      const plunge = Math.min(12.7, zoffset * 0.75) + zlift;
+
+      Vue.set(this.state, "goto_xy_zero_after_probe", !zOnly);
+
+      if (zOnly) {
+        this.send(`
+          ${metric ? "G21" : "G20"}
+          G92 Z0
+        
+          G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
+          G91 G1 Z ${mm(1)}
+          G38.2 Z ${mm(-2)} ${speed(slowSeek)}
+          G92 Z ${mm(zoffset)}
+        
+          G91 G0 Z ${mm(3)}
+
+          M2
+        `);
+      } else {
+        this.send(`
+          ${metric ? "G21" : "G20"}
+          G92 X0 Y0 Z0
+          
+          G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
+          G91 G1 Z ${mm(1)}
+          G38.2 Z ${mm(-2)} ${speed(slowSeek)}
+          G92 Z ${mm(zoffset)}
+        
+          G91 G0 Z ${mm(zlift)}
+          G91 G0 X ${mm(20)}
+          G91 G0 Z ${mm(-plunge)}
+          G38.2 X ${mm(-20)} ${speed(fastSeek)}
+          G91 G1 X ${mm(1)}
+          G38.2 X ${mm(-2)} ${speed(slowSeek)}
+          G92 X ${mm(xoffset)}
+
+          G91 G0 X ${mm(1)}
+          G91 G0 Y ${mm(20)}
+          G91 G0 X ${mm(-20)}
+          G38.2 Y ${mm(-20)} ${speed(fastSeek)}
+          G91 G1 Y ${mm(1)}
+          G38.2 Y ${mm(-2)} ${speed(slowSeek)}
+          G92 Y ${mm(yoffset)}
+
+          G91 G0 Y ${mm(3)}
+          G91 G0 Z ${mm(25.4)}
+
+          M2
+        `);
+      }
+
+      // Wait 1 second to let the probing sequence begin,
+      // then wait for probing to be complete
+      setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
+    },
+
+    probe_xyz() {
+      this.probe(false);
+    },
+
+    probe_z() {
+      this.probe(true);
+    },
+
+    set_jog_incr: function(newValue) {
       document.getElementById("jog_button_fine").style.fontWeight = 'normal';
       document.getElementById("jog_button_small").style.fontWeight = 'normal';
       document.getElementById("jog_button_medium").style.fontWeight = 'normal';
@@ -343,9 +444,6 @@ module.exports = {
           ? 100
           : 5;
       }
-
-
-
     },
 
     goto_zero(zero_x,zero_y,zero_z,zero_a) {
@@ -364,97 +462,6 @@ module.exports = {
       this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
-    probe_xyz() {
-      const xdim = this.config.probe["probe-xdim"];
-      const ydim = this.config.probe["probe-ydim"];
-      const zdim = this.config.probe["probe-zdim"];
-      const slowSeek = this.config.probe["probe-slow-seek"];
-      const fastSeek = this.config.probe["probe-fast-seek"];
-
-      const zlift = 1;
-      const xoffset = xdim + (this.tool_diameter / 2.0);
-      const yoffset = ydim + (this.tool_diameter / 2.0);
-      const zoffset = zdim;
-
-      const metric = this.mach_units == "METRIC";
-      const mm = n => (metric ? n : n / 25.4).toFixed(5);
-      const speed = s => `F${mm(s)}`;
-
-      // After probing Z, we want to drop the bit down:
-      // Ideally, 12.7mm/0.5in
-      // And we don't want to be more than 75% down on the probe block
-      // Also, add zlift to compensate for the fact that we lift after probing Z
-      const plunge = Math.min(12.7, zoffset * 0.75) + zlift;
-
-      this.send(`
-        ${metric ? "G21" : "G20"}
-        G92 X0 Y0 Z0
-        
-        G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
-        G91 G1 Z ${mm(1)}
-        G38.2 Z ${mm(-2)} ${speed(slowSeek)}
-        G92 Z ${mm(zoffset)}
-      
-        G91 G0 Z ${mm(zlift)}
-        G91 G0 X ${mm(20)}
-        G91 G0 Z ${mm(-plunge)}
-        G38.2 X ${mm(-20)} ${speed(fastSeek)}
-        G91 G1 X ${mm(1)}
-        G38.2 X ${mm(-2)} ${speed(slowSeek)}
-        G92 X ${mm(xoffset)}
-
-        G91 G0 X ${mm(1)}
-        G91 G0 Y ${mm(20)}
-        G91 G0 X ${mm(-20)}
-        G38.2 Y ${mm(-20)} ${speed(fastSeek)}
-        G91 G1 Y ${mm(1)}
-        G38.2 Y ${mm(-2)} ${speed(slowSeek)}
-        G92 Y ${mm(yoffset)}
-
-        G91 G0 Y ${mm(3)}
-        G91 G0 Z ${mm(25.4)}
-        G90 G0 X0 Y0
-
-        M2
-      `);
-
-      if (this.config.settings['probing-prompts']) {
-        setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
-      }
-    },
-
-    probe_z() {
-      const xdim = this.config.probe["probe-xdim"];
-      const ydim = this.config.probe["probe-ydim"];
-      const zdim = this.config.probe["probe-zdim"];
-      const slowSeek = this.config.probe["probe-slow-seek"];
-      const fastSeek = this.config.probe["probe-fast-seek"];
-
-      const zoffset = zdim;
-
-      const metric = this.mach_units == "METRIC";
-      const mm = n => (metric ? n : n / 25.4).toFixed(5);
-      const speed = s => `F${mm(s)}`;
-        
-      this.send(`
-        ${metric ? "G21" : "G20"}
-        G92 Z0
-      
-        G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
-        G91 G1 Z ${mm(1)}
-        G38.2 Z ${mm(-2)} ${speed(slowSeek)}
-        G92 Z ${mm(zoffset)}
-      
-        G91 G0 Z ${mm(3)}
-
-        M2
-      `);
-
-      if (this.config.settings['probing-prompts']) {
-        setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
-      }
-    },
-
     jog_fn: function (x_jog,y_jog,z_jog,a_jog) {
       var xcmd = "X" + x_jog * this.jog_incr;
       var ycmd = "Y" + y_jog * this.jog_incr;
@@ -464,8 +471,9 @@ module.exports = {
       this.send('G91\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
-    send: function (msg) {this.$dispatch('send', msg)},
-
+    send: function (msg) {
+      this.$dispatch('send', msg)
+    },
 
     load: function () {
       var file_time = this.state.selected_time;
@@ -530,7 +538,9 @@ module.exports = {
     },
 
 
-    load_history: function (index) {this.mdi = this.history[index];},
+    load_history: function (index) {
+      this.mdi = this.history[index];
+    },
 
 
     open: function (e) {
