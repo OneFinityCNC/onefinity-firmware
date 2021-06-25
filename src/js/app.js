@@ -436,7 +436,7 @@ module.exports = new Vue({
         if (this.state.cycle === 'idle') {
           if (this.state.wait_for_probing_complete) {
             Vue.set(this.state, "wait_for_probing_complete", false);
-            Vue.set(this.state, "show_probe_complete_modal", true);
+            this.$broadcast("probing_complete");
           }
         }
 

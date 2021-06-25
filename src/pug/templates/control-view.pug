@@ -117,9 +117,15 @@ script#control-view-template(type="text/x-template")
       div(slot="body")
         .pure-form
           p Don't forget to put away the probe!
+          div(v-if="state.goto_xy_zero_after_probe")
+            p
+              | The machine will now move
+              br
+              | to the X-Y zero point.
+            p Watch your hands!
 
       div(slot="footer")
-        button.pure-button.button-success(@click=`state.show_probe_complete_modal = false`)
+        button.pure-button.button-success(@click=`$emit("finalize_probe")`)
           | Done
 
     table(style="table-layout: fixed; width: 100%;")
