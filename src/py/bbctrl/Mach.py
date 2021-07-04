@@ -25,9 +25,11 @@
 #                                                                              #
 ################################################################################
 
+from collections import deque
 import bbctrl
 from bbctrl.Comm import Comm
 import bbctrl.Cmd as Cmd
+from bbctrl.JogLinePlanner import JogLinePlanner
 
 
 # Axis homing procedure:
@@ -96,6 +98,10 @@ class Mach(Comm):
         self.unpausing = False
         self.stopping = False
 
+        self.position_at_pause = None
+        self.after_pause_callbacks = deque()
+        self.after_jog_callbacks = deque()
+
         ctrl.state.set('cycle', 'idle')
 
         ctrl.state.add_listener(self._update)
@@ -106,6 +112,7 @@ class Mach(Comm):
     def _get_state(self): return self.ctrl.state.get('xx', '')
     def _is_estopped(self): return self._get_state() == 'ESTOPPED'
     def _is_holding(self): return self._get_state() == 'HOLDING'
+    def _is_jogging(self): return self._get_state() == 'JOGGING'
     def _is_ready(self): return self._get_state() == 'READY'
     def _get_pause_reason(self): return self.ctrl.state.get('pr', '')
     def _get_cycle(self): return self.ctrl.state.get('cycle', 'idle')
@@ -117,20 +124,33 @@ class Mach(Comm):
             'User pause', 'Program pause', 'Optional pause')
 
 
-    def _set_cycle(self, cycle): self.ctrl.state.set('cycle', cycle)
+    def _set_cycle(self, cycle):
+        self.ctrl.state.set('cycle', cycle)
 
 
     def _begin_cycle(self, cycle):
         current = self._get_cycle()
-        if current == cycle: return # No change
 
-        if current != 'idle':
-            raise Exception('Cannot enter %s cycle while in %s cycle' %
-                            (cycle, current))
+        if current == cycle:
+            return
 
-        # TODO handle jogging during pause
-        # if current == 'idle' or (cycle == 'jogging' and self._is_paused()):
-        self._set_cycle(cycle)
+        allow = (
+            current == 'idle' or
+            (cycle == 'jogging' and self._is_paused())
+        )
+
+        if allow:
+            self._set_cycle(cycle)
+        else:
+            raise Exception('Cannot enter %s cycle while in %s cycle' % (cycle, current))
+
+
+    def _after_pause(self, cb):
+        self.after_pause_callbacks.append(cb)
+
+
+    def _after_jog(self, cb):
+        self.after_jog_callbacks.append(cb)
 
 
     def _update(self, update):
@@ -154,6 +174,16 @@ class Mach(Comm):
             self.planner.position_change()
             self._set_cycle('idle')
 
+        # Return to idle state if we're done jogging during a pause
+        if (state_changed and self._get_cycle() == 'jogging' and self._is_holding()):
+            self.planner.position_change()
+            self._set_cycle('idle')
+
+            # Call any "after jog" callbacks
+            while len(self.after_jog_callbacks) > 0:
+                cb = self.after_jog_callbacks.popleft()
+                cb()
+
         # Planner stop
         if state == 'READY' and self.stopping:
             self.planner.stop()
@@ -161,13 +191,19 @@ class Mach(Comm):
             self.stopping = False
 
         # Unpause sync
-        if state_changed and state != 'HOLDING': self.unpausing = False
+        if state_changed and state != 'HOLDING':
+            self.unpausing = False
 
         # Entering HOLDING state
         if state_changed and state == 'HOLDING':
             # Always flush queue after pause
             super().i2c_command(Cmd.FLUSH)
             super().resume()
+    
+            # Call any "after pause" callbacks
+            while len(self.after_pause_callbacks) > 0:
+                cb = self.after_pause_callbacks.popleft()
+                cb()
 
         # Automatically unpause after seek or stop hold
         # Must be after holding commands above
@@ -186,8 +222,8 @@ class Mach(Comm):
         if pause_reason == 'User stop':
             self.planner.stop()
             self.ctrl.state.set('line', 0)
-
-        else: self.planner.restart()
+        else:
+            self.planner.restart()
 
         super().i2c_command(Cmd.UNPAUSE)
         self.unpausing = True
@@ -200,17 +236,20 @@ class Mach(Comm):
         super().i2c_command(block[0], block = block[1:])
 
 
-    def _i2c_set(self, name, value): self._i2c_block(Cmd.set(name, value))
+    def _i2c_set(self, name, value):
+        self._i2c_block(Cmd.set(name, value))
 
 
     @overrides(Comm)
     def comm_next(self):
-        if self.planner.is_running() and not self._is_holding():
+        if (self.planner.is_running() and
+            not (self._is_holding() or self._is_jogging())):
             return self.planner.next()
 
 
     @overrides(Comm)
-    def comm_error(self): self._reset()
+    def comm_error(self):
+        self._reset()
 
 
     @overrides(Comm)
@@ -251,10 +290,21 @@ class Mach(Comm):
         super().queue_command('${}={}'.format(code, value))
 
 
-    def jog(self, axes):
+    def jog(self, params):
         self._begin_cycle('jogging')
         self.planner.position_change()
-        super().queue_command(Cmd.jog(axes))
+
+        if 'mode' in params and params['mode'] == 'line':
+            jogLinePlanner = JogLinePlanner(self.ctrl, params['gcode'])
+            done = False
+            while not done:
+                cmd = jogLinePlanner.next()
+                if cmd is None:
+                    done = True
+                else:
+                    super().queue_command(cmd)
+        else:
+            super().queue_command(Cmd.jog(params))
 
 
     def home(self, axis, position = None):
@@ -325,14 +375,51 @@ class Mach(Comm):
     def stop(self):
         if self._get_state() != 'jogging': self.stopping = True
         super().i2c_command(Cmd.STOP)
-        
-    def pause(self): super().pause()
+
+    
+    def pause(self):
+        super().pause()
+
+        if not self.ctrl.config.get('lift-on-pause'):
+            return
+
+        def lift_on_pause():
+            self.position_at_pause = self.ctrl.state.get_position()
+            self.jog({
+                'mode': 'line',
+                'gcode': 'G90\nG0 Z0'
+            })
+
+        self._after_pause(lift_on_pause)
 
 
     def unpause(self):
-        if self._is_paused():
-            self.ctrl.state.set('optional_pause', False)
+        if not self._is_paused():
+            return
+
+        self.ctrl.state.set('optional_pause', False)
+        if self.position_at_pause is None:
             self._unpause()
+        else:
+            position = self.position_at_pause
+            self.position_at_pause = None
+
+            def jog_z():
+                self.jog({
+                    'mode': 'line',
+                    'gcode': 'G90\nG0 Z0'
+                })
+
+            def jog_x_y():
+                self.jog({
+                    'mode': 'line',
+                    'gcode': 'G90\nG0 X%s Y%s' % (position['x'], position['y'])
+                })
+
+                self._after_jog(self._unpause)
+
+            jog_z()
+            self._after_jog(jog_x_y)
 
 
     def optional_pause(self, enable = True):

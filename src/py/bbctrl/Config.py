@@ -168,6 +168,9 @@ class Config(object):
             config['settings']['max-deviation'] = 0.05
             config['settings']['junction-accel'] = 200000
 
+        if version < (1, 0, 9):
+            config['settings']['lift-on-pause'] = False
+
         config['version'] = self.version.split('b')[0]
         config['full_version'] = self.version
 

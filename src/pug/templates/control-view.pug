@@ -139,36 +139,36 @@ script#control-view-template(type="text/x-template")
                col(style="width:100px")
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,1,0,0)")
+                button(style="height:100px;width:100px",@click="jog_line(-1,1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(-135deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(0,1,0,0)") Y+
+                button(style="height:100px;width:100px",@click="jog_line(0,1,0,0)") Y+
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,1,0,0)")
+                button(style="height:100px;width:100px",@click="jog_line(1,1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(-45deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",,@click="jog_fn(0,0,1,0)") Z+
+                button(style="height:100px;width:100px",,@click="jog_line(0,0,1,0)") Z+
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,0,0,0)") X-
+                button(style="height:100px;width:100px",@click="jog_line(-1,0,0,0)") X-
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click="ask_zero_xy_msg = true")
                   .fa.fa-bullseye(style="font-size: 172%")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,0,0,0)") X+
+                button(style="height:100px;width:100px",@click="jog_line(1,0,0,0)") X+
               td(style="height:100px",align="center")
                 button(style="height:100px;width:100px",@click='ask_zero_z_msg = true') Z0
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,-1,0,0)")
+                button(style="height:100px;width:100px",@click="jog_line(-1,-1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(135deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(0,-1,0,0)") Y-
+                button(style="height:100px;width:100px",@click="jog_line(0,-1,0,0)") Y-
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,-1,0,0)")
+                button(style="height:100px;width:100px",@click="jog_line(1,-1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(45deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(0,0,-1,0)") Z-
+                button(style="height:100px;width:100px",@click="jog_line(0,0,-1,0)") Z-
             tr
               td(style="height:100px",align="center")
                 button#jog_button_fine(style="height:100px;width:100px", @click=`set_jog_incr('fine')`) 0.1

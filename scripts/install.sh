@@ -24,6 +24,7 @@ if $UPDATE_PY; then
 fi
 
 if $UPDATE_AVR; then
+    chmod +x ./scripts/avr109-flash.py
     ./scripts/avr109-flash.py src/avr/bbctrl-avr-firmware.hex
 fi
 

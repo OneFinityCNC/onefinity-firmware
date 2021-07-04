@@ -27,6 +27,11 @@
       "help": "Enable or disable safety prompts during and after probing",
       "type": "bool",
       "default": true
+    },
+    "lift-on-pause": {
+      "help": "Enable or disable lifting the Z-axis on a pause",
+      "type": "bool",
+      "default": false
     }
   },
   "motors": {

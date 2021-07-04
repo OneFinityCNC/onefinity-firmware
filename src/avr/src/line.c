@@ -31,6 +31,7 @@
 #include "spindle.h"
 #include "util.h"
 #include "SCurve.h"
+#include "state.h"
 
 #include <math.h>
 #include <float.h>
@@ -47,10 +48,13 @@ typedef struct {
 
   float unit[AXES];
   float length;
+
+  bool is_jogging;
+  bool is_holding;
 } line_t;
 
 
-static struct {
+typedef struct {
   line_t line;
 
   int section;
@@ -64,8 +68,10 @@ static struct {
   float lD; // Last distance
 
   power_update_t power_updates[POWER_MAX_UPDATES];
-} l;
+} l_t;
 
+static l_t l = {};
+static l_t l_backup = {};
 
 static void _segment_target(float target[AXES], float d) {
   for (int axis = 0; axis < AXES; axis++)
@@ -158,7 +164,19 @@ static stat_t _line_exec() {
 
       // Last segment of last section
       // Use exact target values to correct for floating-point errors
-      return _exec_segment(seg_time, l.line.target, l.line.target_vel, a);
+      stat_t stat = _exec_segment(seg_time, l.line.target, l.line.target_vel, a);
+
+      if (l.line.is_jogging) {
+        if (l.line.is_holding) {
+          state_holding();
+        } else {
+          state_idle();
+        }
+
+        memcpy(&l, &l_backup, sizeof(l_t));
+      }
+
+      return stat;
     }
   }
 
@@ -171,7 +189,7 @@ static stat_t _line_exec() {
 }
 
 
-stat_t command_line(char *cmd) {
+stat_t _command_line_prep(char *cmd, line_t *line_out) {
   line_t line = {};
 
   cmd++; // Skip command code
@@ -229,10 +247,20 @@ stat_t command_line(char *cmd) {
   for (int axis = 0; axis < AXES; axis++)
     if (line.unit[axis]) line.unit[axis] /= line.length;
 
+  memcpy(line_out, &line, sizeof(line_t));
+
+  return STAT_OK;
+}
+
+
+stat_t command_line(char *cmd) {
+  line_t line = {};
+  stat_t stat = _command_line_prep(cmd, &line);
+
   // Queue
   command_push(COMMAND_line, &line);
 
-  return STAT_OK;
+  return stat;
 }
 
 
@@ -240,6 +268,11 @@ unsigned command_line_size() {return sizeof(line_t);}
 
 
 void command_line_exec(void *data) {
+  line_t *line = (line_t *)data;
+  if (line->is_jogging) {
+    memcpy(&l_backup, &l, sizeof(l_t));
+  }
+
   l.line = *(line_t *)data;
 
   // Setup first section
@@ -272,3 +305,21 @@ void command_line_exec(void *data) {
   // Set callback
   exec_set_cb(_line_exec);
 }
+
+
+stat_t command_jog_line(char *cmd) {
+  if (l.line.is_jogging) {
+    return STAT_OK;
+  }
+
+  line_t line = {};
+  stat_t stat = _command_line_prep(cmd, &line);
+
+  line.is_jogging = true;
+  line.is_holding = state_get() == STATE_HOLDING;
+  state_jogging();
+  command_line_exec(&line);
+
+  return stat;
+}
+
