@@ -25,13 +25,10 @@
 #                                                                              #
 ################################################################################
 
-import serial
 import json
-import time
 import traceback
 from collections import deque
 
-import bbctrl
 import bbctrl.Cmd as Cmd
 
 
@@ -129,7 +126,8 @@ class Comm(object):
             self.command = None
 
         # Load next command from queue
-        if len(self.queue): self._load_next_command(self.queue.popleft())
+        if len(self.queue):
+            self._load_next_command(self.queue.popleft())
 
         # Load next command from callback
         else:

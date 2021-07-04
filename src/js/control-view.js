@@ -27,8 +27,7 @@
 
 'use strict'
 
-var api    = require('./api');
-var cookie = require('./cookie')('bbctrl-');
+const api = require('./api');
 
 module.exports = {
   template: '#control-view-template',
@@ -63,8 +62,6 @@ module.exports = {
         c: false
       },
       axis_position: 0,
-      jog_step: cookie.get_bool('jog-step'),
-      jog_adjust: parseInt(cookie.get('jog-adjust', 2)),
       deleteGCode: false,
       tab: 'auto',
       jog_incr: 1.0,
@@ -89,7 +86,6 @@ module.exports = {
   },
 
   components: {
-    'axis-control': require('./axis-control'),
     'path-viewer': require('./path-viewer'),
     'gcode-viewer': require('./gcode-viewer')
   },
@@ -125,14 +121,6 @@ module.exports = {
 
     'state.selected_time': function () {
       this.load();
-    },
-
-    jog_step: function () {
-      cookie.set_bool('jog-step', this.jog_step);
-  },
-
-    jog_adjust: function () {
-      cookie.set('jog-adjust', this.jog_adjust);
     }
   },
 
@@ -226,20 +214,6 @@ module.exports = {
 
 
   events: {
-    jog: function (axis, power) {
-      var data = {ts: new Date().getTime()};
-      data[axis] = power;
-      api.put('jog', data);
-    },
-
-    back2zero: function(axis0,axis1) {
-      this.send("G0"+axis0+"0"+axis1+"0");
-    },
-
-    step: function (axis, value) {
-      this.send('M70\nG91\nG0' + axis + value + '\nM72');
-    },
-
     probing_complete: function() {
       if (this.config.settings['probing-prompts']) {
         Vue.set(this.state, "show_probe_complete_modal", true);
@@ -446,29 +420,37 @@ module.exports = {
       }
     },
 
-    goto_zero(zero_x,zero_y,zero_z,zero_a) {
-      var xcmd = "";
-      var ycmd = "";
-      var zcmd = "";
-      var acmd = "";
-      if(zero_x) xcmd = "X0";
-      if(zero_y) ycmd = "Y0";
-      if(zero_z) zcmd = "Z0";
-      if(zero_a) acmd = "A0";
-
+    goto_zero(x, y, z, a) {
       this.ask_zero_xy_msg = false;
       this.ask_zero_z_msg = false;
 
-      this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
+      const axes = [
+        x ? "X0" : "",
+        y ? "Y0" : "",
+        z ? "Z0" : "",
+        a ? "A0" : ""
+      ];
+
+      api.put('jog', {
+        ts: Date.now(),
+        mode: 'line',
+        gcode: `G90\nG0 ${axes.join(" ")}`
+      });
     },
 
-    jog_fn: function (x_jog,y_jog,z_jog,a_jog) {
-      var xcmd = "X" + x_jog * this.jog_incr;
-      var ycmd = "Y" + y_jog * this.jog_incr;
-      var zcmd = "Z" + z_jog * this.jog_incr;
-      var acmd = "A" + a_jog * this.jog_incr;
+    jog_line: function (x, y, z, a) {
+      const axes = [
+        x ? `X${x * this.jog_incr}` : "",
+        y ? `Y${y * this.jog_incr}` : "",
+        z ? `Z${z * this.jog_incr}` : "",
+        a ? `A${a * this.jog_incr}` : ""
+      ];
 
-      this.send('G91\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
+      api.put('jog', {
+        ts: Date.now(),
+        mode: 'line',
+        gcode: `G91\nG0 ${axes.join(" ")}`
+      });
     },
 
     send: function (msg) {

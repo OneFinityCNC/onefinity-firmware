@@ -36,10 +36,13 @@ script#settings-view-template(type="text/x-template")
           | set below, may also change the default machine units.
 
       fieldset
-        h2 Probing safety prompts
+        h2 Safety settings
         templated-input(name="probing-prompts",
           :model.sync="config.settings['probing-prompts']",
           :template="template.settings['probing-prompts']")
+        templated-input(name="lift-on-pause",
+          :model.sync="config.settings['lift-on-pause']",
+          :template="template.settings['lift-on-pause']")
 
       fieldset
         h2 Probe Dimensions
