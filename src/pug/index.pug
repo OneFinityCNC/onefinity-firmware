@@ -160,11 +160,6 @@ html(lang="en")
           | Are you sure you want to upgrade the firmware to version
           | {{latestVersion}}?
 
-        p.pure-control-group
-          label(for="pass") Password
-          input(name="pass", v-model="password", type="password",
-            @keyup.enter="upgrade_confirmed")
-
       div(slot="footer")
         button.pure-button(@click="confirmUpgrade=false") Cancel
         button.pure-button.pure-button-primary(@click="upgrade_confirmed")
@@ -174,11 +169,6 @@ html(lang="en")
       h3(slot="header") Upload Firmware?
       div(slot="body")
         p Are you sure you want to upload firmware #[em {{firmwareName}}]?
-
-        p.pure-control-group
-          label(for="pass") Password
-          input(name="pass", v-model="password", type="password",
-            @keyup.enter="upload_confirmed")
 
       div(slot="footer")
         button.pure-button(@click="confirmUpload=false") Cancel

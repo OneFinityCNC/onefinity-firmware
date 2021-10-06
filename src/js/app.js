@@ -32,23 +32,23 @@ var cookie = require('./cookie')('bbctrl-');
 var Sock = require('./sock');
 
 function is_newer_version(current, latest) {
-	const pattern = /(\d+)\.(\d+)\.(\d+)(.*)/;
-	const currentParts = current.match(pattern);
-	const latestParts = latest.match(pattern);
+  const pattern = /(\d+)\.(\d+)\.(\d+)(.*)/;
+  const currentParts = current.match(pattern);
+  const latestParts = latest.match(pattern);
 
   if (!currentParts || !latestParts) {
     return false;
   }
 
-	// Normal version comparisons
-	const major = latestParts[1] - currentParts[1];
-	const minor = latestParts[2] - currentParts[2];
-	const patch = latestParts[3] - currentParts[3];
+  // Normal version comparisons
+  const major = latestParts[1] - currentParts[1];
+  const minor = latestParts[2] - currentParts[2];
+  const patch = latestParts[3] - currentParts[3];
 
-	// If current is a pre-release, and latest is a release
-	const betaToRelease = latestParts[4].length === 0 && currentParts[4].length > 0;
-  
-	switch (true) {
+  // If current is a pre-release, and latest is a release
+  const betaToRelease = latestParts[4].length === 0 && currentParts[4].length > 0;
+
+  switch (true) {
     case major > 0:
     case major === 0 && minor > 0:
     case major === 0 && minor === 0 && patch > 0:
@@ -60,8 +60,8 @@ function is_newer_version(current, latest) {
   }
 }
 
-function is_object(o) {return o !== null && typeof o == 'object'}
-function is_array(o) {return Array.isArray(o)}
+function is_object(o) { return o !== null && typeof o == 'object' }
+function is_array(o) { return Array.isArray(o) }
 
 function update_array(dst, src) {
   while (dst.length) dst.pop()
@@ -110,7 +110,7 @@ module.exports = new Vue({
       modified: false,
       template: require('../resources/config-template.json'),
       config: {
-        settings: {units: 'METRIC'},
+        settings: { units: 'METRIC' },
         motors: [{}, {}, {}, {}],
         version: '<loading>',
         full_version: '<loading>'
@@ -132,7 +132,6 @@ module.exports = new Vue({
       checkedUpgrade: false,
       firmwareName: '',
       latestVersion: '',
-      password: '',
       ipAddress: '0.0.0.0',
       wifiSSID: '',
       confirmShutdown: false,
@@ -140,10 +139,9 @@ module.exports = new Vue({
     }
   },
 
-
   components: {
-    'estop': {template: '#estop-template'},
-    'loading-view': {template: '<h1>Loading...</h1>'},
+    'estop': { template: '#estop-template' },
+    'loading-view': { template: '<h1>Loading...</h1>' },
     'control-view': require('./control-view'),
     'settings-view': require('./settings-view'),
     'motor-view': require('./motor-view'),
@@ -151,18 +149,21 @@ module.exports = new Vue({
     'io-view': require('./io-view'),
     'admin-general-view': require('./admin-general-view'),
     'admin-network-view': require('./admin-network-view'),
-    'help-view': {template: '#help-view-template'},
+    'help-view': { template: '#help-view-template' },
     'cheat-sheet-view': {
       template: '#cheat-sheet-view-template',
-      data: function () {return {showUnimplemented: false}}
+      data: function () { return { showUnimplemented: false } }
     }
   },
 
-
   events: {
-    'config-changed': function () {this.modified = true;},
-    'hostname-changed': function (hostname) {this.hostname = hostname},
+    'config-changed': function () {
+      this.modified = true;
+    },
 
+    'hostname-changed': function (hostname) {
+      this.hostname = hostname
+    },
 
     send: function (msg) {
       if (this.status == 'connected') {
@@ -171,10 +172,13 @@ module.exports = new Vue({
       }
     },
 
+    connected: function () {
+      this.update()
+    },
 
-    connected: function () {this.update()},
-    update: function () {this.update()},
-
+    update: function () {
+      this.update()
+    },
 
     check: function () {
       this.latestVersion = '';
@@ -182,7 +186,7 @@ module.exports = new Vue({
       $.ajax({
         type: 'GET',
         url: 'https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/latest.txt',
-        data: {hid: this.state.hid},
+        data: { hid: this.state.hid },
         cache: false
 
       }).done(function (data) {
@@ -191,20 +195,15 @@ module.exports = new Vue({
       }.bind(this))
     },
 
-
     upgrade: function () {
-      this.password = '';
       this.confirmUpgrade = true;
     },
-
 
     upload: function (firmware) {
       this.firmware = firmware;
       this.firmwareName = firmware.name;
-      this.password = '';
       this.confirmUpload = true;
     },
-
 
     error: function (msg) {
       // Honor user error blocking
@@ -212,7 +211,9 @@ module.exports = new Vue({
         return;
 
       // Wait at least 1 sec to pop up repeated errors
-      if (1 < msg.repeat && Date.now() - msg.ts < 1000) return;
+      if (1 < msg.repeat && Date.now() - msg.ts < 1000) {
+        return;
+      }
 
       // Popup error dialog
       this.errorShow = true;
@@ -220,43 +221,41 @@ module.exports = new Vue({
     }
   },
 
-
   computed: {
     popupMessages: function () {
-      var msgs = [];
+      const msgs = [];
 
-      for (var i = 0; i < this.state.messages.length; i++) {
-        var text = this.state.messages[i].text;
-        if (!/^#/.test(text)) msgs.push(text);
+      for (let i = 0; i < this.state.messages.length; i++) {
+        const text = this.state.messages[i].text;
+        if (!/^#/.test(text)) {
+          msgs.push(text);
+        }
       }
 
       return msgs;
     }
   },
 
-
   ready: function () {
     $(window).on('hashchange', this.parse_hash);
     this.connect();
   },
 
-
   methods: {
-    metric: function () {return this.config.settings.units != 'IMPERIAL'},
-
+    metric: function () {
+      return this.config.settings.units != 'IMPERIAL'
+    },
 
     block_error_dialog: function () {
       this.errorTimeoutStart = Date.now();
       this.errorShow = false;
     },
 
-
     toggle_video: function (e) {
-      if      (this.video_size == 'small')  this.video_size = 'large';
-      else if (this.video_size == 'large')  this.video_size = 'small';
+      if (this.video_size == 'small') this.video_size = 'large';
+      else if (this.video_size == 'large') this.video_size = 'small';
       cookie.set('video-size', this.video_size);
     },
-
 
     toggle_crosshair: function (e) {
       e.preventDefault();
@@ -264,31 +263,28 @@ module.exports = new Vue({
       cookie.set('crosshair', this.crosshair);
     },
 
-
     estop: function () {
       if (this.state.xx == 'ESTOPPED') api.put('clear');
       else api.put('estop');
     },
 
-
-    upgrade_confirmed: function () {
+    upgrade_confirmed: async function () {
       this.confirmUpgrade = false;
 
-      api.put('upgrade', {password: this.password}).done(function () {
+      try {
+        await api.put('upgrade');
         this.firmwareUpgrading = true;
-
-      }.bind(this)).fail(function () {
-        api.alert('Invalid password');
-      }.bind(this))
+      } catch (err) {
+        api.alert('Error during upgrade.');
+        console.error("Error during upgrade", err);
+      }
     },
-
 
     upload_confirmed: function () {
       this.confirmUpload = false;
 
-      var form = new FormData();
+      const form = new FormData();
       form.append('firmware', this.firmware);
-      if (this.password) form.append('password', this.password);
 
       $.ajax({
         url: '/api/firmware/update',
@@ -300,12 +296,11 @@ module.exports = new Vue({
 
       }).success(function () {
         this.firmwareUpgrading = true;
-
-      }.bind(this)).error(function () {
-        api.alert('Invalid password or bad firmware');
+      }.bind(this)).error(function (err) {
+        api.alert('Firmware update failed');
+        console.error('Firmware update failed', err);
       }.bind(this))
     },
-
 
     show_upgrade: function () {
       if (!this.latestVersion) return false;
@@ -325,80 +320,61 @@ module.exports = new Vue({
             this.$emit('check');
         }
 
-	this.check_ip_address();
-	this.check_ssid();
-	//.check_disk_space();
-	
+        this.check_ip_address();
+        this.check_ssid();
+        //.check_disk_space();
+
 
       }.bind(this))
     },
 
-    check_ip_address : function() {	
-	$.ajax({
+    check_ip_address: function () {
+      $.ajax({
         type: 'GET',
         url: 'hostinfo.txt',
-        data: {hid: this.state.hid},
+        data: { hid: this.state.hid },
         cache: false
 
       }).done(function (data) {
-	console.debug('>', data);
-	this.ipAddress = 'IP:' + data;
-	this.$broadcast('ipAddress', data);
-      }.bind(this))	
+        console.debug('>', data);
+        this.ipAddress = 'IP:' + data;
+        this.$broadcast('ipAddress', data);
+      }.bind(this))
     },
 
-    check_ssid : function() {	
-	$.ajax({
+    check_ssid: function () {
+      $.ajax({
         type: 'GET',
         url: 'ssidinfo.txt',
-        data: {hid: this.state.hid},
+        data: { hid: this.state.hid },
         cache: false
 
       }).done(function (data) {
-	console.debug('>', data);
-	this.wifiSSID = 'SSID:' + data;
-	this.$broadcast('wifiSSID', data);
-      }.bind(this))	
-    },
-    
-//    check_disk_space : function() {
-//    	$.ajax({
-//        type: 'GET',
-//        url: 'diskinfo.txt',
-//        data: {hid: this.state.hid},
-//        cache: false
-//
-//      }).done(function (data) {
-//	console.debug('>', data);
-//	this.diskSpace = data;
-//	this.$broadcast('diskSpace', data);
-//     }.bind(this))
-//    },
-
-    get_ip_address : function() {
-  console.debug('get_ip>', this.ipAddress);
-  return this.ipAddress;
+        console.debug('>', data);
+        this.wifiSSID = 'SSID:' + data;
+        this.$broadcast('wifiSSID', data);
+      }.bind(this))
     },
 
-    get_ssid : function() {
-  console.debug('get_ssid>', this.wifiSSID);
-  return this.wifiSSID;
+    get_ip_address: function () {
+      console.debug('get_ip>', this.ipAddress);
+      return this.ipAddress;
     },
-    
-//    get_disk_space : function() {
-//    	console.debug('get_disk>', this.diskSpace);
-//    	return this.diskSpace;
-//    },
-    
-    shutdown : function() {
+
+    get_ssid: function () {
+      console.debug('get_ssid>', this.wifiSSID);
+      return this.wifiSSID;
+    },
+
+    shutdown: function () {
       this.confirmShutdown = false;
       api.put('shutdown');
-    
+
     },
-    
-    reboot : function() {
-    	this.confirmShutdown = false;
-    	api.put('reboot');
+
+    reboot: function () {
+      this.confirmShutdown = false;
+      api.put('reboot');
     },
 
     connect: function () {
@@ -456,7 +432,6 @@ module.exports = new Vue({
       };
     },
 
-
     parse_hash: function () {
       var hash = location.hash.substr(1);
 
@@ -472,7 +447,6 @@ module.exports = new Vue({
       this.currentView = parts[0];
     },
 
-
     save: function () {
       api.put('config/save', this.config).done(function (data) {
         this.modified = false;
@@ -480,7 +454,6 @@ module.exports = new Vue({
         api.alert('Save failed', error);
       });
     },
-
 
     close_messages: function (action) {
       if (action == 'stop') api.put('stop');
