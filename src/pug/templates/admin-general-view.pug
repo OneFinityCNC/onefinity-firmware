@@ -49,19 +49,19 @@ script#admin-general-view-template(type="text/x-template")
       h3(slot="header") Success
       p(slot="body") Configuration restored.
 
-    button.pure-button.pure-button-primary(@click="confirmReset = true") Reset
+    button.pure-button.pure-button-primary(@click="confirmReset = true") Reset    
     message(:show.sync="confirmReset")
       h3(slot="header") Reset to default configuration?
       p(slot="body") Non-network configuration changes will be lost.
       p(slot="body") Select defaults to restore
       p(slot="body")
-        button.pure-button.button-success(@click="onefinity_woodworker_reset") Woodworker
-        button.pure-button.button-success(@click="onefinity_machinist_reset") Machinist
+        button.pure-button.button-success(@click="reset('woodworker_x35')") Woodworker X-35
+        button.pure-button.button-success(@click="reset('machinist_x35')") Machinist X-35
+        button.pure-button.button-success(@click="reset('woodworker_x50')") Woodworker X-50
+        button.pure-button.button-success(@click="reset('journeyman_x50')") Journeyman X-50
       div(slot="footer")
         button.pure-button(@click="confirmReset = false") Cancel
         
-        
-
     message(:show.sync="configReset")
       h3(slot="header") Success
       p(slot="body") Configuration reset.
@@ -71,5 +71,3 @@ script#admin-general-view-template(type="text/x-template")
       button.pure-button.pure-button-primary View Log
     a(href="/api/bugreport")
       button.pure-button.pure-button-primary Bug Report
-      
-    

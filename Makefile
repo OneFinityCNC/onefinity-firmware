@@ -107,8 +107,7 @@ $(TARGET_DIR)/index.html: $(wildcard src/pug/templates/*)
 $(TARGET_DIR)/index.html: $(wildcard src/js/*)
 $(TARGET_DIR)/index.html: $(wildcard src/stylus/*)
 $(TARGET_DIR)/index.html: src/resources/config-template.json
-$(TARGET_DIR)/index.html: src/resources/onefinity_woodworker_defaults.json
-$(TARGET_DIR)/index.html: src/resources/onefinity_machinist_defaults.json
+$(TARGET_DIR)/index.html: $(wildcard src/resources/onefinity_*_defaults.json)
 
 $(TARGET_DIR)/%.html: src/pug/%.pug node_modules
 	@mkdir -p $(shell dirname $@)
