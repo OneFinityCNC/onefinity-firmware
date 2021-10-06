@@ -34,6 +34,7 @@
 #include "command.h"
 #include "exec.h"
 #include "util.h"
+#include "state.h"
 
 #include <math.h>
 
@@ -147,7 +148,7 @@ static power_update_t _get_power_update() {
   float power = _speed_to_power(spindle.speed);
 
   // Handle dynamic power
-  if (spindle.dynamic_power && spindle.inv_feed) {
+  if (state_get() == STATE_RUNNING && spindle.dynamic_power && spindle.inv_feed) {
     float scale = spindle.inv_feed * exec_get_velocity();
     if (scale < 1) power *= scale;
   }
