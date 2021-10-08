@@ -46,7 +46,7 @@ module.exports = {
       configReset: false,
       latest: '',
       autoCheckUpgrade: true,
-      default_config: ''
+      reset_variant: ''
     }
   },
 
@@ -98,10 +98,10 @@ module.exports = {
       fr.readAsText(files[0]);
     },
 
-    reset: async function (variant) {
+    reset: async function () {
       const fetchConfig = async () => {
         try {
-          return await fetchJSON(`onefinity_${variant}_defaults.json`);
+          return await fetchJSON(`onefinity_${this.reset_variant}_defaults.json`);
         } catch (err) {
           api.alert("Invalid default config file");
           console.error('Invalid default config file', err);
