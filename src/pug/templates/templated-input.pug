@@ -31,7 +31,7 @@ script#templated-input-template(type="text/x-template")
 
     select(v-if="template.type == 'enum' || template.values", v-model="view",
       :name="name", @change="change")
-      option(v-for="opt in template.values", :value="opt") {{opt}}
+      option(v-for="opt in template.values", :value="opt" :disabled="opt === '-----' ? true : false") {{opt}}
 
     input(v-if="template.type == 'bool'", type="checkbox", v-model="view",
       :name="name", @change="change")
