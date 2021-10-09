@@ -26,18 +26,15 @@
 ################################################################################
 
 import os
-import sys
 import json
 import tornado
 import sockjs.tornado
 import datetime
-import shutil
-import tarfile
 import subprocess
 import socket
-import time
 from tornado.web import HTTPError
-from tornado import web, gen
+from tornado import gen
+from pkg_resources import Requirement, resource_filename
 
 import bbctrl
 
@@ -227,6 +224,13 @@ class PasswordHandler(bbctrl.APIHandler):
 
         raise HTTPError(401, 'Failed to set password')
 
+
+class ConfigDefaultsHandler(bbctrl.APIHandler):
+    def get(self):
+        # defaults_path = bbctrl.get_resource("")
+        # defaults_path = resource_filename(Requirement.parse('bbctrl'), 'bbctrl/' + path)
+        # self.write_json(self.get_ctrl().config.load())
+        pass
 
 class ConfigLoadHandler(bbctrl.APIHandler):
     def get(self): self.write_json(self.get_ctrl().config.load())
@@ -525,6 +529,7 @@ class Web(tornado.web.Application):
             (r'/api/wifi', WifiHandler),
             (r'/api/remote/username', UsernameHandler),
             (r'/api/remote/password', PasswordHandler),
+            (r'/api/config/defaults/(.*)', ConfigDefaultsHandler),
             (r'/api/config/load', ConfigLoadHandler),
             (r'/api/config/download', ConfigDownloadHandler),
             (r'/api/config/save', ConfigSaveHandler),

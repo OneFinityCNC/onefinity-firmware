@@ -101,7 +101,7 @@ module.exports = {
     reset: async function () {
       const fetchConfig = async () => {
         try {
-          return await fetchJSON(`onefinity_${this.reset_variant}_defaults.json`);
+          return await fetchJSON(`/api/config/${this.reset_variant}`);
         } catch (err) {
           api.alert("Invalid default config file");
           console.error('Invalid default config file', err);
