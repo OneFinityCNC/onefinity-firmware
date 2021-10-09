@@ -27,14 +27,17 @@
 
 'use strict'
 
+const api = require('./api');
 
-var api = require('./api');
+async function fetchJSON(url, options) {
+  const response = await fetch(url, options);
 
+  return response.json();
+}
 
 module.exports = {
   template: '#admin-general-view-template',
   props: ['config', 'state'],
-
 
   data: function () {
     return {
@@ -43,26 +46,24 @@ module.exports = {
       configReset: false,
       latest: '',
       autoCheckUpgrade: true,
-      default_config: ''
+      reset_variant: ''
     }
   },
 
-
   events: {
-    latest_version: function (version) {this.latest = version}
+    latest_version: function (version) {
+      this.latest = version
+    }
   },
-
 
   ready: function () {
     this.autoCheckUpgrade = this.config.admin['auto-check-upgrade']
   },
 
-
   methods: {
     backup: function () {
       document.getElementById('download-target').src = '/api/config/download';
     },
-
 
     restore_config: function () {
       // If we don't reset the form the browser may cache file if name is same
@@ -70,7 +71,6 @@ module.exports = {
       $('.restore-config')[0].reset();
       $('.restore-config input').click();
     },
-
 
     restore: function (e) {
       var files = e.target.files || e.dataTransfer.files;
@@ -98,92 +98,37 @@ module.exports = {
       fr.readAsText(files[0]);
     },
 
-    onefinity_woodworker_reset : function () {
-      var fr = new FileReader();
-      
-      $.ajax({
-        type: 'GET',
-        url: 'onefinity_woodworker_defaults.json',
-        data: {hid: this.state.hid},
-        dataType: 'text',
-        cache: false
-
-      }).done(function (data) {
-        var config;
+    reset: async function () {
+      const fetchConfig = async () => {
         try {
-          config = JSON.parse(data);
-        } catch(ex) {
+          return await fetchJSON(`onefinity_${this.reset_variant}_defaults.json`);
+        } catch (err) {
           api.alert("Invalid default config file");
-          return;
+          console.error('Invalid default config file', err);
+          return undefined;
         }
-        
-        api.put('config/save', config).done(function (data) {
-          this.confirmReset = false;
-          
-          this.$dispatch('update');
-          this.configRestored = true;
-          
-        }.bind(this)).fail(function (error) {
-          api.alert('Restore failed', error);
-        })
-	
-	
-      }.bind(this))
-     
-      
-    },
-    
-    onefinity_machinist_reset : function () {
-      var fr = new FileReader();
-      
-      $.ajax({
-        type: 'GET',
-        url: 'onefinity_machinist_defaults.json',
-        data: {hid: this.state.hid},
-        dataType: 'text',
-        cache: false
+      }
 
-      }).done(function (data) {
-        var config;
-        try {
-          config = JSON.parse(data);
-        } catch(ex) {
-          api.alert("Invalid default config file");
-          return;
-        }
-        
-        api.put('config/save', config).done(function (data) {
-          this.confirmReset = false;
-          
-          this.$dispatch('update');
-          this.configRestored = true;
-          
-        }.bind(this)).fail(function (error) {
-          api.alert('Restore failed', error);
-        })
-	
-	
-      }.bind(this))
-     
-      
-    },
+      const config = await fetchConfig();
 
-
-    reset: function () {
-      this.confirmReset = false;
-      api.put('config/reset').done(function () {
+      try {
+        await api.put('config/save', config)
+        this.confirmReset = false;
         this.$dispatch('update');
-        this.configReset = true;
-
-      }.bind(this)).fail(function (error) {
-        api.alert('Reset failed', error);
-      });
+        this.configRestored = true;
+      } catch (err) {
+        api.alert('Restore failed');
+        console.error('Restore failed', err);
+      }
     },
 
+    check: function () {
+      this.$dispatch('check')
+    },
 
-    check: function () {this.$dispatch('check')},
-    upgrade: function () {this.$dispatch('upgrade')},
-
+    upgrade: function () {
+      this.$dispatch('upgrade')
+    },
 
     upload_firmware: function () {
       // If we don't reset the form the browser may cache file if name is same
@@ -192,13 +137,11 @@ module.exports = {
       $('.upload-firmware input').click();
     },
 
-
     upload: function (e) {
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
       this.$dispatch('upload', files[0]);
     },
-
 
     change_auto_check_upgrade: function () {
       this.config.admin['auto-check-upgrade'] = this.autoCheckUpgrade;
