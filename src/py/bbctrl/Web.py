@@ -26,18 +26,14 @@
 ################################################################################
 
 import os
-import sys
 import json
 import tornado
 import sockjs.tornado
 import datetime
-import shutil
-import tarfile
 import subprocess
 import socket
-import time
 from tornado.web import HTTPError
-from tornado import web, gen
+from tornado import gen
 
 import bbctrl
 

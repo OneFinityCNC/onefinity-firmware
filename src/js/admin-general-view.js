@@ -27,13 +27,18 @@
 
 'use strict'
 
+const merge = require("lodash.merge");
+
+const config_defaults = require("../resources/onefinity_defaults.json");
+
+const variant_defaults = {
+  machinist_x35: require("../resources/onefinity_machinist_x35_defaults.json"),
+  woodworker_x35: require("../resources/onefinity_woodworker_x35_defaults.json"),
+  woodworker_x50: require("../resources/onefinity_woodworker_x50_defaults.json"),
+  journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json")
+};
+
 const api = require('./api');
-
-async function fetchJSON(url, options) {
-  const response = await fetch(url, options);
-
-  return response.json();
-}
 
 module.exports = {
   template: '#admin-general-view-template',
@@ -99,17 +104,11 @@ module.exports = {
     },
 
     reset: async function () {
-      const fetchConfig = async () => {
-        try {
-          return await fetchJSON(`onefinity_${this.reset_variant}_defaults.json`);
-        } catch (err) {
-          api.alert("Invalid default config file");
-          console.error('Invalid default config file', err);
-          return undefined;
-        }
-      }
-
-      const config = await fetchConfig();
+      const config = merge(
+        {},
+        config_defaults,
+        variant_defaults[this.reset_variant]
+      );
 
       try {
         await api.put('config/save', config)
