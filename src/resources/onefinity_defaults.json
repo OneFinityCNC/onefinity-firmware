@@ -14,13 +14,14 @@
     "probe": "normally-open"
   },
   "probe": {
+    "probe-diameter": 6.35,
     "probe-ydim": 53.975,
     "probe-slow-seek": 25,
     "probe-fast-seek": 75,
     "probe-zdim": 15.4,
     "probe-xdim": 53.975
   },
-  "version": "1.0.4",
+  "version": "1.0.9",
   "outputs": {
     "load-1": "disabled",
     "fault": "disabled",

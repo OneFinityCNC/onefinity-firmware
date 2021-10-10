@@ -5,10 +5,11 @@
   "repository": "https://github.com/OneFinityCNC/onefinity",
   "license": "GPL-3.0+",
   "dependencies": {
-    "jshint": "",
     "browserify": "",
-    "jstransformer-stylus": "",
+    "jshint": "",
     "jstransformer-escape-html": "",
+    "jstransformer-stylus": "",
+    "lodash.merge": "4.6.2",
     "pug-cli": ""
   }
 }
