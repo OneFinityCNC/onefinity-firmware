@@ -27,8 +27,9 @@
 
 'use strict';
 
-var api = require('./api');
-var modbus = require('./modbus.js');
+const api = require('./api');
+const modbus = require('./modbus.js');
+const merge = require("lodash.merge");
 
 module.exports = {
   template: '#tool-view-template',
@@ -123,8 +124,9 @@ module.exports = {
   events: {
     'input-changed': function () {
       this.$dispatch('config-changed');
+
       return false;
-    }
+    },
   },
 
   ready: function () {
@@ -140,25 +142,25 @@ module.exports = {
       return this.config.tool['tool-type'].toUpperCase();
     },
 
-    selected_tool: function() {
-      return this.config.tool['selected-tool'].toUpperCase();
+    selected_tool: function () {
+      return this.config.tool['selected-tool'];
     },
 
     is_pwm_spindle: function () {
-      return this.selected_tool == 'PWM';
-    },
-
-    is_laser: function () {
-      return this.selected_tool.includes("LASER");
-    },
-
-    is_router: function () {
-      return this.selected_tool.includes("ROUTER");
+      return this.selected_tool == 'pwm';
     },
 
     is_modbus: function () {
-      return this.tool_type != 'DISABLED' &&
-        !this.is_pwm_spindle && !this.is_laser && !this.is_router;
+      switch (this.selected_tool) {
+        case "disabled":
+        case "laser":
+        case "router":
+        case "pwm":
+          return false;
+
+        default:
+          return true;
+      }
     },
 
     modbus_status: function () {
@@ -167,11 +169,15 @@ module.exports = {
   },
 
   methods: {
-    change_selected_tool: function(...args) {
+    change_selected_tool: function () {
+      const selectedToolSettings = this.config['selected-tool-settings'] || {};
+      const settings = selectedToolSettings[this.selected_tool] || {};
+      this.config.tool = merge({}, this.config.tool, settings['tool']);
+      this.config['pwm-spindle'] = merge({}, this.config['pwm-spindle'], settings['pwm-spindle']);
+      this.config['modbus-spindle'] = merge({}, this.config['modbus-spindle'], settings['modbus-spindle']);
+
       const tool = this.toolList.find(tool => tool.id == this.config.tool['selected-tool']);
       this.config.tool["tool-type"] = tool.type || tool.name;
-
-      console.log(this.config.tool["tool-type"]);
 
       this.$dispatch("config-changed");
     },
@@ -182,11 +188,11 @@ module.exports = {
         case key === "selected-tool":
           return false;
 
-        case this.selected_tool === "DISABLED":
-        case this.selected_tool.includes("LASER"):
+        case this.selected_tool === "disabled":
           return false;
 
-        case this.selected_tool.includes("ROUTER"):
+        case this.selected_tool === "laser":
+        case this.selected_tool === "router":
           switch (key) {
             case "tool-enable-mode":
               return true;
@@ -213,7 +219,7 @@ module.exports = {
     },
 
     get_reg_fails: function (reg) {
-      var fails = this.state[reg + 'vr']
+      const fails = this.state[reg + 'vr']
       return fails == 255 ? 'Max' : fails;
     },
 
@@ -236,9 +242,9 @@ module.exports = {
       e.preventDefault();
       this.config.tool['tool-type'] = 'Custom Modbus VFD';
 
-      var regs = this.config['modbus-spindle'].regs;
-      for (var i = 0; i < regs.length; i++) {
-        var reg = this.regs_tmpl.index[i];
+      const regs = this.config['modbus-spindle'].regs;
+      for (let i = 0; i < regs.length; i++) {
+        const reg = this.regs_tmpl.index[i];
         regs[i]['reg-type'] = this.get_reg_type(reg);
         regs[i]['reg-addr'] = this.get_reg_addr(reg);
         regs[i]['reg-value'] = this.get_reg_value(reg);
@@ -251,8 +257,8 @@ module.exports = {
       e.preventDefault();
       this.config.tool['tool-type'] = 'Custom Modbus VFD';
 
-      var regs = this.config['modbus-spindle'].regs;
-      for (var i = 0; i < regs.length; i++) {
+      const regs = this.config['modbus-spindle'].regs;
+      for (let i = 0; i < regs.length; i++) {
         regs[i]['reg-type'] = 'disabled';
         regs[i]['reg-addr'] = 0;
         regs[i]['reg-value'] = 0;
@@ -263,8 +269,8 @@ module.exports = {
 
     reset_failures: function (e) {
       e.preventDefault();
-      var regs = this.config['modbus-spindle'].regs;
-      for (var reg = 0; reg < regs.length; reg++)
+      const regs = this.config['modbus-spindle'].regs;
+      for (let reg = 0; reg < regs.length; reg++)
         this.$dispatch('send', '\$' + reg + 'vr=0');
     }
   }

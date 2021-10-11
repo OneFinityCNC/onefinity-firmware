@@ -45,9 +45,6 @@ script#tool-view-template(type="text/x-template")
             | Pin {{templ.pin}}
             io-indicator(:name="$key", :state="state")
 
-      div(v-if="is_laser")
-        label Laser support is pre-configured, there are no user-adjustable settings.
-
       fieldset(v-if="is_pwm_spindle")
         h2 PWM Spindle
         templated-input(v-for="templ in template['pwm-spindle']",
