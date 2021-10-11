@@ -132,6 +132,12 @@ class Mach(Comm):
         # if current == 'idle' or (cycle == 'jogging' and self._is_paused()):
         self._set_cycle(cycle)
 
+    
+    def process_log(self, log):
+        # Detect when a probe has failed, and reset the planner
+        if log['msg'] == 'Switch not found':
+            self.planner.reset(False)
+
 
     def _update(self, update):
         # Detect motor faults
@@ -145,7 +151,8 @@ class Mach(Comm):
         state = self._get_state()
 
         # Handle EStop
-        if state_changed and state == 'ESTOPPED': self.planner.reset(False)
+        if state_changed and state == 'ESTOPPED':
+            self.planner.reset(False)
 
         # Exit cycle if state changed to READY
         if (state_changed and self._get_cycle() != 'idle' and
@@ -161,7 +168,8 @@ class Mach(Comm):
             self.stopping = False
 
         # Unpause sync
-        if state_changed and state != 'HOLDING': self.unpausing = False
+        if state_changed and state != 'HOLDING':
+            self.unpausing = False
 
         # Entering HOLDING state
         if state_changed and state == 'HOLDING':

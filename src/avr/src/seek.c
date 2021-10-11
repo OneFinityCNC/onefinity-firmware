@@ -82,7 +82,7 @@ void seek_end() {
   if (!seek.active) return;
 
   if (!(SEEK_FOUND & seek.flags) && (SEEK_ERROR & seek.flags))
-    estop_trigger(STAT_SEEK_NOT_FOUND);
+    STATUS_WARNING(STAT_SEEK_NOT_FOUND, "", 0);
 
   if((seekMode == SW_STALL_0) || (seekMode == SW_STALL_1) || (seekMode ==SW_STALL_2) || (seekMode == SW_STALL_3))
     disable_stall_microstep();
