@@ -253,13 +253,8 @@ class FirmwareUpdateHandler(bbctrl.APIHandler):
 
 
     def put_ok(self):
-        if not 'password' in self.request.arguments:
-            raise HTTPError(401, 'Missing "password"')
-
         if not 'firmware' in self.request.files:
             raise HTTPError(401, 'Missing "firmware"')
-
-        check_password(self.request.arguments['password'][0])
 
         firmware = self.request.files['firmware'][0]
 
@@ -274,7 +269,6 @@ class FirmwareUpdateHandler(bbctrl.APIHandler):
 
 class UpgradeHandler(bbctrl.APIHandler):
     def put_ok(self):
-        check_password(self.json['password'])
         self.get_ctrl().lcd.goodbye('Upgrading firmware')
         subprocess.Popen(['/usr/local/bin/upgrade-bbctrl'])
 

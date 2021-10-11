@@ -160,11 +160,6 @@ html(lang="en")
           | Are you sure you want to upgrade the firmware to version
           | {{latestVersion}}?
 
-        p.pure-control-group
-          label(for="pass") Password
-          input(name="pass", v-model="password", type="password",
-            @keyup.enter="upgrade_confirmed")
-
       div(slot="footer")
         button.pure-button(@click="confirmUpgrade=false") Cancel
         button.pure-button.pure-button-primary(@click="upgrade_confirmed")
@@ -175,11 +170,6 @@ html(lang="en")
       div(slot="body")
         p Are you sure you want to upload firmware #[em {{firmwareName}}]?
 
-        p.pure-control-group
-          label(for="pass") Password
-          input(name="pass", v-model="password", type="password",
-            @keyup.enter="upload_confirmed")
-
       div(slot="footer")
         button.pure-button(@click="confirmUpload=false") Cancel
         button.pure-button.pure-button-primary(@click="upload_confirmed")
@@ -189,7 +179,7 @@ html(lang="en")
       h3(slot="header") Firmware upgrading
       div(slot="body")
         h3 Please wait...
-        p Loss of power during an upgrade may damage the controller.
+        p This process should take less than 5 minutes.  If it takes longer than this, please restart the controller and try via USB.
       div(slot="footer")
 
     message(v-if="popupMessages.length", :show="true")
