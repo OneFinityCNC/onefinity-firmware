@@ -96,7 +96,7 @@ class Planner():
             'max-merge-error': deviation,
             'max-arc-error':   deviation / 10,
             'junction-accel':  config.get('junction-accel'),
-            }
+        }
 
         # We place an upper limit of 1000 km/min^3 on jerk for MDI movements
         if mdi:

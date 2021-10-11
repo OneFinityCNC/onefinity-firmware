@@ -31,16 +31,21 @@ script#tool-view-template(type="text/x-template")
 
     .pure-form.pure-form-aligned
       fieldset
-        templated-input(v-for="templ in template.tool", :name="$key",
-          :model.sync="config.tool[$key]", :template="templ",
-          v-if="tool_type != 'DISABLED' || $key == 'tool-type'")
+        .pure-control-group
+          label(for="tool-type") tool-type
 
-          label.extra(slot="extra",
-            v-if="$key == 'tool-enable-mode' || $key == 'tool-direction-mode'")
+          select(v-model="config.tool['selected-tool']", name="tool-type", @change="change_selected_tool")
+            option(v-for="tool in toolList", :value="tool.id", :disabled="tool.disabled") {{tool.name}}
+
+        templated-input(v-for="templ in template.tool",
+          :name="$key", v-if="show_tool_settings($key)"
+          :model.sync="config.tool[$key]", :template="templ")
+
+          label.extra(slot="extra", v-if="$key == 'tool-enable-mode' || $key == 'tool-direction-mode'")
             | Pin {{templ.pin}}
             io-indicator(:name="$key", :state="state")
 
-      fieldset(v-if="tool_type == 'PWM SPINDLE'")
+      fieldset(v-if="is_pwm_spindle")
         h2 PWM Spindle
         templated-input(v-for="templ in template['pwm-spindle']",
           :name="$key", :model.sync="config['pwm-spindle'][$key]",

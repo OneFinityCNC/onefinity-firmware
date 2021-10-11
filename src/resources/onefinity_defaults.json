@@ -1,4 +1,11 @@
 {
+  "version": "1.0.9",
+  "settings": {
+    "junction-accel": 200000,
+    "max-deviation": 0.05,
+    "units": "METRIC",
+    "probing-prompts": true
+  },
   "tool": {
     "tool-reversed": false,
     "tool-enable-mode": "disabled",
@@ -7,138 +14,14 @@
     "min-spin": 0,
     "max-spin": 255
   },
-  "switches": {
-    "switch-lockout": 250,
-    "estop": "disabled",
-    "switch-debounce": 5,
-    "probe": "normally-open"
+  "pwm-spindle": {
+    "pwm-min-duty": 1,
+    "pwm-inverted": false,
+    "pwm-max-duty": 99.99,
+    "pwm-freq": 1000,
+    "dynamic-power": true,
+    "rapid-auto-off": true
   },
-  "probe": {
-    "probe-diameter": 6.35,
-    "probe-ydim": 53.975,
-    "probe-slow-seek": 25,
-    "probe-fast-seek": 75,
-    "probe-zdim": 15.4,
-    "probe-xdim": 53.975
-  },
-  "version": "1.0.9",
-  "outputs": {
-    "load-1": "disabled",
-    "fault": "disabled",
-    "load-2": "disabled"
-  },
-  "settings": {
-    "junction-accel": 200000,
-    "max-deviation": 0.05,
-    "units": "METRIC",
-    "probing-prompts": true
-  },
-  "motors": [
-    {
-      "latch-velocity": 0.1,
-      "max-accel": 750,
-      "max-velocity": 10,
-      "search-velocity": 1.688,
-      "travel-per-rev": 10,
-      "idle-current": 1,
-      "drive-current": 2.8,
-      "latch-backoff": 5,
-      "enabled": true,
-      "homing-mode": "stall-min",
-      "reverse": false,
-      "stall-microstep": 8,
-      "min-soft-limit": 0,
-      "max-switch": "disabled",
-      "step-angle": 1.8,
-      "stall-current": 1,
-      "stall-sample-time": 200,
-      "microsteps": 16,
-      "stall-volts": 2,
-      "axis": "X",
-      "min-switch": "disabled",
-      "max-jerk": 1000,
-      "max-soft-limit": 0,
-      "zero-backoff": 1.5
-    },
-    {
-      "latch-velocity": 0.1,
-      "max-accel": 750,
-      "max-velocity": 10,
-      "search-velocity": 1.688,
-      "travel-per-rev": 10,
-      "idle-current": 1,
-      "drive-current": 2.8,
-      "latch-backoff": 5,
-      "enabled": true,
-      "homing-mode": "stall-min",
-      "reverse": false,
-      "stall-microstep": 8,
-      "min-soft-limit": 0,
-      "max-switch": "disabled",
-      "step-angle": 1.8,
-      "stall-current": 1,
-      "stall-sample-time": 200,
-      "microsteps": 16,
-      "stall-volts": 2,
-      "axis": "Y",
-      "min-switch": "disabled",
-      "max-jerk": 1000,
-      "max-soft-limit": 0,
-      "zero-backoff": 1.5
-    },
-    {
-      "latch-velocity": 0.1,
-      "max-accel": 750,
-      "max-velocity": 10,
-      "search-velocity": 1.688,
-      "travel-per-rev": 10,
-      "idle-current": 1,
-      "drive-current": 2.8,
-      "latch-backoff": 5,
-      "enabled": true,
-      "homing-mode": "stall-min",
-      "reverse": false,
-      "stall-microstep": 8,
-      "min-soft-limit": 0,
-      "max-switch": "disabled",
-      "step-angle": 1.8,
-      "stall-current": 1,
-      "stall-sample-time": 200,
-      "microsteps": 16,
-      "stall-volts": 2,
-      "axis": "Y",
-      "min-switch": "disabled",
-      "max-jerk": 1000,
-      "max-soft-limit": 0,
-      "zero-backoff": 1.5
-    },
-    {
-      "latch-velocity": 0.1,
-      "max-accel": 750,
-      "max-velocity": 3,
-      "search-velocity": 0.675,
-      "travel-per-rev": 4,
-      "idle-current": 1,
-      "drive-current": 2.8,
-      "latch-backoff": 5,
-      "enabled": true,
-      "homing-mode": "stall-max",
-      "reverse": true,
-      "stall-microstep": 8,
-      "min-soft-limit": -133,
-      "max-switch": "disabled",
-      "step-angle": 1.8,
-      "stall-current": 1,
-      "stall-sample-time": 200,
-      "microsteps": 16,
-      "stall-volts": 2,
-      "axis": "Z",
-      "min-switch": "disabled",
-      "max-jerk": 1000,
-      "max-soft-limit": 0,
-      "zero-backoff": 1
-    }
-  ],
   "modbus-spindle": {
     "baud": "9600",
     "multi-write": false,
@@ -307,14 +190,184 @@
     "bus-id": "1",
     "parity": "None"
   },
-  "pwm-spindle": {
-    "pwm-min-duty": 1,
-    "pwm-inverted": false,
-    "pwm-max-duty": 99.99,
-    "pwm-freq": 1000,
-    "dynamic-power": true,
-    "rapid-auto-off": true
+  "selected-tool-settings": {
+    "laser": {
+      "tool": {
+        "tool-reversed": false,
+        "tool-enable-mode": "disabled",
+        "tool-direction-mode": "disabled",
+        "min-spin": 0,
+        "max-spin": 1000
+      },
+      "pwm-spindle": {
+        "pwm-min-duty": 1,
+        "pwm-inverted": false,
+        "pwm-max-duty": 99.99,
+        "pwm-freq": 1000,
+        "dynamic-power": true,
+        "rapid-auto-off": true
+      }
+    },
+    "router": {
+      "tool": {
+        "tool-reversed": false,
+        "tool-enable-mode": "disabled",
+        "tool-direction-mode": "disabled",
+        "min-spin": 0,
+        "max-spin": 255
+      },
+      "pwm-spindle": {
+        "pwm-min-duty": 1,
+        "pwm-inverted": false,
+        "pwm-max-duty": 99.99,
+        "pwm-freq": 1000,
+        "dynamic-power": false,
+        "rapid-auto-off": false
+      }
+    },
+    "pwm": {
+      "tool": {
+        "tool-reversed": false,
+        "tool-enable-mode": "disabled",
+        "tool-direction-mode": "disabled",
+        "min-spin": 0,
+        "max-spin": 255
+      },
+      "pwm-spindle": {
+        "pwm-min-duty": 1,
+        "pwm-inverted": false,
+        "pwm-max-duty": 99.99,
+        "pwm-freq": 1000,
+        "dynamic-power": true,
+        "rapid-auto-off": true
+      }
+    }
   },
+  "switches": {
+    "switch-lockout": 250,
+    "estop": "disabled",
+    "switch-debounce": 5,
+    "probe": "normally-open"
+  },
+  "probe": {
+    "probe-diameter": 6.35,
+    "probe-ydim": 53.975,
+    "probe-slow-seek": 25,
+    "probe-fast-seek": 75,
+    "probe-zdim": 15.4,
+    "probe-xdim": 53.975
+  },
+  "outputs": {
+    "load-1": "disabled",
+    "fault": "disabled",
+    "load-2": "disabled"
+  },
+  "motors": [
+    {
+      "latch-velocity": 0.1,
+      "max-accel": 750,
+      "max-velocity": 10,
+      "search-velocity": 1.688,
+      "travel-per-rev": 10,
+      "idle-current": 1,
+      "drive-current": 2.8,
+      "latch-backoff": 5,
+      "enabled": true,
+      "homing-mode": "stall-min",
+      "reverse": false,
+      "stall-microstep": 8,
+      "min-soft-limit": 0,
+      "max-switch": "disabled",
+      "step-angle": 1.8,
+      "stall-current": 1,
+      "stall-sample-time": 200,
+      "microsteps": 16,
+      "stall-volts": 2,
+      "axis": "X",
+      "min-switch": "disabled",
+      "max-jerk": 1000,
+      "max-soft-limit": 0,
+      "zero-backoff": 1.5
+    },
+    {
+      "latch-velocity": 0.1,
+      "max-accel": 750,
+      "max-velocity": 10,
+      "search-velocity": 1.688,
+      "travel-per-rev": 10,
+      "idle-current": 1,
+      "drive-current": 2.8,
+      "latch-backoff": 5,
+      "enabled": true,
+      "homing-mode": "stall-min",
+      "reverse": false,
+      "stall-microstep": 8,
+      "min-soft-limit": 0,
+      "max-switch": "disabled",
+      "step-angle": 1.8,
+      "stall-current": 1,
+      "stall-sample-time": 200,
+      "microsteps": 16,
+      "stall-volts": 2,
+      "axis": "Y",
+      "min-switch": "disabled",
+      "max-jerk": 1000,
+      "max-soft-limit": 0,
+      "zero-backoff": 1.5
+    },
+    {
+      "latch-velocity": 0.1,
+      "max-accel": 750,
+      "max-velocity": 10,
+      "search-velocity": 1.688,
+      "travel-per-rev": 10,
+      "idle-current": 1,
+      "drive-current": 2.8,
+      "latch-backoff": 5,
+      "enabled": true,
+      "homing-mode": "stall-min",
+      "reverse": false,
+      "stall-microstep": 8,
+      "min-soft-limit": 0,
+      "max-switch": "disabled",
+      "step-angle": 1.8,
+      "stall-current": 1,
+      "stall-sample-time": 200,
+      "microsteps": 16,
+      "stall-volts": 2,
+      "axis": "Y",
+      "min-switch": "disabled",
+      "max-jerk": 1000,
+      "max-soft-limit": 0,
+      "zero-backoff": 1.5
+    },
+    {
+      "latch-velocity": 0.1,
+      "max-accel": 750,
+      "max-velocity": 3,
+      "search-velocity": 0.675,
+      "travel-per-rev": 4,
+      "idle-current": 1,
+      "drive-current": 2.8,
+      "latch-backoff": 5,
+      "enabled": true,
+      "homing-mode": "stall-max",
+      "reverse": true,
+      "stall-microstep": 8,
+      "min-soft-limit": -133,
+      "max-switch": "disabled",
+      "step-angle": 1.8,
+      "stall-current": 1,
+      "stall-sample-time": 200,
+      "microsteps": 16,
+      "stall-volts": 2,
+      "axis": "Z",
+      "min-switch": "disabled",
+      "max-jerk": 1000,
+      "max-soft-limit": 0,
+      "zero-backoff": 1
+    }
+  ],
   "admin": {
     "auto-check-upgrade": true
   },

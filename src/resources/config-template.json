@@ -29,6 +29,7 @@
       "default": true
     }
   },
+
   "motors": {
     "type": "list",
     "index": "0123",
@@ -248,12 +249,25 @@
   },
 
   "tool": {
+    "selected-tool": {
+      "type": "string",
+      "default": "disabled"
+    },
     "tool-type": {
       "type": "enum",
-      "values": ["Disabled", "PWM Spindle", "Huanyang VFD", "Custom Modbus VFD",
-                 "AC-Tech VFD", "Nowforever VFD", "Delta VFD015M21A (Beta)",
-                 "YL600, YL620, YL620-A VFD (Beta)", "FR-D700 (Beta)",
-                 "Sunfar E300 (Beta)", "OMRON MX2"],
+      "values": [
+        "Disabled",
+        "PWM Spindle",
+        "Huanyang VFD",
+        "Custom Modbus VFD",
+        "AC-Tech VFD",
+        "Nowforever VFD",
+        "Delta VFD015M21A (Beta)",
+        "YL600, YL620, YL620-A VFD (Beta)",
+        "FR-D700 (Beta)",
+        "Sunfar E300 (Beta)",
+        "OMRON MX2"
+      ],
       "default": "Disabled",
       "code": "st"
     },
