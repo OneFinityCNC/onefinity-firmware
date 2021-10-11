@@ -93,16 +93,15 @@ class State(object):
         observer.start()
 
 
-    #def is_metric(self): return self.get('units', 'METRIC') == 'METRIC'
-
     def init(self):
         # Init machine units
         metric = self.ctrl.config.get('units', 'METRIC').upper() == 'METRIC'
         self.log.info('INIT Metric %d' % metric)
         if not 'metric' in self.vars: self.set('metric', metric)
         if not 'imperial' in self.vars: self.set('imperial', not metric)
-        #Bit diameter for probing
-        diameter = self.ctrl.config.get('probe-diameter',6.35)
+        
+        # Bit diameter for probing
+        diameter = self.ctrl.config.get('probe-diameter', 6.35)
         self.log.info('INIT Diameter %f' % diameter)
         self.set('bitDiameter',diameter)
 

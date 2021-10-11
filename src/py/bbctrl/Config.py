@@ -28,8 +28,6 @@
 import os
 import json
 import pkg_resources
-import subprocess
-import copy
 from pkg_resources import Requirement, resource_filename
 
 
@@ -55,14 +53,6 @@ class Config(object):
         except Exception: self.log.exception('Internal error: Failed to load config template')
 
 
-    def get(self, name, default = None):
-        return self.values.get(name, default)
-
-
-    def get_index(self, name, index, default = None):
-        return self.values.get(name, {}).get(str(index), None)
-
-
     def load(self):
         path = self.ctrl.get_path('config.json')
 
@@ -72,7 +62,7 @@ class Config(object):
             else: config = {'version': self.version}
 
             try:
-                self.upgrade(config)
+                self._upgrade(config)
             except Exception: self.log.exception('Internal error: Failed to upgrade config')
 
         except Exception as e:
@@ -81,6 +71,33 @@ class Config(object):
 
         self._defaults(config)
         return config
+
+
+    def reload(self):
+        self._update(self.load(), True)
+
+
+    def get(self, name, default = None):
+        return self.values.get(name, default)
+
+
+    def save(self, config):
+        self._upgrade(config)
+        self._update(config, False)
+
+        with open(self.ctrl.get_path('config.json'), 'w') as f:
+            json.dump(config, f, indent=2)
+
+        os.sync()
+
+        self.ctrl.preplanner.invalidate_all()
+        self.log.info('Saved')
+
+
+    def reset(self):
+        if os.path.exists('config.json'): os.unlink('config.json')
+        self.reload()
+        self.ctrl.preplanner.invalidate_all()
 
 
     def _valid_value(self, template, value):
@@ -136,7 +153,7 @@ class Config(object):
             self.__defaults(conf, name, tmpl)
 
 
-    def upgrade(self, config):
+    def _upgrade(self, config):
         version = config['version']
         version = version.split('b')[0] # Strip off any "beta" suffix
         version = tuple(map(int, version.split('.'))) # Break it into a tuple of integers
@@ -170,24 +187,6 @@ class Config(object):
 
         config['version'] = self.version.split('b')[0]
         config['full_version'] = self.version
-
-    def save(self, config):
-        self.upgrade(config)
-        self._update(config, False)
-
-        with open(self.ctrl.get_path('config.json'), 'w') as f:
-            json.dump(config, f, indent=2)
-
-        os.sync()
-
-        self.ctrl.preplanner.invalidate_all()
-        self.log.info('Saved')
-
-
-    def reset(self):
-        if os.path.exists('config.json'): os.unlink('config.json')
-        self.reload()
-        self.ctrl.preplanner.invalidate_all()
 
 
     def _encode(self, name, index, config, tmpl, with_defaults):
@@ -238,6 +237,3 @@ class Config(object):
         for name, tmpl in self.template.items():
             conf = config.get(name, None)
             self._encode(name, '', conf, tmpl, with_defaults)
-
-
-    def reload(self): self._update(self.load(), True)

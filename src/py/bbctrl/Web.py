@@ -225,7 +225,8 @@ class PasswordHandler(bbctrl.APIHandler):
 
 
 class ConfigLoadHandler(bbctrl.APIHandler):
-    def get(self): self.write_json(self.get_ctrl().config.load())
+    def get(self):
+        self.write_json(self.get_ctrl().config.load())
 
 
 class ConfigDownloadHandler(bbctrl.APIHandler):

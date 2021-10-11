@@ -249,15 +249,15 @@
   },
 
   "tool": {
+    "selected-tool": {
+      "type": "string",
+      "default": "disabled"
+    },
     "tool-type": {
       "type": "enum",
       "values": [
         "Disabled",
-        "-----",
-        "Router (Makita, etc)",
-        "J Tech Laser",
         "PWM Spindle",
-        "-----",
         "Huanyang VFD",
         "Custom Modbus VFD",
         "AC-Tech VFD",

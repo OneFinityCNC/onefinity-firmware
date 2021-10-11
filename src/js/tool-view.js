@@ -37,7 +37,78 @@ module.exports = {
   data: function () {
     return {
       address: 0,
-      value: 0
+      value: 0,
+      toolList: [
+        {
+          id: "disabled",
+          name: "Disabled"
+        },
+        {
+          id: "router",
+          type: "PWM Spindle",
+          name: "Router (Makita, etc)"
+        },
+        {
+          id: "laser",
+          type: "PWM Spindle",
+          name: "Laser (J Tech, etc)"
+        },
+        {
+          id: "pwm",
+          name: "PWM Spindle"
+        },
+        {
+          id: "unsupported-separator",
+          name: "Unsupported Tools",
+          disabled: true,
+          unsupported: true
+        },
+        {
+          id: "huanyang-vfd",
+          name: "Huanyang VFD",
+          unsupported: true
+        },
+        {
+          id: "custom-modbus-vfd",
+          name: "Custom Modbus VFD",
+          unsupported: true
+        },
+        {
+          id: "ac-tech-vfd",
+          name: "AC-Tech VFD",
+          unsupported: true
+        },
+        {
+          id: "nowforever-vfd",
+          name: "Nowforever VFD",
+          unsupported: true
+        },
+        {
+          id: "delta-vfd",
+          name: "Delta VFD015M21A (Beta)",
+          unsupported: true
+        },
+        {
+          id: "yl600-vfd",
+          name: "YL600, YL620, YL620-A VFD (Beta)",
+          unsupported: true
+        },
+        {
+          id: "fr-d700-vfd",
+          name: "FR-D700 (Beta)",
+          unsupported: true
+        },
+        {
+          id: "sunfar-e300-vfd",
+          name: "Sunfar E300 (Beta)",
+          unsupported: true
+        },
+        {
+          id: "omron-mx2-vfd",
+          name: "OMRON MX2",
+          unsupported: true
+        }
+      ]
     }
   },
 
@@ -69,23 +140,20 @@ module.exports = {
       return this.config.tool['tool-type'].toUpperCase();
     },
 
-    show_tool_settings: function() {
-      return !(
-        this.tool_type == "DISABLED" ||
-        this.is_laser
-      );
+    selected_tool: function() {
+      return this.config.tool['selected-tool'].toUpperCase();
     },
 
-    is_pwm_spindle: function() {
-      return this.tool_type == 'PWM SPINDLE';
+    is_pwm_spindle: function () {
+      return this.selected_tool == 'PWM';
     },
 
-    is_laser: function() {
-      return this.tool_type.includes("LASER");
+    is_laser: function () {
+      return this.selected_tool.includes("LASER");
     },
 
-    is_router: function() {
-      return this.tool_type.includes("ROUTER");
+    is_router: function () {
+      return this.selected_tool.includes("ROUTER");
     },
 
     is_modbus: function () {
@@ -99,6 +167,39 @@ module.exports = {
   },
 
   methods: {
+    change_selected_tool: function(...args) {
+      const tool = this.toolList.find(tool => tool.id == this.config.tool['selected-tool']);
+      this.config.tool["tool-type"] = tool.type || tool.name;
+
+      console.log(this.config.tool["tool-type"]);
+
+      this.$dispatch("config-changed");
+    },
+
+    show_tool_settings: function (key) {
+      switch (true) {
+        case key === "tool-type":
+        case key === "selected-tool":
+          return false;
+
+        case this.selected_tool === "DISABLED":
+        case this.selected_tool.includes("LASER"):
+          return false;
+
+        case this.selected_tool.includes("ROUTER"):
+          switch (key) {
+            case "tool-enable-mode":
+              return true;
+
+            default:
+              return false;
+          }
+
+        default:
+          return true;
+      }
+    },
+
     get_reg_type: function (reg) {
       return this.regs_tmpl.template['reg-type'].values[this.state[reg + 'vt']];
     },

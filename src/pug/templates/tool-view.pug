@@ -31,13 +31,22 @@ script#tool-view-template(type="text/x-template")
 
     .pure-form.pure-form-aligned
       fieldset
-        templated-input(v-for="templ in template.tool", :name="$key",
-          :model.sync="config.tool[$key]", :template="templ",
-          v-if="$key == 'tool-type' || show_tool_settings")
+        .pure-control-group
+          label(for="tool-type") tool-type
+
+          select(v-model="config.tool['selected-tool']", name="tool-type", @change="change_selected_tool")
+            option(v-for="tool in toolList", :value="tool.id", :disabled="tool.disabled") {{tool.name}}
+
+        templated-input(v-for="templ in template.tool",
+          :name="$key", v-if="show_tool_settings($key)"
+          :model.sync="config.tool[$key]", :template="templ")
 
           label.extra(slot="extra", v-if="$key == 'tool-enable-mode' || $key == 'tool-direction-mode'")
             | Pin {{templ.pin}}
             io-indicator(:name="$key", :state="state")
+
+      div(v-if="is_laser")
+        label Laser support is pre-configured, there are no user-adjustable settings.
 
       fieldset(v-if="is_pwm_spindle")
         h2 PWM Spindle
