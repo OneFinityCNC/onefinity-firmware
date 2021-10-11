@@ -128,6 +128,18 @@ script#control-view-template(type="text/x-template")
         button.pure-button.button-success(@click=`$emit("finalize_probe")`)
           | Done
 
+    message(:show.sync=`state.show_probe_failed_modal`)
+      h3(slot="header") Probing failed!
+
+      div(slot="body")
+        .pure-form
+          p Could not find the probe block during probing!
+          p Make sure the bit is within 1" / 25.4mm of the probe block, and try again.
+
+      div(slot="footer")
+        button.pure-button.button-success(@click=`hide_probe_failed_modal()`)
+          | OK
+
     table(style="table-layout: fixed; width: 100%;")
       tr(style="height: fit-content;")
         td(style="white-space: nowrap; width: 410px;", rowspan="2")

@@ -117,8 +117,10 @@ module.exports = new Vue({
       },
       state: {
         messages: [],
+        probing_active: false,
         wait_for_probing_complete: false,
-        show_probe_complete_modal: false
+        show_probe_complete_modal: false,
+        show_probe_failed_modal: false
       },
       video_size: cookie.get('video-size', 'small'),
       crosshair: cookie.get('crosshair', 'false') != 'false',
@@ -322,9 +324,6 @@ module.exports = new Vue({
 
         this.check_ip_address();
         this.check_ssid();
-        //.check_disk_space();
-
-
       }.bind(this))
     },
 
@@ -386,7 +385,12 @@ module.exports = new Vue({
         }
 
         if ('log' in e.data) {
-          this.$broadcast('log', e.data.log);
+          if (this.state.probing_active && e.data.log.msg === "Switch not found") {
+            this.$broadcast('probing_failed');
+          } else {
+            this.$broadcast('log', JSON.stringify(e.data.log, null, 4));
+          }
+
           delete e.data.log;
         }
 

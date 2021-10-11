@@ -240,7 +240,18 @@ module.exports = {
       this.send('M70\nG91\nG0' + axis + value + '\nM72');
     },
 
+    probing_failed: function() {
+      Vue.set(this.state, "probing_active", false);
+      Vue.set(this.state, "wait_for_probing_complete", false);
+      Vue.set(this.state, "show_probe_complete_modal", false);
+      Vue.set(this.state, "goto_xy_zero_after_probe", false);
+
+      Vue.set(this.state, "show_probe_failed_modal", true);
+    },
+
     probing_complete: function() {
+      Vue.set(this.state, "probing_active", false);
+
       if (this.config.settings['probing-prompts']) {
         Vue.set(this.state, "show_probe_complete_modal", true);
       } else {
@@ -303,6 +314,10 @@ module.exports = {
       on_finish();
     },
 
+    hide_probe_failed_modal: function() {
+      Vue.set(this.state, "show_probe_failed_modal", false);
+    },
+
     prep_and_show_tool_diameter_modal() {
       this.tool_diameter_for_prompt = (this.mach_units == 'METRIC')
           ? this.tool_diameter
@@ -351,6 +366,7 @@ module.exports = {
       // Also, add zlift to compensate for the fact that we lift after probing Z
       const plunge = Math.min(12.7, zoffset * 0.75) + zlift;
 
+      Vue.set(this.state, "probing_active", true);
       Vue.set(this.state, "goto_xy_zero_after_probe", !zOnly);
 
       if (zOnly) {

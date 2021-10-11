@@ -216,14 +216,16 @@ class Comm(object):
                     self.log.warning('%s, data: %s', e, line)
                     continue
 
-                if 'variables' in msg: self._update_vars(msg)
-                elif 'msg' in msg: self._log_msg(msg)
-
+                if 'variables' in msg:
+                    self._update_vars(msg)
+                elif 'msg' in msg:
+                    self._log_msg(msg)
+                    self.ctrl.mach.process_log(msg)
                 elif 'firmware' in msg:
                     self.log.info('AVR firmware rebooted')
                     self.connect()
-
-                else: self._update_state(msg)
+                else:
+                    self._update_state(msg)
 
 
     def estop(self):
