@@ -10,6 +10,7 @@
     "jstransformer-escape-html": "",
     "jstransformer-stylus": "",
     "lodash.merge": "4.6.2",
+    "lodash.omit": "^4.5.0",
     "pug-cli": ""
   }
 }

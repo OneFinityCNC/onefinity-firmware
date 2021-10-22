@@ -27,9 +27,10 @@
 
 'use strict'
 
-var api = require('./api');
-var cookie = require('./cookie')('bbctrl-');
-var Sock = require('./sock');
+const api = require('./api');
+const cookie = require('./cookie')('bbctrl-');
+const Sock = require('./sock');
+const omit = require('lodash.omit');
 
 function is_newer_version(current, latest) {
   const pattern = /(\d+)\.(\d+)\.(\d+)(.*)/;
@@ -385,10 +386,10 @@ module.exports = new Vue({
         }
 
         if ('log' in e.data) {
-          if (this.state.probing_active && e.data.log.msg === "Switch not found") {
+          if (e.data.log.msg === "Switch not found") {
             this.$broadcast('probing_failed');
           } else {
-            this.$broadcast('log', JSON.stringify(e.data.log, null, 4));
+            this.$broadcast('log', e.data.log);
           }
 
           delete e.data.log;
@@ -404,6 +405,25 @@ module.exports = new Vue({
             }
 
             location.reload();
+          }
+        }
+
+        // Set this to true to get console output of changes to the state
+        const debugStateChanges = false;
+        if (debugStateChanges) {
+          const data = omit(e.data, [
+            'vdd',
+            'vin',
+            'vout',
+            'motor',
+            'temp',
+            'heartbeat',
+            'load1',
+            'load2',
+            'rpi_temp'
+          ]);
+          if (Object.keys(data).length > 0) {
+            console.log(JSON.stringify(data, null, 4));
           }
         }
 

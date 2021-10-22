@@ -182,7 +182,7 @@ html(lang="en")
         p This process should take less than 5 minutes.  If it takes longer than this, please restart the controller and try via USB.
       div(slot="footer")
 
-    message(v-if="popupMessages.length", :show="true")
+    message(v-if="popupMessages.length", show=true)
       h3(slot="header") GCode message
 
       div(slot="body")
