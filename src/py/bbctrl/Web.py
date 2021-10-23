@@ -441,7 +441,8 @@ class ClientConnection(object):
         self.app.closed(self.ctrl)
 
 
-    def on_message(self, data): self.ctrl.mach.mdi(data)
+    def on_message(self, data):
+        self.ctrl.mach.mdi(data)
 
 
 # Used by CAMotics
@@ -451,8 +452,11 @@ class WSConnection(ClientConnection, tornado.websocket.WebSocketHandler):
         tornado.websocket.WebSocketHandler.__init__(
             self, app, request, **kwargs)
 
-    def send(self, msg): self.write_message(msg)
-    def open(self): self.on_open()
+    def send(self, msg):
+        self.write_message(msg)
+
+    def open(self):
+        self.on_open()
 
 
 # Used by Web frontend

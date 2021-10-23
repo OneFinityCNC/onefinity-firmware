@@ -64,7 +64,7 @@ class Planner():
 
         ctrl.state.add_listener(self._update)
 
-        self.reset(False)
+        self.reset(stop = False)
         self._report_time()
 
 
@@ -324,8 +324,11 @@ class Planner():
             self.planner.set_logger(None)
 
 
-    def reset(self, stop = True):
-        if stop: self.ctrl.mach.stop()
+    def reset(self, *args, **kwargs):
+        stop = kwargs.get('stop', True)
+        if stop:
+            self.ctrl.mach.stop()
+
         self.planner = gplan.Planner()
         self.planner.set_resolver(self._get_var_cb)
         # TODO logger is global and will not work correctly in demo mode
@@ -333,7 +336,10 @@ class Planner():
         self._position_dirty = True
         self.cmdq.clear()
         self.reset_times()
-        self.ctrl.state.reset()
+
+        resetState = kwargs.get('resetState', True)
+        if resetState:
+            self.ctrl.state.reset()
 
 
     def mdi(self, cmd, with_limits = True):

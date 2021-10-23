@@ -136,7 +136,7 @@ class Mach(Comm):
     def process_log(self, log):
         # Detect when a probe has failed, and reset the planner
         if log['msg'] == 'Switch not found':
-            self.planner.reset(False)
+            self.planner.reset(stop = False, resetState = False)
 
 
     def _update(self, update):
@@ -152,7 +152,7 @@ class Mach(Comm):
 
         # Handle EStop
         if state_changed and state == 'ESTOPPED':
-            self.planner.reset(False)
+            self.planner.reset(stop = False)
 
         # Exit cycle if state changed to READY
         if (state_changed and self._get_cycle() != 'idle' and
@@ -201,9 +201,6 @@ class Mach(Comm):
         self.unpausing = True
 
 
-    def _reset(self): self.planner.reset()
-
-
     def _i2c_block(self, block):
         super().i2c_command(block[0], block = block[1:])
 
@@ -218,12 +215,13 @@ class Mach(Comm):
 
 
     @overrides(Comm)
-    def comm_error(self): self._reset()
+    def comm_error(self):
+        self.planner.reset()
 
 
     @overrides(Comm)
     def connect(self):
-        self._reset()
+        self.planner.reset()
         super().connect()
 
 
@@ -246,14 +244,17 @@ class Mach(Comm):
 
 
     def mdi(self, cmd, with_limits = True):
-        if not len(cmd): return
-        if   cmd[0] == '$':  self._query_var(cmd)
-        elif cmd[0] == '\\': super().queue_command(cmd[1:])
-        else:
-            self._begin_cycle('mdi')
-            self.planner.mdi(cmd, with_limits)
-            super().resume()
-
+        try:
+            if not len(cmd): return
+            if   cmd[0] == '$':  self._query_var(cmd)
+            elif cmd[0] == '\\': super().queue_command(cmd[1:])
+            else:
+                self._begin_cycle('mdi')
+                self.planner.mdi(cmd, with_limits)
+                super().resume()
+        except BaseException as err:
+            self.mlog.info("Exception during MDI: %s" % err)
+            pass
 
     def set(self, code, value):
         super().queue_command('${}={}'.format(code, value))
@@ -312,7 +313,7 @@ class Mach(Comm):
 
     def clear(self):
         if self._is_estopped():
-            self._reset()
+            self.planner.reset()
             super().clear()
 
 
