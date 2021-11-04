@@ -134,9 +134,10 @@ class Mach(Comm):
 
     
     def process_log(self, log):
-        # Detect when a probe has failed, and reset the planner
+        # When a probe has failed, we have to e-stop or things
+        # end up in a bad state, where positions and offsets are incorrect
         if log['msg'] == 'Switch not found':
-            self.planner.reset(stop = False, resetState = False)
+            self.estop()
 
 
     def _update(self, update):
