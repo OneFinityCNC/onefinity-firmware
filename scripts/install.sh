@@ -157,6 +157,7 @@ fi
 # Delete some cookies that were left behind in older images
 chmod +x ./scripts/delete-cookies.py
 ./scripts/delete-cookies.py
+pkill -HUP chromium # Force Chromium to restart, to see the cookie changes
 
 # Get rid of some old files that were left behind in older images
 rm -rf /home/pi/hostinfo.txt
