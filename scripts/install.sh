@@ -154,15 +154,11 @@ if [ ! -e /etc/cron.d/reboot ]; then
     cp ./scripts/cron_reboot_logrotate /etc/cron.reboot/logrotate
 fi
 
-##########################################
-# Begin one-time cleanup tasks for 1.0.7
-##########################################
+# Delete some cookies that were left behind in older images
+chmod +x ./scripts/delete-cookies.py
+./scripts/delete-cookies.py
 
-# Delete cached login data
-rm -rf "/home/pi/.config/chromium/Login Data"
-rm -rf "/home/pi/.config/chromium/Login Data.journal"
-
-# Get rid of some old files that were left behind
+# Get rid of some old files that were left behind in older images
 rm -rf /home/pi/hostinfo.txt
 rm -rf /home/pi/ssidinfo.txt
 rm -rf /home/Downloads/bbctrl-20200415.json
@@ -173,10 +169,6 @@ rm -rf /home/bbmc/favicon.ico
 
 # Force a logrotate to get everything into a good state
 logrotate -f /etc/logrotate.conf
-
-##########################################
-# End one-time cleanup tasks for 1.0.7
-##########################################
 
 sync
 
