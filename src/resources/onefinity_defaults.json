@@ -11,8 +11,8 @@
     "tool-enable-mode": "disabled",
     "tool-direction-mode": "disabled",
     "tool-type": "PWM Spindle",
-    "min-spin": 0,
-    "max-spin": 255
+    "min-spin": 6000,
+    "max-spin": 24000
   },
   "pwm-spindle": {
     "pwm-min-duty": 1,
@@ -230,8 +230,8 @@
         "tool-reversed": false,
         "tool-enable-mode": "disabled",
         "tool-direction-mode": "disabled",
-        "min-spin": 0,
-        "max-spin": 255
+        "min-spin": 6000,
+        "max-spin": 24000
       },
       "pwm-spindle": {
         "pwm-min-duty": 1,
