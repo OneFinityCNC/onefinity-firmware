@@ -50,6 +50,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <util/delay.h>
 
 
 // For emu
@@ -61,13 +62,18 @@ int main(int argc, char *argv[]) {
   __argc = argc;
   __argv = argv;
 
-  wdt_enable(WDTO_250MS);
+  
 
   // Init
   cli();                          // disable interrupts
 
   emu_init();                     // Init emulator
   hw_init();                      // hardware setup - must be first
+  
+  _delay_ms(5000);		  //2 seconds to charge capacitor banks, 1 second for shunt test, 2 seconds to recharge banks
+
+  wdt_enable(WDTO_250MS);
+
   outputs_init();                 // output pins
   switch_init();                  // switches
   estop_init();                   // emergency stop handler
