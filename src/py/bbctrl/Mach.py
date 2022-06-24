@@ -132,7 +132,7 @@ class Mach(Comm):
         # if current == 'idle' or (cycle == 'jogging' and self._is_paused()):
         self._set_cycle(cycle)
 
-    
+
     def process_log(self, log):
         # When a probe has failed, we have to e-stop or things
         # end up in a bad state, where positions and offsets are incorrect
@@ -335,7 +335,7 @@ class Mach(Comm):
     def stop(self):
         if self._get_state() != 'jogging': self.stopping = True
         super().i2c_command(Cmd.STOP)
-        
+
     def pause(self): super().pause()
 
 
@@ -381,3 +381,19 @@ class Mach(Comm):
 
     def modbus_write(self, addr, value):
         self._i2c_block(Cmd.modbus_write(addr, value))
+
+
+    def macro(self, macro):
+        macros = self.ctrl.config.get('macros')
+        if len(macros) < macro: raise Exception('Invalid macro id %d' % macro)
+        path = 'Home/' + macros[macro - 1]['path']
+
+        if not self.ctrl.fs.exists(path):
+            raise HTTPError(404, 'Macro file not found')
+
+        self.mlog.info('Running macro %d %s' % (macro, path))
+        self._begin_cycle('running')
+
+        # self.ctrl.queue.push(path)
+        self.planner.load(path, lambda: self.ctrl.queue.pop())
+        super().resume()

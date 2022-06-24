@@ -102,7 +102,7 @@ module.exports = {
       },
       immediate: true
     },
-    
+
     'state.bitDiameter': {
       handler: function (bitDiameter) {
           this.tool_diameter = bitDiameter;
@@ -328,6 +328,13 @@ module.exports = {
       this.show_tool_diameter_modal = true;
     },
 
+    run_macro: function (macro) {
+      api.put('macro/' + macro)
+         .fail(function (error) {
+           this.$root.error_dialog('Failed to run macro "' + macro + '":\n' + error.message)
+         }).bind(this);
+    },
+
     set_tool_diameter() {
       this.tool_diameter = parseFloat(this.tool_diameter_for_prompt);
 
@@ -340,7 +347,7 @@ module.exports = {
       if (this.mach_units !== "METRIC") {
         this.tool_diameter *= 25.4;
       }
-      
+
       this.probe_xyz();
     },
 
@@ -619,10 +626,10 @@ module.exports = {
 
 
     home: function (axis) {
-      
+
       this.ask_home = false;
-      this.ask_home_msg = false;     
-      
+      this.ask_home_msg = false;
+
       if (typeof axis == 'undefined') api.put('home');
 
       else {
@@ -648,7 +655,7 @@ module.exports = {
       this.axis_position = 0;
       this.position_msg[axis] = true;
     },
-    
+
     show_toolpath_msg : function(axis) {
       this.toolpath_msg[axis] = true;
     },

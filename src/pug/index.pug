@@ -39,6 +39,7 @@ html(lang="en")
     style: include ../static/css/font-awesome.min.css
     style: include ../static/css/Audiowide.css
     style: include ../static/css/clusterize.css
+    style: include ../static/css/codemirror.css
     style: include:stylus ../stylus/style.styl
 
 
@@ -70,6 +71,12 @@ html(lang="en")
               a.pure-menu-link(href="#tool") Tool
 
             li.pure-menu-heading
+              a.pure-menu-link(href="#macros") Macros
+
+            li.pure-menu-heading
+              a.pure-menu-link(href="#files") Files
+
+            li.pure-menu-heading
               a.pure-menu-link(href="#io") I/O
 
             li.pure-menu-heading
@@ -86,7 +93,7 @@ html(lang="en")
 
             li.pure-menu-heading
               a.pure-menu-link(href="#help") Help
-              
+
             button.pure-button.pure-button-primary(@click="confirmShutdown = true", style="width: 100%")
               .fa.fa-power-off
             message(:show.sync="confirmShutdown")
@@ -96,7 +103,7 @@ html(lang="en")
                 button.pure-button(@click="confirmShutdown = false") Cancel
                 button.pure-button.button-success(@click="shutdown") Shutdown
                 button.pure-button.button-success(@click="reboot") Restart
-              
+
 
       #main
         .header
@@ -134,6 +141,13 @@ html(lang="en")
         .content(class="{{currentView}}-view")
           component(:is="currentView + '-view'", :index="index",
             :config="config", :template="template", :state="state", keep-alive)
+
+    file-dialog(v-ref:file-dialog, :locations="state.locations")
+      upload-dialog(v-ref:uploader)
+      dialog(v-ref:dialog)
+
+    upload-dialog(v-ref:uploader)
+    dialog(v-ref:dialog)
 
     message.error-message(:show.sync="errorShow")
       div(slot="header")
@@ -211,4 +225,7 @@ html(lang="en")
     script: include ../static/js/clusterize.min.js
     script: include ../static/js/three.min.js
     script: include:browserify ../js/main.js
+    script: include ../static/js/codemirror.js
+    script: include ../static/js/codemirror-javascript.js
     script: include ../static/js/ui.js
+    script: include ../static/js/jscolor.min.js

@@ -1,0 +1,133 @@
+/******************************************************************************\
+
+                  This file is part of the Buildbotics firmware.
+
+         Copyright (c) 2015 - 2021, Buildbotics LLC, All rights reserved.
+
+          This Source describes Open Hardware and is licensed under the
+                                  CERN-OHL-S v2.
+
+          You may redistribute and modify this Source and make products
+     using it under the terms of the CERN-OHL-S v2 (https:/cern.ch/cern-ohl).
+            This Source is distributed WITHOUT ANY EXPRESS OR IMPLIED
+     WARRANTY, INCLUDING OF MERCHANTABILITY, SATISFACTORY QUALITY AND FITNESS
+      FOR A PARTICULAR PURPOSE. Please see the CERN-OHL-S v2 for applicable
+                                   conditions.
+
+                 Source location: https://github.com/buildbotics
+
+       As per CERN-OHL-S v2 section 4, should You produce hardware based on
+     these sources, You must maintain the Source Location clearly visible on
+     the external case of the CNC Controller or other product you make using
+                                   this Source.
+
+                 For more information, email info@buildbotics.com
+
+\******************************************************************************/
+
+.files .new-folder input
+  width calc(100% - 8px)
+
+.files-name
+  display flex
+  margin-bottom 0.5em
+
+  label
+    font-weight bold
+    margin-right 1em
+    line-height 34px
+
+  input
+    flex 1
+
+.files-path-bar
+  display flex
+  gap 5px
+  margin-bottom 5px
+
+  > :first-child
+    flex 1
+
+.files-list
+  table
+    width 100%
+    overflow-y auto
+
+  .name
+    text-align left
+
+  .size, .modified, .actions
+    text-align right
+    width 1%
+
+  .actions
+    a, a:visited, a:active
+      text-decoration none
+      color #777
+
+    .fa:hover
+      color #222
+
+  thead tr
+    background #444
+    color #eee
+
+  tbody tr
+    cursor pointer
+
+    &:nth-of-type(even)
+      background #fafafa
+
+    &:hover
+      background #f7f7f7
+
+    &.selected
+      color #222
+      background #ffdd74
+
+  td, th
+    padding 0 1em
+    white-space nowrap
+
+.file-dialog > .modal-mask > .modal-wrapper > .modal-container
+  width 800px
+  height 600px
+
+.file-dialog .modal-body > div, .files, .files-locations,
+.files-body, .files-box
+  display flex
+  flex-direction column
+  overflow hidden
+
+.files-location
+  max-width 12em
+  padding 0.25em 1em
+  text-overflow ellipsis
+  overflow hidden
+  cursor pointer
+  white-space nowrap
+
+  .fa
+    padding-right 0.5em
+
+  &:hover
+    background #f7f7f7
+
+  &.active
+    background #ddd
+    color #444
+
+.files-body
+  flex-direction row
+
+.files-box
+  flex 1
+
+.files-path
+  padding 0 1em
+
+.files-locations
+  border-right 1px solid #eee
+
+.files-locations, .files-list
+  overflow auto

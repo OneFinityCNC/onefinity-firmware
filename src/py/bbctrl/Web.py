@@ -76,11 +76,16 @@ class RebootHandler(bbctrl.APIHandler):
     def put_ok(self):
         self.get_ctrl().lcd.goodbye('Rebooting...')
         subprocess.Popen('reboot')
-        
+
 class ShutdownHandler(bbctrl.APIHandler):
     def put_ok(self):
         subprocess.Popen(['shutdown','-h','now'])
 
+class StateHandler(bbctrl.APIHandler):
+    def get(self, path):
+        if path is None or path == '' or path == '/':
+            self.write_json(self.get_ctrl().state.snapshot())
+        else: self.write_json(self.get_ctrl().state.get(path[1:]))
 
 class LogHandler(bbctrl.RequestHandler):
     def get(self):
@@ -273,6 +278,9 @@ class UpgradeHandler(bbctrl.APIHandler):
         self.get_ctrl().lcd.goodbye('Upgrading firmware')
         subprocess.Popen(['/usr/local/bin/upgrade-bbctrl'])
 
+class MacroHandler(bbctrl.APIHandler):
+    def put_ok(self, macro):
+        self.get_ctrl().mach.macro(int(macro))
 
 class PathHandler(bbctrl.APIHandler):
     @gen.coroutine
@@ -407,6 +415,18 @@ class JogHandler(bbctrl.APIHandler):
         self.get_ctrl().mach.jog(self.json)
 
 
+class KeyboardHandler(bbctrl.APIHandler):
+    def set_keyboard(self, show):
+        signal = 'SIGUSR' + ('1' if show else '2')
+        subprocess.call(['killall', '-' + signal, 'bbkbd'])
+
+
+    def put_ok(self, cmd, *args):
+        show = cmd == 'show'
+        enabled = self.get_ctrl().config.get('virtual-keyboard-enabled', True)
+        if enabled or not show: self.set_keyboard(show)
+
+
 # Base class for Web Socket connections
 class ClientConnection(object):
     def __init__(self, app):
@@ -511,6 +531,7 @@ class Web(tornado.web.Application):
 
         handlers = [
             (r'/websocket', WSConnection),
+            (r'/api/state(/.*)?',               StateHandler),
             (r'/api/log', LogHandler),
             (r'/api/message/(\d+)/ack', MessageAckHandler),
             (r'/api/bugreport', BugReportHandler),
@@ -528,6 +549,11 @@ class Web(tornado.web.Application):
             (r'/api/upgrade', UpgradeHandler),
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
+            (r'/api/fs/(.*)',                   bbctrl.FileSystemHandler),
+            (r'/api/macro/(\d+)',               MacroHandler),
+            (r'/api/(path)/(.*)',               PathHandler),
+            (r'/api/(positions)/(.*)',          PathHandler),
+            (r'/api/(speeds)/(.*)',             PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
             (r'/api/start', StartHandler),
             (r'/api/estop', EStopHandler),
@@ -544,6 +570,7 @@ class Web(tornado.web.Application):
             (r'/api/modbus/write', ModbusWriteHandler),
             (r'/api/jog', JogHandler),
             (r'/api/video', bbctrl.VideoHandler),
+            (r'/api/keyboard/((show)|(hide))',  KeyboardHandler),
             (r'/(.*)', StaticFileHandler,
              {'path': bbctrl.get_resource('http/'),
               'default_filename': 'index.html'}),
@@ -562,6 +589,10 @@ class Web(tornado.web.Application):
                 args.addr, args.port, e))
 
         print('Listening on http://%s:%d/' % (args.addr, args.port))
+
+
+    def get_image_resource(self, name):
+        return bbctrl.get_resource('http/images/%s.jpg' % name)
 
 
     def opened(self, ctrl): ctrl.clear_timeout()

@@ -293,7 +293,7 @@
     "tool-enable-mode": {
       "type": "enum",
       "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+        "hi-tri"],
       "default": "lo-hi",
       "code": "eom",
       "pin": 15
@@ -301,7 +301,7 @@
     "tool-direction-mode": {
       "type": "enum",
       "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+        "hi-tri"],
       "default": "lo-hi",
       "code": "dom",
       "pin": 16
@@ -453,7 +453,7 @@
     "load-1": {
       "type": "enum",
       "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+        "hi-tri"],
       "default": "lo-hi",
       "code": "1om",
       "pin": 2
@@ -461,7 +461,7 @@
     "load-2": {
       "type": "enum",
       "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+        "hi-tri"],
       "default": "lo-hi",
       "code": "2om",
       "pin": 1
@@ -469,7 +469,7 @@
     "fault": {
       "type": "enum",
       "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+        "hi-tri"],
       "default": "lo-hi",
       "code": "fom",
       "pin": 21
@@ -540,6 +540,16 @@
     "auto-check-upgrade": {
       "type": "bool",
       "default": true
+    }
+  },
+
+  "macros": {
+    "type": "list",
+    "default": [],
+    "template": {
+      "name": {"type": "string", "default": ""},
+      "path": {"type": "string", "default": ""},
+      "color": {"type": "string", "default": "#e6e6e6"}
     }
   }
 }

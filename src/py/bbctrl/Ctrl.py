@@ -37,13 +37,17 @@ class Ctrl(object):
         self.id = id
         self.timeout = None # Used in demo mode
 
-        if id and not os.path.exists(id): os.mkdir(id)
+        if id:
+            if not os.path.exists(id): os.mkdir(id)
+            self.root = './' + id
+        else: self.root = '.'
 
         # Start log
         if args.demo: log_path = self.get_path(filename = 'bbctrl.log')
         else: log_path = args.log
         self.log = bbctrl.log.Log(args, self.ioloop, log_path)
 
+        self.events = bbctrl.Events(self)
         self.state = bbctrl.State(self)
         self.config = bbctrl.Config(self)
 
@@ -57,6 +61,8 @@ class Ctrl(object):
             self.lcd = bbctrl.LCD(self)
             self.mach = bbctrl.Mach(self, self.avr)
             self.preplanner = bbctrl.Preplanner(self)
+            self.fs = bbctrl.FileSystem(self)
+            self.queue = bbctrl.ProgramQueue(self)
             if not args.demo: self.jog = bbctrl.Jog(self)
             self.pwr = bbctrl.Pwr(self)
 

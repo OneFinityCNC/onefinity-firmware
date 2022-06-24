@@ -70,15 +70,30 @@ $(function() {
 
   // Vue debugging
   Vue.config.debug = true;
+  Vue.config.devtools = true;
   //Vue.util.warn = function (msg) {console.debug('[Vue warn]: ' + msg)}
+
+  // Init global modules
+  require('./keyboard')
+
 
   // Register global components
   Vue.component('templated-input', require('./templated-input'));
+  Vue.component('templated-select', require('./templated-select'));
+  Vue.component('dialog', require('./dialog'))
+  Vue.component('files', require('./files'))
+  Vue.component('file-dialog', require('./file-dialog'))
+  Vue.component('upload-dialog', require('./upload-dialog'))
+  Vue.component('color-picker', require('./color-picker'))
   Vue.component('message', require('./message'));
   Vue.component('indicators', require('./indicators'));
   Vue.component('io-indicator', require('./io-indicator'));
   Vue.component('console', require('./console'));
   Vue.component('unit-value', require('./unit-value'));
+  Vue.component('message', require('./message'))
+  Vue.component('loading-message', require('./loading-message'))
+  Vue.component('nav-menu', require('./nav-menu'))
+  Vue.component('nav-item', require('./nav-item'))
 
   Vue.filter('number', function (value) {
     if (isNaN(value)) return 'NaN';

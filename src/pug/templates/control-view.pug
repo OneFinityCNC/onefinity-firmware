@@ -33,10 +33,10 @@ script#control-view-template(type="text/x-template")
       div(slot="body")
         h3 Please wait..
         p Simulating GCode to check for errors, calculate ETA and generate 3D view.
-        
+
       div(slot="footer")
         label Simulating {{(toolpath_progress || 0) | percent}}
-            
+
     message(:show.sync=`ask_home_msg`)
         h3(slot="header") Home Machine
 
@@ -46,10 +46,10 @@ script#control-view-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="home()")
             | OK
-            
+
           button.pure-button(@click='ask_home_msg = false; ask_home = false')
             | Cancel
-    
+
     message(:show.sync=`ask_zero_xy_msg`)
         h3(slot="header") XY Origin
 
@@ -59,10 +59,10 @@ script#control-view-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="goto_zero(1,1,0,0)")
             | Confirm
-            
+
           button.pure-button(@click='ask_zero_xy_msg = false')
             | Cancel
-    
+
     message(:show.sync=`ask_zero_z_msg`)
         h3(slot="header") Z Origin
 
@@ -72,7 +72,7 @@ script#control-view-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="goto_zero(0,0,1,0)")
             | Confirm
-            
+
           button.pure-button(@click='ask_zero_z_msg = false')
             | Cancel
 
@@ -223,7 +223,7 @@ script#control-view-template(type="text/x-template")
                 button.pure-button(title="Home all axes.", @click="home()",
                   :disabled="!is_idle",style="height:60px;width:60px")
                   .fa.fa-home
-            
+
             each axis in 'xyzabc'
               tr.axis(:class=`${axis}.klass`, v-if=`${axis}.enabled`,
                 :title=`${axis}.title`)
@@ -239,17 +239,17 @@ script#control-view-template(type="text/x-template")
                   | {{#{axis}.tstate}}
                 //td.tstate: unit-value(:value=`${axis}.pathMin`, precision=4)
                 //td.tstate: unit-value(:value=`${axis}.pathMax`, precision=4)
-                  
+
                 message(:show.sync=`toolpath_msg['${axis}']`)
                     h3(slot="header") Tool path info {{'#{axis}' | upper}} axis
-                
+
                     div(slot="body")
                       p {{#{axis}.toolmsg}}
-                
+
                     div(slot="footer")
                       button.pure-button(@click=`toolpath_msg['${axis}'] = false`)
                         | OK
-                
+
                 th.actions
                   button.pure-button(:disabled="!can_set_axis",
                     title=`Set {{'${axis}' | upper}} axis position.`,
@@ -307,7 +307,7 @@ script#control-view-template(type="text/x-template")
                       button.pure-button.button-success(
                         title=`Home {{'${axis}' | upper}} axis.`,
                         @click=`set_home('${axis}', axis_position)`) Set
-      
+
       tr(style="vertical-align: top;")
         td
           table(width="100%")
@@ -388,8 +388,20 @@ script#control-view-template(type="text/x-template")
                       label {{(progress || 0) | percent}}
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
+    .macros
+      button.pure-button.macro(v-for="macro in config.macros",
+        v-if="macro.path", @click="run_macro($index + 1)",
+        :title="'Run macro ' + ($index + 1) + ' ' + macro.name + '\n' + macro.path",
+        :style="{'background-color': macro.color}")
+        | {{($index + 1) + ' ' + macro.name}}
+
+      button.pure-button.macro(@click="goto('#settings:macros')",
+        title="Go to macro settings")
+        .fa.fa-cog
+        | Macros
+
     .tabs
-     
+
       input#tab1(type="radio", name="tabs",checked="" @click="tab = 'auto'")
       label(for="tab1", title="Run GCode programs",style="height:50px;width:100px") Auto
 
@@ -404,7 +416,7 @@ script#control-view-template(type="text/x-template")
 
 
 
-      
+
       section#content1.tab-content.pure-form
         .toolbar.pure-control-group
           button.pure-button(:class="{'attention': is_holding}",
@@ -512,4 +524,4 @@ script#control-view-template(type="text/x-template")
         v-model="speed_override", @change="override_speed")
       span.percent {{speed_override | percent 0}}
 
-    
+

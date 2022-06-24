@@ -146,10 +146,13 @@ module.exports = new Vue({
     'estop': { template: '#estop-template' },
     'loading-view': { template: '<h1>Loading...</h1>' },
     'control-view': require('./control-view'),
+    'editor-view': require('./view-editor'),
     'settings-view': require('./settings-view'),
+    'files-view': require('./view-files'),
     'motor-view': require('./motor-view'),
     'tool-view': require('./tool-view'),
     'io-view': require('./io-view'),
+    'macros-view': require('./macros-view'),
     'admin-general-view': require('./admin-general-view'),
     'admin-network-view': require('./admin-network-view'),
     'help-view': { template: '#help-view-template' },
@@ -249,6 +252,16 @@ module.exports = new Vue({
       return this.config.settings.units != 'IMPERIAL'
     },
 
+    file_dialog:    function (config) {this.$refs.fileDialog.open(config)},
+    upload:         function (config) {this.$refs.uploader.upload(config)},
+    open_dialog:    function (config) {this.$refs.dialog.open(config)},
+    error_dialog:   function (msg)    {this.$refs.dialog.error(msg)},
+    warning_dialog: function (msg)    {this.$refs.dialog.warning(msg)},
+    success_dialog: function (msg)    {this.$refs.dialog.success(msg)},
+    edit: function (path) {
+      cookie.set('selected-path', path);
+      location.hash = 'editor';
+    },
     block_error_dialog: function () {
       this.errorTimeoutStart = Date.now();
       this.errorShow = false;
@@ -501,6 +514,16 @@ module.exports = new Vue({
         var id = this.state.messages.slice(-1)[0].id
         api.put('message/' + id + '/ack');
       }
-    }
+    },
+
+    api_error: function (msg, error) {
+      if (error != undefined) {
+        if (error.message != undefined)
+          msg += '\n' + error.message;
+        else msg += '\n' + JSON.stringify(error);
+      }
+
+      this.error_dialog(msg);
+    },
   }
 })
