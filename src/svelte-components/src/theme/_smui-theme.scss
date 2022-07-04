@@ -1,0 +1,22 @@
+@use 'sass:color';
+
+@use '@material/theme/color-palette';
+
+// Svelte Colors!
+@use '@material/theme/index' as theme with (
+  $primary: #0078e7,
+  $secondary: #676778,
+  $surface: #fff,
+  $background: #fff,
+  $error: color-palette.$red-900,
+  $on-surface: #777
+);
+
+@use "@material/elevation/mdc-elevation";
+
+@use "@material/list";
+@include list.deprecated-core-styles;
+
+:root {
+  --mdc-theme-text-primary-on-background: #777;
+}
