@@ -1,9 +1,9 @@
-@use 'sass:color';
+@use "sass:color";
 
-@use '@material/theme/color-palette';
+@use "@material/theme/color-palette";
 
 // Svelte Colors!
-@use '@material/theme/index' as theme with (
+@use "@material/theme/index" as theme with (
   $primary: #0078e7,
   $secondary: #676778,
   $surface: #fff,
@@ -13,10 +13,19 @@
 );
 
 @use "@material/elevation/mdc-elevation";
-
 @use "@material/list";
+
 @include list.deprecated-core-styles;
 
 :root {
   --mdc-theme-text-primary-on-background: #777;
+
+  .mdc-dialog .mdc-dialog__content {
+    color: #777;
+  }
+
+  .mdc-dialog .mdc-dialog__title {
+    color: #777;
+    font-weight: bold;
+  }
 }

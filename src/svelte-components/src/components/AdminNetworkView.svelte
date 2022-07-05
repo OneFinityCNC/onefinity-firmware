@@ -1,7 +1,6 @@
 <script lang="ts">
   import WifiConnectionDialog from "../dialogs/WifiConnectionDialog.svelte";
   import ChangeHostnameDialog from "../dialogs/ChangeHostnameDialog.svelte";
-  import Paper from "@smui/paper";
   import Button, { Label } from "@smui/button";
   import List, { Item, Graphic, Text, Meta } from "@smui/list";
   import Card from "@smui/card";

@@ -20,6 +20,8 @@ html(lang="en")
     style: include:stylus ../stylus/style.styl
 
   body(v-cloak)
+    #svelte-dialog-host
+
     #overlay(v-if="status != 'connected'")
       span {{status}}
     

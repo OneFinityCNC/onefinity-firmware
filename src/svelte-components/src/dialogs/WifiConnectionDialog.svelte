@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions, InitialFocus } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import TextField from "@smui/textfield";
   import Icon from "@smui/textfield/icon";
@@ -22,7 +22,9 @@
 
   $: {
     connectOrDisconnect = network?.active ? "Disconnect" : "Connect";
-    connectToOrDisconnectFrom = network?.active ? "Disconnect from" : "Connect to";
+    connectToOrDisconnectFrom = network?.active
+      ? "Disconnect from"
+      : "Connect to";
   }
 
   $: if (open) {
@@ -92,6 +94,7 @@
 
     <Button
       defaultAction
+      use={[InitialFocus]}
       on:click={onConfirm}
       disabled={needPassword && (password.length < 8 || password.length > 128)}
     >

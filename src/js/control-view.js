@@ -27,7 +27,7 @@
 
 'use strict'
 
-var api    = require('./api');
+var api = require('./api');
 var cookie = require('./cookie')('bbctrl-');
 
 module.exports = {
@@ -81,7 +81,6 @@ module.exports = {
         c: false
       },
       ask_home: true,
-      ask_home_msg: false,
       ask_zero_xy_msg: false,
       ask_zero_z_msg: false,
       showGcodeMessage: false
@@ -102,10 +101,10 @@ module.exports = {
       },
       immediate: true
     },
-    
+
     'state.bitDiameter': {
       handler: function (bitDiameter) {
-          this.tool_diameter = bitDiameter;
+        this.tool_diameter = bitDiameter;
       },
       immediate: true
     },
@@ -115,7 +114,7 @@ module.exports = {
       if ((units == 'METRIC') != this.metric)
         this.send(units == 'METRIC' ? 'G21' : 'G20');
 
-        this.units_changed();
+      this.units_changed();
     },
 
     'state.line': function () {
@@ -129,7 +128,7 @@ module.exports = {
 
     jog_step: function () {
       cookie.set_bool('jog-step', this.jog_step);
-  },
+    },
 
     jog_adjust: function () {
       cookie.set('jog-adjust', this.jog_adjust);
@@ -148,13 +147,13 @@ module.exports = {
       var state = this.state.xx;
 
       if (typeof cycle != 'undefined' && state != 'ESTOPPED' &&
-          (cycle == 'jogging' || cycle == 'homing'))
+        (cycle == 'jogging' || cycle == 'homing'))
         return cycle.toUpperCase();
       return state || ''
     },
 
 
-    pause_reason: function () {return this.state.pr},
+    pause_reason: function () { return this.state.pr },
 
 
     is_running: function () {
@@ -162,20 +161,20 @@ module.exports = {
     },
 
 
-    is_stopping: function () {return this.mach_state == 'STOPPING'},
-    is_holding: function () {return this.mach_state == 'HOLDING'},
-    is_ready: function () {return this.mach_state == 'READY'},
-    is_idle: function () {return this.state.cycle == 'idle'},
+    is_stopping: function () { return this.mach_state == 'STOPPING' },
+    is_holding: function () { return this.mach_state == 'HOLDING' },
+    is_ready: function () { return this.mach_state == 'READY' },
+    is_idle: function () { return this.state.cycle == 'idle' },
 
 
     is_paused: function () {
       return this.is_holding &&
         (this.pause_reason == 'User pause' ||
-         this.pause_reason == 'Program pause')
+          this.pause_reason == 'Program pause')
     },
 
 
-    can_mdi: function () {return this.is_idle || this.state.cycle == 'mdi'},
+    can_mdi: function () { return this.is_idle || this.state.cycle == 'mdi' },
 
 
     can_set_axis: function () {
@@ -199,7 +198,7 @@ module.exports = {
     },
 
 
-    plan_time: function () {return this.state.plan_time},
+    plan_time: function () { return this.state.plan_time },
 
 
     plan_time_remaining: function () {
@@ -227,20 +226,20 @@ module.exports = {
 
   events: {
     jog: function (axis, power) {
-      var data = {ts: new Date().getTime()};
+      var data = { ts: new Date().getTime() };
       data[axis] = power;
       api.put('jog', data);
     },
 
-    back2zero: function(axis0,axis1) {
-      this.send("G0"+axis0+"0"+axis1+"0");
+    back2zero: function (axis0, axis1) {
+      this.send("G0" + axis0 + "0" + axis1 + "0");
     },
 
     step: function (axis, value) {
       this.send('M70\nG91\nG0' + axis + value + '\nM72');
     },
 
-    probing_failed: function() {
+    probing_failed: function () {
       Vue.set(this.state, "probing_active", false);
       Vue.set(this.state, "wait_for_probing_complete", false);
       Vue.set(this.state, "show_probe_complete_modal", false);
@@ -249,7 +248,7 @@ module.exports = {
       Vue.set(this.state, "show_probe_failed_modal", true);
     },
 
-    probing_complete: function() {
+    probing_complete: function () {
       Vue.set(this.state, "probing_active", false);
 
       if (this.config.settings['probing-prompts']) {
@@ -259,7 +258,7 @@ module.exports = {
       }
     },
 
-    finalize_probe: function() {
+    finalize_probe: function () {
       Vue.set(this.state, "show_probe_complete_modal", false);
 
       if (this.state.goto_xy_zero_after_probe) {
@@ -277,8 +276,8 @@ module.exports = {
 
 
   methods: {
-    units_changed : function() {
-      if(this.mach_units == 'METRIC') {
+    units_changed: function () {
+      if (this.mach_units == 'METRIC') {
         document.getElementById("jog_button_fine").innerHTML = "0.1";
         document.getElementById("jog_button_small").innerHTML = "1.0";
         document.getElementById("jog_button_medium").innerHTML = "10";
@@ -293,7 +292,7 @@ module.exports = {
       this.set_jog_incr('small');
     },
 
-    start_probe_test: function(on_finish) {
+    start_probe_test: function (on_finish) {
       if (!this.config.settings['probing-prompts']) {
         on_finish();
         return;
@@ -304,7 +303,7 @@ module.exports = {
       Vue.set(this.state, "on_probe_finish", on_finish);
     },
 
-    finish_probe_test: function() {
+    finish_probe_test: function () {
       this.show_probe_test_modal = false;
       Vue.set(this.state, "saw_probe_connected", false);
 
@@ -314,14 +313,14 @@ module.exports = {
       on_finish();
     },
 
-    hide_probe_failed_modal: function() {
+    hide_probe_failed_modal: function () {
       Vue.set(this.state, "show_probe_failed_modal", false);
     },
 
     prep_and_show_tool_diameter_modal() {
       this.tool_diameter_for_prompt = (this.mach_units == 'METRIC')
-          ? this.tool_diameter
-          : this.tool_diameter / 25.4;
+        ? this.tool_diameter
+        : this.tool_diameter / 25.4;
 
       this.tool_diameter_for_prompt = this.tool_diameter_for_prompt.toFixed(3).replace(/0+$/, "");
 
@@ -340,7 +339,7 @@ module.exports = {
       if (this.mach_units !== "METRIC") {
         this.tool_diameter *= 25.4;
       }
-      
+
       this.probe_xyz();
     },
 
@@ -429,7 +428,7 @@ module.exports = {
       this.probe(true);
     },
 
-    set_jog_incr: function(newValue) {
+    set_jog_incr: function (newValue) {
       document.getElementById("jog_button_fine").style.fontWeight = 'normal';
       document.getElementById("jog_button_small").style.fontWeight = 'normal';
       document.getElementById("jog_button_medium").style.fontWeight = 'normal';
@@ -437,19 +436,19 @@ module.exports = {
 
       if (newValue == 'fine') {
         document.getElementById("jog_button_fine").style.fontWeight = 'bold';
-        if(this.mach_units == 'METRIC')
+        if (this.mach_units == 'METRIC')
           this.jog_incr = 0.1;
         else
           this.jog_incr = 0.005;
       } else if (newValue == 'small') {
         document.getElementById("jog_button_small").style.fontWeight = 'bold';
-        if(this.mach_units == 'METRIC')
+        if (this.mach_units == 'METRIC')
           this.jog_incr = 1.0;
         else
           this.jog_incr = 0.05;
       } else if (newValue == 'medium') {
         document.getElementById("jog_button_medium").style.fontWeight = 'bold';
-        if(this.mach_units == 'METRIC')
+        if (this.mach_units == 'METRIC')
           this.jog_incr = 10;
         else
           this.jog_incr = 0.5;
@@ -462,15 +461,15 @@ module.exports = {
       }
     },
 
-    goto_zero(zero_x,zero_y,zero_z,zero_a) {
+    goto_zero(zero_x, zero_y, zero_z, zero_a) {
       var xcmd = "";
       var ycmd = "";
       var zcmd = "";
       var acmd = "";
-      if(zero_x) xcmd = "X0";
-      if(zero_y) ycmd = "Y0";
-      if(zero_z) zcmd = "Z0";
-      if(zero_a) acmd = "A0";
+      if (zero_x) xcmd = "X0";
+      if (zero_y) ycmd = "Y0";
+      if (zero_z) zcmd = "Z0";
+      if (zero_a) acmd = "A0";
 
       this.ask_zero_xy_msg = false;
       this.ask_zero_z_msg = false;
@@ -478,7 +477,7 @@ module.exports = {
       this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
-    jog_fn: function (x_jog,y_jog,z_jog,a_jog) {
+    jog_fn: function (x_jog, y_jog, z_jog, a_jog) {
       var xcmd = "X" + x_jog * this.jog_incr;
       var ycmd = "Y" + y_jog * this.jog_incr;
       var zcmd = "Z" + z_jog * this.jog_incr;
@@ -619,22 +618,24 @@ module.exports = {
 
 
     home: function (axis) {
-      
       this.ask_home = false;
-      this.ask_home_msg = false;     
-      
-      if (typeof axis == 'undefined') api.put('home');
 
-      else {
-        if (this[axis].homingMode != 'manual') api.put('home/' + axis);
-        else this.manual_home[axis] = true;
+      if (typeof axis == 'undefined') {
+        api.put('home');
+      } else {
+        if (this[axis].homingMode != 'manual') {
+          api.put('home/' + axis);
+        }
+        else {
+          this.manual_home[axis] = true;
+        }
       }
     },
 
 
     set_home: function (axis, position) {
       this.manual_home[axis] = false;
-      api.put('home/' + axis + '/set', {position: parseFloat(position)});
+      api.put('home/' + axis + '/set', { position: parseFloat(position) });
     },
 
 
@@ -648,15 +649,15 @@ module.exports = {
       this.axis_position = 0;
       this.position_msg[axis] = true;
     },
-    
-    show_toolpath_msg : function(axis) {
+
+    show_toolpath_msg: function (axis) {
       this.toolpath_msg[axis] = true;
     },
 
 
     set_position: function (axis, position) {
       this.position_msg[axis] = false;
-      api.put('position/' + axis, {'position': parseFloat(position)});
+      api.put('position/' + axis, { 'position': parseFloat(position) });
     },
 
 
@@ -682,15 +683,15 @@ module.exports = {
     },
 
 
-    start: function () {api.put('start')},
-    pause: function () {api.put('pause')},
-    unpause: function () {api.put('unpause')},
-    optional_pause: function () {api.put('pause/optional')},
-    stop: function () {api.put('stop')},
-    step: function () {api.put('step')},
+    start: function () { api.put('start') },
+    pause: function () { api.put('pause') },
+    unpause: function () { api.put('unpause') },
+    optional_pause: function () { api.put('pause/optional') },
+    stop: function () { api.put('stop') },
+    step: function () { api.put('step') },
 
 
-    override_feed: function () {api.put('override/feed/' + this.feed_override)},
+    override_feed: function () { api.put('override/feed/' + this.feed_override) },
 
 
     override_speed: function () {

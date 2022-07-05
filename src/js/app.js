@@ -6,6 +6,9 @@ const Sock = require("./sock");
 const omit = require("lodash.omit");
 
 SvelteComponents.initNetworkInfo();
+SvelteComponents.createComponent("DialogHost",
+  document.getElementById("svelte-dialog-host")
+);
 
 function is_newer_version(current, latest) {
   const pattern = /(\d+)\.(\d+)\.(\d+)(.*)/;

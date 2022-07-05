@@ -36,20 +36,7 @@ script#control-view-template(type="text/x-template")
         
       div(slot="footer")
         label Simulating {{(toolpath_progress || 0) | percent}}
-            
-    message(:show.sync=`ask_home_msg`)
-        h3(slot="header") Home Machine
 
-        div(slot="body")
-          p Home the machine?
-
-        div(slot="footer")
-          button.pure-button(@click="home()")
-            | OK
-            
-          button.pure-button(@click='ask_home_msg = false; ask_home = false')
-            | Cancel
-    
     message(:show.sync=`ask_zero_xy_msg`)
         h3(slot="header") XY Origin
 
@@ -496,9 +483,6 @@ script#control-view-template(type="text/x-template")
 
       section#content4.tab-content
         indicators(:state="state", :template="template")
-
-
-
 
     .override(title="Feed rate override.")
       label Feed
