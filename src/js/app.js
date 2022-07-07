@@ -3,7 +3,6 @@
 const api = require("./api");
 const cookie = require("./cookie")("bbctrl-");
 const Sock = require("./sock");
-const omit = require("lodash.omit");
 
 SvelteComponents.initNetworkInfo();
 SvelteComponents.createComponent("DialogHost",
@@ -84,6 +83,7 @@ module.exports = new Vue({
     return {
       status: "connecting",
       currentView: "loading",
+      display_units: localStorage.getItem("display_units") || "METRIC",
       index: -1,
       modified: false,
       template: require("../resources/config-template.json"),
@@ -95,10 +95,6 @@ module.exports = new Vue({
       },
       state: {
         messages: [],
-        probing_active: false,
-        wait_for_probing_complete: false,
-        show_probe_complete_modal: false,
-        show_probe_failed_modal: false,
       },
       video_size: cookie.get("video-size", "small"),
       crosshair: cookie.get("crosshair", "false") != "false",
@@ -130,8 +126,16 @@ module.exports = new Vue({
     "cheat-sheet-view": {
       template: "#cheat-sheet-view-template",
       data: function () {
-        return { showUnimplemented: false };
+        return {
+          showUnimplemented: false
+        };
       },
+    },
+  },
+
+  watch: {
+    display_units: function (value) {
+      localStorage.setItem("display_units", value);
     },
   },
 
@@ -142,7 +146,6 @@ module.exports = new Vue({
 
     send: function (msg) {
       if (this.status == "connected") {
-        console.debug(">", msg);
         this.sock.send(msg);
       }
     },
@@ -214,10 +217,6 @@ module.exports = new Vue({
   },
 
   methods: {
-    metric: function () {
-      return this.config.settings.units != "IMPERIAL";
-    },
-
     block_error_dialog: function () {
       this.errorTimeoutStart = Date.now();
       this.errorShow = false;
@@ -297,6 +296,7 @@ module.exports = new Vue({
         if (typeof check == "undefined" || check) this.$emit("check");
       }
 
+      SvelteComponents.handleConfigUpdate(this.config);
     },
 
     shutdown: function () {
@@ -318,13 +318,9 @@ module.exports = new Vue({
         }
 
         if ("log" in e.data) {
-          if (e.data.log.msg === "Switch not found") {
-            this.$broadcast("probing_failed");
-          } else {
+          if (e.data.log.msg !== "Switch not found") {
             this.$broadcast("log", e.data.log);
           }
-
-          delete e.data.log;
         }
 
         // Check for session ID change on controller
@@ -343,37 +339,11 @@ module.exports = new Vue({
           }
         }
 
-        // Set this to true to get console output of changes to the state
-        const debugStateChanges = false;
-        if (debugStateChanges) {
-          const data = omit(e.data, [
-            "vdd",
-            "vin",
-            "vout",
-            "motor",
-            "temp",
-            "heartbeat",
-            "load1",
-            "load2",
-            "rpi_temp",
-          ]);
-          if (Object.keys(data).length > 0) {
-            console.log(JSON.stringify(data, null, 4));
-          }
-        }
-
         update_object(this.state, e.data, false);
 
-        if (this.state.pw === 0) {
-          Vue.set(this.state, "saw_probe_connected", true);
-        }
+        SvelteComponents.handleControllerStateUpdate(this.state);
 
-        if (this.state.cycle === "idle") {
-          if (this.state.wait_for_probing_complete) {
-            Vue.set(this.state, "wait_for_probing_complete", false);
-            this.$broadcast("probing_complete");
-          }
-        }
+        delete this.state.log;
 
         this.$broadcast("update");
       };
@@ -406,7 +376,7 @@ module.exports = new Vue({
       this.currentView = parts[0];
     },
 
-    save: function () {
+    save: async function () {
       const selected_tool = this.config.tool["selected-tool"];
       const saveModbus =
         selected_tool !== "pwm" &&
@@ -423,16 +393,12 @@ module.exports = new Vue({
 
       this.config["selected-tool-settings"][selected_tool] = settings;
 
-      api
-        .put("config/save", this.config)
-        .done(
-          function (data) {
-            this.modified = false;
-          }.bind(this)
-        )
-        .fail(function (error) {
-          api.alert("Save failed", error);
-        });
+      try {
+        await api.put("config/save", this.config);
+        this.modified = false;
+      } catch (error) {
+        api.alert("Save failed", error);
+      }
     },
 
     close_messages: function (action) {

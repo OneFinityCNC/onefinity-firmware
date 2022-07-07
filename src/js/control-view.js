@@ -1,30 +1,3 @@
-/******************************************************************************\
-
-                 This file is part of the Buildbotics firmware.
-
-                   Copyright (c) 2015 - 2018, Buildbotics LLC
-                              All rights reserved.
-
-      This file ("the software") is free software: you can redistribute it
-      and/or modify it under the terms of the GNU General Public License,
-       version 2 as published by the Free Software Foundation. You should
-       have received a copy of the GNU General Public License, version 2
-      along with the software. If not, see <http://www.gnu.org/licenses/>.
-
-      The software is distributed in the hope that it will be useful, but
-           WITHOUT ANY WARRANTY; without even the implied warranty of
-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-                Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public
-                 License along with the software.  If not, see
-                        <http://www.gnu.org/licenses/>.
-
-                 For information regarding this software email:
-                   "Joseph Coffland" <joseph@buildbotics.com>
-
-\******************************************************************************/
-
 'use strict'
 
 var api = require('./api');
@@ -36,7 +9,7 @@ module.exports = {
 
   data: function () {
     return {
-      mach_units: 'METRIC',
+      mach_units: this.$root.state.metric ? "METRIC" : "IMPERIAL",
       mdi: '',
       last_file: undefined,
       last_file_time: undefined,
@@ -62,16 +35,26 @@ module.exports = {
         b: false,
         c: false
       },
+      jog_incr_amounts: {
+        "METRIC": {
+          fine: 0.1,
+          small: 1.0,
+          medium: 10,
+          large: 100,
+        },
+        "IMPERIAL": {
+          fine: 0.005,
+          small: 0.05,
+          medium: 0.5,
+          large: 5,
+        }
+      },
       axis_position: 0,
+      jog_incr: localStorage.getItem("jog_incr") || 'small',
       jog_step: cookie.get_bool('jog-step'),
       jog_adjust: parseInt(cookie.get('jog-adjust', 2)),
       deleteGCode: false,
       tab: 'auto',
-      jog_incr: 1.0,
-      tool_diameter: 6.35,
-      tool_diameter_for_prompt: 6.35,
-      show_probe_test_modal: false,
-      show_tool_diameter_modal: false,
       toolpath_msg: {
         x: false,
         y: false,
@@ -93,33 +76,24 @@ module.exports = {
     'gcode-viewer': require('./gcode-viewer')
   },
 
-
   watch: {
-    'state.imperial': {
-      handler: function (imperial) {
-        this.mach_units = imperial ? 'IMPERIAL' : 'METRIC';
-      },
-      immediate: true
+    jog_incr: function (value) {
+      localStorage.setItem("jog_incr", value);
     },
 
-    'state.bitDiameter': {
-      handler: function (bitDiameter) {
-        this.tool_diameter = bitDiameter;
+    'state.metric': {
+      handler: function (metric) {
+        this.mach_units = metric
+          ? 'METRIC'
+          : 'IMPERIAL';
       },
       immediate: true
-    },
-
-
-    mach_units: function (units) {
-      if ((units == 'METRIC') != this.metric)
-        this.send(units == 'METRIC' ? 'G21' : 'G20');
-
-      this.units_changed();
     },
 
     'state.line': function () {
-      if (this.mach_state != 'HOMING')
+      if (this.mach_state != 'HOMING') {
         this.$broadcast('gcode-line', this.state.line);
+      }
     },
 
     'state.selected_time': function () {
@@ -135,37 +109,56 @@ module.exports = {
     }
   },
 
-
   computed: {
-    metric: function () {
-      return !this.state.imperial;
+    display_units: {
+      cache: false,
+      get: function () {
+        return this.$root.display_units;
+      },
+      set: function (value) {
+        this.$root.display_units = value;
+      }
     },
 
+    metric: function () {
+      return this.display_units === "METRIC";
+    },
 
     mach_state: function () {
       var cycle = this.state.cycle;
       var state = this.state.xx;
 
       if (typeof cycle != 'undefined' && state != 'ESTOPPED' &&
-        (cycle == 'jogging' || cycle == 'homing'))
+        (cycle == 'jogging' || cycle == 'homing')) {
         return cycle.toUpperCase();
+      }
+
       return state || ''
     },
 
-
-    pause_reason: function () { return this.state.pr },
-
+    pause_reason: function () {
+      return this.state.pr
+    },
 
     is_running: function () {
       return this.mach_state == 'RUNNING' || this.mach_state == 'HOMING';
     },
 
+    is_stopping: function () {
+      return this.mach_state == 'STOPPING'
+    },
 
-    is_stopping: function () { return this.mach_state == 'STOPPING' },
-    is_holding: function () { return this.mach_state == 'HOLDING' },
-    is_ready: function () { return this.mach_state == 'READY' },
-    is_idle: function () { return this.state.cycle == 'idle' },
+    is_holding: function () {
+      return this.mach_state == 'HOLDING'
+    },
 
+    is_ready: function () {
+      return this.mach_state == 'READY'
+    },
+
+    is_idle: function () {
+      return this.state.cycle == 'idle'
+    },
 
     is_paused: function () {
       return this.is_holding &&
@@ -173,9 +166,9 @@ module.exports = {
           this.pause_reason == 'Program pause')
     },
 
-
-    can_mdi: function () { return this.is_idle || this.state.cycle == 'mdi' },
-
+    can_mdi: function () {
+      return this.is_idle || this.state.cycle == 'mdi'
+    },
 
     can_set_axis: function () {
       return this.is_idle
@@ -183,46 +176,58 @@ module.exports = {
       return this.is_idle || this.is_paused
     },
 
-
     message: function () {
-      if (this.mach_state == 'ESTOPPED') return this.state.er;
-      if (this.mach_state == 'HOLDING') return this.state.pr;
-      if (this.state.messages.length)
+      if (this.mach_state == 'ESTOPPED') {
+        return this.state.er;
+      }
+
+      if (this.mach_state == 'HOLDING') {
+        return this.state.pr;
+      }
+
+      if (this.state.messages.length) {
         return this.state.messages.slice(-1)[0].text;
+      }
+
       return '';
     },
-
 
     highlight_state: function () {
       return this.mach_state == 'ESTOPPED' || this.mach_state == 'HOLDING';
     },
 
-
-    plan_time: function () { return this.state.plan_time },
-
+    plan_time: function () {
+      return this.state.plan_time
+    },
 
     plan_time_remaining: function () {
-      if (!(this.is_stopping || this.is_running || this.is_holding)) return 0;
+      if (!(this.is_stopping || this.is_running || this.is_holding)) {
+        return 0;
+      }
+
       return this.toolpath.time - this.plan_time
     },
 
-
     eta: function () {
-      if (this.mach_state != 'RUNNING') return '';
+      if (this.mach_state != 'RUNNING') {
+        return '';
+      }
+
       var remaining = this.plan_time_remaining;
       var d = new Date();
       d.setSeconds(d.getSeconds() + remaining);
       return d.toLocaleString();
     },
 
-
     progress: function () {
-      if (!this.toolpath.time || this.is_ready) return 0;
+      if (!this.toolpath.time || this.is_ready) {
+        return 0;
+      }
+
       var p = this.plan_time / this.toolpath.time;
       return p < 1 ? p : 1;
     }
   },
-
 
   events: {
     jog: function (axis, power) {
@@ -232,244 +237,34 @@ module.exports = {
     },
 
     back2zero: function (axis0, axis1) {
-      this.send("G0" + axis0 + "0" + axis1 + "0");
+      this.send(`G0 ${axis0}0 ${axis1}0`);
     },
 
     step: function (axis, value) {
-      this.send('M70\nG91\nG0' + axis + value + '\nM72');
+      this.send(`
+        M70
+        G91
+        G0 ${axis}${value}
+        M72
+      `);
     },
-
-    probing_failed: function () {
-      Vue.set(this.state, "probing_active", false);
-      Vue.set(this.state, "wait_for_probing_complete", false);
-      Vue.set(this.state, "show_probe_complete_modal", false);
-      Vue.set(this.state, "goto_xy_zero_after_probe", false);
-
-      Vue.set(this.state, "show_probe_failed_modal", true);
-    },
-
-    probing_complete: function () {
-      Vue.set(this.state, "probing_active", false);
-
-      if (this.config.settings['probing-prompts']) {
-        Vue.set(this.state, "show_probe_complete_modal", true);
-      } else {
-        this.$emit("finalize_probe");
-      }
-    },
-
-    finalize_probe: function () {
-      Vue.set(this.state, "show_probe_complete_modal", false);
-
-      if (this.state.goto_xy_zero_after_probe) {
-        this.goto_zero(1, 1, 0, 0);
-      }
-
-      Vue.set(this.state, "goto_xy_zero_after_probe", false);
-    }
   },
-
 
   ready: function () {
-    this.load()
+    this.load();
+
+    SvelteComponents.registerControllerMethods({
+      send: (...args) => this.send(...args),
+      goto_zero: (...args) => this.goto_zero(...args)
+    });
   },
 
-
   methods: {
-    units_changed: function () {
-      if (this.mach_units == 'METRIC') {
-        document.getElementById("jog_button_fine").innerHTML = "0.1";
-        document.getElementById("jog_button_small").innerHTML = "1.0";
-        document.getElementById("jog_button_medium").innerHTML = "10";
-        document.getElementById("jog_button_large").innerHTML = "100";
-      } else {
-        document.getElementById("jog_button_fine").innerHTML = "0.005";
-        document.getElementById("jog_button_small").innerHTML = "0.05";
-        document.getElementById("jog_button_medium").innerHTML = "0.5";
-        document.getElementById("jog_button_large").innerHTML = "5";
-      }
-
-      this.set_jog_incr('small');
-    },
-
-    start_probe_test: function (on_finish) {
-      if (!this.config.settings['probing-prompts']) {
-        on_finish();
-        return;
-      }
-
-      this.show_probe_test_modal = true;
-      Vue.set(this.state, "saw_probe_connected", false);
-      Vue.set(this.state, "on_probe_finish", on_finish);
-    },
-
-    finish_probe_test: function () {
-      this.show_probe_test_modal = false;
-      Vue.set(this.state, "saw_probe_connected", false);
-
-      const on_finish = this.state.on_probe_finish;
-      Vue.set(this.state, "on_probe_finish", undefined);
-
-      on_finish();
-    },
-
-    hide_probe_failed_modal: function () {
-      Vue.set(this.state, "show_probe_failed_modal", false);
-    },
-
-    prep_and_show_tool_diameter_modal() {
-      this.tool_diameter_for_prompt = (this.mach_units == 'METRIC')
-        ? this.tool_diameter
-        : this.tool_diameter / 25.4;
-
-      this.tool_diameter_for_prompt = this.tool_diameter_for_prompt.toFixed(3).replace(/0+$/, "");
-
-      this.show_tool_diameter_modal = true;
-    },
-
-    set_tool_diameter() {
-      this.tool_diameter = parseFloat(this.tool_diameter_for_prompt);
-
-      if (!isFinite(this.tool_diameter)) {
-        return;
-      }
-
-      this.show_tool_diameter_modal = false;
-
-      if (this.mach_units !== "METRIC") {
-        this.tool_diameter *= 25.4;
-      }
-
-      this.probe_xyz();
-    },
-
-    probe(zOnly = false) {
-      const xdim = this.config.probe["probe-xdim"];
-      const ydim = this.config.probe["probe-ydim"];
-      const zdim = this.config.probe["probe-zdim"];
-      const slowSeek = this.config.probe["probe-slow-seek"];
-      const fastSeek = this.config.probe["probe-fast-seek"];
-
-      const zlift = 1;
-      const xoffset = xdim + (this.tool_diameter / 2.0);
-      const yoffset = ydim + (this.tool_diameter / 2.0);
-      const zoffset = zdim;
-
-      const metric = this.mach_units == "METRIC";
-      const mm = n => (metric ? n : n / 25.4).toFixed(5);
-      const speed = s => `F${mm(s)}`;
-
-      // After probing Z, we want to drop the bit down:
-      // Ideally, 12.7mm/0.5in
-      // And we don't want to be more than 75% down on the probe block
-      // Also, add zlift to compensate for the fact that we lift after probing Z
-      const plunge = Math.min(12.7, zoffset * 0.75) + zlift;
-
-      Vue.set(this.state, "probing_active", true);
-      Vue.set(this.state, "goto_xy_zero_after_probe", !zOnly);
-
-      if (zOnly) {
-        this.send(`
-          ${metric ? "G21" : "G20"}
-          G92 Z0
-        
-          G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
-          G91 G1 Z ${mm(1)}
-          G38.2 Z ${mm(-2)} ${speed(slowSeek)}
-          G92 Z ${mm(zoffset)}
-        
-          G91 G0 Z ${mm(3)}
-
-          M2
-        `);
-      } else {
-        this.send(`
-          ${metric ? "G21" : "G20"}
-          G92 X0 Y0 Z0
-          
-          G38.2 Z ${mm(-25.4)} ${speed(fastSeek)}
-          G91 G1 Z ${mm(1)}
-          G38.2 Z ${mm(-2)} ${speed(slowSeek)}
-          G92 Z ${mm(zoffset)}
-        
-          G91 G0 Z ${mm(zlift)}
-          G91 G0 X ${mm(20)}
-          G91 G0 Z ${mm(-plunge)}
-          G38.2 X ${mm(-20)} ${speed(fastSeek)}
-          G91 G1 X ${mm(1)}
-          G38.2 X ${mm(-2)} ${speed(slowSeek)}
-          G92 X ${mm(xoffset)}
-
-          G91 G0 X ${mm(1)}
-          G91 G0 Y ${mm(20)}
-          G91 G0 X ${mm(-20)}
-          G38.2 Y ${mm(-20)} ${speed(fastSeek)}
-          G91 G1 Y ${mm(1)}
-          G38.2 Y ${mm(-2)} ${speed(slowSeek)}
-          G92 Y ${mm(yoffset)}
-
-          G91 G0 Y ${mm(3)}
-          G91 G0 Z ${mm(25.4)}
-
-          M2
-        `);
-      }
-
-      // Wait 1 second to let the probing sequence begin,
-      // then wait for probing to be complete
-      setTimeout(() => Vue.set(this.state, "wait_for_probing_complete", true), 1000);
-    },
-
-    probe_xyz() {
-      this.probe(false);
-    },
-
-    probe_z() {
-      this.probe(true);
-    },
-
-    set_jog_incr: function (newValue) {
-      document.getElementById("jog_button_fine").style.fontWeight = 'normal';
-      document.getElementById("jog_button_small").style.fontWeight = 'normal';
-      document.getElementById("jog_button_medium").style.fontWeight = 'normal';
-      document.getElementById("jog_button_large").style.fontWeight = 'normal';
-
-      if (newValue == 'fine') {
-        document.getElementById("jog_button_fine").style.fontWeight = 'bold';
-        if (this.mach_units == 'METRIC')
-          this.jog_incr = 0.1;
-        else
-          this.jog_incr = 0.005;
-      } else if (newValue == 'small') {
-        document.getElementById("jog_button_small").style.fontWeight = 'bold';
-        if (this.mach_units == 'METRIC')
-          this.jog_incr = 1.0;
-        else
-          this.jog_incr = 0.05;
-      } else if (newValue == 'medium') {
-        document.getElementById("jog_button_medium").style.fontWeight = 'bold';
-        if (this.mach_units == 'METRIC')
-          this.jog_incr = 10;
-        else
-          this.jog_incr = 0.5;
-      } else if (newValue == 'large') {
-        document.getElementById("jog_button_large").style.fontWeight = 'bold';
-
-        this.jog_incr = (this.mach_units == 'METRIC')
-          ? 100
-          : 5;
-      }
-    },
-
     goto_zero(zero_x, zero_y, zero_z, zero_a) {
-      var xcmd = "";
-      var ycmd = "";
-      var zcmd = "";
-      var acmd = "";
-      if (zero_x) xcmd = "X0";
-      if (zero_y) ycmd = "Y0";
-      if (zero_z) zcmd = "Z0";
-      if (zero_a) acmd = "A0";
+      const xcmd = zero_x ? "X0" : "";
+      const ycmd = zero_y ? "Y0" : "";
+      const zcmd = zero_z ? "Z0" : "";
+      const acmd = zero_a ? "A0" : "";
 
       this.ask_zero_xy_msg = false;
       this.ask_zero_z_msg = false;
@@ -477,13 +272,25 @@ module.exports = {
       this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
-    jog_fn: function (x_jog, y_jog, z_jog, a_jog) {
-      var xcmd = "X" + x_jog * this.jog_incr;
-      var ycmd = "Y" + y_jog * this.jog_incr;
-      var zcmd = "Z" + z_jog * this.jog_incr;
-      var acmd = "A" + a_jog * this.jog_incr;
+    getJogIncrFontWeight(value) {
+      const weight = this.jog_incr === value ? 'bold' : 'normal';
 
-      this.send('G91\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
+      return `font-weight:${weight}`;
+    },
+
+    jog_fn: function (x_jog, y_jog, z_jog, a_jog) {
+      const amount = this.jog_incr_amounts[this.display_units][this.jog_incr];
+
+      var xcmd = "X" + x_jog * amount;
+      var ycmd = "Y" + y_jog * amount;
+      var zcmd = "Z" + z_jog * amount;
+      var acmd = "A" + a_jog * amount;
+
+      this.send(`
+        G91
+        ${this.metric ? "G21" : "G20"}
+        G0 ${xcmd}${ycmd}${zcmd}${acmd}
+      `);
     },
 
     send: function (msg) {
@@ -493,7 +300,10 @@ module.exports = {
     load: function () {
       var file_time = this.state.selected_time;
       var file = this.state.selected;
-      if (this.last_file == file && this.last_file_time == file_time) return;
+      if (this.last_file == file && this.last_file_time == file_time) {
+        return;
+      }
+
       this.last_file = file;
       this.last_file_time = file_time;
 
@@ -503,12 +313,12 @@ module.exports = {
       this.load_toolpath(file, file_time);
     },
 
-
     load_toolpath: async function (file, file_time) {
       this.toolpath = {};
 
-      if (!file) return;
-      if (this.last_file_time != file_time) return;
+      if (!file || this.last_file_time != file_time) {
+        return;
+      }
 
       this.showGcodeMessage = true;
 
@@ -534,29 +344,29 @@ module.exports = {
       }
     },
 
-
     submit_mdi: function () {
       this.send(this.mdi);
-      if (!this.history.length || this.history[0] != this.mdi)
+
+      if (!this.history.length || this.history[0] != this.mdi) {
         this.history.unshift(this.mdi);
+      }
+
       this.mdi = '';
     },
 
-
     mdi_start_pause: function () {
-      if (this.state.xx == 'RUNNING') this.pause();
-
-      else if (this.state.xx == 'STOPPING' || this.state.xx == 'HOLDING')
+      if (this.state.xx == 'RUNNING') {
+        this.pause();
+      } else if (this.state.xx == 'STOPPING' || this.state.xx == 'HOLDING') {
         this.unpause();
-
-      else this.submit_mdi();
+      } else {
+        this.submit_mdi();
+      }
     },
-
 
     load_history: function (index) {
       this.mdi = this.history[index];
     },
-
 
     open: function (e) {
       // If we don't reset the form the browser may cache file if name is same
@@ -564,7 +374,6 @@ module.exports = {
       $('.gcode-file-input')[0].reset();
       $('.gcode-file-input input').click();
     },
-
 
     upload: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -601,7 +410,6 @@ module.exports = {
       }
     },
 
-
     delete_current: function () {
       if (this.state.selected) {
         api.delete('file/' + this.state.selected);
@@ -610,40 +418,32 @@ module.exports = {
       this.deleteGCode = false;
     },
 
-
     delete_all: function () {
       api.delete('file');
       this.deleteGCode = false;
     },
-
 
     home: function (axis) {
       this.ask_home = false;
 
       if (typeof axis == 'undefined') {
         api.put('home');
+      } else if (this[axis].homingMode != 'manual') {
+        api.put('home/' + axis);
       } else {
-        if (this[axis].homingMode != 'manual') {
-          api.put('home/' + axis);
-        }
-        else {
-          this.manual_home[axis] = true;
-        }
+        this.manual_home[axis] = true;
       }
     },
-
 
     set_home: function (axis, position) {
       this.manual_home[axis] = false;
       api.put('home/' + axis + '/set', { position: parseFloat(position) });
     },
 
-
     unhome: function (axis) {
       this.position_msg[axis] = false;
       api.put('home/' + axis + '/clear');
     },
-
 
     show_set_position: function (axis) {
       this.axis_position = 0;
@@ -654,61 +454,84 @@ module.exports = {
       this.toolpath_msg[axis] = true;
     },
 
-
     set_position: function (axis, position) {
       this.position_msg[axis] = false;
       api.put('position/' + axis, { 'position': parseFloat(position) });
     },
 
-
     zero_all: function () {
-      for (var axis of 'xyzabc')
-        if (this[axis].enabled) this.zero(axis);
+      for (var axis of 'xyzabc') {
+        if (this[axis].enabled) {
+          this.zero(axis);
+        }
+      }
     },
-
 
     zero: function (axis) {
-      if (typeof axis == 'undefined') this.zero_all();
-      else this.set_position(axis, 0);
+      if (typeof axis == 'undefined') {
+        this.zero_all();
+      } else {
+        this.set_position(axis, 0);
+      }
     },
-
 
     start_pause: function () {
-      if (this.state.xx == 'RUNNING') this.pause();
-
-      else if (this.state.xx == 'STOPPING' || this.state.xx == 'HOLDING')
+      if (this.state.xx == 'RUNNING') {
+        this.pause();
+      } else if (this.state.xx == 'STOPPING' || this.state.xx == 'HOLDING') {
         this.unpause();
-
-      else this.start();
+      } else {
+        this.start();
+      }
     },
 
+    start: function () {
+      api.put('start')
+    },
 
-    start: function () { api.put('start') },
-    pause: function () { api.put('pause') },
-    unpause: function () { api.put('unpause') },
-    optional_pause: function () { api.put('pause/optional') },
-    stop: function () { api.put('stop') },
-    step: function () { api.put('step') },
+    pause: function () {
+      api.put('pause')
+    },
 
+    unpause: function () {
+      api.put('unpause')
+    },
 
-    override_feed: function () { api.put('override/feed/' + this.feed_override) },
+    optional_pause: function () {
+      api.put('pause/optional')
+    },
 
+    stop: function () {
+      api.put('stop')
+    },
+
+    step: function () {
+      api.put('step')
+    },
+
+    override_feed: function () {
+      api.put('override/feed/' + this.feed_override)
+    },
 
     override_speed: function () {
       api.put('override/speed/' + this.speed_override)
     },
 
-
     current: function (axis, value) {
       var x = value / 32.0;
-      if (this.state[axis + 'pl'] == x) return;
+      if (this.state[axis + 'pl'] == x) {
+        return;
+      }
 
       var data = {};
       data[axis + 'pl'] = x;
       this.send(JSON.stringify(data));
+    },
+
+    showProbeDialog: function(probeType) {
+      SvelteComponents.showDialog("Probe", { probeType });
     }
   },
-
 
   mixins: [require('./axis-vars')]
 }

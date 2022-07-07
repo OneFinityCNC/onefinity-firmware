@@ -4,6 +4,7 @@ module.exports = {
   props: ['state', 'config'],
 
   computed: {
+    metric: function () { this.$root.display_units === "METRIC" },
     x: function () { return this._compute_axis('x') },
     y: function () { return this._compute_axis('y') },
     z: function () { return this._compute_axis('z') },
@@ -15,12 +16,14 @@ module.exports = {
 
   methods: {
     _convert_length: function (value) {
-      return this.state.imperial ? value / 25.4 : value;
+      return this.metric
+        ? value
+        : value / 25.4;
     },
 
     _length_str: function (value) {
       return this._convert_length(value).toLocaleString() +
-        (this.state.imperial ? ' in' : ' mm');
+        (this.metric ? ' mm' : ' in');
     },
 
     _compute_axis: function (axis) {

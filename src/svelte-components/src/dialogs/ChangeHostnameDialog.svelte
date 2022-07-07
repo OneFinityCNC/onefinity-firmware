@@ -2,8 +2,8 @@
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import TextField from "@smui/textfield";
-  import MessageDialog from "./MessageDialog.svelte";
-  import * as api from "../lib/api";
+  import MessageDialog from "$dialogs/MessageDialog.svelte";
+  import * as api from "$lib/api";
 
   // https://man7.org/linux/man-pages/man7/hostname.7.html
   //

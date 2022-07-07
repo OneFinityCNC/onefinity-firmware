@@ -1,11 +1,10 @@
 <script lang="ts">
-  import WifiConnectionDialog from "../dialogs/WifiConnectionDialog.svelte";
-  import ChangeHostnameDialog from "../dialogs/ChangeHostnameDialog.svelte";
+  import WifiConnectionDialog from "$dialogs/WifiConnectionDialog.svelte";
+  import ChangeHostnameDialog from "$dialogs/ChangeHostnameDialog.svelte";
   import Button, { Label } from "@smui/button";
   import List, { Item, Graphic, Text, Meta } from "@smui/list";
   import Card from "@smui/card";
-  import { networkInfo } from "../lib/NetworkInfo";
-  import type { WifiNetwork } from "../lib/NetworkInfo";
+  import { networkInfo, type WifiNetwork } from "$lib/NetworkInfo";
 
   let changeHostnameDialog = {
     open: false,

@@ -7,6 +7,13 @@ export default defineConfig({
   plugins: [
     svelte()
   ],
+  resolve: {
+    alias: {
+      $lib: resolve('./src/lib'),
+      $dialogs: resolve('./src/dialogs'),
+      $components: resolve('./src/components')
+    }
+  },
   build: {
     target: "chrome60",
     lib: {

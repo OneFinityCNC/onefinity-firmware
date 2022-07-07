@@ -4,28 +4,22 @@
   import TextField from "@smui/textfield";
   import Icon from "@smui/textfield/icon";
   import HelperText from "@smui/textfield/helper-text";
-  import MessageDialog from "./MessageDialog.svelte";
-  import type { WifiNetwork } from "../lib/NetworkInfo";
-  import * as api from "../lib/api";
+  import MessageDialog from "$dialogs/MessageDialog.svelte";
+  import type { WifiNetwork } from "$lib/NetworkInfo";
+  import * as api from "$lib/api";
 
   export let open = false;
   export let network: WifiNetwork;
 
   let rebooting = false;
-  let needPassword = false;
   let password = "";
   let showPassword = false;
-  let connectOrDisconnect: string;
-  let connectToOrDisconnectFrom: string;
 
   $: needPassword = !network?.active && network?.Encryption !== "Open";
-
-  $: {
-    connectOrDisconnect = network?.active ? "Disconnect" : "Connect";
-    connectToOrDisconnectFrom = network?.active
+  $: connectOrDisconnect = network?.active ? "Disconnect" : "Connect";
+  $: connectToOrDisconnectFrom = network?.active
       ? "Disconnect from"
       : "Connect to";
-  }
 
   $: if (open) {
     password = "";

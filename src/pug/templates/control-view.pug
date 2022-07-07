@@ -1,30 +1,3 @@
-//-/////////////////////////////////////////////////////////////////////////////
-//-                                                                           //
-//-              This file is part of the Buildbotics firmware.               //
-//-                                                                           //
-//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
-//-                           All rights reserved.                            //
-//-                                                                           //
-//-   This file ("the software") is free software: you can redistribute it    //
-//-   and/or modify it under the terms of the GNU General Public License,     //
-//-    version 2 as published by the Free Software Foundation. You should     //
-//-    have received a copy of the GNU General Public License, version 2      //
-//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
-//-                                                                           //
-//-   The software is distributed in the hope that it will be useful, but     //
-//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
-//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
-//-             Lesser General Public License for more details.               //
-//-                                                                           //
-//-     You should have received a copy of the GNU Lesser General Public      //
-//-              License along with the software.  If not, see                //
-//-                     <http://www.gnu.org/licenses/>.                       //
-//-                                                                           //
-//-              For information regarding this software email:               //
-//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
-//-                                                                           //
-//-/////////////////////////////////////////////////////////////////////////////
-
 script#control-view-template(type="text/x-template")
   #control
     message(:show.sync="showGcodeMessage")
@@ -63,70 +36,6 @@ script#control-view-template(type="text/x-template")
           button.pure-button(@click='ask_zero_z_msg = false')
             | Cancel
 
-    message(:show.sync=`show_probe_test_modal`)
-
-      h3(slot="header") Test probe connection
-
-      div(slot="body")
-        .pure-form
-          p Attach the probe magnet to the collet.
-          p Touch the probe block to the bit.
-
-      div(slot="footer")
-        button.pure-button(@click=`show_probe_test_modal = false`)
-          | Cancel
-
-        button.pure-button.button-success(
-          :disabled=`!state.saw_probe_connected`
-          @click=`finish_probe_test()`) Continue
-
-    message(:show.sync=`show_tool_diameter_modal`)
-      h3(slot="header") Enter probe tool information
-
-      div(slot="body")
-        .pure-form
-          .pure-control-group
-            label="{{metric ? 'Diameter (mm)' : 'Diameter (inches)'}}"
-            input(v-model="tool_diameter_for_prompt", size="8")
-        p
-
-      div(slot="footer")
-        button.pure-button(@click=`show_tool_diameter_modal = false`)
-          | Cancel
-
-        button.pure-button.button-success(
-          @click=`set_tool_diameter`)
-          | Set
-
-    message(:show.sync=`state.show_probe_complete_modal`)
-      h3(slot="header") Probing complete!
-
-      div(slot="body")
-        .pure-form
-          p Don't forget to put away the probe!
-          div(v-if="state.goto_xy_zero_after_probe")
-            p
-              | The machine will now move
-              br
-              | to the X-Y zero point.
-            p Watch your hands!
-
-      div(slot="footer")
-        button.pure-button.button-success(@click=`$emit("finalize_probe")`)
-          | Done
-
-    message(:show.sync=`state.show_probe_failed_modal`)
-      h3(slot="header") Probing failed!
-
-      div(slot="body")
-        .pure-form
-          p Could not find the probe block during probing!
-          p Make sure the tip of the bit is about 1/4" (~6mm) above the probe block, and try again.
-
-      div(slot="footer")
-        button.pure-button.button-success(@click=`hide_probe_failed_modal()`)
-          | OK
-
     table(style="table-layout: fixed; width: 100%;")
       tr(style="height: fit-content;")
         td(style="white-space: nowrap; width: 410px;", rowspan="2")
@@ -138,55 +47,60 @@ script#control-view-template(type="text/x-template")
                col(style="width:100px")
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,1,0,0)")
+                button(@click="jog_fn(-1,1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(-135deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(0,1,0,0)") Y+
+                button(@click="jog_fn(0,1,0,0)") Y+
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,1,0,0)")
+                button(@click="jog_fn(1,1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(-45deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",,@click="jog_fn(0,0,1,0)") Z+
+                button(,@click="jog_fn(0,0,1,0)") Z+
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,0,0,0)") X-
+                button(@click="jog_fn(-1,0,0,0)") X-
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="ask_zero_xy_msg = true")
+                button(@click="ask_zero_xy_msg = true")
                   .fa.fa-bullseye(style="font-size: 172%")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,0,0,0)") X+
+                button(@click="jog_fn(1,0,0,0)") X+
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click='ask_zero_z_msg = true') Z0
+                button(@click='ask_zero_z_msg = true') Z0
             tr
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(-1,-1,0,0)")
+                button(@click="jog_fn(-1,-1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(135deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(0,-1,0,0)") Y-
+                button(@click="jog_fn(0,-1,0,0)") Y-
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(1,-1,0,0)")
+                button(@click="jog_fn(1,-1,0,0)")
                   .fa.fa-arrow-right(style="transform: rotate(45deg);")
               td(style="height:100px",align="center")
-                button(style="height:100px;width:100px",@click="jog_fn(0,0,-1,0)") Z-
+                button(@click="jog_fn(0,0,-1,0)") Z-
             tr
               td(style="height:100px",align="center")
-                button#jog_button_fine(style="height:100px;width:100px", @click=`set_jog_incr('fine')`) 0.1
+                button(:style="getJogIncrFontWeight('fine')", @click="jog_incr = 'fine'")
+                  span {{jog_incr_amounts[display_units].fine}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
               td(style="height:100px",align="center")
-                button#jog_button_small(style="height:100px;width:100px", @click=`set_jog_incr('small')`) 1.0
+                button(:style="getJogIncrFontWeight('small')", @click="jog_incr = 'small'")
+                  span {{jog_incr_amounts[display_units].small}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
               td(style="height:100px",align="center")
-                button#jog_button_medium(style="height:100px;width:100px", @click=`set_jog_incr('medium')`) 10
+                button(:style="getJogIncrFontWeight('medium')", @click="jog_incr = 'medium'")
+                  span {{jog_incr_amounts[display_units].medium}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
               td(style="height:100px",align="center")
-                button#jog_button_large(style="height:100px;width:100px", @click=`set_jog_incr('large')`) 100
+                button(:style="getJogIncrFontWeight('large')", @click="jog_incr = 'large'")
+                  span {{jog_incr_amounts[display_units].large}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
             tr
               td(style="height:100px", align="center", colspan="2")
                 button(:class="state['pw'] ? '' : 'load-on'",
                   style="height:100px;width:200px",
-                  @click=`start_probe_test(prep_and_show_tool_diameter_modal)`)
+                  @click="showProbeDialog('xyz')")
                   | Probe XYZ
+
               td(style="height:100px", align="center", colspan="2")
                 button(:class="state['pw'] ? '' : 'load-on'",
                   style="height:100px;width:200px",
-                  @click=`start_probe_test(probe_z)`)
+                  @click="showProbeDialog('z')")
                   | Probe Z
 
         td(style="vertical-align: top;")
@@ -198,8 +112,6 @@ script#control-view-template(type="text/x-template")
               th.offset Offset
               th.state State
               th.tstate Toolpath
-              //th.tstate Min
-              //th.tstate Max
               th.actions
                 button.pure-button(disabled, style="height:60px;width:60px;display:none;")
 
@@ -224,8 +136,6 @@ script#control-view-template(type="text/x-template")
                 td.tstate(:class=`${axis}.tklass`, :title=`${axis}.toolmsg`, @click=`show_toolpath_msg('${axis}')`)
                   .fa(:class=`'fa-' + ${axis}.ticon`)
                   | {{#{axis}.tstate}}
-                //td.tstate: unit-value(:value=`${axis}.pathMin`, precision=4)
-                //td.tstate: unit-value(:value=`${axis}.pathMax`, precision=4)
                   
                 message(:show.sync=`toolpath_msg['${axis}']`)
                     h3(slot="header") Tool path info {{'#{axis}' | upper}} axis
@@ -310,10 +220,10 @@ script#control-view-template(type="text/x-template")
                     td.message(:class="{attention: highlight_state}")
                       | {{message.replace(/^#/, '')}}
 
-                  tr(title="Active machine units")
+                  tr
                     th Units
-                    td.mach_units
-                      select(v-model="mach_units", :disabled="!is_idle")
+                    td.units
+                      select(v-model="display_units")
                         option(value="METRIC") METRIC
                         option(value="IMPERIAL") IMPERIAL
 
@@ -470,6 +380,9 @@ script#control-view-template(type="text/x-template")
             .fa.fa-stop
 
           input(v-model="mdi", :disabled="!can_mdi", @keyup.enter="submit_mdi")
+
+        div
+          em The machine is currently operating in #[strong {{mach_units}}] units.  Use G20/G21 to switch units.
 
         .history(:class="{placeholder: !history}")
           span(v-if="!history.length") MDI history displays here.
