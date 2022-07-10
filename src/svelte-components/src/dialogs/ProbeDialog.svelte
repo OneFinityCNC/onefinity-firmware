@@ -5,12 +5,10 @@
   import { Config } from "$lib/ConfigStore";
   import { waitForChange } from "$lib/StoreHelpers";
   import { ControllerMethods } from "$lib/RegisterControllerMethods";
-  import { tick } from "svelte";
 
-  type Stage =
+  type Step =
     | "None"
     | "TestingProbe"
-    | "TestingProbeComplete"
     | "GetToolDiameter"
     | "Probing"
     | "ProbingFailed"
@@ -55,77 +53,48 @@
 <script type="ts">
   export let open;
   export let probeType: "xyz" | "z";
-  let stage: Stage = "None";
+  let step: Step = "None";
   let toolDiameter;
-  let confirmButton = {
-    label: "Continue",
+  let showCancelButton = true;
+  let nextButton = {
+    label: "Next",
     disabled: false,
     allowClose: false,
   };
 
   $: showPrompts = $Config.settings?.["probing-prompts"];
-  $: clearFlags(stage);
-  $: updateConfirmButton();
 
   $: if (open) {
+    toolDiameter = "";
+
     // Svelte appears not to like it when you invoke
-    // an async function from a reactive statement
+    // an async function from a reactive statement, so we
+    // use requestAnimationFrame to call begin at a later moment.
     requestAnimationFrame(begin);
-  }
-
-  function updateConfirmButton() {
-    confirmButton.label = "Continue";
-    confirmButton.disabled = false;
-    confirmButton.allowClose = false;
-
-    switch (stage) {
-      case "TestingProbe":
-      case "Probing":
-        confirmButton.disabled = true;
-        break;
-
-      case "ProbingComplete":
-        confirmButton.disabled = true;
-        confirmButton.label = "Done";
-        confirmButton.allowClose = true;
-        break;
-    }
   }
 
   async function begin() {
     try {
       $probingActive = true;
-
       assertValidProbeType();
 
       if (showPrompts) {
-        stage = "TestingProbe";
-
-        await cancellableSignal(probeContacted);
-
-        stage = "TestingProbeComplete";
-        await cancellableSignal(userAcknowledged);
+        await stepCompleted("TestingProbe", probeContacted);
       }
 
       if (probeType === "xyz") {
-        stage = "GetToolDiameter";
-        await cancellableSignal(userAcknowledged);
+        await stepCompleted("GetToolDiameter", userAcknowledged);
       }
 
       do {
-        stage = "Probing";
-        executeProbe(probeType, toolDiameter);
-
-        await cancellableSignal(probingComplete, probingFailed);
+        await stepCompleted("Probing", probingComplete, probingFailed);
 
         if ($probingFailed) {
-          stage = "ProbingFailed";
-          await cancellableSignal(userAcknowledged);
+          await stepCompleted("ProbingFailed", userAcknowledged);
         }
       } while (!$probingComplete);
 
-      stage = "ProbingComplete";
-      await cancellableSignal(userAcknowledged);
+      await stepCompleted("ProbingComplete", userAcknowledged);
 
       if (probeType === "xyz") {
         ControllerMethods.goto_zero(1, 1, 0, 0);
@@ -136,12 +105,40 @@
       }
     } finally {
       $probingActive = false;
-      stage = "None";
+      step = "None";
+
+      if ($probingStarted) {
+        ControllerMethods.stop();
+      }
+
       clearFlags();
     }
   }
 
-  async function cancellableSignal<T>(...writables: Array<Writable<T>>) {
+  function assertValidProbeType() {
+    switch (probeType) {
+      case "xyz":
+      case "z":
+        break;
+
+      default:
+        throw new Error(`Invalid probe type: ${probeType}`);
+    }
+  }
+
+  async function stepCompleted(
+    nextStep: Step,
+    ...writables: Array<Writable<any>>
+  ) {
+    step = nextStep;
+
+    clearFlags();
+    updateButtons();
+
+    if (step === "Probing") {
+      executeProbe();
+    }
+
     await Promise.race([
       ...writables.map((writable) => waitForChange(writable)),
       waitForChange(cancelled),
@@ -161,18 +158,33 @@
     $userAcknowledged = false;
   }
 
-  function assertValidProbeType() {
-    switch (probeType) {
-      case "xyz":
-      case "z":
+  function updateButtons() {
+    showCancelButton = true;
+
+    nextButton = {
+      label: "Next",
+      disabled: false,
+      allowClose: false,
+    };
+
+    switch (step) {
+      case "TestingProbe":
+      case "Probing":
+        nextButton.disabled = true;
         break;
 
-      default:
-        throw new Error(`Invalid probe type: ${probeType}`);
+      case "ProbingComplete":
+        showCancelButton = false;
+        nextButton = {
+          disabled: false,
+          label: "Done",
+          allowClose: true,
+        };
+        break;
     }
   }
 
-  function executeProbe(probeType: "xyz" | "z", toolDiameter: number) {
+  function executeProbe() {
     const probeBlockWidth = $Config.probe["probe-xdim"];
     const probeBlockLength = $Config.probe["probe-ydim"];
     const probeBlockHeight = $Config.probe["probe-zdim"];
@@ -186,18 +198,18 @@
 
     if (probeType === "z") {
       ControllerMethods.send(`
-            G21
-            G92 Z0
-        
-            G38.2 Z -25.4 F${fastSeek}
-            G91 G1 Z 1
-            G38.2 Z -2 F${slowSeek}
-            G92 Z ${zOffset}
-        
-            G91 G0 Z 3
+        G21
+        G92 Z0
+    
+        G38.2 Z -25.4 F${fastSeek}
+        G91 G1 Z 1
+        G38.2 Z -2 F${slowSeek}
+        G92 Z ${zOffset}
+    
+        G91 G0 Z 3
 
-            M2
-        `);
+        M2
+      `);
     } else {
       // After probing Z, we want to drop the bit down:
       // Ideally, 12.7mm/0.5in
@@ -206,35 +218,35 @@
       const plunge = Math.min(12.7, zOffset * 0.75) + zLift;
 
       ControllerMethods.send(`
-            G21
-            G92 X0 Y0 Z0
-            
-            G38.2 Z -25 F${fastSeek}
-            G91 G1 Z 1
-            G38.2 Z -2 F${slowSeek}
-            G92 Z ${zOffset}
+        G21
+        G92 X0 Y0 Z0
         
-            G91 G0 Z ${zLift}
-            G91 G0 X 20
-            G91 G0 Z ${-plunge}
-            G38.2 X -20 F${fastSeek}
-            G91 G1 X 1
-            G38.2 X -2 F${slowSeek}
-            G92 X ${xOffset}
+        G38.2 Z -25 F${fastSeek}
+        G91 G1 Z 1
+        G38.2 Z -2 F${slowSeek}
+        G92 Z ${zOffset}
+    
+        G91 G0 Z ${zLift}
+        G91 G0 X 20
+        G91 G0 Z ${-plunge}
+        G38.2 X -20 F${fastSeek}
+        G91 G1 X 1
+        G38.2 X -2 F${slowSeek}
+        G92 X ${xOffset}
 
-            G91 G0 X 1
-            G91 G0 Y 20
-            G91 G0 X -20
-            G38.2 Y -20 F${fastSeek}
-            G91 G1 Y 1
-            G38.2 Y -2 F${slowSeek}
-            G92 Y ${yOffset}
+        G91 G0 X 1
+        G91 G0 Y 20
+        G91 G0 X -20
+        G38.2 Y -20 F${fastSeek}
+        G91 G1 Y 1
+        G38.2 Y -2 F${slowSeek}
+        G92 Y ${yOffset}
 
-            G91 G0 Y 3
-            G91 G0 Z 25
+        G91 G0 Y 3
+        G91 G0 Z 25
 
-            M2
-        `);
+        M2
+      `);
     }
   }
 </script>
@@ -248,27 +260,27 @@
   <Title id="simple-title">Probe {probeType}</Title>
 
   <Content id="simple-content">
-    {#if stage === "TestingProbe" || stage === "TestingProbeComplete"}
+    {#if step === "TestingProbe"}
       <p>Attach the probe magnet to the collet.</p>
       <p>Touch the probe block to the bit.</p>
 
-      {#if stage === "TestingProbe"}
-        <p>Waiting for probe contact...</p>
-      {:else}
+      {#if $probeContacted}
         <p>Probe contact detected!</p>
+      {:else}
+        <p>Waiting for probe contact...</p>
       {/if}
-    {:else if stage === "GetToolDiameter"}
+    {:else if step === "GetToolDiameter"}
       <label for="tool-diameter">Tool Diameter (mm)</label>
       <input id="tool-diameter" bind:value={toolDiameter} />
-    {:else if stage === "Probing"}
+    {:else if step === "Probing"}
       <p>Probing in progress...</p>
-    {:else if stage === "ProbingFailed"}
+    {:else if step === "ProbingFailed"}
       <p>Could not find the probe block during probing!</p>
       <p>
         Make sure the tip of the bit is about 1/4" (6mm) above the probe block,
         and try again.
       </p>
-    {:else if stage === "ProbingComplete"}
+    {:else if step === "ProbingComplete"}
       <p>Don't forget to put away the probe!</p>
       <p>The machine will now move to the XY origin.</p>
       <p>Watch your hands!</p>
@@ -276,17 +288,19 @@
   </Content>
 
   <Actions>
-    <Button on:click={() => ($cancelled = true)}>
-      <Label>Cancel</Label>
-    </Button>
+    {#if showCancelButton}
+      <Button on:click={() => ($cancelled = true)}>
+        <Label>Cancel</Label>
+      </Button>
+    {/if}
     <Button
       defaultAction
-      data-mdc-dialog-action={confirmButton.allowClose ? "close" : ""}
-      disabled={confirmButton.disabled}
+      data-mdc-dialog-action={nextButton.allowClose ? "close" : ""}
+      disabled={nextButton.disabled}
       on:click={() => ($userAcknowledged = true)}
     >
       <Label>
-        {confirmButton.label}
+        {nextButton.label}
       </Label>
     </Button>
   </Actions>

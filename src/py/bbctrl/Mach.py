@@ -1,30 +1,3 @@
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
 import bbctrl
 from bbctrl.Comm import Comm
 import bbctrl.Cmd as Cmd
@@ -74,6 +47,7 @@ and check your motor cabling. See the "Motor Faults" table on the "Indicators" \
 for more information.\
 '''
 
+
 def overrides(interface_class):
     def overrider(method):
         if not method.__name__ in dir(interface_class):
@@ -102,7 +76,6 @@ class Mach(Comm):
 
         super().reboot()
 
-
     def _get_state(self): return self.ctrl.state.get('xx', '')
     def _is_estopped(self): return self._get_state() == 'ESTOPPED'
     def _is_holding(self): return self._get_state() == 'HOLDING'
@@ -110,19 +83,18 @@ class Mach(Comm):
     def _get_pause_reason(self): return self.ctrl.state.get('pr', '')
     def _get_cycle(self): return self.ctrl.state.get('cycle', 'idle')
 
-
     def _is_paused(self):
-        if not self._is_holding() or self.unpausing: return False
+        if not self._is_holding() or self.unpausing:
+            return False
         return self._get_pause_reason() in (
             'User pause', 'Program pause', 'Optional pause')
 
-
     def _set_cycle(self, cycle): self.ctrl.state.set('cycle', cycle)
-
 
     def _begin_cycle(self, cycle):
         current = self._get_cycle()
-        if current == cycle: return # No change
+        if current == cycle:
+            return  # No change
 
         if current != 'idle':
             raise Exception('Cannot enter %s cycle while in %s cycle' %
@@ -132,13 +104,11 @@ class Mach(Comm):
         # if current == 'idle' or (cycle == 'jogging' and self._is_paused()):
         self._set_cycle(cycle)
 
-    
     def process_log(self, log):
         # When a probe has failed, we have to e-stop or things
         # end up in a bad state, where positions and offsets are incorrect
         if log['msg'] == 'Switch not found':
             self.estop()
-
 
     def _update(self, update):
         # Detect motor faults
@@ -153,12 +123,12 @@ class Mach(Comm):
 
         # Handle EStop
         if state_changed and state == 'ESTOPPED':
-            self.planner.reset(stop = False)
+            self.planner.reset(stop=False)
 
         # Exit cycle if state changed to READY
         if (state_changed and self._get_cycle() != 'idle' and
             self._is_ready() and not self.planner.is_busy() and
-            not super().is_active()):
+                not super().is_active()):
             self.planner.position_change()
             self._set_cycle('idle')
 
@@ -187,7 +157,6 @@ class Mach(Comm):
              (pr == 'Optional pause' and not op))):
             self._unpause()
 
-
     def _unpause(self):
         pause_reason = self._get_pause_reason()
         self.mlog.info('Unpause: ' + pause_reason)
@@ -196,35 +165,30 @@ class Mach(Comm):
             self.planner.stop()
             self.ctrl.state.set('line', 0)
 
-        else: self.planner.restart()
+        else:
+            self.planner.restart()
 
         super().i2c_command(Cmd.UNPAUSE)
         self.unpausing = True
 
-
     def _i2c_block(self, block):
-        super().i2c_command(block[0], block = block[1:])
-
+        super().i2c_command(block[0], block=block[1:])
 
     def _i2c_set(self, name, value): self._i2c_block(Cmd.set(name, value))
-
 
     @overrides(Comm)
     def comm_next(self):
         if self.planner.is_running() and not self._is_holding():
             return self.planner.next()
 
-
     @overrides(Comm)
     def comm_error(self):
         self.planner.reset()
-
 
     @overrides(Comm)
     def connect(self):
         self.planner.reset()
         super().connect()
-
 
     def _query_var(self, cmd):
         equal = cmd.find('=')
@@ -234,21 +198,26 @@ class Mach(Comm):
         else:
             name, value = cmd[1:equal], cmd[equal + 1:]
 
-            if value.lower() == 'true': value = True
-            elif value.lower() == 'false': value = False
+            if value.lower() == 'true':
+                value = True
+            elif value.lower() == 'false':
+                value = False
             else:
                 try:
                     value = float(value)
-                except: pass
+                except:
+                    pass
 
             self.ctrl.state.config(name, value)
 
-
-    def mdi(self, cmd, with_limits = True):
+    def mdi(self, cmd, with_limits=True):
         try:
-            if not len(cmd): return
-            if   cmd[0] == '$':  self._query_var(cmd)
-            elif cmd[0] == '\\': super().queue_command(cmd[1:])
+            if not len(cmd):
+                return
+            if cmd[0] == '$':
+                self._query_var(cmd)
+            elif cmd[0] == '\\':
+                super().queue_command(cmd[1:])
             else:
                 self._begin_cycle('mdi')
                 self.planner.mdi(cmd, with_limits)
@@ -260,18 +229,18 @@ class Mach(Comm):
     def set(self, code, value):
         super().queue_command('${}={}'.format(code, value))
 
-
     def jog(self, axes):
         self._begin_cycle('jogging')
         self.planner.position_change()
         super().queue_command(Cmd.jog(axes))
 
-
-    def home(self, axis, position = None):
+    def home(self, axis, position=None):
         state = self.ctrl.state
 
-        if axis is None: axes = 'zxyabc' # TODO This should be configurable
-        else: axes = '%c' % axis
+        if axis is None:
+            axes = 'zxyabc'  # TODO This should be configurable
+        else:
+            axes = '%c' % axis
 
         for axis in axes:
             enabled = state.is_axis_enabled(axis)
@@ -291,7 +260,8 @@ class Mach(Comm):
                 continue
 
             if mode == 'manual':
-                if position is None: raise Exception('Position not set')
+                if position is None:
+                    raise Exception('Position not set')
                 self.mdi('G28.3 %c%f' % (axis, position))
                 continue
 
@@ -299,55 +269,62 @@ class Mach(Comm):
             self.mlog.info('Homing %s axis' % axis)
             self._begin_cycle('homing')
 
-            if mode.startswith('stall-'): procedure = stall_homing_procedure
-            else: procedure = axis_homing_procedure
+            if mode.startswith('stall-'):
+                procedure = stall_homing_procedure
+            else:
+                procedure = axis_homing_procedure
 
             gcode = procedure % {'axis': axis}
 
             self.planner.mdi(gcode, False)
             super().resume()
 
-
     def unhome(self, axis): self.mdi('G28.2 %c0' % axis)
     def estop(self): super().estop()
-
 
     def clear(self):
         if self._is_estopped():
             self.planner.reset()
             super().clear()
 
+    def fake_probe_contact(self):
+        self._i2c_set('pt', 2)
+        self.ctrl.state.set('pw', 0)
+        self.timer = self.ctrl.ioloop.call_later(0.5, self.clear_fake_probe_contact)
+
+    def clear_fake_probe_contact(self):
+        self._i2c_set('pt', 1)
+        self.ctrl.state.set('pw', 1)
 
     def start(self):
         filename = self.ctrl.state.get('selected', '')
-        if not filename: return
+        if not filename:
+            return
         self._begin_cycle('running')
         self.planner.load(filename)
         super().resume()
 
-
     def step(self):
-        raise Exception('NYI') # TODO
-        if self._get_cycle() != 'running': self.start()
-        else: super().i2c_command(Cmd.UNPAUSE)
-
+        raise Exception('NYI')  # TODO
+        if self._get_cycle() != 'running':
+            self.start()
+        else:
+            super().i2c_command(Cmd.UNPAUSE)
 
     def stop(self):
-        if self._get_state() != 'jogging': self.stopping = True
+        if self._get_state() != 'jogging':
+            self.stopping = True
         super().i2c_command(Cmd.STOP)
-        
-    def pause(self): super().pause()
 
+    def pause(self): super().pause()
 
     def unpause(self):
         if self._is_paused():
             self.ctrl.state.set('optional_pause', False)
             self._unpause()
 
-
-    def optional_pause(self, enable = True):
+    def optional_pause(self, enable=True):
         self.ctrl.state.set('optional_pause', enable)
-
 
     def set_position(self, axis, position):
         axis = axis.lower()
@@ -367,17 +344,13 @@ class Mach(Comm):
             state.set(axis + 'p', target)
             super().queue_command(Cmd.set_axis(axis, target))
 
-
     def override_feed(self, override):
         self._i2c_set('fo', int(1000 * override))
-
 
     def override_speed(self, override):
         self._i2c_set('so', int(1000 * override))
 
-
     def modbus_read(self, addr): self._i2c_block(Cmd.modbus_read(addr))
-
 
     def modbus_write(self, addr, value):
         self._i2c_block(Cmd.modbus_write(addr, value))

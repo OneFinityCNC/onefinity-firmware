@@ -269,6 +269,14 @@ class HomeHandler(bbctrl.APIHandler):
             self.get_ctrl().mach.home(axis)
 
 
+class DevmodeHandler(bbctrl.APIHandler):
+    def put_ok(self, command, *args):
+        if command == "/probe":
+            self.get_ctrl().mach.fake_probe_contact()
+        else:
+            raise HTTPError(400, 'Not implemented')
+
+
 class StartHandler(bbctrl.APIHandler):
     def put_ok(self): self.get_ctrl().mach.start()
 
@@ -463,6 +471,7 @@ class Web(tornado.web.Application):
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
+            (r'/api/devmode((/probe))?', DevmodeHandler),
             (r'/api/start', StartHandler),
             (r'/api/estop', EStopHandler),
             (r'/api/clear', ClearHandler),

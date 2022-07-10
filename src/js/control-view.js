@@ -254,6 +254,7 @@ module.exports = {
     this.load();
 
     SvelteComponents.registerControllerMethods({
+      stop: (...args) => this.stop(...args),
       send: (...args) => this.send(...args),
       goto_zero: (...args) => this.goto_zero(...args)
     });
