@@ -473,6 +473,10 @@ script#control-view-template(type="text/x-template")
             style="max-width:100%")
             option(v-for="file in state.files", :value="file") {{file}}
 
+          button.pure-button(title="Select yo file", @click="openFile",
+            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-folder-open
+
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
             title="Simulating GCode to check for errors, calculate ETA and " +
               "generate 3D view.  You can run GCode before the simulation " +

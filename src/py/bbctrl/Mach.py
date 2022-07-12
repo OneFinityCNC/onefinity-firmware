@@ -319,7 +319,7 @@ class Mach(Comm):
 
 
     def start(self):
-        filename = self.ctrl.state.get('selected', '')
+        filename = self.ctrl.queue.get()
         if not filename: return
         self._begin_cycle('running')
         self.planner.load(filename)
@@ -394,6 +394,6 @@ class Mach(Comm):
         self.mlog.info('Running macro %d %s' % (macro, path))
         self._begin_cycle('running')
 
-        # self.ctrl.queue.push(path)
+        self.ctrl.queue.push(path)
         self.planner.load(path, lambda: self.ctrl.queue.pop())
         super().resume()

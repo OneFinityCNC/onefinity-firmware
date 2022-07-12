@@ -91,3 +91,6 @@ class IOLoop(object):
 
     def add_callback(self, cb, *args, **kwargs):
         self.ioloop.add_callback(cb, *args, **kwargs)
+
+    def add_future(self, future, cb):
+        self.ioloop.add_future(future, cb)

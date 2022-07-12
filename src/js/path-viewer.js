@@ -129,7 +129,7 @@ module.exports = {
       if (!this.webglAvailable) {
         return;
       }
-      
+
       if (!this.state.selected) {
         this.dirty = true;
         this.scene = new THREE.Scene();
@@ -377,6 +377,7 @@ module.exports = {
     },
 
 
+    // this never fucking runs
     draw_workpiece: function (scene, material) {
       if (typeof this.workpiece == 'undefined') return;
 

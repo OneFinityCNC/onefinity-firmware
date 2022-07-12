@@ -41,6 +41,7 @@ from bbctrl.APIHandler import APIHandler
 from bbctrl.FileHandler import FileHandler
 from bbctrl.FileSystemHandler import FileSystemHandler
 from bbctrl.FileSystem import FileSystem
+from bbctrl.ProgramQueue import ProgramQueue
 from bbctrl.Config import Config
 from bbctrl.LCD import LCD, LCDPage
 from bbctrl.Mach import Mach

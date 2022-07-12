@@ -278,6 +278,16 @@ class UpgradeHandler(bbctrl.APIHandler):
         self.get_ctrl().lcd.goodbye('Upgrading firmware')
         subprocess.Popen(['/usr/local/bin/upgrade-bbctrl'])
 
+class QueueHandler(bbctrl.APIHandler):
+    def put_ok(self, path):
+        path = os.path.normpath(path)
+        if path.startswith('..'): raise HTTPError(400, 'Invalid path')
+        path = path.lstrip('./')
+
+        realpath = self.get_ctrl().fs.realpath(path)
+        if not os.path.exists(realpath): raise HTTPError(404, 'File not found')
+        self.get_ctrl().queue.set(path)
+
 class MacroHandler(bbctrl.APIHandler):
     def put_ok(self, macro):
         self.get_ctrl().mach.macro(int(macro))
@@ -475,6 +485,9 @@ class WSConnection(ClientConnection, tornado.websocket.WebSocketHandler):
     def send(self, msg):
         self.write_message(msg)
 
+    def check_origin(self):
+        return True
+
     def open(self):
         self.on_open()
 
@@ -492,17 +505,17 @@ class SockJSConnection(ClientConnection, sockjs.tornado.SockJSConnection):
         except:
             self.close()
 
+    def check_origin(self):
+        return True
 
     def on_open(self, info):
-        cookie = info.get_cookie('client-id')
-        if cookie is None: self.send(dict(sid = '')) # Trigger client reset
-        else:
-            id = cookie.value
 
-            ip = info.ip
-            if 'X-Real-IP' in info.headers: ip = info.headers['X-Real-IP']
-            self.app.get_ctrl(id).log.get('Web').info('Connection from %s' % ip)
-            super().on_open(id)
+        id = 'test'
+
+        ip = info.ip
+        if 'X-Real-IP' in info.headers: ip = info.headers['X-Real-IP']
+        self.app.get_ctrl(id).log.get('Web').info('Connection from %s' % ip)
+        super().on_open(id)
 
 
 class StaticFileHandler(tornado.web.StaticFileHandler):
@@ -547,6 +560,7 @@ class Web(tornado.web.Application):
             (r'/api/config/reset', ConfigResetHandler),
             (r'/api/firmware/update', FirmwareUpdateHandler),
             (r'/api/upgrade', UpgradeHandler),
+            (r'/api/queue/(.*)',                QueueHandler),
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/fs/(.*)',                   bbctrl.FileSystemHandler),
