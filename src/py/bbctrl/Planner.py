@@ -29,6 +29,7 @@ import json
 import math
 import re
 import time
+import datetime
 from collections import deque
 import camotics.gplan as gplan # pylint: disable=no-name-in-module,import-error
 import bbctrl.Cmd as Cmd
@@ -61,6 +62,7 @@ class Planner():
         self.planner = None
         self._position_dirty = False
         self.where = ''
+        self.end_cb = None
 
         ctrl.state.add_listener(self._update)
 
@@ -179,6 +181,8 @@ class Planner():
         elif level == 'E': self.log.error   (msg, where = where)
         else: self.log.error('Could not parse planner log line: ' + line)
 
+    def _log_time(self, prefix):
+        self.log.info(prefix + datetime.datetime.now().isoformat())
 
     def _add_message(self, text):
         self.ctrl.state.add_message(text)
@@ -297,7 +301,9 @@ class Planner():
             sw = self.ctrl.state.get_switch_id(block['switch'])
             return Cmd.seek(sw, block['active'], block['error'])
 
-        if type == 'end': return '' # Sends id
+        if type == 'end':
+            self.cmdq.enqueue(id, self._end_program, 'Program end:')
+            return '' # Sends id
 
         raise Exception('Unknown planner command "%s"' % type)
 
@@ -325,6 +331,7 @@ class Planner():
 
 
     def reset(self, *args, **kwargs):
+        self._end_program()
         stop = kwargs.get('stop', True)
         if stop:
             self.ctrl.mach.stop()
@@ -350,11 +357,24 @@ class Planner():
         self.reset_times()
 
 
+    def _end_program(self, msg = None):
+        if self.end_cb is not None:
+            self.end_cb()
+            self.end_cb = None
+
+        if msg is not None: self._log_time(msg)
+
+
     def load(self, path, done = None):
+        if done is not None and self.end_cb is not None:
+            raise Exception('End callback already set')
+
+        self.end_cb = done
         self.where = path
         path = self.ctrl.fs.realpath(path)
         # path = self.ctrl.get_path('upload', path)
         self.log.info('GCode:' + path)
+        self._log_time('Program Start: ')
         self._sync_position()
         self.planner.load(path, self.get_config(False, True))
         self.reset_times()
@@ -364,6 +384,7 @@ class Planner():
         try:
             self.planner.stop()
             self.cmdq.clear()
+            self._end_program('Program Stop: ')
 
         except:
             self.log.exception('Internal error: Planner stop')

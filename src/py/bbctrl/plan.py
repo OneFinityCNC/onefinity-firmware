@@ -87,7 +87,6 @@ class Plan(object):
         self.planner = gplan.Planner()
         self.planner.set_resolver(self.get_var_cb)
         self.planner.set_logger(self._log_cb, 1, 'LinePlanner:3')
-        self.planner.load(self.path, config)
 
         self.messages = []
         self.levels = dict(I = 'info', D = 'debug', W = 'warning', E = 'error',
@@ -195,6 +194,7 @@ class Plan(object):
 
         # Execute plan
         try:
+            self.planner.load(self.path, self.config)
             while self.planner.has_more():
                 cmd = self.planner.next()
                 self.planner.set_active(cmd['id']) # Release plan
