@@ -273,10 +273,11 @@ module.exports = {
       this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
-    getJogIncrFontWeight(value) {
-      const weight = this.jog_incr === value ? 'bold' : 'normal';
+    getJogIncrStyle(value) {
+      const weight = `font-weight:${this.jog_incr === value ? 'bold' : 'normal'}`;
+      const color = this.jog_incr === value ? "color:#0078e7" : "";
 
-      return `font-weight:${weight}`;
+      return [weight, color].join(';');
     },
 
     jog_fn: function (x_jog, y_jog, z_jog, a_jog) {

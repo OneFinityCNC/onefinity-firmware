@@ -79,16 +79,16 @@ script#control-view-template(type="text/x-template")
                 button(@click="jog_fn(0,0,-1,0)") Z-
             tr
               td(style="height:100px",align="center")
-                button(:style="getJogIncrFontWeight('fine')", @click="jog_incr = 'fine'")
+                button(:style="getJogIncrStyle('fine')", @click="jog_incr = 'fine'")
                   span {{jog_incr_amounts[display_units].fine}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
               td(style="height:100px",align="center")
-                button(:style="getJogIncrFontWeight('small')", @click="jog_incr = 'small'")
+                button(:style="getJogIncrStyle('small')", @click="jog_incr = 'small'")
                   span {{jog_incr_amounts[display_units].small}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
               td(style="height:100px",align="center")
-                button(:style="getJogIncrFontWeight('medium')", @click="jog_incr = 'medium'")
+                button(:style="getJogIncrStyle('medium')", @click="jog_incr = 'medium'")
                   span {{jog_incr_amounts[display_units].medium}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
               td(style="height:100px",align="center")
-                button(:style="getJogIncrFontWeight('large')", @click="jog_incr = 'large'")
+                button(:style="getJogIncrStyle('large')", @click="jog_incr = 'large'")
                   span {{jog_incr_amounts[display_units].large}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
             tr
               td(style="height:100px", align="center", colspan="2")
