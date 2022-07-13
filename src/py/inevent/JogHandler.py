@@ -72,12 +72,6 @@ class JogHandler:
         log.info(axes_to_string(self.axes) + ' x {:d}'.format(self.speed))
 
 
-    def up(self): log.debug('up')
-    def down(self): log.debug('down')
-    def left(self): log.debug('left')
-    def right(self): log.debug('right')
-
-
     def reset(self):
         self.axes = [0.0, 0.0, 0.0, 0.0]
         self.speed = 3
@@ -104,17 +98,6 @@ class JogHandler:
         # Process event
         if event.type == EV_ABS and event.code in config['axes']:
             pass
-
-        elif event.type == EV_ABS and event.code in config['arrows']:
-            axis = config['arrows'].index(event.code)
-
-            if event.value < 0:
-                if axis == 1: self.up()
-                else: self.left()
-
-            elif 0 < event.value:
-                if axis == 1: self.down()
-                else: self.right()
 
         elif event.type == EV_KEY and event.code in config['speed']:
             old_speed = self.speed

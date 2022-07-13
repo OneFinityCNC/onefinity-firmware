@@ -40,7 +40,6 @@ from bbctrl.RequestHandler import RequestHandler
 from bbctrl.APIHandler import APIHandler
 from bbctrl.FileHandler import FileHandler
 from bbctrl.Config import Config
-from bbctrl.LCD import LCD, LCDPage
 from bbctrl.Mach import Mach
 from bbctrl.Web import Web
 from bbctrl.Jog import Jog
@@ -52,8 +51,6 @@ from bbctrl.Preplanner import Preplanner
 from bbctrl.State import State
 from bbctrl.Comm import Comm
 from bbctrl.CommandQueue import CommandQueue
-from bbctrl.MainLCDPage import MainLCDPage
-from bbctrl.IPLCDPage import IPLCDPage
 from bbctrl.Camera import Camera, VideoHandler
 from bbctrl.AVR import AVR
 from bbctrl.AVREmu import AVREmu
@@ -132,8 +129,6 @@ def parse_args():
                         help = 'Serial baud rate')
     parser.add_argument('--i2c-port', default = 1, type = int,
                         help = 'I2C port')
-    parser.add_argument('--lcd-addr', default = [0x27, 0x3f], type = int,
-                        help = 'LCD I2C address')
     parser.add_argument('--avr-addr', default = 0x2b, type = int,
                         help = 'AVR I2C address')
     parser.add_argument('--pwr-addr', default = 0x60, type = int,

@@ -31,7 +31,6 @@ class Ctrl(object):
                 self.avr = bbctrl.AVR(self)
 
             self.i2c = bbctrl.I2C(args.i2c_port, args.demo)
-            self.lcd = bbctrl.LCD(self)
             self.mach = bbctrl.Mach(self, self.avr)
             self.preplanner = bbctrl.Preplanner(self)
             if not args.demo:
@@ -39,9 +38,6 @@ class Ctrl(object):
             self.pwr = bbctrl.Pwr(self)
 
             self.mach.connect()
-
-            self.lcd.add_new_page(bbctrl.MainLCDPage(self))
-            self.lcd.add_new_page(bbctrl.IPLCDPage(self.lcd))
 
             os.environ['GCODE_SCRIPT_PATH'] = self.get_upload()
 
