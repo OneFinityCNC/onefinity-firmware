@@ -91,8 +91,7 @@ class Ctrl(object):
 
 
     def get_path(self, dir = None, filename = None):
-        path = './' + self.id if self.id else '.'
-        path = path if dir is None else (path + '/' + dir)
+        path = self.root if dir is None else (self.root + '/' + dir)
         return path if filename is None else (path + '/' + filename)
 
 

@@ -26,9 +26,12 @@
 ################################################################################
 
 import os
+import stat
+import json
 import bbctrl
 import glob
 import html
+from datetime import datetime
 from tornado import gen
 from tornado.web import HTTPError
 
@@ -38,10 +41,21 @@ def safe_remove(path):
         os.unlink(path)
     except OSError: pass
 
+def clean_path(path):
+    if path is None: return ''
+
+    path = os.path.normpath(path)
+    if path.startswith('..'): raise HTTPError(400, 'Invalid path')
+    return path.lstrip('./').replace('#', '-').replace('?', '-')
+
+def timestamp_to_iso8601(ts):
+    return datetime.fromtimestamp(ts).replace(microsecond = 0).isoformat() + 'Z'
+
 
 class FileHandler(bbctrl.APIHandler):
+    def get_fs(self): return self.get_ctrl().fs
+    def delete(self, path): self.get_fs().delete(clean_path(path))
     def prepare(self): pass
-
 
     def delete_ok(self, filename):
         if not filename:
@@ -73,17 +87,43 @@ class FileHandler(bbctrl.APIHandler):
         self.get_ctrl().state.add_file(filename)
         self.get_log('FileHandler').info('GCode received: ' + filename)
 
+    def put(self, path):
+        path = clean_path(path)
+
+        if 'file' in self.request.files:
+            self.get_fs().mkdir(os.path.dirname(path))
+            file = self.request.files['file'][0]
+            self.get_fs().write(path, file['body'])
+
+        else: self.get_fs().mkdir(path)
 
     @gen.coroutine
-    def get(self, filename):
-        if not filename: raise HTTPError(400, 'Missing filename')
-        filename = os.path.basename(filename)
+    def get(self, path):
+        path = clean_path(path)
+        if path == '': path = 'Home'
+        realpath = self.get_fs().realpath(path)
+        self.get_log('FileHandler').info('GCode received: ' + realpath + path)
+        if not os.path.exists(realpath): raise HTTPError(404, 'File not found')
+        elif os.path.isdir(realpath):
+            files = []
 
-        try:
-            with open(self.get_upload(filename).encode('utf8'), 'r') as f:
+            if os.path.exists(realpath):
+                for name in os.listdir(realpath):
+                    s = os.stat(realpath + '/' + name)
+
+                    d = dict(name = name)
+                    d['created']  = timestamp_to_iso8601(s.st_ctime)
+                    d['modified'] = timestamp_to_iso8601(s.st_mtime)
+                    d['size']     = s.st_size
+                    d['dir']      = stat.S_ISDIR(s.st_mode)
+
+                    files.append(d)
+
+            d = dict(path = path, files = files)
+
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(d, separators = (',', ':')))
+
+        else:
+            with open(realpath.encode('utf8'), 'rb') as f:
                 self.write(f.read())
-        except Exception:
-            self.get_ctrl().state.select_file('')
-            raise HTTPError(400, "Unable to read file - doesn't appear to be GCode.")
-
-        self.get_ctrl().state.select_file(filename)

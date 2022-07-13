@@ -33,7 +33,9 @@ import datetime
 import subprocess
 import socket
 from tornado.web import HTTPError
-from tornado import gen
+from tornado import web, gen
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor
 
 import bbctrl
 
@@ -294,19 +296,20 @@ class MacroHandler(bbctrl.APIHandler):
 
 class PathHandler(bbctrl.APIHandler):
     @gen.coroutine
-    def get(self, filename, dataType, *args):
-        if not os.path.exists(self.get_upload(filename)):
+    def get(self, dataType, path, *args):
+        self.get_log('PathHandler').info('filepath requested: ' + self.get_ctrl().fs.realpath(path) + path + dataType)
+        if not os.path.exists(self.get_ctrl().fs.realpath(path)):
             raise HTTPError(404, 'File not found')
 
         preplanner = self.get_ctrl().preplanner
-        future = preplanner.get_plan(filename)
+        future = preplanner.get_plan(path)
 
         try:
             delta = datetime.timedelta(seconds = 1)
             data = yield gen.with_timeout(delta, future)
 
         except gen.TimeoutError:
-            progress = preplanner.get_plan_progress(filename)
+            progress = preplanner.get_plan_progress(path)
             self.write_json(dict(progress = progress))
             return
 
@@ -314,14 +317,15 @@ class PathHandler(bbctrl.APIHandler):
             if data is None: return
             meta, positions, speeds = data
 
-            if dataType == '/positions': data = positions
-            elif dataType == '/speeds': data = speeds
+            if dataType == 'positions': data = positions
+            elif dataType == 'speeds': data = speeds
             else:
                 self.get_ctrl().state.set_bounds(meta['bounds'])
                 self.write_json(meta)
                 return
 
-            filename = filename + '-' + dataType[1:]
+            filename = os.path.basename(path) + '-' + dataType + '.gz'
+            path = path + '-' + dataType[1:]
             self.set_header('Content-Disposition', 'filename="%s"' % filename)
             self.set_header('Content-Type', 'application/octet-stream')
             self.set_header('Content-Encoding', 'gzip')
@@ -561,8 +565,7 @@ class Web(tornado.web.Application):
             (r'/api/firmware/update', FirmwareUpdateHandler),
             (r'/api/upgrade', UpgradeHandler),
             (r'/api/queue/(.*)',                QueueHandler),
-            (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
-            (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
+            (r'/api/file/(.*)', bbctrl.FileHandler),
             (r'/api/fs/(.*)',                   bbctrl.FileSystemHandler),
             (r'/api/macro/(\d+)',               MacroHandler),
             (r'/api/(path)/(.*)',               PathHandler),

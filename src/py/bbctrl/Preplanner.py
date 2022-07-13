@@ -63,7 +63,7 @@ def safe_remove(path):
 
 
 class Plan(object):
-    def __init__(self, preplanner, ctrl, filename):
+    def __init__(self, preplanner, ctrl, path):
         self.preplanner = preplanner
 
         # Copy planner state
@@ -75,9 +75,8 @@ class Plan(object):
         self.cancel = False
         self.pid = None
 
-        root = ctrl.get_path()
-        self.gcode = '%s/upload/%s' % (root, filename)
-        self.base = '%s/plans/%s' % (root, filename)
+        self.gcode = ctrl.fs.realpath(path)
+        self.base = '%s/plans/%s' % (ctrl.root, os.path.basename(path))
         self.hid = plan_hash(self.gcode, self.config)
         fbase = '%s.%s.' % (self.base, self.hid)
         self.files = [
@@ -251,16 +250,18 @@ class Preplanner(object):
             self.invalidate(filename)
 
     @gen.coroutine
-    def get_plan(self, filename):
-        if filename is None: raise Exception('Filename cannot be None')
+    def get_plan(self, path):
+        if path is None: raise Exception('Path cannot be None')
 
         # Wait until state is fully initialized
         yield self.started
 
-        if filename in self.plans: plan = self.plans[filename]
+        if not self.ctrl.fs.isfile(path): raise Exception('File not found')
+
+        if path in self.plans: plan = self.plans[path]
         else:
-            plan = Plan(self, self.ctrl, filename)
-            self.plans[filename] = plan
+            plan = Plan(self, self.ctrl, path)
+            self.plans[path] = plan
 
         data = yield plan.future
         return data

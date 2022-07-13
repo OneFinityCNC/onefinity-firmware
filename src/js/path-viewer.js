@@ -150,8 +150,8 @@ module.exports = {
       }
 
       const [positions, speeds] = await Promise.all([
-        get('/api/path/' + this.toolpath.filename + '/positions'),
-        get('/api/path/' + this.toolpath.filename + '/speeds')
+        get('/api/positions/' + this.toolpath.filename),
+        get('/api/speeds/' + this.toolpath.filename)
       ]);
 
       this.positions = positions

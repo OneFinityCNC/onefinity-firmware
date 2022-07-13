@@ -519,7 +519,7 @@ module.exports = {
 
     load: function () {
       var file_time = this.state.selected_time;
-      var file = this.state.queued.replace('Home/', '');
+      var file = this.state.queued;
       if (this.last_file == file && this.last_file_time == file_time) return;
       this.last_file = file;
       this.last_file_time = file_time;
@@ -537,7 +537,6 @@ module.exports = {
         callback: function (path) {
           if (path) {
             api.put('queue/' + path)
-            path = path.replace('Home/', '');
             this.$broadcast('gcode-load', path);
             this.toolpath_progress = 0;
             this.load_toolpath(path, this.state.selected_time)
