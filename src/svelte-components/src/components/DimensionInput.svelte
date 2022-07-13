@@ -22,7 +22,7 @@
   let textValue = "";
 
   $: if (textValue) {
-    value = Number(textValue);
+    value = Number.parseFloat(textValue) || null;
   }
 
   onMount(() => {

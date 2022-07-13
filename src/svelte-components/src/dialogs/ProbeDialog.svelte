@@ -83,8 +83,8 @@
   export let open;
   export let probeType: "xyz" | "z";
   let currentStep: Step = "None";
-  let cutterDiameter;
-  let cutterLength;
+  let cutterDiameter: number;
+  let cutterLength: number;
   let showCancelButton = true;
   let steps: Array<Step> = [];
   let nextButton = {
@@ -96,8 +96,10 @@
   $: metric = $Config.settings?.units === "METRIC";
 
   $: if (open) {
-    cutterDiameter = null;
-    cutterLength = null;
+    cutterDiameter =
+      Number.parseFloat(localStorage.getItem("cutterDiameter")) || null;
+    cutterLength =
+      Number.parseFloat(localStorage.getItem("cutterLength")) || null;
 
     // Svelte appears not to like it when you invoke
     // an async function from a reactive statement, so we
@@ -130,6 +132,8 @@
 
       if (probeType === "xyz") {
         await stepCompleted("BitDimensions", userAcknowledged);
+        localStorage.setItem("cutterDiameter", cutterDiameter);
+        localStorage.setItem("cutterLength", cutterLength);
       }
 
       await stepCompleted("PlaceProbeBlock", userAcknowledged);
