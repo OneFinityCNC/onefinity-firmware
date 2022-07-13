@@ -11,13 +11,6 @@ script#settings-view-template(type="text/x-template")
             option(value="METRIC") METRIC
             option(value="IMPERIAL") IMPERIAL
           
-
-      fieldset
-        h2 Probing safety prompts
-        templated-input(name="probing-prompts",
-          :model.sync="config.settings['probing-prompts']",
-          :template="template.settings['probing-prompts']")
-
       fieldset
         h2 Probe Dimensions
         templated-input(v-for="templ in template.probe", :name="$key",
