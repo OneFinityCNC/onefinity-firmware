@@ -395,7 +395,7 @@ script#control-view-template(type="text/x-template")
         :style="{'background-color': macro.color}")
         | {{($index + 1) + ' ' + macro.name}}
 
-      button.pure-button.macro(@click="goto('#settings:macros')",
+      button.pure-button.macro(@click="goto('#macros')",
         title="Go to macro settings")
         .fa.fa-cog
         | Macros

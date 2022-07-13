@@ -500,6 +500,10 @@ module.exports = {
       this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
     },
 
+    goto(routeHash) {
+      window.location.hash = routeHash;
+    },
+
     jog_fn: function (x_jog, y_jog, z_jog, a_jog) {
       var xcmd = 'X' + x_jog * this.jog_incr;
       var ycmd = 'Y' + y_jog * this.jog_incr;
