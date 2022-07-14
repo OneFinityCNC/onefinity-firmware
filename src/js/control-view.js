@@ -124,7 +124,7 @@ module.exports = {
         this.$broadcast('gcode-line', this.state.line);
     },
 
-    'state.selected_time': function () {
+    'state.queued_time': function () {
       this.load();
     },
 
@@ -518,7 +518,7 @@ module.exports = {
     },
 
     load: function () {
-      var file_time = this.state.selected_time;
+      var file_time = this.state.queued_time;
       var file = this.state.queued;
       if (this.last_file == file && this.last_file_time == file_time) return;
       this.last_file = file;
@@ -539,7 +539,7 @@ module.exports = {
             api.put('queue/' + path)
             this.$broadcast('gcode-load', path);
             this.toolpath_progress = 0;
-            this.load_toolpath(path, this.state.selected_time)
+            this.load_toolpath(path, this.state.queued_time);
           }
         }.bind(this),
         dir: path ? util.dirname(path) : '/',
@@ -667,8 +667,8 @@ module.exports = {
 
 
     delete_current: function () {
-      if (this.state.selected) {
-        api.delete('file/' + this.state.selected);
+      if (this.state.queued) {
+        api.delete('file/' + this.state.queued);
       }
 
       this.deleteGCode = false;
@@ -763,8 +763,6 @@ module.exports = {
     step: function () {
       api.put('step')
     },
-
-
     override_feed: function () {
       api.put('override/feed/' + this.feed_override)
     },

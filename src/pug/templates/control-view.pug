@@ -421,7 +421,7 @@ script#control-view-template(type="text/x-template")
         .toolbar.pure-control-group
           button.pure-button(:class="{'attention': is_holding}",
             title="{{is_running ? 'Pause' : 'Start'}} program.",
-            @click="start_pause", :disabled="!state.selected",
+            @click="start_pause", :disabled="!state.queued",
             style="height:100px;width:100px;font-weight:normal")
             .fa(:class="is_running ? 'fa-pause' : 'fa-play'")
 
@@ -433,27 +433,19 @@ script#control-view-template(type="text/x-template")
             .fa.fa-stop-circle-o
 
           button.pure-button(title="Execute one program step.", @click="step",
-            :disabled="(!is_ready && !is_holding) || !state.selected",
+            :disabled="(!is_ready && !is_holding) || !state.queued",
             v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-step-forward
 
-          button.pure-button(title="Upload a new GCode program.", @click="open",
-            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-folder-open
-
-          form.gcode-file-input.file-upload
-            input(type="file", @change="upload", :disabled="!is_ready",
-              accept=".nc,.ngc,.gcode,.gc")
-
-          a(:disabled="!state.selected", download,
-              :href="'/api/file/' + state.selected",
+          a(:disabled="!state.queued", download,
+              :href="'/api/file/' + state.queued",
               title="Download the selected GCode program.")
-            button.pure-button(:disabled="!state.selected", style="height:100px;width:100px")
+            button.pure-button(:disabled="!state.queued", style="height:100px;width:100px")
               .fa.fa-download
 
           button.pure-button(title="Delete current GCode program.",
             @click="deleteGCode = true",
-            :disabled="!state.selected || !is_ready",style="height:100px;width:100px;font-weight:normal")
+            :disabled="!state.queued || !is_ready",style="height:100px;width:100px;font-weight:normal")
             .fa.fa-trash
 
           message(:show.sync="deleteGCode")
@@ -468,11 +460,6 @@ script#control-view-template(type="text/x-template")
                 .fa.fa-trash
                 | &nbsp;selected
 
-          select(title="Select previously uploaded GCode programs.",
-            v-model="state.selected", @change="load", :disabled="!is_ready",
-            style="max-width:100%")
-            option(v-for="file in state.files", :value="file") {{file}}
-
           button.pure-button(title="Select previously uploaded GCode file", @click="openFile",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
             .fa.fa-folder-open
@@ -483,6 +470,9 @@ script#control-view-template(type="text/x-template")
               "finishes.")
             div(:style="'width:' + (toolpath_progress || 0) * 100 + '%'")
               label Simulating {{(toolpath_progress || 0) | percent}}
+
+          div.pull-right
+            label Current Job: {{state.queued}}
 
         path-viewer(:toolpath="toolpath", :state="state", :config="config")
         gcode-viewer
