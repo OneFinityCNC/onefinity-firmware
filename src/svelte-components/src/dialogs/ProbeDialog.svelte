@@ -63,21 +63,21 @@
   import { Config } from "$lib/ConfigStore";
 
   const cutterDiameterOptions = [
-    { value: 0.5, metric: false },
-    { value: 10, metric: true },
-    { value: 0.25, metric: false },
-    { value: 6, metric: true },
-    { value: 0.125, metric: false },
-    { value: 3, metric: true },
+    { value: 0.5, label: '1/2 "', metric: false },
+    { value: 0.25, label: '1/4 "', metric: false },
+    { value: 0.125, label: '1/8 "', metric: false },
+    { value: 10, label: "10 mm", metric: true },
+    { value: 6, label: "6 mm", metric: true },
+    { value: 3, label: "10 mm", metric: true },
   ];
 
   const cutterLengthOptions = [
-    { value: 1, metric: false },
-    { value: 20, metric: true },
-    { value: 0.5, metric: false },
-    { value: 10, metric: true },
-    { value: 0.25, metric: false },
-    { value: 6, metric: true },
+    { value: 1, label: '1 "', metric: false },
+    { value: 0.5, label: '1/2 "', metric: false },
+    { value: 0.25, label: '1/4 "', metric: false },
+    { value: 20, label: "20 mm", metric: true },
+    { value: 10, label: "10 mm", metric: true },
+    { value: 6, label: "6 mm", metric: true },
   ];
 
   export let open;
@@ -132,8 +132,8 @@
 
       if (probeType === "xyz") {
         await stepCompleted("BitDimensions", userAcknowledged);
-        localStorage.setItem("cutterDiameter", cutterDiameter);
-        localStorage.setItem("cutterLength", cutterLength);
+        localStorage.setItem("cutterDiameter", cutterDiameter.toString());
+        localStorage.setItem("cutterLength", cutterLength.toString());
       }
 
       await stepCompleted("PlaceProbeBlock", userAcknowledged);
