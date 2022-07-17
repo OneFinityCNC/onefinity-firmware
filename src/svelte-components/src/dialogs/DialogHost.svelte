@@ -1,31 +1,48 @@
 <script lang="ts" context="module">
+  import { writable } from "svelte/store";
   import HomeMachineDialog from "$dialogs/HomeMachineDialog.svelte";
   import ProbeDialog from "$dialogs/ProbeDialog.svelte";
-  import {
-    HomeMachineProps,
-    ProbeProps,
-    type HomeMachinePropsType,
-    type ProbePropsType,
-  } from "$dialogs/DialogProps";
+  import ScreenRotationDialog from "$dialogs/ScreenRotationDialog.svelte";
+
+  const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
+  type HomeMachineDialogPropsType = {
+    open: boolean;
+    home: () => void;
+  };
+
+  const ProbeDialogProps = writable<ProbeDialogPropsType>();
+  type ProbeDialogPropsType = {
+    open: boolean;
+    probeType: "xyz" | "z";
+  };
+
+  const ScreenRotationDialogProps = writable<ProbeDialogPropsType>();
+  type ScreenRotationDialogPropsType = {
+    open: boolean;
+  };
 
   export function showDialog(
     dialog: "HomeMachine",
-    props: Omit<HomeMachinePropsType, "open">
+    props: Omit<HomeMachineDialogPropsType, "open">
   );
 
   export function showDialog(
     dialog: "Probe",
-    props: Omit<ProbePropsType, "open">
+    props: Omit<ProbeDialogPropsType, "open">
   );
 
   export function showDialog(dialog: string, props: any) {
     switch (dialog) {
       case "HomeMachine":
-        HomeMachineProps.set({ ...props, open: true });
+        HomeMachineDialogProps.set({ ...props, open: true });
         break;
 
       case "Probe":
-        ProbeProps.set({ ...props, open: true });
+        ProbeDialogProps.set({ ...props, open: true });
+        break;
+
+      case "ScreenRotation":
+        ScreenRotationDialogProps.set({ ...props, open: true });
         break;
 
       default:
@@ -34,5 +51,6 @@
   }
 </script>
 
-<HomeMachineDialog {...$HomeMachineProps} />
-<ProbeDialog {...$ProbeProps} />
+<HomeMachineDialog {...$HomeMachineDialogProps} />
+<ProbeDialog {...$ProbeDialogProps} />
+<ScreenRotationDialog {...$ScreenRotationDialogProps} />

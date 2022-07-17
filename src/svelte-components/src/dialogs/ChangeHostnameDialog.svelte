@@ -88,7 +88,7 @@
       <Label>Cancel</Label>
     </Button>
     <Button defaultAction on:click={onConfirm} disabled={hostname.length === 0}>
-      <Label>Confirm</Label>
+      <Label>Confirm & Reboot</Label>
     </Button>
   </Actions>
 </Dialog>

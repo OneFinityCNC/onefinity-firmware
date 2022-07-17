@@ -92,7 +92,7 @@
       on:click={onConfirm}
       disabled={needPassword && (password.length < 8 || password.length > 128)}
     >
-      <Label>{connectOrDisconnect}</Label>
+      <Label>{connectOrDisconnect} & Reboot</Label>
     </Button>
   </Actions>
 </Dialog>
