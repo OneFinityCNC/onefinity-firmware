@@ -18,8 +18,8 @@
   $: needPassword = !network?.active && network?.Encryption !== "Open";
   $: connectOrDisconnect = network?.active ? "Disconnect" : "Connect";
   $: connectToOrDisconnectFrom = network?.active
-      ? "Disconnect from"
-      : "Connect to";
+    ? "Disconnect from"
+    : "Connect to";
 
   $: if (open) {
     password = "";
@@ -48,7 +48,9 @@
   aria-labelledby="wifi-connection-dialog-title"
   aria-describedby="wifi-connection-dialog-content"
 >
-  <Title id="wifi-connection-dialog-title">{connectToOrDisconnectFrom} {network.Name}</Title>
+  <Title id="wifi-connection-dialog-title"
+    >{connectToOrDisconnectFrom} {network.Name}</Title
+  >
 
   <Content id="wifi-connection-dialog-content">
     {#if needPassword}
@@ -64,9 +66,7 @@
           slot="trailingIcon"
           on:click={() => (showPassword = !showPassword)}
         >
-          <Icon class="material-symbols-outlined">
-            {showPassword ? "password" : "abc"}
-          </Icon>
+          <Icon class={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
         </div>
         <HelperText persistent slot="helper">
           Wifi passwords must be 8 to 128 characters

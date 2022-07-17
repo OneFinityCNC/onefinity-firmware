@@ -15,22 +15,24 @@
     network: {} as WifiNetwork,
   };
 
-  function getWifiStrengthIcon(network: WifiNetwork) {
+  function getWifiStrengthStyle(network: WifiNetwork) {
     const strength = Math.ceil((Number(network.Quality) / 100) * 4);
 
     switch (strength) {
       case 0:
+        return "clip-path: circle(0px at 12.5px 19px);";
+
       case 1:
-        return "";
+        return "clip-path: circle(4px at 12.5px 19px);";
 
       case 2:
-        return "wifi_1_bar";
+        return "clip-path: circle(8px at 12.5px 19px);";
 
       case 3:
-        return "wifi_2_bar";
+        return "clip-path: circle(14px at 12.5px 19px);";
 
       case 4:
-        return "wifi";
+        return "";
     }
   }
 
@@ -104,17 +106,16 @@
                       ? 'active'
                       : ''}"
                   >
-                    <span class="material-symbols-outlined background"
-                      >wifi</span
-                    >
-                    <span class="material-symbols-outlined">
-                      {getWifiStrengthIcon(network)}
-                    </span>
+                    <span class="fa fa-wifi background" />
+                    <span
+                      class="fa fa-wifi"
+                      style={getWifiStrengthStyle(network)}
+                    />
                   </Graphic>
                   <Text style="margin-right: 20px;">{network.Name}</Text>
                   {#if network.Encryption !== "Open"}
                     <Meta>
-                      <span class="material-symbols-outlined lock">lock</span>
+                      <span class="fa fa-lock" />
                     </Meta>
                   {/if}
                 </Item>
@@ -189,8 +190,8 @@
 
           span {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            top: 5px;
+            font-size: 22px;
 
             &.background {
               opacity: 0.25;
