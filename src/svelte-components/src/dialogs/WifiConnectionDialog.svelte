@@ -45,12 +45,12 @@
 <Dialog
   bind:open
   scrimClickAction=""
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
+  aria-labelledby="wifi-connection-dialog-title"
+  aria-describedby="wifi-connection-dialog-content"
 >
-  <Title id="simple-title">{connectToOrDisconnectFrom} {network.Name}</Title>
+  <Title id="wifi-connection-dialog-title">{connectToOrDisconnectFrom} {network.Name}</Title>
 
-  <Content id="simple-content">
+  <Content id="wifi-connection-dialog-content">
     {#if needPassword}
       <TextField
         bind:value={password}

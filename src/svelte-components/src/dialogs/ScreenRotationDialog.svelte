@@ -36,12 +36,12 @@
 <Dialog
   bind:open
   scrimClickAction=""
-  aria-labelledby="screen-rotation-title"
-  aria-describedby="screen-rotation-content"
+  aria-labelledby="screen-rotation-dialog-title"
+  aria-describedby="screen-rotation-dialog-content"
 >
-  <Title id="screen-rotation-title">Screen Rotation</Title>
+  <Title id="screen-rotation-dialog-title">Screen Rotation</Title>
 
-  <Content id="screen-rotation-content">
+  <Content id="screen-rotation-dialog-content">
     {#each options as option}
       <FormField>
         <Radio bind:group={value} value={option.value} />
@@ -68,7 +68,7 @@
 
 <style lang="scss">
   :global {
-    #screen-rotation-content {
+    #screen-rotation-dialog-content {
       display: flex;
       flex-direction: column;
     }

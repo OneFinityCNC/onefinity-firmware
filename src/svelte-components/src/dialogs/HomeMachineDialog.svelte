@@ -8,12 +8,12 @@
 
 <Dialog
   bind:open
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
+  aria-labelledby="home-machine-dialog-title"
+  aria-describedby="home-machine-dialog-content"
 >
-  <Title id="simple-title">Home Machine</Title>
+  <Title id="home-machine-dialog-title">Home Machine</Title>
 
-  <Content id="simple-content">Home the machine?</Content>
+  <Content id="home-machine-dialog-content">Home the machine?</Content>
 
   <Actions>
     <Button>

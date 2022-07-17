@@ -310,13 +310,13 @@
   bind:open
   class="probe-dialog"
   scrimClickAction=""
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
+  aria-labelledby="probe-dialog-title"
+  aria-describedby="probe-dialog-content"
   surface$style="width: 700px; height: 400px; max-width: calc(100vw - 32px); overflow: visible;"
 >
-  <Title id="simple-title">Probing {probeType?.toUpperCase()}</Title>
+  <Title id="probe-dialog-title">Probing {probeType?.toUpperCase()}</Title>
 
-  <Content id="simple-content" style="overflow: visible;">
+  <Content id="probe-dialog-content" style="overflow: visible;">
     <div class="steps">
       <p><b>Step {steps.indexOf(currentStep) + 1} of {steps.length}</b></p>
       <ul>
@@ -402,7 +402,7 @@
   $light: #ddd;
 
   :global {
-    .mdc-dialog__content {
+    #probe-dialog-content {
       display: flex;
       flex-direction: row;
     }
