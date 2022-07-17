@@ -19,6 +19,7 @@
     const strength = Math.ceil((Number(network.Quality) / 100) * 4);
 
     switch (strength) {
+      case 0:
       case 1:
         return "";
 
