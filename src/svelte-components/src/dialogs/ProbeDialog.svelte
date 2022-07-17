@@ -71,20 +71,10 @@
     { value: 3, label: "10 mm", metric: true },
   ];
 
-  const cutterLengthOptions = [
-    { value: 1, label: '1 "', metric: false },
-    { value: 0.5, label: '1/2 "', metric: false },
-    { value: 0.25, label: '1/4 "', metric: false },
-    { value: 20, label: "20 mm", metric: true },
-    { value: 10, label: "10 mm", metric: true },
-    { value: 6, label: "6 mm", metric: true },
-  ];
-
   export let open;
   export let probeType: "xyz" | "z";
   let currentStep: Step = "None";
   let cutterDiameter: number;
-  let cutterLength: number;
   let showCancelButton = true;
   let steps: Array<Step> = [];
   let nextButton = {
@@ -98,8 +88,6 @@
   $: if (open) {
     cutterDiameter =
       Number.parseFloat(localStorage.getItem("cutterDiameter")) || null;
-    cutterLength =
-      Number.parseFloat(localStorage.getItem("cutterLength")) || null;
 
     // Svelte appears not to like it when you invoke
     // an async function from a reactive statement, so we
@@ -107,7 +95,7 @@
     requestAnimationFrame(begin);
   }
 
-  $: if (cutterDiameter && cutterLength) {
+  $: if (cutterDiameter) {
     updateButtons();
   }
 
@@ -133,7 +121,6 @@
       if (probeType === "xyz") {
         await stepCompleted("BitDimensions", userAcknowledged);
         localStorage.setItem("cutterDiameter", cutterDiameter.toString());
-        localStorage.setItem("cutterLength", cutterLength.toString());
       }
 
       await stepCompleted("PlaceProbeBlock", userAcknowledged);
@@ -221,10 +208,7 @@
         nextButton.disabled = !(
           cutterDiameter !== null &&
           cutterDiameter !== 0 &&
-          isFinite(cutterDiameter) &&
-          cutterLength !== null &&
-          cutterLength !== 0 &&
-          isFinite(cutterLength)
+          isFinite(cutterDiameter)
         );
         break;
 
@@ -246,6 +230,7 @@
     const slowSeek = $Config.probe["probe-slow-seek"];
     const fastSeek = $Config.probe["probe-fast-seek"];
 
+    const cutterLength = 12.7;
     const zLift = 1;
     const xOffset = probeBlockWidth + cutterDiameter / 2.0;
     const yOffset = probeBlockLength + cutterDiameter / 2.0;
@@ -335,12 +320,6 @@
             label="Cutter diameter"
             options={cutterDiameterOptions}
             bind:value={cutterDiameter}
-            {metric}
-          />
-          <DimensionInput
-            label="Cutter length"
-            options={cutterLengthOptions}
-            bind:value={cutterLength}
             {metric}
           />
         {:else if currentStep === "PlaceProbeBlock"}
