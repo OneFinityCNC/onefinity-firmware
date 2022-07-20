@@ -398,18 +398,13 @@ module.exports = {
           return;
       }
 
-      const fd = new FormData();
-
-      fd.append('gcode', file);
-
-      try {
-        await api.upload('file', fd);
-
-        this.last_file_time = undefined; // Force reload
-        this.$broadcast('gcode-reload', file.name);
-      } catch (err) {
-        api.alert('Upload failed', err)
-      }
+      SvelteComponents.showDialog("Upload", {
+        file,
+        onComplete: () => {
+          this.last_file_time = undefined; // Force reload
+          this.$broadcast('gcode-reload', file.name);
+        }
+      });
     },
 
     delete_current: function () {
@@ -530,7 +525,7 @@ module.exports = {
       this.send(JSON.stringify(data));
     },
 
-    showProbeDialog: function(probeType) {
+    showProbeDialog: function (probeType) {
       SvelteComponents.showDialog("Probe", { probeType });
     }
   },

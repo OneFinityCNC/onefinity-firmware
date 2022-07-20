@@ -3,6 +3,7 @@
   import HomeMachineDialog from "$dialogs/HomeMachineDialog.svelte";
   import ProbeDialog from "$dialogs/ProbeDialog.svelte";
   import ScreenRotationDialog from "$dialogs/ScreenRotationDialog.svelte";
+  import UploadDialog from "$dialogs/UploadDialog.svelte";
 
   const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
   type HomeMachineDialogPropsType = {
@@ -16,9 +17,15 @@
     probeType: "xyz" | "z";
   };
 
-  const ScreenRotationDialogProps = writable<ProbeDialogPropsType>();
+  const ScreenRotationDialogProps = writable<ScreenRotationDialogPropsType>();
   type ScreenRotationDialogPropsType = {
     open: boolean;
+  };
+
+  const UploadDialogProps = writable<UploadDialogPropsType>();
+  type UploadDialogPropsType = {
+    open: boolean;
+    file: File;
   };
 
   export function showDialog(
@@ -29,6 +36,16 @@
   export function showDialog(
     dialog: "Probe",
     props: Omit<ProbeDialogPropsType, "open">
+  );
+
+  export function showDialog(
+    dialog: "ScreenRotation",
+    props: Omit<ScreenRotationDialogPropsType, "open">
+  );
+
+  export function showDialog(
+    dialog: "Upload",
+    props: Omit<UploadDialogPropsType, "open">
   );
 
   export function showDialog(dialog: string, props: any) {
@@ -45,6 +62,10 @@
         ScreenRotationDialogProps.set({ ...props, open: true });
         break;
 
+      case "Upload":
+        UploadDialogProps.set({ ...props, open: true });
+        break;
+
       default:
         throw new Error(`Unknown dialog '${dialog}`);
     }
@@ -54,3 +75,4 @@
 <HomeMachineDialog {...$HomeMachineDialogProps} />
 <ProbeDialog {...$ProbeDialogProps} />
 <ScreenRotationDialog {...$ScreenRotationDialogProps} />
+<UploadDialog {...$UploadDialogProps} />
