@@ -26,6 +26,7 @@
   type UploadDialogPropsType = {
     open: boolean;
     file: File;
+    onComplete: () => void;
   };
 
   export function showDialog(

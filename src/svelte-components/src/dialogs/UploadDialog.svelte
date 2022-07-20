@@ -5,6 +5,7 @@
 
   export let open = false;
   export let file: File;
+  export let onComplete: () => void;
 
   let wasOpen = false;
   let xhr;
@@ -28,6 +29,9 @@
     xhr = new XMLHttpRequest();
     xhr.upload.onload = () => {
       open = false;
+      if (onComplete) {
+        onComplete();
+      }
     };
 
     xhr.upload.onerror = () => {
