@@ -1,10 +1,22 @@
 import traceback
 import copy
+import json
 import uuid
 import os
+import socket
 import bbctrl
+import iw_parse
+from tornado import gen
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+
+
+def call_get_output(cmd):
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    s = p.communicate()[0].decode('utf-8')
+    if p.returncode:
+        raise HTTPError(400, 'Command failed')
+    return s
 
 
 class UploadChangeHandler(FileSystemEventHandler):
@@ -63,6 +75,36 @@ class State(object):
         observer.schedule(UploadChangeHandler(
             self), self.ctrl.get_upload(), recursive=True)
         observer.start()
+
+        self._updateNetworkInfo()
+
+    @gen.coroutine
+    def _updateNetworkInfo(self):
+        try:
+            ipAddresses = call_get_output(['hostname', '-I']).split()
+        except:
+            ipAddresses = ""
+
+        hostname = socket.gethostname()
+
+        try:
+            wifi = json.loads(call_get_output(['config-wifi', '-j']))
+        except:
+            wifi = {'enabled': False}
+
+        try:
+            lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
+            wifi['networks'] = iw_parse.get_parsed_cells(lines)
+        except:
+            wifi['networks'] = []
+
+        self.set('networkInfo', {
+            'ipAddresses': ipAddresses,
+            'hostname': hostname,
+            'wifi': wifi
+        })
+
+        self.timeout = self.ctrl.ioloop.call_later(5, self._updateNetworkInfo)
 
     def reset(self):
         # Unhome all motors
@@ -170,8 +212,11 @@ class State(object):
 
         return name
 
-    def has(self, name): return self.resolve(name) in self.vars
-    def set_callback(self, name, cb): self.callbacks[self.resolve(name)] = cb
+    def has(self, name):
+        return self.resolve(name) in self.vars
+
+    def set_callback(self, name, cb):
+        self.callbacks[self.resolve(name)] = cb
 
     def set(self, name, value):
         name = self.resolve(name)
@@ -233,7 +278,8 @@ class State(object):
         self.listeners.append(listener)
         listener(self.vars)
 
-    def remove_listener(self, listener): self.listeners.remove(listener)
+    def remove_listener(self, listener):
+        self.listeners.remove(listener)
 
     def set_machine_vars(self, vars):
         # Record all machine vars, indexed or otherwise
@@ -284,7 +330,8 @@ class State(object):
             if motor_axis == axis.lower() and self.vars.get('%dme' % motor, 0):
                 return motor
 
-    def is_axis_homed(self, axis): return self.get('%s_homed' % axis, False)
+    def is_axis_homed(self, axis):
+        return self.get('%s_homed' % axis, False)
 
     def is_axis_enabled(self, axis):
         motor = self.find_motor(axis)

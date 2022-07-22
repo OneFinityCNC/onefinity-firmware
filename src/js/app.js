@@ -4,7 +4,6 @@ const api = require("./api");
 const cookie = require("./cookie")("bbctrl-");
 const Sock = require("./sock");
 
-SvelteComponents.initNetworkInfo();
 SvelteComponents.createComponent("DialogHost",
   document.getElementById("svelte-dialog-host")
 );

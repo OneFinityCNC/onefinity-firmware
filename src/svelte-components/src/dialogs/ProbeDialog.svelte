@@ -1,5 +1,18 @@
-<script type="ts" context="module">
-  import { get, writable, type Writable } from "svelte/store";
+<script type="ts">
+  import DimensionInput from "$components/DimensionInput.svelte";
+  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Button, { Label } from "@smui/button";
+  import { waitForChange } from "$lib/StoreHelpers";
+  import { ControllerMethods } from "$lib/RegisterControllerMethods";
+  import { Config } from "$lib/ConfigStore";
+  import { writable, type Writable } from "svelte/store";
+  import {
+    probingActive,
+    probeContacted,
+    probingComplete,
+    probingFailed,
+    probingStarted,
+  } from "$lib/ControllerState";
 
   type Step =
     | "None"
@@ -19,48 +32,7 @@
   };
 
   const cancelled = writable(false);
-  const probingActive = writable(false);
-  const probeContacted = writable(false);
-  const probingStarted = writable(false);
-  const probingFailed = writable(false);
-  const probingComplete = writable(false);
   const userAcknowledged = writable(false);
-
-  export function handleControllerStateUpdate(state: Record<string, any>) {
-    if (!get(probingActive)) {
-      return;
-    }
-
-    switch (true) {
-      case state.pw === 0:
-        probeContacted.set(true);
-        break;
-
-      case state.log?.msg === "Switch not found":
-        probingFailed.set(true);
-        break;
-
-      case state.cycle !== "idle":
-        probingStarted.set(true);
-        break;
-
-      case state.cycle === "idle":
-        if (get(probingStarted)) {
-          probingStarted.set(false);
-          probingComplete.set(true);
-        }
-        break;
-    }
-  }
-</script>
-
-<script type="ts">
-  import DimensionInput from "$components/DimensionInput.svelte";
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
-  import Button, { Label } from "@smui/button";
-  import { waitForChange } from "$lib/StoreHelpers";
-  import { ControllerMethods } from "$lib/RegisterControllerMethods";
-  import { Config } from "$lib/ConfigStore";
 
   const cutterDiameterOptions = [
     { value: 0.5, label: '1/2 "', metric: false },

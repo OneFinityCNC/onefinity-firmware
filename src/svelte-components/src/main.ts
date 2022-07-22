@@ -1,11 +1,13 @@
 import 'polyfill-object.fromentries';
+import matchAll from "string.prototype.matchall";
+
+matchAll.shim();
 
 import AdminNetworkView from '$components/AdminNetworkView.svelte';
 import DialogHost, { showDialog } from "$dialogs/DialogHost.svelte";
 import Devmode from "$components/Devmode.svelte";
 import { handleConfigUpdate } from '$lib/ConfigStore';
-import { init as initNetworkInfo } from '$lib/NetworkInfo';
-import { handleControllerStateUpdate } from "$dialogs/ProbeDialog.svelte";
+import { handleControllerStateUpdate } from "$lib/ControllerState";
 import { registerControllerMethods } from "$lib/RegisterControllerMethods";
 
 export function createComponent(component: string, target: HTMLElement, props: Record<string, any>) {
@@ -17,7 +19,7 @@ export function createComponent(component: string, target: HTMLElement, props: R
       return new DialogHost({ target, props });
 
     case "Devmode":
-      return new Devmode({target, props});
+      return new Devmode({ target, props });
 
     default:
       throw new Error("Unknown component");
@@ -25,7 +27,6 @@ export function createComponent(component: string, target: HTMLElement, props: R
 }
 
 export {
-  initNetworkInfo,
   showDialog,
   handleControllerStateUpdate,
   handleConfigUpdate,

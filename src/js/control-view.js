@@ -9,6 +9,7 @@ module.exports = {
 
   data: function () {
     return {
+      current_time: "",
       mach_units: this.$root.state.metric ? "METRIC" : "IMPERIAL",
       mdi: '',
       last_file: undefined,
@@ -252,6 +253,10 @@ module.exports = {
 
   ready: function () {
     this.load();
+
+    setInterval(() => {
+      this.current_time = new Date().toLocaleTimeString();
+    }, 1000);
 
     SvelteComponents.registerControllerMethods({
       stop: (...args) => this.stop(...args),
@@ -527,6 +532,10 @@ module.exports = {
 
     showProbeDialog: function (probeType) {
       SvelteComponents.showDialog("Probe", { probeType });
+    },
+
+    showSetTimeDialog: function () {
+      SvelteComponents.showDialog("SetTime");
     }
   },
 

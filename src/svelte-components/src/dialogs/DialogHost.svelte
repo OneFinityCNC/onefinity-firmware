@@ -4,6 +4,7 @@
   import ProbeDialog from "$dialogs/ProbeDialog.svelte";
   import ScreenRotationDialog from "$dialogs/ScreenRotationDialog.svelte";
   import UploadDialog from "$dialogs/UploadDialog.svelte";
+  import SetTimeDialog from "./SetTimeDialog.svelte";
 
   const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
   type HomeMachineDialogPropsType = {
@@ -29,6 +30,11 @@
     onComplete: () => void;
   };
 
+  const SetTimeDialogProps = writable<SetTimeDialogPropsType>();
+  type SetTimeDialogPropsType = {
+    open: boolean;
+  };
+
   export function showDialog(
     dialog: "HomeMachine",
     props: Omit<HomeMachineDialogPropsType, "open">
@@ -49,6 +55,11 @@
     props: Omit<UploadDialogPropsType, "open">
   );
 
+  export function showDialog(
+    dialog: "SetTime",
+    props: Omit<SetTimeDialogPropsType, "open">
+  );
+
   export function showDialog(dialog: string, props: any) {
     switch (dialog) {
       case "HomeMachine":
@@ -67,6 +78,10 @@
         UploadDialogProps.set({ ...props, open: true });
         break;
 
+      case "SetTime":
+        SetTimeDialogProps.set({ ...props, open: true });
+        break;
+
       default:
         throw new Error(`Unknown dialog '${dialog}`);
     }
@@ -77,3 +92,4 @@
 <ProbeDialog {...$ProbeDialogProps} />
 <ScreenRotationDialog {...$ScreenRotationDialogProps} />
 <UploadDialog {...$UploadDialogProps} />
+<SetTimeDialog {...$SetTimeDialogProps} />
