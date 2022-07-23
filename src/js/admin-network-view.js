@@ -4,7 +4,7 @@ module.exports = {
   attached: function () {
     this.svelteComponent = SvelteComponents.createComponent(
       "AdminNetworkView",
-      document.getElementById("svelte-root")
+      document.getElementById("admin-network")
     );
   },
 

@@ -135,6 +135,7 @@ module.exports = new Vue({
   watch: {
     display_units: function (value) {
       localStorage.setItem("display_units", value);
+      SvelteComponents.setDisplayUnits(value);
     },
   },
 
@@ -213,6 +214,10 @@ module.exports = new Vue({
   ready: function () {
     $(window).on("hashchange", this.parse_hash);
     this.connect();
+
+    SvelteComponents.registerControllerMethods({
+      dispatch: (...args) => this.$dispatch(...args)
+    });
   },
 
   methods: {
