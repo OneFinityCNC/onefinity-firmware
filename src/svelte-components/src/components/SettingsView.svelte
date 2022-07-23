@@ -2,13 +2,17 @@
   import configTemplate from "../../../resources/config-template.json";
   import ScreenRotationDialog from "$dialogs/ScreenRotationDialog.svelte";
   import ConfigTemplatedInput from "./ConfigTemplatedInput.svelte";
+  import SetTimeDialog from "$dialogs/SetTimeDialog.svelte";
+  import Button, { Label } from "@smui/button";
 
   const gcodeURL = "https://linuxcnc.org/docs/html/gcode/g-code.html";
 
   let showScreenRotationDialog = false;
+  let showSetTimeDialog = false;
 </script>
 
 <ScreenRotationDialog bind:open={showScreenRotationDialog} />
+<SetTimeDialog bind:open={showSetTimeDialog} />
 
 <h1>Settings</h1>
 
@@ -17,13 +21,26 @@
   <fieldset>
     <div class="pure-control-group">
       <label for="screen-rotation" />
-      <button
-        class="pure-button"
+      <Button
         name="screen-rotation"
+        touch
+        variant="raised"
         on:click={() => (showScreenRotationDialog = true)}
       >
-        Change Screen Rotation
-      </button>
+        <Label>Change Screen Rotation</Label>
+      </Button>
+    </div>
+
+    <div class="pure-control-group">
+      <label for="set-time" />
+      <Button
+        name="set-time"
+        touch
+        variant="raised"
+        on:click={() => (showSetTimeDialog = true)}
+      >
+        <Label>Change Time & Timezone</Label>
+      </Button>
     </div>
   </fieldset>
 

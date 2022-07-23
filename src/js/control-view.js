@@ -532,10 +532,6 @@ module.exports = {
 
     showProbeDialog: function (probeType) {
       SvelteComponents.showDialog("Probe", { probeType });
-    },
-
-    showSetTimeDialog: function () {
-      SvelteComponents.showDialog("SetTime");
     }
   },
 
