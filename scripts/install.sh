@@ -93,6 +93,14 @@ if [ $? -ne 0 ]; then
     REBOOT=true
 fi
 
+# Set the default locale to en_US
+grep '^en_US.UTF-8 UTF-8' /etc/locale.gen >/dev/null
+if [ $? -ne 0 ]; then
+    perl -pi -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+    locale-gen en_US.UTF-8
+    update-locale en_US.UTF-8
+fi
+
 # Install .Xresources & .xinitrc
 cp scripts/Xresources ~pi/.Xresources
 chown pi:pi ~pi/.Xresources

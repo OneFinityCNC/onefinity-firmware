@@ -22,12 +22,8 @@ RSYNC_OPTS    := $(RSYNC_EXCLUDE) -rv --no-g --delete --force
 
 VERSION  := $(shell sed -n 's/^.*"version": "\([^"]*\)",.*$$/\1/p' package.json)
 PKG_NAME := bbctrl-$(VERSION)
-PUB_PATH := root@buildbotics.com:/var/www/buildbotics.com/bbctrl
-BETA_VERSION := $(VERSION)-rc$(shell ./scripts/next-rc)
-BETA_PKG_NAME := bbctrl-$(BETA_VERSION)
 
 SUBPROJECTS := avr boot pwr jig
-WATCH := src/pug src/pug/templates src/stylus src/js src/resources src/svelte-components src/static Makefile
 
 ifndef HOST
 HOST=onefinity
@@ -37,15 +33,11 @@ ifndef PASSWORD
 PASSWORD=onefinity
 endif
 
-
 all: $(HTML) $(RESOURCES)
 	@for SUB in $(SUBPROJECTS); do $(MAKE) -C src/$$SUB; done
 
 pkg: all $(AVR_FIRMWARE) bbserial
 	./setup.py sdist
-
-beta-pkg: pkg
-	cp dist/$(PKG_NAME).tar.bz2 dist/$(BETA_PKG_NAME).tar.bz2
 
 bbserial:
 	$(MAKE) -C src/bbserial
@@ -73,15 +65,6 @@ $(GPLAN_IMG):
 .PHONY: $(AVR_FIRMWARE)
 $(AVR_FIRMWARE):
 	$(MAKE) -C src/avr
-
-publish: pkg
-	echo -n $(VERSION) > dist/latest.txt
-	rsync $(RSYNC_OPTS) dist/$(PKG_NAME).tar.bz2 dist/latest.txt $(PUB_PATH)/
-
-publish-beta: beta-pkg
-	echo -n $(BETA_VERSION) > dist/latest-beta.txt
-	rsync $(RSYNC_OPTS) dist/$(BETA_PKG_NAME).tar.bz2 dist/latest-beta.txt \
-	  $(PUB_PATH)/
 
 update: pkg
 	http_proxy= curl -i -X PUT -H "Content-Type: multipart/form-data" \
@@ -121,35 +104,5 @@ $(TARGET_DIR)/%.html: src/pug/%.pug node_modules FORCE
 
 	@mkdir -p $(TARGET_DIR)
 	$(PUG) -O pug-opts.js -P $< -o $(TARGET_DIR) || (rm -f $@; exit 1)
-
-pylint:
-	pylint3 -E $(shell find src/py -name \*.py | grep -v flycheck_)
-
-jshint:
-	./node_modules/jshint/bin/jshint --config jshint.json src/js/*.js
-
-lint: pylint jshint
-
-watch:
-	@clear
-	$(MAKE)
-	@while sleep 1; do \
-	  inotifywait -qr -e modify -e create -e delete \
-		--exclude .*~ --exclude \#.* $(WATCH); \
-	  clear; \
-	  $(MAKE); \
-	done
-
-tidy:
-	rm -f $(shell find "$(DIR)" -name \*~)
-
-clean: tidy
-	rm -rf build html dist
-	@for SUB in $(SUBPROJECTS); do \
-	  $(MAKE) -C src/$$SUB clean; \
-	done
-
-dist-clean: clean
-	rm -rf node_modules
 
 .PHONY: all install clean tidy pkg gplan lint pylint jshint bbserial

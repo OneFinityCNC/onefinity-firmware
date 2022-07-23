@@ -32,7 +32,6 @@ setup(
         'scripts/update-bbctrl',
         'scripts/upgrade-bbctrl',
         'scripts/sethostname',
-        'scripts/reset-video',
         'scripts/config-wifi',
         'scripts/edit-config',
         'scripts/edit-boot-config',

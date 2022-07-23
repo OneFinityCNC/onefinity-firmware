@@ -123,8 +123,6 @@ class State(object):
 
         if not os.path.exists(upload):
             os.mkdir(upload)
-            from shutil import copy
-            copy(bbctrl.get_resource('http/buildbotics.nc'), upload)
 
         for path in os.listdir(upload):
             if os.path.isfile(upload + '/' + path):
