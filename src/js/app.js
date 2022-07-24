@@ -293,15 +293,6 @@ module.exports = new Vue({
       update_object(this.config, config, true);
       this.parse_hash();
 
-      if (!this.devModChecked) {
-        this.devModChecked = true;
-        if (this.config.devmode) {
-          SvelteComponents.createComponent("Devmode",
-            document.getElementById("svelte-devmode-host")
-          );
-        }
-      }
-
       if (!this.checkedUpgrade) {
         this.checkedUpgrade = true;
 
