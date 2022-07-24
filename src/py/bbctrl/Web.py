@@ -21,11 +21,17 @@ def call_get_output(cmd):
 
 class RebootHandler(bbctrl.APIHandler):
     def put_ok(self):
-        subprocess.Popen('reboot')
+        subprocess.Popen(['plymouth', 'show-splash'])
+        subprocess.Popen(['plymouth', 'change-mode', '--shutdown'])
+        subprocess.Popen(['killall', 'xinit'])
+        subprocess.Popen(['reboot'])
 
 
 class ShutdownHandler(bbctrl.APIHandler):
     def put_ok(self):
+        subprocess.Popen(['plymouth', 'show-splash'])
+        subprocess.Popen(['plymouth', 'change-mode', '--shutdown'])
+        subprocess.Popen(['killall', 'xinit'])
         subprocess.Popen(['shutdown', '-h', 'now'])
 
 

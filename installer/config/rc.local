@@ -23,9 +23,6 @@ fi
 # Reload udev
 /etc/init.d/udev restart
 
-# Stop boot splash so it doesn't interfere with X if GPU enabled and to save CPU
-plymouth quit
-
 # Start X in /home/pi
 cd /home/pi
 sudo -u pi startx

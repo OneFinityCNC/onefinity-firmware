@@ -29,13 +29,13 @@ setup(
         ]
     },
     scripts=[
-        'scripts/update-bbctrl',
-        'scripts/upgrade-bbctrl',
-        'scripts/sethostname',
-        'scripts/config-wifi',
-        'scripts/edit-config',
-        'scripts/edit-boot-config',
-        'scripts/browser',
+        'installer/scripts/update-bbctrl',
+        'installer/scripts/upgrade-bbctrl',
+        'installer/scripts/sethostname',
+        'installer/scripts/config-wifi',
+        'installer/scripts/edit-config',
+        'installer/scripts/edit-boot-config',
+        'installer/scripts/browser',
     ],
     install_requires=[
         'tornado',

@@ -1,7 +1,12 @@
 screenW = Window.GetWidth();
 screenH = Window.GetHeight();
 
-image = Image("splash.png");
+image = Image("boot.png");
+
+if (Plymouth.GetMode() == "shutdown") {
+  image = Image("shutdown.png");
+}
+
 imageW = image.GetWidth();
 imageH = image.GetHeight();
 
