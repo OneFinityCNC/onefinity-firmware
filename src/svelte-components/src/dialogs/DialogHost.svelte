@@ -5,6 +5,8 @@
   import ScreenRotationDialog from "$dialogs/ScreenRotationDialog.svelte";
   import UploadDialog from "$dialogs/UploadDialog.svelte";
   import SetTimeDialog from "./SetTimeDialog.svelte";
+  import ManualHomeAxisDialog from "./ManualHomeAxisDialog.svelte";
+  import SetAxisPositionDialog from "./SetAxisPositionDialog.svelte";
 
   const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
   type HomeMachineDialogPropsType = {
@@ -35,6 +37,18 @@
     open: boolean;
   };
 
+  const ManualHomeAxisDialogProps = writable<ManualHomeAxisDialogPropsType>();
+  type ManualHomeAxisDialogPropsType = {
+    open: boolean;
+    axis: string;
+  };
+
+  const SetAxisPositionDialogProps = writable<SetAxisPositionDialogPropsType>();
+  type SetAxisPositionDialogPropsType = {
+    open: boolean;
+    axis: string;
+  };
+
   export function showDialog(
     dialog: "HomeMachine",
     props: Omit<HomeMachineDialogPropsType, "open">
@@ -60,6 +74,16 @@
     props: Omit<SetTimeDialogPropsType, "open">
   );
 
+  export function showDialog(
+    dialog: "ManualHomeAxis",
+    props: Omit<ManualHomeAxisDialogPropsType, "open">
+  );
+
+  export function showDialog(
+    dialog: "SetAxisPosition",
+    props: Omit<SetAxisPositionDialogPropsType, "open">
+  );
+
   export function showDialog(dialog: string, props: any) {
     switch (dialog) {
       case "HomeMachine":
@@ -82,6 +106,14 @@
         SetTimeDialogProps.set({ ...props, open: true });
         break;
 
+      case "ManualHomeAxis":
+        ManualHomeAxisDialogProps.set({ ...props, open: true });
+        break;
+
+      case "SetAxisPosition":
+        SetAxisPositionDialogProps.set({ ...props, open: true });
+        break;
+
       default:
         throw new Error(`Unknown dialog '${dialog}`);
     }
@@ -93,3 +125,5 @@
 <ScreenRotationDialog {...$ScreenRotationDialogProps} />
 <UploadDialog {...$UploadDialogProps} />
 <SetTimeDialog {...$SetTimeDialogProps} />
+<ManualHomeAxisDialog {...$ManualHomeAxisDialogProps} />
+<SetAxisPositionDialog {...$SetAxisPositionDialogProps} />
