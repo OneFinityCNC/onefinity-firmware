@@ -7,6 +7,7 @@
   import SetTimeDialog from "./SetTimeDialog.svelte";
   import ManualHomeAxisDialog from "./ManualHomeAxisDialog.svelte";
   import SetAxisPositionDialog from "./SetAxisPositionDialog.svelte";
+  import ShutdownDialog from "./ShutdownDialog.svelte";
 
   const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
   type HomeMachineDialogPropsType = {
@@ -49,6 +50,11 @@
     axis: string;
   };
 
+  const ShutdownDialogProps = writable<ShutdownDialogPropsType>();
+  type ShutdownDialogPropsType = {
+    open: boolean;
+  };
+
   export function showDialog(
     dialog: "HomeMachine",
     props: Omit<HomeMachineDialogPropsType, "open">
@@ -84,6 +90,11 @@
     props: Omit<SetAxisPositionDialogPropsType, "open">
   );
 
+  export function showDialog(
+    dialog: "Shutdown",
+    props: Omit<ShutdownDialogPropsType, "open">
+  );
+
   export function showDialog(dialog: string, props: any) {
     switch (dialog) {
       case "HomeMachine":
@@ -114,8 +125,12 @@
         SetAxisPositionDialogProps.set({ ...props, open: true });
         break;
 
+      case "Shutdown":
+        ShutdownDialogProps.set({ ...props, open: true });
+        break;
+
       default:
-        throw new Error(`Unknown dialog '${dialog}`);
+        throw new Error(`Unknown dialog '${dialog}'`);
     }
   }
 </script>
@@ -127,3 +142,4 @@
 <SetTimeDialog {...$SetTimeDialogProps} />
 <ManualHomeAxisDialog {...$ManualHomeAxisDialogProps} />
 <SetAxisPositionDialog {...$SetAxisPositionDialogProps} />
+<ShutdownDialog {...$ShutdownDialogProps} />

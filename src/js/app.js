@@ -106,8 +106,7 @@ module.exports = new Vue({
       firmwareUpgrading: false,
       checkedUpgrade: false,
       firmwareName: "",
-      latestVersion: "",
-      confirmShutdown: false,
+      latestVersion: ""
     };
   },
 
@@ -283,8 +282,15 @@ module.exports = new Vue({
     },
 
     show_upgrade: function () {
-      if (!this.latestVersion) return false;
+      if (!this.latestVersion) {
+        return false;
+      }
+
       return is_newer_version(this.config.version, this.latestVersion);
+    },
+
+    showShutdownDialog: function () {
+      SvelteComponents.showDialog("Shutdown");
     },
 
     update: async function () {
@@ -301,16 +307,6 @@ module.exports = new Vue({
       }
 
       SvelteComponents.handleConfigUpdate(this.config);
-    },
-
-    shutdown: function () {
-      this.confirmShutdown = false;
-      api.put("shutdown");
-    },
-
-    reboot: function () {
-      this.confirmShutdown = false;
-      api.put("reboot");
     },
 
     connect: function () {
