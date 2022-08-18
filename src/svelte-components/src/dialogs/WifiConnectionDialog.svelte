@@ -7,6 +7,7 @@
   import MessageDialog from "$dialogs/MessageDialog.svelte";
   import type { WifiNetwork } from "$lib/NetworkInfo";
   import * as api from "$lib/api";
+  import { virtualKeyboardChangeHelper } from "$lib/customActions";
 
   export let open = false;
   export let network: WifiNetwork;
@@ -56,6 +57,7 @@
     {#if needPassword}
       <TextField
         bind:value={password}
+        use={[[virtualKeyboardChangeHelper, (newValue) => (password = newValue)]]}
         label="Password"
         spellcheck="false"
         variant="filled"

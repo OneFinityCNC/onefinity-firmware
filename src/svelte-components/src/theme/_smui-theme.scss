@@ -20,6 +20,10 @@
 :root {
   --mdc-theme-text-primary-on-background: #777;
 
+  .mdc-dialog .mdc-dialog__container {
+    transition: margin-bottom 0.5s;
+  }
+
   .mdc-dialog .mdc-dialog__content {
     color: #777;
   }

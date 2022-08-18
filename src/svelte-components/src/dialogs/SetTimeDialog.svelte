@@ -5,6 +5,7 @@
   import CircularProgress from "@smui/circular-progress";
   import VirtualList from "svelte-tiny-virtual-list";
   import * as api from "$lib/api";
+  import { virtualKeyboardChangeHelper } from "$lib/customActions";
 
   const itemHeight = 35;
 
@@ -153,6 +154,9 @@
         <Label>Date & Time</Label>
         <TextField
           bind:value
+          use={[
+            [virtualKeyboardChangeHelper, (newValue) => (value = newValue)],
+          ]}
           label="Time"
           type="datetime-local"
           variant="filled"

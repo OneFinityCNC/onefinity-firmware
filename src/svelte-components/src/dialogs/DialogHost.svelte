@@ -135,6 +135,67 @@
   }
 </script>
 
+<script lang="ts">
+  import { onMount, onDestroy } from "svelte";
+
+  let bodyObserver: MutationObserver;
+  let keyboardObserver: MutationObserver;
+
+  onMount(() => {
+    bodyObserver = new MutationObserver(() => {
+      const virtualKeyboard = document.getElementById(
+        "virtualKeyboardChromeExtension"
+      );
+
+      if (virtualKeyboard) {
+        bodyObserver.disconnect();
+        bodyObserver = undefined;
+
+        const virtualKeyboardOverlay = document.getElementById(
+          "virtualKeyboardChromeExtensionOverlayScrollExtend"
+        );
+
+        keyboardObserver = new MutationObserver(() => {
+          const open = virtualKeyboard.getAttribute("_state") === "open";
+          const keyboardHeight = Number.parseFloat(
+            virtualKeyboardOverlay.style.height
+          );
+
+          const dialogContainers = document.querySelectorAll<HTMLDivElement>(
+            ".mdc-dialog .mdc-dialog__container"
+          );
+
+          for (let dialogContainer of dialogContainers) {
+            dialogContainer.style["marginBottom"] = open
+              ? `${keyboardHeight}px`
+              : "";
+          }
+        });
+
+        keyboardObserver.observe(virtualKeyboard, { attributes: true });
+      }
+    });
+
+    bodyObserver.observe(document.querySelector("body"), {
+      subtree: false,
+      childList: true,
+    });
+  });
+
+  onDestroy(() => {
+    if (bodyObserver) {
+      bodyObserver.disconnect();
+      bodyObserver = undefined;
+    }
+
+    if (keyboardObserver) {
+      keyboardObserver.disconnect();
+      keyboardObserver = undefined;
+    }
+  });
+</script>
+
+
 <HomeMachineDialog {...$HomeMachineDialogProps} />
 <ProbeDialog {...$ProbeDialogProps} />
 <ScreenRotationDialog {...$ScreenRotationDialogProps} />
