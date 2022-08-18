@@ -4,7 +4,7 @@
   import TextField from "@smui/textfield";
   import MessageDialog from "$dialogs/MessageDialog.svelte";
   import * as api from "$lib/api";
-  import { virtualKeyboardChangeHelper } from "$lib/customActions";
+  import { virtualKeyboardChange } from "$lib/CustomActions";
 
   // https://man7.org/linux/man-pages/man7/hostname.7.html
   //
@@ -73,7 +73,7 @@
   <Content id="change-hostname-dialog-content">
     <TextField
       bind:value={hostname}
-      use={[[virtualKeyboardChangeHelper, (newValue) => (hostname = newValue)]]}
+      use={[[virtualKeyboardChange, (newValue) => (hostname = newValue)]]}
       label="New Hostname"
       spellcheck="false"
       variant="filled"

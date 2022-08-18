@@ -3,7 +3,7 @@
   import TextField from "@smui/textfield";
   import Button, { Label } from "@smui/button";
   import { ControllerMethods } from "$lib/RegisterControllerMethods";
-  import { virtualKeyboardChangeHelper } from "$lib/customActions";
+  import { virtualKeyboardChange } from "$lib/CustomActions";
 
   export let open: boolean;
   export let axis = "";
@@ -43,7 +43,7 @@
       label="Position"
       type="number"
       bind:value
-      use={[[virtualKeyboardChangeHelper, (newValue) => (value = newValue)]]}
+      use={[[virtualKeyboardChange, (newValue) => (value = newValue)]]}
       spellcheck="false"
       variant="filled"
       style="width: 100%;"

@@ -15,7 +15,6 @@ export default defineConfig({
     }
   },
   build: {
-    minify: false,
     target: "chrome60",
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
