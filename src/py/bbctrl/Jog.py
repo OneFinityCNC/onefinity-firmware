@@ -37,7 +37,7 @@ class Jog(inevent.JogHandler):
 
         config = {
             "Logitech Logitech RumblePad 2 USB": {
-                "deadband": 0.1,
+                "deadband": 0.15,
                 "axes":     [ABS_X, ABS_Y, ABS_RZ, ABS_Z],
                 "dir":      [1, -1, -1, 1],
                 "arrows":   [ABS_HAT0X, ABS_HAT0Y],
@@ -46,7 +46,7 @@ class Jog(inevent.JogHandler):
             },
 
             "default": {
-                "deadband": 0.1,
+                "deadband": 0.15,
                 "axes":     [ABS_X, ABS_Y, ABS_RY, ABS_RX],
                 "dir":      [1, -1, -1, 1],
                 "arrows":   [ABS_HAT0X, ABS_HAT0Y],

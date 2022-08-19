@@ -1,30 +1,3 @@
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
 import logging
 
 from inevent.Constants import *
@@ -97,7 +70,31 @@ class JogHandler:
 
         # Process event
         if event.type == EV_ABS and event.code in config['axes']:
-            pass
+            old_axes = list(self.axes)
+            deadband = config['deadband']
+            axis = config['axes'].index(event.code)
+
+            self.axes[axis] = event.stream.state.abs[event.code]
+            self.axes[axis] *= config['dir'][axis]
+
+            value = abs(self.axes[axis])
+            if value >= deadband:
+                sign = -1 if self.axes[axis] < 0 else 1
+                delta = value - deadband
+                range = 1 - deadband
+
+                # Scale the new value to the available range (full range, minus the deadband)
+                self.axes[axis] = (delta * sign) / range
+            else:
+                self.axes[axis] = 0
+                
+            if self.horizontal_lock and axis not in [0, 3]:
+                self.axes[axis] = 0
+
+            if self.vertical_lock and axis not in [1, 2]:
+                self.axes[axis] = 0
+
+            if old_axes[axis] != self.axes[axis]: changed = True
 
         elif event.type == EV_KEY and event.code in config['speed']:
             old_speed = self.speed
@@ -114,23 +111,5 @@ class JogHandler:
                 if index == 1: self.vertical_lock = True
 
         log.debug(event_to_string(event, state))
-
-        # Update axes
-        old_axes = list(self.axes)
-
-        for axis in range(4):
-            self.axes[axis] = event.stream.state.abs[config['axes'][axis]]
-            self.axes[axis] *= config['dir'][axis]
-
-            if abs(self.axes[axis]) < config['deadband']:
-                self.axes[axis] = 0
-
-            if self.horizontal_lock and axis not in [0, 3]:
-                self.axes[axis] = 0
-
-            if self.vertical_lock and axis not in [1, 2]:
-                self.axes[axis] = 0
-
-        if old_axes != self.axes: changed = True
 
         if changed: self.changed()
