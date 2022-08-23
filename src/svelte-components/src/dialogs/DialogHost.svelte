@@ -7,6 +7,7 @@
   import SetTimeDialog from "./SetTimeDialog.svelte";
   import ManualHomeAxisDialog from "./ManualHomeAxisDialog.svelte";
   import SetAxisPositionDialog from "./SetAxisPositionDialog.svelte";
+  import MoveToZeroDialog from "./MoveToZeroDialog.svelte";
   import ShutdownDialog from "./ShutdownDialog.svelte";
 
   const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
@@ -50,6 +51,12 @@
     axis: string;
   };
 
+  const MoveToZeroDialogProps = writable<MoveToZeroDialogPropsType>();
+  type MoveToZeroDialogPropsType = {
+    open: boolean;
+    axes: "xy" | "z";
+  };
+
   const ShutdownDialogProps = writable<ShutdownDialogPropsType>();
   type ShutdownDialogPropsType = {
     open: boolean;
@@ -91,6 +98,11 @@
   );
 
   export function showDialog(
+    dialog: "MoveToZero",
+    props: Omit<MoveToZeroDialogPropsType, "open">
+  );
+
+  export function showDialog(
     dialog: "Shutdown",
     props: Omit<ShutdownDialogPropsType, "open">
   );
@@ -123,6 +135,10 @@
 
       case "SetAxisPosition":
         SetAxisPositionDialogProps.set({ ...props, open: true });
+        break;
+
+      case "MoveToZero":
+        MoveToZeroDialogProps.set({ ...props, open: true });
         break;
 
       case "Shutdown":
@@ -195,7 +211,6 @@
   });
 </script>
 
-
 <HomeMachineDialog {...$HomeMachineDialogProps} />
 <ProbeDialog {...$ProbeDialogProps} />
 <ScreenRotationDialog {...$ScreenRotationDialogProps} />
@@ -203,4 +218,5 @@
 <SetTimeDialog {...$SetTimeDialogProps} />
 <ManualHomeAxisDialog {...$ManualHomeAxisDialogProps} />
 <SetAxisPositionDialog {...$SetAxisPositionDialogProps} />
+<MoveToZeroDialog {...$MoveToZeroDialogProps} />
 <ShutdownDialog {...$ShutdownDialogProps} />

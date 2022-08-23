@@ -104,7 +104,7 @@
       await stepCompleted("Done", userAcknowledged);
 
       if (probeType === "xyz") {
-        ControllerMethods.goto_zero(1, 1, 0, 0);
+        ControllerMethods.gotoZero("xy");
       }
     } catch (err) {
       if (err.message !== "cancelled") {
