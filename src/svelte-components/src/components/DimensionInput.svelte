@@ -11,6 +11,7 @@
 
   type Option = {
     value: number;
+    label: string;
     metric: boolean;
   };
 
@@ -65,10 +66,7 @@
     <List>
       {#each options as option}
         <Item on:SMUI:action={() => onOptionSelected(option)}>
-          <Text>
-            {option.value}
-            {option.metric ? "mm" : "in"}
-          </Text>
+          <Text>{option.label}</Text>
         </Item>
       {/each}
     </List>
@@ -76,18 +74,18 @@
 </div>
 
 <style lang="scss">
-  .value-and-unit {
-    display: flex;
-    column-gap: 10px;
-  }
-
   :global {
-    .mdc-select {
-      max-width: 60px;
-    }
+    .value-and-unit {
+      display: flex;
+      column-gap: 10px;
 
-    .smui-select--standard .mdc-select__dropdown-icon {
-      margin-left: 0;
+      .mdc-select {
+        max-width: 60px;
+      }
+
+      .smui-select--standard .mdc-select__dropdown-icon {
+        margin-left: 0;
+      }
     }
   }
 </style>

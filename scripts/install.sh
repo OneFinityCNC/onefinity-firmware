@@ -29,8 +29,7 @@ if $UPDATE_AVR; then
 fi
 
 # Update config.txt
-./scripts/edit-boot-config max_usb_current=1
-./scripts/edit-boot-config config_hdmi_boost=8
+./scripts/edit-boot-config max_usb_current=1 config_hdmi_boost=8 hdmi_force_hotplug=1 hdmi_group=2 hdmi_mode=82
 
 # TODO Enable GPU
 #./scripts/edit-boot-config dtoverlay=vc4-kms-v3d

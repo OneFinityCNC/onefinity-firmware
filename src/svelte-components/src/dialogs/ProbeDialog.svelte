@@ -63,28 +63,18 @@
   import { Config } from "$lib/ConfigStore";
 
   const cutterDiameterOptions = [
-    { value: 0.5, metric: false },
-    { value: 10, metric: true },
-    { value: 0.25, metric: false },
-    { value: 6, metric: true },
-    { value: 0.125, metric: false },
-    { value: 3, metric: true },
-  ];
-
-  const cutterLengthOptions = [
-    { value: 1, metric: false },
-    { value: 20, metric: true },
-    { value: 0.5, metric: false },
-    { value: 10, metric: true },
-    { value: 0.25, metric: false },
-    { value: 6, metric: true },
+    { value: 0.5, label: '1/2 "', metric: false },
+    { value: 0.25, label: '1/4 "', metric: false },
+    { value: 0.125, label: '1/8 "', metric: false },
+    { value: 10, label: "10 mm", metric: true },
+    { value: 6, label: "6 mm", metric: true },
+    { value: 3, label: "10 mm", metric: true },
   ];
 
   export let open;
   export let probeType: "xyz" | "z";
   let currentStep: Step = "None";
   let cutterDiameter: number;
-  let cutterLength: number;
   let showCancelButton = true;
   let steps: Array<Step> = [];
   let nextButton = {
@@ -98,8 +88,6 @@
   $: if (open) {
     cutterDiameter =
       Number.parseFloat(localStorage.getItem("cutterDiameter")) || null;
-    cutterLength =
-      Number.parseFloat(localStorage.getItem("cutterLength")) || null;
 
     // Svelte appears not to like it when you invoke
     // an async function from a reactive statement, so we
@@ -107,7 +95,7 @@
     requestAnimationFrame(begin);
   }
 
-  $: if (cutterDiameter && cutterLength) {
+  $: if (cutterDiameter) {
     updateButtons();
   }
 
@@ -132,8 +120,7 @@
 
       if (probeType === "xyz") {
         await stepCompleted("BitDimensions", userAcknowledged);
-        localStorage.setItem("cutterDiameter", cutterDiameter);
-        localStorage.setItem("cutterLength", cutterLength);
+        localStorage.setItem("cutterDiameter", cutterDiameter.toString());
       }
 
       await stepCompleted("PlaceProbeBlock", userAcknowledged);
@@ -221,10 +208,7 @@
         nextButton.disabled = !(
           cutterDiameter !== null &&
           cutterDiameter !== 0 &&
-          isFinite(cutterDiameter) &&
-          cutterLength !== null &&
-          cutterLength !== 0 &&
-          isFinite(cutterLength)
+          isFinite(cutterDiameter)
         );
         break;
 
@@ -246,6 +230,7 @@
     const slowSeek = $Config.probe["probe-slow-seek"];
     const fastSeek = $Config.probe["probe-fast-seek"];
 
+    const cutterLength = 12.7;
     const zLift = 1;
     const xOffset = probeBlockWidth + cutterDiameter / 2.0;
     const yOffset = probeBlockLength + cutterDiameter / 2.0;
@@ -310,13 +295,13 @@
   bind:open
   class="probe-dialog"
   scrimClickAction=""
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
+  aria-labelledby="probe-dialog-title"
+  aria-describedby="probe-dialog-content"
   surface$style="width: 700px; height: 400px; max-width: calc(100vw - 32px); overflow: visible;"
 >
-  <Title id="simple-title">Probing {probeType?.toUpperCase()}</Title>
+  <Title id="probe-dialog-title">Probing {probeType?.toUpperCase()}</Title>
 
-  <Content id="simple-content" style="overflow: visible;">
+  <Content id="probe-dialog-content" style="overflow: visible;">
     <div class="steps">
       <p><b>Step {steps.indexOf(currentStep) + 1} of {steps.length}</b></p>
       <ul>
@@ -335,12 +320,6 @@
             label="Cutter diameter"
             options={cutterDiameterOptions}
             bind:value={cutterDiameter}
-            {metric}
-          />
-          <DimensionInput
-            label="Cutter length"
-            options={cutterLengthOptions}
-            bind:value={cutterLength}
             {metric}
           />
         {:else if currentStep === "PlaceProbeBlock"}
@@ -402,7 +381,7 @@
   $light: #ddd;
 
   :global {
-    .mdc-dialog__content {
+    #probe-dialog-content {
       display: flex;
       flex-direction: row;
     }

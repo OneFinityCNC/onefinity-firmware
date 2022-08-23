@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import tornado
 import sockjs.tornado
@@ -349,6 +350,46 @@ class JogHandler(bbctrl.APIHandler):
         self.get_ctrl().mach.jog(self.json)
 
 
+displayRotatePattern = re.compile(r'display_rotate\s*=\s*(\d)')
+transformationMatrixPattern = re.compile(
+    r'(\n)(\s+)(MatchIsTouchscreen.*?\n)(\s+Option\s+\"TransformationMatrix\".*?\n)(.*?EndSection)', re.DOTALL)
+matchIsTouchscreenPattern = re.compile(
+    r'(\n)(\s+)(MatchIsTouchscreen.*?\n)(.*?EndSection)', re.DOTALL)
+
+
+class ScreenRotationHandler(bbctrl.APIHandler):
+    @gen.coroutine
+    def get(self):
+        with open("/boot/config.txt", 'rt') as config:
+            lines = config.readlines()
+            for line in lines:
+                if line.startswith('display_rotate'):
+                    self.write_json({
+                        'rotated': int(displayRotatePattern.search(line).group(1)) != 0
+                    })
+                    return
+
+        self.write_json({'rotated': False})
+        return
+
+    @gen.coroutine
+    def put_ok(self):
+        rotated = self.json['rotated']
+
+        subprocess.Popen(
+            ['/usr/local/bin/edit-boot-config', 'display_rotate={}'.format(2 if rotated else 0)])
+
+        with open("/usr/share/X11/xorg.conf.d/40-libinput.conf", 'rt') as config:
+            text = config.read()
+            text = transformationMatrixPattern.sub(r'\1\2\3\5', text)
+            if rotated:
+                text = matchIsTouchscreenPattern.sub(r'\1\2\3\2Option "TransformationMatrix" "-1 0 1 0 -1 1 0 0 1"\1\4', text)
+        with open("/usr/share/X11/xorg.conf.d/40-libinput.conf", 'wt') as config:
+            config.write(text)
+
+        subprocess.run('reboot')
+
+
 # Base class for Web Socket connections
 class ClientConnection(object):
     def __init__(self, app):
@@ -484,6 +525,7 @@ class Web(tornado.web.Application):
             (r'/api/modbus/write', ModbusWriteHandler),
             (r'/api/jog', JogHandler),
             (r'/api/video', bbctrl.VideoHandler),
+            (r'/api/screen-rotation', ScreenRotationHandler),
             (r'/(.*)', StaticFileHandler,
              {'path': bbctrl.get_resource('http/'),
               'default_filename': 'index.html'}),

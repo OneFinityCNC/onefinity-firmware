@@ -4,16 +4,14 @@ script#settings-view-template(type="text/x-template")
 
     .pure-form.pure-form-aligned
       fieldset
-        h2 Units
+        h2 Screen
         .pure-control-group
-          label(for="units") units
-          select(name="units", v-model="display_units")
-            option(value="METRIC") METRIC
-            option(value="IMPERIAL") IMPERIAL
+          label(for="screen-rotation") 
+          button.pure-button(name="screen-rotation", @click="showScreenRotationDialog") Change Screen Rotation
           
       fieldset
         h2 Probe Dimensions
-        templated-input(v-for="templ in template.probe", :name="$key",
+        templated-input(v-for="templ in template.probe", v-if="$key !== 'probe-diameter'", :name="$key"
           :model.sync="config.probe[$key]", :template="templ")
       
       fieldset

@@ -9,11 +9,11 @@
   bind:open
   scrimClickAction=""
   escapeKeyAction=""
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
+  aria-labelledby="message-dialog-title"
+  aria-describedby="message-dialog-content"
 >
-  <Title id="simple-title">{title}</Title>
-  <Content id="simple-content">
+  <Title id="message-dialog-title">{title}</Title>
+  <Content id="message-dialog-content">
     <slot />
   </Content>
 </Dialog>

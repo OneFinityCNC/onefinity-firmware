@@ -18,8 +18,8 @@
   $: needPassword = !network?.active && network?.Encryption !== "Open";
   $: connectOrDisconnect = network?.active ? "Disconnect" : "Connect";
   $: connectToOrDisconnectFrom = network?.active
-      ? "Disconnect from"
-      : "Connect to";
+    ? "Disconnect from"
+    : "Connect to";
 
   $: if (open) {
     password = "";
@@ -45,12 +45,14 @@
 <Dialog
   bind:open
   scrimClickAction=""
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
+  aria-labelledby="wifi-connection-dialog-title"
+  aria-describedby="wifi-connection-dialog-content"
 >
-  <Title id="simple-title">{connectToOrDisconnectFrom} {network.Name}</Title>
+  <Title id="wifi-connection-dialog-title"
+    >{connectToOrDisconnectFrom} {network.Name}</Title
+  >
 
-  <Content id="simple-content">
+  <Content id="wifi-connection-dialog-content">
     {#if needPassword}
       <TextField
         bind:value={password}
@@ -64,9 +66,7 @@
           slot="trailingIcon"
           on:click={() => (showPassword = !showPassword)}
         >
-          <Icon class="material-symbols-outlined">
-            {showPassword ? "password" : "abc"}
-          </Icon>
+          <Icon class={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
         </div>
         <HelperText persistent slot="helper">
           Wifi passwords must be 8 to 128 characters
@@ -92,7 +92,7 @@
       on:click={onConfirm}
       disabled={needPassword && (password.length < 8 || password.length > 128)}
     >
-      <Label>{connectOrDisconnect}</Label>
+      <Label>{connectOrDisconnect} & Reboot</Label>
     </Button>
   </Actions>
 </Dialog>

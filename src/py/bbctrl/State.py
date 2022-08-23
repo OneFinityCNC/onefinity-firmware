@@ -419,3 +419,12 @@ class State(object):
         if switch[1:] == '-max':
             return self.get_axis_switch(switch[0], 'max')
         raise Exception('Unsupported switch "%s"' % switch)
+
+    def init(self):
+        # Init machine units
+        metric = self.ctrl.config.get('units', 'METRIC').upper() == 'METRIC'
+        self.log.info('INIT Metric %d' % metric)
+        if not 'metric' in self.vars:
+            self.set('metric', metric)
+        if not 'imperial' in self.vars:
+            self.set('imperial', not metric)

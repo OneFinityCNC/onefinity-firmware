@@ -64,12 +64,12 @@
 <Dialog
   bind:open
   scrimClickAction=""
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
+  aria-labelledby="change-hostname-dialog-title"
+  aria-describedby="change-hostname-dialog-content"
 >
-  <Title id="simple-title">Change Hostname</Title>
+  <Title id="change-hostname-dialog-title">Change Hostname</Title>
 
-  <Content id="simple-content">
+  <Content id="change-hostname-dialog-content">
     <TextField
       bind:value={hostname}
       label="New Hostname"
@@ -88,7 +88,7 @@
       <Label>Cancel</Label>
     </Button>
     <Button defaultAction on:click={onConfirm} disabled={hostname.length === 0}>
-      <Label>Confirm</Label>
+      <Label>Confirm & Reboot</Label>
     </Button>
   </Actions>
 </Dialog>

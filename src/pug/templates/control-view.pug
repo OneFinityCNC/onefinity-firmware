@@ -61,7 +61,7 @@ script#control-view-template(type="text/x-template")
                 button(@click="jog_fn(-1,0,0,0)") X-
               td(style="height:100px",align="center")
                 button(@click="ask_zero_xy_msg = true")
-                  .fa.fa-bullseye(style="font-size: 172%")
+                  .fa.fa-bullseye(style="font-size: 173%")
               td(style="height:100px",align="center")
                 button(@click="jog_fn(1,0,0,0)") X+
               td(style="height:100px",align="center")
@@ -221,7 +221,7 @@ script#control-view-template(type="text/x-template")
                       | {{message.replace(/^#/, '')}}
 
                   tr
-                    th Units
+                    th Display Units
                     td.units
                       select(v-model="display_units")
                         option(value="METRIC") METRIC

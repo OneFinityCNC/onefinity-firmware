@@ -21,5 +21,11 @@ module.exports = {
       this.$dispatch('config-changed');
       return false;
     }
+  },
+
+  methods: {
+    showScreenRotationDialog: function () {
+      SvelteComponents.showDialog("ScreenRotation");
+    }
   }
 }

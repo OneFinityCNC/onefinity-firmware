@@ -1,5 +1,15 @@
 <script lang="ts">
   import * as api from "$lib/api";
+  import { onMount } from "svelte";
+
+  onMount(() => {
+    document.body.style.backgroundColor = "black";
+    const layout = document.querySelector("#layout") as HTMLElement;
+    layout.style.backgroundColor = "white";
+    layout.style.width = "1280px";
+    layout.style.height = "720px";
+    layout.style.overflowY = "scroll";
+  });
 </script>
 
 <div class="devmode">
