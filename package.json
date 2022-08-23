@@ -1,16 +1,16 @@
 {
   "name": "bbctrl",
-  "version": "1.0.9",
+  "version": "1.0.10b1",
   "homepage": "https://onefinitycnc.com/",
   "repository": "https://github.com/OneFinityCNC/onefinity",
   "license": "GPL-3.0+",
   "dependencies": {
-    "browserify": "",
-    "jshint": "",
-    "jstransformer-escape-html": "",
-    "jstransformer-stylus": "",
+    "browserify": "^17.0.0",
+    "jshint": "^2.13.4",
+    "jstransformer-escape-html": "^1.1.0",
+    "jstransformer-scss": "^2.0.0",
+    "jstransformer-stylus": "^1.5.0",
     "lodash.merge": "4.6.2",
-    "lodash.omit": "^4.5.0",
-    "pug-cli": ""
+    "pug-cli": "^1.0.0-alpha6"
   }
 }

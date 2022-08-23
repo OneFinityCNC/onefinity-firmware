@@ -29,25 +29,61 @@ tt
   clear right
 
 .header
-  height 140px
-  padding 0
+    padding-left 60px
+    display flex
 
-  .header-content
-    max-width 90%
-    margin auto
-    text-align left
+  .brand
+    display flex
+    flex-direction column
+    align-self center
+    white-space nowrap
 
-  .estop
-    float right
-    margin 5px
+    img
+      width 300px
+
+    .version
+      font-size 18pt
+      color #777
+      display flex
+
+      .upgrade-link
+        margin-left 20px
+        font-size 16pt
+        align-self center
+        color blue
+
+      .upgrade-attention
+        background-color red
+        width 20px
+        height 20px
+        display inline-block
+        border-radius 50%
+        color white
+        font-size 13pt
+        font-weight 1000
+        margin-left 5px
+        align-self center
+
+  .pi-temp-warning
+    align-self center
+    font-size 30pt
+    font-family Audiowide
+    display inline
+    margin 0 30px
+
+    .left
+      color #444
+    .right
+      color #e5aa3d
+
+  .whitespace
+    flex-grow 1
 
   .video
     position relative
-    float right
     width 174px
     height 130px
-    margin 2px 5px
-    border 2px solid #fff
+    border 2px solid transparent
     border-radius 5px
 
     &:hover
@@ -87,29 +123,9 @@ tt
       width 100%
       height 100%
 
-  .banner
-    float left
-    padding-top 40px
-    white-space nowrap
-
-    img
-      vertical-align top
-
-    .title
-      font-size 30pt
-      font-family Audiowide
-      display inline
-      margin-right 0.5em
-
-      .left
-        color #444
-      .right
-        color #e5aa3d
-
-    .subtitle
-      font-size 18pt
-      font-weight 100
-      color #aaa
+  .estop
+    align-self center
+    margin 0 30px
 
 .error
   background red
@@ -214,8 +230,6 @@ span.unit
     .pure-control-group
       label.units
         width 6em
-
-      label.units
         text-align left
 
       textarea
@@ -230,6 +244,7 @@ span.unit
         padding 0.7em 1em
         border-radius 3px
         display inline-block
+        
 
 @keyframes blink
   50%
@@ -267,6 +282,12 @@ span.unit
     // The jogging buttons, etc.
     .control-buttons button
       font-size 150%
+      width 100px
+      height 100px
+
+    .jog-units
+      font-size initial
+      margin-left 5px
 
     &:first-child
       margin 0.5em 0
@@ -421,7 +442,7 @@ span.unit
       min-width 8em
       width 100%
 
-    .mach_units
+    .units
       padding 0
 
       select
@@ -847,18 +868,6 @@ tt.save
   a
     text-decoration none
 
-
-.upgrade-version
-  display inline-block
-  border-radius 4px
-  padding 2px
-  margin-left 0.5em
-  color #555
-  background-color #e5aa3d
-  text-decoration none
-
-  &:hover
-    color #fff
 
 .modal-mask
   position fixed

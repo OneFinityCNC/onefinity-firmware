@@ -49,15 +49,8 @@ module.exports = {
       configRestored: false,
       confirmReset: false,
       configReset: false,
-      latest: '',
       autoCheckUpgrade: true,
       reset_variant: ''
-    }
-  },
-
-  events: {
-    latest_version: function (version) {
-      this.latest = version
     }
   },
 

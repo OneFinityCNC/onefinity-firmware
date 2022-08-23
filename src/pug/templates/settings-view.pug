@@ -1,25 +1,3 @@
-//-                           All rights reserved.                            //
-//-                                                                           //
-//-   This file ("the software") is free software: you can redistribute it    //
-//-   and/or modify it under the terms of the GNU General Public License,     //
-//-    version 2 as published by the Free Software Foundation. You should     //
-//-    have received a copy of the GNU General Public License, version 2      //
-//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
-//-                                                                           //
-//-   The software is distributed in the hope that it will be useful, but     //
-//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
-//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
-//-             Lesser General Public License for more details.               //
-//-                                                                           //
-//-     You should have received a copy of the GNU Lesser General Public      //
-//-              License along with the software.  If not, see                //
-//-                     <http://www.gnu.org/licenses/>.                       //
-//-                                                                           //
-//-              For information regarding this software email:               //
-//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
-//-                                                                           //
-//-/////////////////////////////////////////////////////////////////////////////
-
 script#settings-view-template(type="text/x-template")
   #settings
     h1 Settings
@@ -27,20 +5,12 @@ script#settings-view-template(type="text/x-template")
     .pure-form.pure-form-aligned
       fieldset
         h2 Units
-        templated-input(name="units", :model.sync="config.settings.units",
-          :template="template.settings.units")
-
-        p
-          | Note, #[tt units] sets both the machine default units and the
-          | units used in motor configuration.  GCode #[tt program-start],
-          | set below, may also change the default machine units.
-
-      fieldset
-        h2 Probing safety prompts
-        templated-input(name="probing-prompts",
-          :model.sync="config.settings['probing-prompts']",
-          :template="template.settings['probing-prompts']")
-
+        .pure-control-group
+          label(for="units") units
+          select(name="units", v-model="display_units")
+            option(value="METRIC") METRIC
+            option(value="IMPERIAL") IMPERIAL
+          
       fieldset
         h2 Probe Dimensions
         templated-input(v-for="templ in template.probe", :name="$key",

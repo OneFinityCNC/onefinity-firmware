@@ -18,20 +18,23 @@ function query_config() {
     if [ -e $WLAN0_CFG ]; then
         SSID=$(grep wpa-ssid $WLAN0_CFG |
                    sed 's/^[[:space:]]*wpa-ssid "\([^"]*\)"/\1/')
-        echo "{\"ssid\": \"$SSID\", \"mode\": \"client\"}"
+        # echo "{\"ssid\": \"$SSID\", \"mode\": \"client\"}"
+        echo "{\"ssid\": \"$SSID\"}"
 
     else
-        if [ -e $HOSTAPD_CFG -a -e /etc/default/hostapd ]; then
-            SSID=$(grep ^ssid= $HOSTAPD_CFG | sed 's/^ssid=\(.*\)$/\1/')
-            CHANNEL=$(grep ^channel= $HOSTAPD_CFG |
-                          sed 's/^channel=\(.*\)$/\1/')
+        # if [ -e $HOSTAPD_CFG -a -e /etc/default/hostapd ]; then
+        #     SSID=$(grep ^ssid= $HOSTAPD_CFG | sed 's/^ssid=\(.*\)$/\1/')
+        #     CHANNEL=$(grep ^channel= $HOSTAPD_CFG |
+        #                   sed 's/^channel=\(.*\)$/\1/')
 
-            echo -n "{\"ssid\": \"$SSID\", "
-            echo "\"channel\": $CHANNEL, \"mode\": \"ap\"}"
+        #     echo -n "{\"ssid\": \"$SSID\", "
+        #     echo "\"channel\": $CHANNEL, \"mode\": \"ap\"}"
 
-        else
-            echo "{\"mode\": \"disabled\"}"
-        fi
+        # else
+        #     echo "{\"mode\": \"disabled\"}"
+        # fi
+
+        echo "{}"
     fi
 
 }
