@@ -76,6 +76,7 @@ static volatile uint8_t motor_overload = 0;
 static volatile float shunt_joules = 0;
 static volatile bool initialized = false;
 static volatile float vnom = 0;
+static volatile bool rev4 = false;
 
 
 void delay(uint16_t ms) {
@@ -161,6 +162,8 @@ static float get_reg(int reg) {
 
 static void update_shunt() {
   if (!initialized) return;
+  
+  if(!rev4) return;
 
   static float joules = SHUNT_JOULES; // Power disipation budget
 
@@ -175,6 +178,8 @@ static void update_shunt() {
 
 static void update_shunt_power() {
   if (!initialized) return;
+  
+  if(!rev4) return;
 
   float vout = get_reg(VOUT_REG);
 
@@ -369,14 +374,14 @@ static void validate_input_voltage() {
 static void charge_caps() {
   IO_PORT_SET(SHUNT_PIN); // Disable shunt (hi)
   
-  delay(1000);
+  delay(100);
   IO_PORT_SET(PC2_PIN); //Enable pre-charge circuit
   delay(CAP_PRECHARGE_PERIOD); //Wait for Vs caps to charge
   IO_PORT_CLR(PC2_PIN); //Disable pre-charge circuit
-  delay(1);
+  //delay(100);
   
   IO_PORT_SET(MOTOR_PIN); // Motor voltage on
-  delay(CAP_CHARGE_TIME);
+  //delay(CAP_CHARGE_TIME);
 }
 
 
@@ -412,8 +417,15 @@ void init() {
   IO_DDR_CLR(LOAD1_PIN);  // Tri-state
   IO_DDR_CLR(LOAD2_PIN);  // Tri-state
   IO_PUE_SET(PWR_RESET);  // Pull up reset line
-  IO_PORT_CLR(SHUNT_PIN); // Enable shunt
-  IO_DDR_SET(SHUNT_PIN);  // Output
+  
+  //Rev 4 PCBs have a pull-up on the shunt pin
+  rev4 = IO_PIN_GET(SHUNT_PIN);
+  
+  if(rev4)
+  {
+  	IO_PORT_CLR(SHUNT_PIN); // Enable shunt
+  	IO_DDR_SET(SHUNT_PIN);  // Output
+  }
   IO_PORT_CLR(PC2_PIN);   // Disable cap precharge circuit
   IO_DDR_SET(PC2_PIN);    //Output
 
@@ -484,7 +496,7 @@ int main() {
   init();
   adc_conversion(); // Start ADC
   validate_input_voltage();
-  shunt_test();
+  if(rev4) shunt_test();
   charge_caps();
   validate_measurements();
   initialized = true;

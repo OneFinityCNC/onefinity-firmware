@@ -103,7 +103,7 @@ enum {
 #define VOLTAGE_REF_R2           1000
 #define CURRENT_REF_R2           137
 #define CURRENT_REF_MUL (100.0 * 2700 / CURRENT_REF_R2) // 2700 from datasheet
-#define CAP_PRECHARGE_PERIOD	  50 // ms
+#define CAP_PRECHARGE_PERIOD	  2000 // ms
 
 #define REG_SCALE                100
 #define AVG_SCALE                3
