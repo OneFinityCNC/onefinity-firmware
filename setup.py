@@ -19,7 +19,6 @@ setup(
     packages=[
         'bbctrl',
         'inevent',
-        'lcd',
         'camotics',
         'iw_parse'
     ],

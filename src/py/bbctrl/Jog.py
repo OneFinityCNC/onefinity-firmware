@@ -64,12 +64,6 @@ class Jog(inevent.JogHandler):
         self.processor = inevent.InEvent(ctrl.ioloop, self, types = ['js'])
 
 
-    def up(self): self.ctrl.lcd.page_up()
-    def down(self): self.ctrl.lcd.page_down()
-    def left(self): self.ctrl.lcd.page_left()
-    def right(self): self.ctrl.lcd.page_right()
-
-
     def callback(self):
         if self.v != self.lastV:
             self.lastV = self.v

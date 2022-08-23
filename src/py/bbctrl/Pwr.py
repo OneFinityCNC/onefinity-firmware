@@ -68,7 +68,6 @@ class Pwr():
 
         self.i2c_addr = ctrl.args.pwr_addr
         self.regs = [-1] * 9
-        self.lcd_page = ctrl.lcd.add_new_page()
         self.failures = 0
 
         self._update_cb(False)
@@ -178,16 +177,6 @@ class Pwr():
                     self.log.warning(msg)
                     self.failures = 0
                 return
-
-        self.lcd_page.text('%3dC   Tmp' % self.regs[TEMP_REG],  0, 0)
-        self.lcd_page.text('%5.1fV  In' % self.regs[VIN_REG],   0, 1)
-        self.lcd_page.text('%5.1fV Out' % self.regs[VOUT_REG],  0, 2)
-        self.lcd_page.text(' %04x  Flg' % self.regs[FLAGS_REG], 0, 3)
-
-        self.lcd_page.text('%5.1fA Mot' % self.regs[MOTOR_REG], 10, 0)
-        self.lcd_page.text('%5.1fA Ld1' % self.regs[LOAD1_REG], 10, 1)
-        self.lcd_page.text('%5.1fA Ld2' % self.regs[LOAD2_REG], 10, 2)
-        self.lcd_page.text('%5.1fA Vdd' % self.regs[VDD_REG],   10, 3)
 
         if len(update): self.ctrl.state.update(update)
 

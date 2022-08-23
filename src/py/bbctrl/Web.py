@@ -22,7 +22,6 @@ def call_get_output(cmd):
 
 class RebootHandler(bbctrl.APIHandler):
     def put_ok(self):
-        self.get_ctrl().lcd.goodbye('Rebooting...')
         subprocess.Popen('reboot')
 
 
@@ -193,13 +192,11 @@ class FirmwareUpdateHandler(bbctrl.APIHandler):
         with open('firmware/update.tar.bz2', 'wb') as f:
             f.write(firmware['body'])
 
-        self.get_ctrl().lcd.goodbye('Upgrading firmware')
         subprocess.Popen(['/usr/local/bin/update-bbctrl'])
 
 
 class UpgradeHandler(bbctrl.APIHandler):
     def put_ok(self):
-        self.get_ctrl().lcd.goodbye('Upgrading firmware')
         subprocess.Popen(['/usr/local/bin/upgrade-bbctrl'])
 
 
