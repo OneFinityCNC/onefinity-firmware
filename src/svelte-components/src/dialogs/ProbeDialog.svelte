@@ -42,7 +42,7 @@
   const cancelled = writable(false);
   const userAcknowledged = writable(false);
 
-  const imperialBits = ["1/2 in", "1/4 in", "1/8 in"];
+  const imperialBits = ["1/2 in", "1/4 in", "1/8 in", "1/16", "1/32"];
   const metricBits = ["10 mm", "8 mm", "6 mm", "3 mm"];
 
   export let open;
