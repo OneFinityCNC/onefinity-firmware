@@ -39,14 +39,6 @@ module.exports = {
       jog_adjust: parseInt(cookie.get('jog-adjust', 2)),
       deleteGCode: false,
       tab: 'auto',
-      toolpath_msg: {
-        x: false,
-        y: false,
-        z: false,
-        a: false,
-        b: false,
-        c: false
-      },
       ask_home: true,
       showGcodeMessage: false
     }
@@ -425,8 +417,8 @@ module.exports = {
       SvelteComponents.showDialog("MoveToZero", { axes });
     },
 
-    show_toolpath_msg: function (axis) {
-      this.toolpath_msg[axis] = true;
+    showToolpathMessageDialog: function (axis) {
+      SvelteComponents.showDialog("ToolpathMessage", { msg: this[axis].toolmsg });
     },
 
     set_position: function (axis, position) {
