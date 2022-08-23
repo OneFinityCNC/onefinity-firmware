@@ -9,6 +9,7 @@ module.exports = {
 
   data: function () {
     return {
+      current_time: "",
       mach_units: this.$root.state.metric ? "METRIC" : "IMPERIAL",
       mdi: '',
       last_file: undefined,
@@ -19,22 +20,6 @@ module.exports = {
       history: [],
       speed_override: 1,
       feed_override: 1,
-      manual_home: {
-        x: false,
-        y: false,
-        z: false,
-        a: false,
-        b: false,
-        c: false
-      },
-      position_msg: {
-        x: false,
-        y: false,
-        z: false,
-        a: false,
-        b: false,
-        c: false
-      },
       jog_incr_amounts: {
         "METRIC": {
           fine: 0.1,
@@ -49,7 +34,6 @@ module.exports = {
           large: 5,
         }
       },
-      axis_position: 0,
       jog_incr: localStorage.getItem("jog_incr") || 'small',
       jog_step: cookie.get_bool('jog-step'),
       jog_adjust: parseInt(cookie.get('jog-adjust', 2)),
@@ -253,10 +237,18 @@ module.exports = {
   ready: function () {
     this.load();
 
+    setInterval(() => {
+      this.current_time = new Date().toLocaleTimeString();
+    }, 1000);
+
     SvelteComponents.registerControllerMethods({
       stop: (...args) => this.stop(...args),
       send: (...args) => this.send(...args),
-      goto_zero: (...args) => this.goto_zero(...args)
+      goto_zero: (...args) => this.goto_zero(...args),
+      isAxisHomed: (axis) => this[axis].homed,
+      unhome: (...args) => this.unhome(...args),
+      set_position: (...args) => this.set_position(...args),
+      set_home: (...args) => this.set_home(...args)
     });
   },
 
@@ -398,18 +390,13 @@ module.exports = {
           return;
       }
 
-      const fd = new FormData();
-
-      fd.append('gcode', file);
-
-      try {
-        await api.upload('file', fd);
-
-        this.last_file_time = undefined; // Force reload
-        this.$broadcast('gcode-reload', file.name);
-      } catch (err) {
-        api.alert('Upload failed', err)
-      }
+      SvelteComponents.showDialog("Upload", {
+        file,
+        onComplete: () => {
+          this.last_file_time = undefined; // Force reload
+          this.$broadcast('gcode-reload', file.name);
+        }
+      });
     },
 
     delete_current: function () {
@@ -433,23 +420,20 @@ module.exports = {
       } else if (this[axis].homingMode != 'manual') {
         api.put('home/' + axis);
       } else {
-        this.manual_home[axis] = true;
+        SvelteComponents.showDialog("ManualHomeAxis", { axis });
       }
     },
 
     set_home: function (axis, position) {
-      this.manual_home[axis] = false;
       api.put('home/' + axis + '/set', { position: parseFloat(position) });
     },
 
     unhome: function (axis) {
-      this.position_msg[axis] = false;
       api.put('home/' + axis + '/clear');
     },
 
     show_set_position: function (axis) {
-      this.axis_position = 0;
-      this.position_msg[axis] = true;
+      SvelteComponents.showDialog("SetAxisPosition", { axis });
     },
 
     show_toolpath_msg: function (axis) {
@@ -457,7 +441,6 @@ module.exports = {
     },
 
     set_position: function (axis, position) {
-      this.position_msg[axis] = false;
       api.put('position/' + axis, { 'position': parseFloat(position) });
     },
 
@@ -530,7 +513,7 @@ module.exports = {
       this.send(JSON.stringify(data));
     },
 
-    showProbeDialog: function(probeType) {
+    showProbeDialog: function (probeType) {
       SvelteComponents.showDialog("Probe", { probeType });
     }
   },

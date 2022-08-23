@@ -25,10 +25,7 @@ class Ctrl(object):
         self.log.get('Ctrl').info('Starting %s' % self.id)
 
         try:
-            if args.demo:
-                self.avr = bbctrl.AVREmu(self)
-            else:
-                self.avr = bbctrl.AVR(self)
+            self.avr = bbctrl.AVR(self)
 
             self.i2c = bbctrl.I2C(args.i2c_port, args.demo)
             self.mach = bbctrl.Mach(self, self.avr)

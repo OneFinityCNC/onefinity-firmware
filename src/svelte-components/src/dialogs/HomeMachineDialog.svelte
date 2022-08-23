@@ -8,6 +8,7 @@
 
 <Dialog
   bind:open
+  scrimClickAction=""
   aria-labelledby="home-machine-dialog-title"
   aria-describedby="home-machine-dialog-content"
 >

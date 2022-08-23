@@ -150,60 +150,18 @@ script#control-view-template(type="text/x-template")
                 th.actions
                   button.pure-button(:disabled="!can_set_axis",
                     title=`Set {{'${axis}' | upper}} axis position.`,
-                    @click=`show_set_position('${axis}')`,style="height:60px;width:60px")
+                    @click=`show_set_position('${axis}')`, style="height:60px;width:60px")
                     .fa.fa-cog
 
                   button.pure-button(:disabled="!can_set_axis",
                     title=`Zero {{'${axis}' | upper}} axis offset.`,
-                   @click=`zero('${axis}')`,style="height:60px;width:60px")
+                   @click=`zero('${axis}')`, style="height:60px;width:60px")
                     .fa.fa-map-marker
 
                   button.pure-button(:disabled="!is_idle", @click=`home('${axis}')`,
-                    title=`Home {{'${axis}' | upper}} axis.`,style="height:60px;width:60px")
+                    title=`Home {{'${axis}' | upper}} axis.`, style="height:60px;width:60px")
                     .fa.fa-home
 
-                  message(:show.sync=`position_msg['${axis}']`)
-                    h3(slot="header") Set {{'#{axis}' | upper}} axis position
-
-                    div(slot="body")
-                      .pure-form
-                        .pure-control-group
-                          label Position
-                          input(v-model="axis_position",
-                            @keyup.enter=`set_position('${axis}', axis_position)`)
-                      p
-
-                    div(slot="footer")
-                      button.pure-button(@click=`position_msg['${axis}'] = false`)
-                        | Cancel
-
-                      button.pure-button(v-if=`${axis}.homed`,
-                        @click=`unhome('${axis}')`) Unhome
-
-                      button.pure-button.button-success(
-                        @click=`set_position('${axis}', axis_position)`) Set
-
-                  message(:show.sync=`manual_home['${axis}']`)
-                    h3(slot="header") Manually home {{'#{axis}' | upper}} axis
-
-                    div(slot="body")
-                      p Set axis absolute position.
-
-                      .pure-form
-                        .pure-control-group
-                          label Absolute
-                          input(v-model="axis_position",
-                            @keyup.enter=`set_home('${axis}', axis_position)`)
-
-                      p
-
-                    div(slot="footer")
-                      button.pure-button(@click=`manual_home['${axis}'] = false`)
-                        | Cancel
-
-                      button.pure-button.button-success(
-                        title=`Home {{'${axis}' | upper}} axis.`,
-                        @click=`set_home('${axis}', axis_position)`) Set
       
       tr(style="vertical-align: top;")
         td
@@ -266,6 +224,11 @@ script#control-view-template(type="text/x-template")
               td
                 table.info
                   tr
+                    th Current Time
+                    td
+                      span {{current_time}}
+
+                  tr
                     th Remaining
                     td(title="Total run time (days:hours:mins:secs)").
                       #[span(v-if="plan_time_remaining") {{plan_time_remaining | time}} of]
@@ -273,12 +236,7 @@ script#control-view-template(type="text/x-template")
                   tr
                     th ETA
                     td.eta {{eta}}
-                  tr
-                    th Line
-                    td
-                      | {{0 <= state.line ? state.line : 0 | number}}
-                      span(v-if="toolpath.lines")
-                        | &nbsp;of {{toolpath.lines | number}}
+
                   tr
                     th Progress
                     td.progress

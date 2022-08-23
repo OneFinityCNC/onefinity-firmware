@@ -1,5 +1,4 @@
-import { readable } from "svelte/store";
-import * as api from "$lib/api";
+import { writable } from "svelte/store";
 
 export type WifiNetwork = {
     Quality: string;
@@ -34,60 +33,43 @@ const empty: NetworkInfo = {
     }
 }
 
-export const networkInfo = readable<NetworkInfo>(empty, (set) => {
-    getNetworkInfo();
-    const networkInfoIntervalId = setInterval(getNetworkInfo, 5000);
+export const networkInfo = writable<NetworkInfo>(empty);
 
-    async function getNetworkInfo() {
-        const networksByName: Record<string, WifiNetwork> = {}
+export function processNetworkInfo(rawNetworkInfo: NetworkInfo) {
+    const now = Date.now();
+    const networksByName: Record<string, WifiNetwork> = {}
 
-        try {
-            const networkInfo: NetworkInfo = await api.GET("network");
-
-            const now = Date.now();
-            for (let network of networkInfo.wifi.networks) {
-                if (network.Name) {
-                    network.lastSeen = now;
-                    network.active = networkInfo.wifi.ssid === network.Name;
-                    networksByName[network.Name] = network;
-                }
-            }
-
-            for (let network of Object.values(networksByName)) {
-                if (network.lastSeen - now > 30000) {
-                    delete networksByName[network.Name];
-                }
-            }
-
-            set({
-                ipAddresses: networkInfo.ipAddresses,
-                hostname: networkInfo.hostname,
-                wifi: {
-                    ssid: networkInfo.wifi.ssid,
-                    networks: Object.values(networksByName).sort((a, b) => {
-                        switch (true) {
-                            case a.active:
-                                return -1;
-
-                            case b.active:
-                                return 1;
-
-                            default:
-                                return a.Name.localeCompare(b.Name);
-                        }
-                    })
-                }
-            });
-        } catch (error) {
-            console.debug("Failed to fetch network info", error);
+    for (let network of rawNetworkInfo.wifi.networks) {
+        if (network.Name) {
+            network.lastSeen = now;
+            network.active = rawNetworkInfo.wifi.ssid === network.Name;
+            networksByName[network.Name] = network;
         }
     }
 
-    return () => {
-        clearInterval(networkInfoIntervalId);
+    for (let network of Object.values(networksByName)) {
+        if (network.lastSeen - now > 30000) {
+            delete networksByName[network.Name];
+        }
     }
-})
 
-export function init() {
-    return networkInfo.subscribe(() => ({}));
+    networkInfo.set({
+        ipAddresses: rawNetworkInfo.ipAddresses,
+        hostname: rawNetworkInfo.hostname,
+        wifi: {
+            ssid: rawNetworkInfo.wifi.ssid,
+            networks: Object.values(networksByName).sort((a, b) => {
+                switch (true) {
+                    case a.active:
+                        return -1;
+
+                    case b.active:
+                        return 1;
+
+                    default:
+                        return a.Name.localeCompare(b.Name);
+                }
+            })
+        }
+    });
 }

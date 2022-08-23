@@ -4,7 +4,6 @@ const api = require("./api");
 const cookie = require("./cookie")("bbctrl-");
 const Sock = require("./sock");
 
-SvelteComponents.initNetworkInfo();
 SvelteComponents.createComponent("DialogHost",
   document.getElementById("svelte-dialog-host")
 );
@@ -136,6 +135,7 @@ module.exports = new Vue({
   watch: {
     display_units: function (value) {
       localStorage.setItem("display_units", value);
+      SvelteComponents.setDisplayUnits(value);
     },
   },
 
@@ -214,6 +214,10 @@ module.exports = new Vue({
   ready: function () {
     $(window).on("hashchange", this.parse_hash);
     this.connect();
+
+    SvelteComponents.registerControllerMethods({
+      dispatch: (...args) => this.$dispatch(...args)
+    });
   },
 
   methods: {
@@ -288,15 +292,6 @@ module.exports = new Vue({
 
       update_object(this.config, config, true);
       this.parse_hash();
-
-      if (!this.devModChecked) {
-        this.devModChecked = true;
-        if (this.config.devmode) {
-          SvelteComponents.createComponent("Devmode",
-            document.getElementById("svelte-devmode-host")
-          );
-        }
-      }
 
       if (!this.checkedUpgrade) {
         this.checkedUpgrade = true;

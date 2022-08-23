@@ -1,6 +1,5 @@
 import os
 import re
-import json
 import tornado
 import sockjs.tornado
 import datetime
@@ -10,7 +9,6 @@ from tornado.web import HTTPError
 from tornado import gen
 
 import bbctrl
-import iw_parse
 
 
 def call_get_output(cmd):
@@ -23,11 +21,17 @@ def call_get_output(cmd):
 
 class RebootHandler(bbctrl.APIHandler):
     def put_ok(self):
-        subprocess.Popen('reboot')
+        subprocess.Popen(['plymouth', 'show-splash'])
+        subprocess.Popen(['plymouth', 'change-mode', '--shutdown'])
+        subprocess.Popen(['killall', 'xinit'])
+        subprocess.Popen(['reboot'])
 
 
 class ShutdownHandler(bbctrl.APIHandler):
     def put_ok(self):
+        subprocess.Popen(['plymouth', 'show-splash'])
+        subprocess.Popen(['plymouth', 'change-mode', '--shutdown'])
+        subprocess.Popen(['killall', 'xinit'])
         subprocess.Popen(['shutdown', '-h', 'now'])
 
 
@@ -101,31 +105,6 @@ class HostnameHandler(bbctrl.APIHandler):
 
 
 class NetworkHandler(bbctrl.APIHandler):
-    def get(self):
-        try:
-            ipAddresses = call_get_output(['hostname', '-I']).split()
-        except:
-            ipAddresses = ""
-
-        hostname = socket.gethostname()
-
-        try:
-            wifi = json.loads(call_get_output(['config-wifi', '-j']))
-        except:
-            wifi = {'enabled': False}
-
-        try:
-            lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
-            wifi['networks'] = iw_parse.get_parsed_cells(lines)
-        except:
-            wifi['networks'] = []
-
-        self.write_json({
-            'ipAddresses': ipAddresses,
-            'hostname': hostname,
-            'wifi': wifi
-        })
-
     def put(self):
         if self.get_ctrl().args.demo:
             raise HTTPError(400, 'Cannot configure WiFi in demo mode')
@@ -267,14 +246,6 @@ class HomeHandler(bbctrl.APIHandler):
             self.get_ctrl().mach.home(axis)
 
 
-class DevmodeHandler(bbctrl.APIHandler):
-    def put_ok(self, command, *args):
-        if command == "/probe":
-            self.get_ctrl().mach.fake_probe_contact()
-        else:
-            raise HTTPError(400, 'Not implemented')
-
-
 class StartHandler(bbctrl.APIHandler):
     def put_ok(self): self.get_ctrl().mach.start()
 
@@ -383,11 +354,32 @@ class ScreenRotationHandler(bbctrl.APIHandler):
             text = config.read()
             text = transformationMatrixPattern.sub(r'\1\2\3\5', text)
             if rotated:
-                text = matchIsTouchscreenPattern.sub(r'\1\2\3\2Option "TransformationMatrix" "-1 0 1 0 -1 1 0 0 1"\1\4', text)
+                text = matchIsTouchscreenPattern.sub(
+                    r'\1\2\3\2Option "TransformationMatrix" "-1 0 1 0 -1 1 0 0 1"\1\4', text)
         with open("/usr/share/X11/xorg.conf.d/40-libinput.conf", 'wt') as config:
             config.write(text)
 
         subprocess.run('reboot')
+
+
+class TimeHandler(bbctrl.APIHandler):
+    def get(self):
+        timeinfo = call_get_output(['timedatectl'])
+        timezones = call_get_output(
+            ['timedatectl', 'list-timezones', '--no-pager'])
+        self.get_log('TimeHandler').info(
+            'Time stuff: {}, {}'.format(timeinfo, timezones))
+
+        self.write_json({
+            'timeinfo': timeinfo,
+            'timezones': timezones
+        })
+
+    def put_ok(self):
+        datetime = self.json['datetime']
+        timezone = self.json['timezone']
+        subprocess.Popen(['timedatectl', 'set-time', datetime])
+        subprocess.Popen(['timedatectl', 'set-timezone', timezone])
 
 
 # Base class for Web Socket connections
@@ -509,7 +501,6 @@ class Web(tornado.web.Application):
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
-            (r'/api/devmode((/probe))?', DevmodeHandler),
             (r'/api/start', StartHandler),
             (r'/api/estop', EStopHandler),
             (r'/api/clear', ClearHandler),
@@ -526,6 +517,7 @@ class Web(tornado.web.Application):
             (r'/api/jog', JogHandler),
             (r'/api/video', bbctrl.VideoHandler),
             (r'/api/screen-rotation', ScreenRotationHandler),
+            (r'/api/time', TimeHandler),
             (r'/(.*)', StaticFileHandler,
              {'path': bbctrl.get_resource('http/'),
               'default_filename': 'index.html'}),
@@ -545,7 +537,8 @@ class Web(tornado.web.Application):
 
         print('Listening on http://%s:%d/' % (args.addr, args.port))
 
-    def opened(self, ctrl): ctrl.clear_timeout()
+    def opened(self, ctrl):
+        ctrl.clear_timeout()
 
     def closed(self, ctrl):
         # Time out clients in demo mode
