@@ -39,7 +39,7 @@
   }
 </script>
 
-<MessageDialog open={rebooting} title="Rebooting">
+<MessageDialog open={rebooting} title="Rebooting" noaction>
   Rebooting to apply Wifi changes...
 </MessageDialog>
 
@@ -49,9 +49,10 @@
   aria-labelledby="wifi-connection-dialog-title"
   aria-describedby="wifi-connection-dialog-content"
 >
-  <Title id="wifi-connection-dialog-title"
-    >{connectToOrDisconnectFrom} {network.Name}</Title
-  >
+  <Title id="wifi-connection-dialog-title">
+    {connectToOrDisconnectFrom}
+    {network.Name}
+  </Title>
 
   <Content id="wifi-connection-dialog-content">
     {#if needPassword}

@@ -418,7 +418,7 @@ module.exports = {
     },
 
     showToolpathMessageDialog: function (axis) {
-      SvelteComponents.showDialog("ToolpathMessage", { msg: this[axis].toolmsg });
+      SvelteComponents.showDialog("Message", { title: this[axis].toolmsg });
     },
 
     set_position: function (axis, position) {

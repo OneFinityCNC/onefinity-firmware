@@ -9,7 +9,7 @@
   import SetAxisPositionDialog from "./SetAxisPositionDialog.svelte";
   import MoveToZeroDialog from "./MoveToZeroDialog.svelte";
   import ShutdownDialog from "./ShutdownDialog.svelte";
-  import ToolpathMessageDialog from "./ToolpathMessageDialog.svelte";
+  import MessageDialog from "./MessageDialog.svelte";
 
   const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
   type HomeMachineDialogPropsType = {
@@ -63,10 +63,12 @@
     open: boolean;
   };
 
-  const ToolpathMessageDialogProps = writable<ToolpathMessageDialogPropsType>();
-  type ToolpathMessageDialogPropsType = {
+  const MessageDialogProps = writable<MessageDialogPropsType>();
+  type MessageDialogPropsType = {
     open: boolean;
-    msg: string;
+    title: string;
+    message: string;
+    noaction: boolean;
   };
 
   export function showDialog(
@@ -115,8 +117,8 @@
   );
 
   export function showDialog(
-    dialog: "ToolpathMessage",
-    props: Omit<ToolpathMessageDialogPropsType, "open">
+    dialog: "Message",
+    props: Omit<MessageDialogPropsType, "open">
   );
 
   export function showDialog(dialog: string, props: any) {
@@ -157,8 +159,8 @@
         ShutdownDialogProps.set({ ...props, open: true });
         break;
 
-      case "ToolpathMessage":
-        ToolpathMessageDialogProps.set({ ...props, open: true });
+      case "Message":
+        MessageDialogProps.set({ ...props, open: true });
         break;
 
       default:
@@ -236,4 +238,4 @@
 <SetAxisPositionDialog {...$SetAxisPositionDialogProps} />
 <MoveToZeroDialog {...$MoveToZeroDialogProps} />
 <ShutdownDialog {...$ShutdownDialogProps} />
-<ToolpathMessageDialog {...$ToolpathMessageDialogProps} />
+<MessageDialog {...$MessageDialogProps} />

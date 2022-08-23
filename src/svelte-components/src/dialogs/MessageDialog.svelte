@@ -1,8 +1,11 @@
 <script lang="ts">
-  import Dialog, { Title, Content } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Button, { Label } from "@smui/button";
 
   export let open: boolean;
-  export let title: string;
+  export let title = "";
+  export let message = "";
+  export let noaction = false;
 </script>
 
 <Dialog
@@ -13,7 +16,16 @@
   aria-describedby="message-dialog-content"
 >
   <Title id="message-dialog-title">{title}</Title>
+
   <Content id="message-dialog-content">
-    <slot />
+    <slot>{message}</slot>
   </Content>
+
+  {#if !noaction}
+    <Actions>
+      <Button defaultAction>
+        <Label>OK</Label>
+      </Button>
+    </Actions>
+  {/if}
 </Dialog>

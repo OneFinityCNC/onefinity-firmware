@@ -45,9 +45,6 @@ script#admin-general-view-template(type="text/x-template")
     label.pure-button.pure-button-primary(@click="restore_config") Restore
     form.restore-config.file-upload
       input(type="file", accept=".json", @change="restore")
-    message(:show.sync="configRestored")
-      h3(slot="header") Success
-      p(slot="body") Configuration restored.
 
     button.pure-button.pure-button-primary(@click="confirmReset = true") Reset    
     message(:show.sync="confirmReset")
@@ -70,10 +67,6 @@ script#admin-general-view-template(type="text/x-template")
         button.pure-button(@click="confirmReset = false") Cancel
         button.pure-button.pure-button-primary(@click="reset") Reset
         
-    message(:show.sync="configReset")
-      h3(slot="header") Success
-      p(slot="body") Configuration reset.
-
     h2 Debugging
     a(href="/api/log", target="_blank")
       button.pure-button.pure-button-primary View Log

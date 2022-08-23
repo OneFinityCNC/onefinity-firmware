@@ -29,7 +29,7 @@
   }
 </script>
 
-<MessageDialog open={rebooting} title="Rebooting">
+<MessageDialog open={rebooting} title="Rebooting" noaction>
   Rebooting to apply the new screen rotation...
 </MessageDialog>
 
