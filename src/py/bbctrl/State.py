@@ -4,9 +4,10 @@ import json
 import uuid
 import os
 import socket
-import bbctrl
 import iw_parse
-from tornado import gen
+import threading
+import subprocess
+import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -20,6 +21,7 @@ def call_get_output(cmd):
 
 
 class UploadChangeHandler(FileSystemEventHandler):
+
     def __init__(self, state):
         self.state = state
 
@@ -28,7 +30,9 @@ class UploadChangeHandler(FileSystemEventHandler):
 
 
 class State(object):
+
     def __init__(self, ctrl):
+        self.lock = threading.Lock()
         self.ctrl = ctrl
         self.log = ctrl.log.get('State')
 
@@ -72,39 +76,40 @@ class State(object):
         self.load_files()
 
         observer = Observer()
-        observer.schedule(UploadChangeHandler(
-            self), self.ctrl.get_upload(), recursive=True)
+        observer.schedule(UploadChangeHandler(self),
+                          self.ctrl.get_upload(),
+                          recursive=True)
         observer.start()
 
-        self._updateNetworkInfo()
+        threading.Thread(target=self._updateNetworkInfo, daemon=True).start()
 
-    @gen.coroutine
     def _updateNetworkInfo(self):
-        try:
-            ipAddresses = call_get_output(['hostname', '-I']).split()
-        except:
-            ipAddresses = ""
+        while True:
+            try:
+                ipAddresses = call_get_output(['hostname', '-I']).split()
+            except:
+                ipAddresses = ""
 
-        hostname = socket.gethostname()
+            hostname = socket.gethostname()
 
-        try:
-            wifi = json.loads(call_get_output(['config-wifi', '-j']))
-        except:
-            wifi = {'enabled': False}
+            try:
+                wifi = json.loads(call_get_output(['config-wifi', '-j']))
+            except:
+                wifi = {'enabled': False}
 
-        try:
-            lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
-            wifi['networks'] = iw_parse.get_parsed_cells(lines)
-        except:
-            wifi['networks'] = []
+            try:
+                lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
+                wifi['networks'] = iw_parse.get_parsed_cells(lines)
+            except:
+                wifi['networks'] = []
 
-        self.set('networkInfo', {
-            'ipAddresses': ipAddresses,
-            'hostname': hostname,
-            'wifi': wifi
-        })
+            self.set('networkInfo', {
+                'ipAddresses': ipAddresses,
+                'hostname': hostname,
+                'wifi': wifi
+            })
 
-        self.timeout = self.ctrl.ioloop.call_later(5, self._updateNetworkInfo)
+            time.sleep(5)
 
     def reset(self):
         # Unhome all motors
@@ -217,15 +222,20 @@ class State(object):
         self.callbacks[self.resolve(name)] = cb
 
     def set(self, name, value):
-        name = self.resolve(name)
+        self.lock.acquire()
+        try:
+            name = self.resolve(name)
 
-        if not name in self.vars or self.vars[name] != value:
-            self.vars[name] = value
-            self.changes[name] = value
+            if not name in self.vars or self.vars[name] != value:
+                self.vars[name] = value
+                self.changes[name] = value
 
-            # Trigger listener notify
-            if self.timeout is None:
-                self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
+                # Trigger listener notify
+                if self.timeout is None:
+                    self.timeout = self.ctrl.ioloop.call_later(
+                        0.25, self._notify)
+        finally:
+            self.lock.release()
 
     def update(self, update):
         for name, value in update.items():
@@ -377,7 +387,7 @@ class State(object):
         softMax = int(self.get(axis + '_tm', 0))
         if softMax <= softMin + 1:
             return 'max-soft-limit must be at least 1mm greater ' \
-                'than min-soft-limit'
+             'than min-soft-limit'
 
     def motor_enabled(self, motor):
         return bool(int(self.vars.get('%dme' % motor, 0)))

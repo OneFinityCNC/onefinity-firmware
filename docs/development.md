@@ -8,12 +8,18 @@ Debian Linux are not supported.
 
 On a Debian Linux (9.6.0 stable) system install the required packages:
 
-    sudo apt-get update
-    sudo apt-get install -y build-essential git wget binfmt-support qemu \
-      parted gcc-avr avr-libc avrdude pylint3 python3 python3-tornado curl \
-      unzip python3-setuptools gcc-arm-linux-gnueabihf bc sudo
-    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+    apt update
+    apt upgrade -y
+    apt install -y \
+        build-essential git wget binfmt-support qemu gcc-9 \
+        parted gcc-avr avr-libc avrdude python3 python3-tornado curl \
+        unzip python3-setuptools gcc-arm-linux-gnueabihf bc sudo
+        
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 9
+
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+
+    apt install -y nodejs
 
 ## Getting the Source Code
 

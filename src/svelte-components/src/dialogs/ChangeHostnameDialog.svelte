@@ -4,6 +4,7 @@
   import TextField from "@smui/textfield";
   import MessageDialog from "$dialogs/MessageDialog.svelte";
   import * as api from "$lib/api";
+  import { virtualKeyboardChange } from "$lib/CustomActions";
 
   // https://man7.org/linux/man-pages/man7/hostname.7.html
   //
@@ -57,7 +58,7 @@
   }
 </script>
 
-<MessageDialog open={rebooting} title="Rebooting">
+<MessageDialog open={rebooting} title="Rebooting" noaction>
   Rebooting to apply the hostname change...
 </MessageDialog>
 
@@ -72,15 +73,12 @@
   <Content id="change-hostname-dialog-content">
     <TextField
       bind:value={hostname}
+      use={[[virtualKeyboardChange, (newValue) => (hostname = newValue)]]}
       label="New Hostname"
       spellcheck="false"
       variant="filled"
       style="width: 100%;"
     />
-
-    <p>
-      <em>Clicking Confirm will reboot the controller to apply the change.</em>
-    </p>
   </Content>
 
   <Actions>

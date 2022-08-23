@@ -7,6 +7,9 @@
   import SetTimeDialog from "./SetTimeDialog.svelte";
   import ManualHomeAxisDialog from "./ManualHomeAxisDialog.svelte";
   import SetAxisPositionDialog from "./SetAxisPositionDialog.svelte";
+  import MoveToZeroDialog from "./MoveToZeroDialog.svelte";
+  import ShutdownDialog from "./ShutdownDialog.svelte";
+  import MessageDialog from "./MessageDialog.svelte";
 
   const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
   type HomeMachineDialogPropsType = {
@@ -49,6 +52,25 @@
     axis: string;
   };
 
+  const MoveToZeroDialogProps = writable<MoveToZeroDialogPropsType>();
+  type MoveToZeroDialogPropsType = {
+    open: boolean;
+    axes: "xy" | "z";
+  };
+
+  const ShutdownDialogProps = writable<ShutdownDialogPropsType>();
+  type ShutdownDialogPropsType = {
+    open: boolean;
+  };
+
+  const MessageDialogProps = writable<MessageDialogPropsType>();
+  type MessageDialogPropsType = {
+    open: boolean;
+    title: string;
+    message: string;
+    noaction: boolean;
+  };
+
   export function showDialog(
     dialog: "HomeMachine",
     props: Omit<HomeMachineDialogPropsType, "open">
@@ -84,6 +106,21 @@
     props: Omit<SetAxisPositionDialogPropsType, "open">
   );
 
+  export function showDialog(
+    dialog: "MoveToZero",
+    props: Omit<MoveToZeroDialogPropsType, "open">
+  );
+
+  export function showDialog(
+    dialog: "Shutdown",
+    props: Omit<ShutdownDialogPropsType, "open">
+  );
+
+  export function showDialog(
+    dialog: "Message",
+    props: Omit<MessageDialogPropsType, "open">
+  );
+
   export function showDialog(dialog: string, props: any) {
     switch (dialog) {
       case "HomeMachine":
@@ -114,10 +151,82 @@
         SetAxisPositionDialogProps.set({ ...props, open: true });
         break;
 
+      case "MoveToZero":
+        MoveToZeroDialogProps.set({ ...props, open: true });
+        break;
+
+      case "Shutdown":
+        ShutdownDialogProps.set({ ...props, open: true });
+        break;
+
+      case "Message":
+        MessageDialogProps.set({ ...props, open: true });
+        break;
+
       default:
-        throw new Error(`Unknown dialog '${dialog}`);
+        throw new Error(`Unknown dialog '${dialog}'`);
     }
   }
+</script>
+
+<script lang="ts">
+  import { onMount, onDestroy } from "svelte";
+
+  let bodyObserver: MutationObserver;
+  let keyboardObserver: MutationObserver;
+
+  onMount(() => {
+    bodyObserver = new MutationObserver(() => {
+      const virtualKeyboard = document.getElementById(
+        "virtualKeyboardChromeExtension"
+      );
+
+      if (virtualKeyboard) {
+        bodyObserver.disconnect();
+        bodyObserver = undefined;
+
+        const virtualKeyboardOverlay = document.getElementById(
+          "virtualKeyboardChromeExtensionOverlayScrollExtend"
+        );
+
+        keyboardObserver = new MutationObserver(() => {
+          const open = virtualKeyboard.getAttribute("_state") === "open";
+          const keyboardHeight = Number.parseFloat(
+            virtualKeyboardOverlay.style.height
+          );
+
+          const dialogContainers = document.querySelectorAll<HTMLDivElement>(
+            ".mdc-dialog .mdc-dialog__container"
+          );
+
+          for (let dialogContainer of dialogContainers) {
+            dialogContainer.style["marginBottom"] = open
+              ? `${keyboardHeight}px`
+              : "";
+          }
+        });
+
+        keyboardObserver.observe(virtualKeyboard, { attributes: true });
+      }
+    });
+
+    bodyObserver.observe(document.querySelector("body"), {
+      subtree: false,
+      childList: true,
+    });
+  });
+
+  onDestroy(() => {
+    if (bodyObserver) {
+      bodyObserver.disconnect();
+      bodyObserver = undefined;
+    }
+
+    if (keyboardObserver) {
+      keyboardObserver.disconnect();
+      keyboardObserver = undefined;
+    }
+  });
 </script>
 
 <HomeMachineDialog {...$HomeMachineDialogProps} />
@@ -127,3 +236,6 @@
 <SetTimeDialog {...$SetTimeDialogProps} />
 <ManualHomeAxisDialog {...$ManualHomeAxisDialogProps} />
 <SetAxisPositionDialog {...$SetAxisPositionDialogProps} />
+<MoveToZeroDialog {...$MoveToZeroDialogProps} />
+<ShutdownDialog {...$ShutdownDialogProps} />
+<MessageDialog {...$MessageDialogProps} />

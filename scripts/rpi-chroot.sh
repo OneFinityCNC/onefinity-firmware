@@ -1,7 +1,6 @@
 #!/bin/bash -ex
 
 ROOT="$PWD/rpi-root"
-LOOP=12
 
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <image> <exec>"
@@ -9,7 +8,8 @@ if [ $# -lt 1 ]; then
 fi
 
 IMAGE="$1"
-LOOP_DEV=/dev/loop${LOOP}
+LOOP_BOOT=
+LOOP_ROOT=
 EXEC=
 
 if [ $# -gt 1 ]; then
@@ -26,25 +26,28 @@ fi
 # Clean up on EXIT
 function cleanup {
     umount "$ROOT"/{dev/pts,dev,sys,proc,boot,mnt/host,} 2>/dev/null || true
-    losetup -d $LOOP_DEV 2>/dev/null || true
+    losetup -d $LOOP_BOOT 2>/dev/null || true
+    losetup -d $LOOP_ROOT 2>/dev/null || true
     rmdir "$ROOT" 2>/dev/null || true
 }
 trap cleanup EXIT
 
-# set up image as loop device
-losetup $LOOP_DEV "$IMAGE"
-partprobe $LOOP_DEV
+LOOP_BOOT=`losetup -f`
+losetup -o 4194304 $LOOP_BOOT "$IMAGE"
+
+LOOP_ROOT=`losetup -f`
+losetup -o 48234496 $LOOP_ROOT "$IMAGE"
 
 # check and fix filesystems
-fsck -f ${LOOP_DEV}p1
-fsck -f ${LOOP_DEV}p2
+fsck -f $LOOP_BOOT
+fsck -f $LOOP_ROOT
 
 # make dir
 mkdir -p "$ROOT"
 
 # mount partition
-mount -o rw ${LOOP_DEV}p2 -t ext4 "$ROOT"
-mount -o rw ${LOOP_DEV}p1 "$ROOT/boot"
+mount -o rw $LOOP_ROOT -t ext4 "$ROOT"
+mount -o rw $LOOP_BOOT "$ROOT/boot"
 
 # mount binds
 mount --bind /dev "$ROOT/dev/"

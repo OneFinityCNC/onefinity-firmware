@@ -7,6 +7,7 @@
   import MessageDialog from "$dialogs/MessageDialog.svelte";
   import type { WifiNetwork } from "$lib/NetworkInfo";
   import * as api from "$lib/api";
+  import { virtualKeyboardChange } from "$lib/CustomActions";
 
   export let open = false;
   export let network: WifiNetwork;
@@ -38,7 +39,7 @@
   }
 </script>
 
-<MessageDialog open={rebooting} title="Rebooting">
+<MessageDialog open={rebooting} title="Rebooting" noaction>
   Rebooting to apply Wifi changes...
 </MessageDialog>
 
@@ -48,14 +49,16 @@
   aria-labelledby="wifi-connection-dialog-title"
   aria-describedby="wifi-connection-dialog-content"
 >
-  <Title id="wifi-connection-dialog-title"
-    >{connectToOrDisconnectFrom} {network.Name}</Title
-  >
+  <Title id="wifi-connection-dialog-title">
+    {connectToOrDisconnectFrom}
+    {network.Name}
+  </Title>
 
   <Content id="wifi-connection-dialog-content">
     {#if needPassword}
       <TextField
         bind:value={password}
+        use={[[virtualKeyboardChange, (newValue) => (password = newValue)]]}
         label="Password"
         spellcheck="false"
         variant="filled"

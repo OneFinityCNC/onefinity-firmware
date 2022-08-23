@@ -39,7 +39,6 @@ function uuid(length) {
   return s
 }
 
-
 $(function () {
   if (typeof cookie_get('client-id') == 'undefined') {
     cookie_set('client-id', uuid(), 10000);

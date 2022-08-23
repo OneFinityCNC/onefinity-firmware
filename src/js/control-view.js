@@ -39,17 +39,7 @@ module.exports = {
       jog_adjust: parseInt(cookie.get('jog-adjust', 2)),
       deleteGCode: false,
       tab: 'auto',
-      toolpath_msg: {
-        x: false,
-        y: false,
-        z: false,
-        a: false,
-        b: false,
-        c: false
-      },
       ask_home: true,
-      ask_zero_xy_msg: false,
-      ask_zero_z_msg: false,
       showGcodeMessage: false
     }
   },
@@ -244,7 +234,6 @@ module.exports = {
     SvelteComponents.registerControllerMethods({
       stop: (...args) => this.stop(...args),
       send: (...args) => this.send(...args),
-      goto_zero: (...args) => this.goto_zero(...args),
       isAxisHomed: (axis) => this[axis].homed,
       unhome: (...args) => this.unhome(...args),
       set_position: (...args) => this.set_position(...args),
@@ -253,18 +242,6 @@ module.exports = {
   },
 
   methods: {
-    goto_zero(zero_x, zero_y, zero_z, zero_a) {
-      const xcmd = zero_x ? "X0" : "";
-      const ycmd = zero_y ? "Y0" : "";
-      const zcmd = zero_z ? "Z0" : "";
-      const acmd = zero_a ? "A0" : "";
-
-      this.ask_zero_xy_msg = false;
-      this.ask_zero_z_msg = false;
-
-      this.send('G90\nG0' + xcmd + ycmd + zcmd + acmd + '\n');
-    },
-
     getJogIncrStyle(value) {
       const weight = `font-weight:${this.jog_incr === value ? 'bold' : 'normal'}`;
       const color = this.jog_incr === value ? "color:#0078e7" : "";
@@ -436,8 +413,12 @@ module.exports = {
       SvelteComponents.showDialog("SetAxisPosition", { axis });
     },
 
-    show_toolpath_msg: function (axis) {
-      this.toolpath_msg[axis] = true;
+    showMoveToZeroDialog: function (axes) {
+      SvelteComponents.showDialog("MoveToZero", { axes });
+    },
+
+    showToolpathMessageDialog: function (axis) {
+      SvelteComponents.showDialog("Message", { title: this[axis].toolmsg });
     },
 
     set_position: function (axis, position) {

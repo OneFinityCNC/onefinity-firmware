@@ -5,7 +5,7 @@ import glob
 import tornado
 from tornado import gen
 from tornado.web import HTTPError
-
+from tornado.escape import url_unescape;
 
 def safe_remove(path):
     try:
@@ -20,7 +20,8 @@ class FileHandler(bbctrl.APIHandler):
         if self.request.method == 'PUT':
             self.request.connection.set_max_body_size(2 ** 30)
 
-            self.uploadFilename = self.request.path.split('/')[-1] \
+            filename = self.request.path.split('/')[-1]
+            self.uploadFilename = url_unescape(filename) \
                 .replace('\\', '/') \
                 .replace('#', '-') \
                 .replace('?', '-')

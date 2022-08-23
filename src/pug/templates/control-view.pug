@@ -10,32 +10,6 @@ script#control-view-template(type="text/x-template")
       div(slot="footer")
         label Simulating {{(toolpath_progress || 0) | percent}}
 
-    message(:show.sync=`ask_zero_xy_msg`)
-        h3(slot="header") XY Origin
-
-        div(slot="body")
-          p Move to XY origin?
-
-        div(slot="footer")
-          button.pure-button(@click="goto_zero(1,1,0,0)")
-            | Confirm
-            
-          button.pure-button(@click='ask_zero_xy_msg = false')
-            | Cancel
-    
-    message(:show.sync=`ask_zero_z_msg`)
-        h3(slot="header") Z Origin
-
-        div(slot="body")
-          p Move to Z origin?
-
-        div(slot="footer")
-          button.pure-button(@click="goto_zero(0,0,1,0)")
-            | Confirm
-            
-          button.pure-button(@click='ask_zero_z_msg = false')
-            | Cancel
-
     table(style="table-layout: fixed; width: 100%;")
       tr(style="height: fit-content;")
         td(style="white-space: nowrap; width: 410px;", rowspan="2")
@@ -60,12 +34,12 @@ script#control-view-template(type="text/x-template")
               td(style="height:100px",align="center")
                 button(@click="jog_fn(-1,0,0,0)") X-
               td(style="height:100px",align="center")
-                button(@click="ask_zero_xy_msg = true")
+                button(@click="showMoveToZeroDialog('xy')")
                   .fa.fa-bullseye(style="font-size: 173%")
               td(style="height:100px",align="center")
                 button(@click="jog_fn(1,0,0,0)") X+
               td(style="height:100px",align="center")
-                button(@click='ask_zero_z_msg = true') Z0
+                button(@click="showMoveToZeroDialog('z')") Z0
             tr
               td(style="height:100px",align="center")
                 button(@click="jog_fn(-1,-1,0,0)")
@@ -133,20 +107,10 @@ script#control-view-template(type="text/x-template")
                 td.state
                   .fa(:class=`'fa-' + ${axis}.icon`)
                   | {{#{axis}.state}}
-                td.tstate(:class=`${axis}.tklass`, :title=`${axis}.toolmsg`, @click=`show_toolpath_msg('${axis}')`)
+                td.tstate(:class=`${axis}.tklass`, :title=`${axis}.toolmsg`, @click=`showToolpathMessageDialog('${axis}')`)
                   .fa(:class=`'fa-' + ${axis}.ticon`)
                   | {{#{axis}.tstate}}
-                  
-                message(:show.sync=`toolpath_msg['${axis}']`)
-                    h3(slot="header") Tool path info {{'#{axis}' | upper}} axis
-                
-                    div(slot="body")
-                      p {{#{axis}.toolmsg}}
-                
-                    div(slot="footer")
-                      button.pure-button(@click=`toolpath_msg['${axis}'] = false`)
-                        | OK
-                
+
                 th.actions
                   button.pure-button(:disabled="!can_set_axis",
                     title=`Set {{'${axis}' | upper}} axis position.`,

@@ -1,5 +1,4 @@
 <script type="ts">
-  import DimensionInput from "$components/DimensionInput.svelte";
   import Dialog, { Title, Content, Actions } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import { waitForChange } from "$lib/StoreHelpers";
@@ -13,14 +12,23 @@
     probingFailed,
     probingStarted,
   } from "$lib/ControllerState";
+  import { numberWithUnit } from "$lib/RegexHelpers";
+  import TextFieldWithOptions from "$components/TextFieldWithOptions.svelte";
 
-  type Step =
-    | "None"
-    | "CheckProbe"
-    | "BitDimensions"
-    | "PlaceProbeBlock"
-    | "Probe"
-    | "Done";
+  const ValidSteps = [
+    "None",
+    "CheckProbe",
+    "BitDimensions",
+    "PlaceProbeBlock",
+    "Probe",
+    "Done",
+  ] as const;
+
+  type Step = typeof ValidSteps[number];
+
+  function isStep(str): str is Step {
+    return ValidSteps.includes(str);
+  }
 
   const stepLabels: Record<Step, string> = {
     None: "",
@@ -34,21 +42,16 @@
   const cancelled = writable(false);
   const userAcknowledged = writable(false);
 
-  const cutterDiameterOptions = [
-    { value: 0.5, label: '1/2 "', metric: false },
-    { value: 0.25, label: '1/4 "', metric: false },
-    { value: 0.125, label: '1/8 "', metric: false },
-    { value: 10, label: "10 mm", metric: true },
-    { value: 6, label: "6 mm", metric: true },
-    { value: 3, label: "10 mm", metric: true },
-  ];
+  const imperialBits = ["1/2 in", "1/4 in", "1/8 in", "1/16", "1/32"];
+  const metricBits = ["10 mm", "8 mm", "6 mm", "3 mm"];
 
   export let open;
   export let probeType: "xyz" | "z";
   let currentStep: Step = "None";
-  let cutterDiameter: number;
+  let cutterDiameterString: string = "";
+  let cutterDiameterMetric: number;
   let showCancelButton = true;
-  let steps: Array<Step> = [];
+  let steps: Step[] = [];
   let nextButton = {
     label: "Next",
     disabled: false,
@@ -56,10 +59,12 @@
   };
 
   $: metric = $Config.settings?.units === "METRIC";
+  $: cutterDiameterMetric = numberWithUnit
+    .parse(cutterDiameterString)
+    ?.toMetric();
 
   $: if (open) {
-    cutterDiameter =
-      Number.parseFloat(localStorage.getItem("cutterDiameter")) || null;
+    cutterDiameterString = localStorage.getItem("cutterDiameter") ?? "";
 
     // Svelte appears not to like it when you invoke
     // an async function from a reactive statement, so we
@@ -67,12 +72,8 @@
     requestAnimationFrame(begin);
   }
 
-  $: if (cutterDiameter) {
+  $: if (cutterDiameterString) {
     updateButtons();
-  }
-
-  function removeSkippedSteps(steps: Step[]): Step[] {
-    return steps.filter((x) => x);
   }
 
   async function begin() {
@@ -80,19 +81,22 @@
       $probingActive = true;
       assertValidProbeType();
 
-      steps = removeSkippedSteps([
+      steps = [
         "CheckProbe",
         probeType === "xyz" ? "BitDimensions" : undefined,
         "PlaceProbeBlock",
         "Probe",
         "Done",
-      ]);
+      ].filter<Step>(isStep);
 
       await stepCompleted("CheckProbe", probeContacted);
 
       if (probeType === "xyz") {
         await stepCompleted("BitDimensions", userAcknowledged);
-        localStorage.setItem("cutterDiameter", cutterDiameter.toString());
+        localStorage.setItem(
+          "cutterDiameter",
+          numberWithUnit.normalize(cutterDiameterString)
+        );
       }
 
       await stepCompleted("PlaceProbeBlock", userAcknowledged);
@@ -100,7 +104,7 @@
       await stepCompleted("Done", userAcknowledged);
 
       if (probeType === "xyz") {
-        ControllerMethods.goto_zero(1, 1, 0, 0);
+        ControllerMethods.gotoZero("xy");
       }
     } catch (err) {
       if (err.message !== "cancelled") {
@@ -177,11 +181,7 @@
         break;
 
       case "BitDimensions":
-        nextButton.disabled = !(
-          cutterDiameter !== null &&
-          cutterDiameter !== 0 &&
-          isFinite(cutterDiameter)
-        );
+        nextButton.disabled = !isFinite(cutterDiameterMetric);
         break;
 
       case "Done":
@@ -204,8 +204,8 @@
 
     const cutterLength = 12.7;
     const zLift = 1;
-    const xOffset = probeBlockWidth + cutterDiameter / 2.0;
-    const yOffset = probeBlockLength + cutterDiameter / 2.0;
+    const xOffset = probeBlockWidth + cutterDiameterMetric / 2.0;
+    const yOffset = probeBlockLength + cutterDiameterMetric / 2.0;
     const zOffset = probeBlockHeight;
 
     if (probeType === "z") {
@@ -269,11 +269,11 @@
   scrimClickAction=""
   aria-labelledby="probe-dialog-title"
   aria-describedby="probe-dialog-content"
-  surface$style="width: 700px; height: 400px; max-width: calc(100vw - 32px); overflow: visible;"
+  surface$style="width: 700px; max-width: calc(100vw - 32px);"
 >
   <Title id="probe-dialog-title">Probing {probeType?.toUpperCase()}</Title>
 
-  <Content id="probe-dialog-content" style="overflow: visible;">
+  <Content id="probe-dialog-content">
     <div class="steps">
       <p><b>Step {steps.indexOf(currentStep) + 1} of {steps.length}</b></p>
       <ul>
@@ -282,48 +282,49 @@
         {/each}
       </ul>
     </div>
-    <div class="current-step">
-      <p>
-        {#if currentStep === "CheckProbe"}
-          Attach the probe magnet to the collet, then touch the probe block to
-          the bit.
-        {:else if currentStep === "BitDimensions"}
-          <DimensionInput
-            label="Cutter diameter"
-            options={cutterDiameterOptions}
-            bind:value={cutterDiameter}
-            {metric}
-          />
-        {:else if currentStep === "PlaceProbeBlock"}
+    <p>
+      {#if currentStep === "CheckProbe"}
+        Attach the probe magnet to the collet, then touch the probe block to the
+        bit.
+      {:else if currentStep === "BitDimensions"}
+        <TextFieldWithOptions
+          label="Cutter diameter"
+          variant="filled"
+          spellcheck="false"
+          style="width: 100%;"
+          bind:value={cutterDiameterString}
+          options={[imperialBits, metricBits]}
+          valid={isFinite(cutterDiameterMetric)}
+          helperText={`Examples: 1/2", 10 mm, 0.25 in`}
+        />
+      {:else if currentStep === "PlaceProbeBlock"}
+        {#if probeType === "xyz"}
+          Place the probe block face up, on the lower-left corner of your
+          workpiece.
+        {:else}
+          Place the probe block face down, with the bit above the recess.
+        {/if}
+      {:else if currentStep === "Probe"}
+        Probing in progress...
+      {:else if currentStep === "Done"}
+        {#if $probingFailed}
+          Could not find the probe block during probing!
+
+          <p>
+            Make sure the tip of the bit is less than {metric ? "25mm" : "1 in"}
+            above the probe block, and try again.
+          </p>
+        {:else}
+          Don't forget to put away the probe!
+
           {#if probeType === "xyz"}
-            Place the probe block face up, on the lower-left corner of your
-            workpiece.
-          {:else}
-            Place the probe block face down, with the bit above the recess.
-          {/if}
-        {:else if currentStep === "Probe"}
-          Probing in progress...
-        {:else if currentStep === "Done"}
-          {#if $probingFailed}
-            Could not find the probe block during probing!
+            <p>The machine will now move to the XY origin.</p>
 
-            <p>
-              Make sure the tip of the bit is less than {metric
-                ? "25mm"
-                : "1 in"} above the probe block, and try again.
-            </p>
-          {:else}
-            Don't forget to put away the probe!
-
-            {#if probeType === "xyz"}
-              <p>The machine will now move to the XY origin.</p>
-
-              <p>Watch your hands!</p>
-            {/if}
+            <p>Watch your hands!</p>
           {/if}
         {/if}
-      </p>
-    </div>
+      {/if}
+    </p>
   </Content>
 
   <Actions>
@@ -358,12 +359,9 @@
       flex-direction: row;
     }
 
-    .current-step {
-      flex-grow: 1;
-
-      .mdc-text-field {
-        margin-bottom: 20px;
-      }
+    .bit-dimensions {
+      display: flex;
+      flex-direction: column;
     }
 
     .steps {

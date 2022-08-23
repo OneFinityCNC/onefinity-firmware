@@ -46,9 +46,7 @@ module.exports = {
 
   data: function () {
     return {
-      configRestored: false,
       confirmReset: false,
-      configReset: false,
       autoCheckUpgrade: true,
       reset_variant: ''
     }
@@ -71,29 +69,31 @@ module.exports = {
     },
 
     restore: function (e) {
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
+      const files = e.target.files || e.dataTransfer.files;
+      if (!files.length) {
+        return;
+      }
 
-      var fr = new FileReader();
-      fr.onload = function (e) {
-        var config;
+      const fileReader = new FileReader();
+      fileReader.onload = async ({ target }) => {
+        let config;
         try {
-          config = JSON.parse(e.target.result);
+          config = JSON.parse(target.result);
         } catch (ex) {
           api.alert("Invalid config file");
           return;
         }
 
-        api.put('config/save', config).done(function (data) {
+        try {
+          await api.put('config/save', config);
           this.$dispatch('update');
-          this.configRestored = true;
-
-        }.bind(this)).fail(function (error) {
+          SvelteComponents.showDialog("Message", { title: "Success", message: "Configuration restored" })
+        } catch (error) {
           api.alert('Restore failed', error);
-        })
-      }.bind(this);
+        }
+      }
 
-      fr.readAsText(files[0]);
+      fileReader.readAsText(files[0]);
     },
 
     reset: async function () {
@@ -107,7 +107,7 @@ module.exports = {
         await api.put('config/save', config)
         this.confirmReset = false;
         this.$dispatch('update');
-        this.configRestored = true;
+        SvelteComponents.showDialog("Message", { title: "Success", message: "Configuration restored" })
       } catch (err) {
         api.alert('Restore failed');
         console.error('Restore failed', err);
