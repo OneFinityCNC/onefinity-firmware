@@ -421,6 +421,10 @@ module.exports = {
       SvelteComponents.showDialog("SetAxisPosition", { axis });
     },
 
+    showMoveToZeroDialog: function (axes) {
+      SvelteComponents.showDialog("MoveToZero", { axes });
+    },
+
     show_toolpath_msg: function (axis) {
       this.toolpath_msg[axis] = true;
     },

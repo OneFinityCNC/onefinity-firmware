@@ -14,7 +14,7 @@
     aria-describedby="move-to-zero-dialog-content"
 >
     <Title id="move-to-zero-dialog-title">
-        Move to ${(axes || "").toUpperCase()} origin?
+        Move to {(axes || "").toUpperCase()} origin?
     </Title>
 
     <Actions>
