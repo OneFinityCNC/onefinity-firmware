@@ -42,7 +42,7 @@
   const cancelled = writable(false);
   const userAcknowledged = writable(false);
 
-  const imperialBits = ["1/2 in", "1/4 in", "1/8 in", "1/16", "1/32"];
+  const imperialBits = ["1/2 in", "1/4 in", "1/8 in", "1/16 in", "1/32 in"];
   const metricBits = ["10 mm", "8 mm", "6 mm", "3 mm"];
 
   export let open;
@@ -273,7 +273,7 @@
 >
   <Title id="probe-dialog-title">Probing {probeType?.toUpperCase()}</Title>
 
-  <Content id="probe-dialog-content">
+  <Content id="probe-dialog-content" style="overflow: visible;">
     <div class="steps">
       <p><b>Step {steps.indexOf(currentStep) + 1} of {steps.length}</b></p>
       <ul>
