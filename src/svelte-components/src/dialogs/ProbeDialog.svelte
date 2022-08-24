@@ -42,8 +42,22 @@
   const cancelled = writable(false);
   const userAcknowledged = writable(false);
 
-  const imperialBits = ["1/2 in", "1/4 in", "1/8 in", "1/16 in", "1/32 in"];
-  const metricBits = ["10 mm", "8 mm", "6 mm", "3 mm"];
+  const imperialBits: `${number}/${number} in`[] = [
+    "1/2 in",
+    "3/8 in",
+    "1/4 in",
+    "1/8 in",
+    "1/16 in",
+    "1/32 in",
+  ];
+  const metricBits: `${number} mm`[] = [
+    "12 mm",
+    "10 mm",
+    "8 mm",
+    "6 mm",
+    "4 mm",
+    "3 mm",
+  ];
 
   export let open;
   export let probeType: "xyz" | "z";
@@ -89,7 +103,7 @@
         "Done",
       ].filter<Step>(isStep);
 
-      await stepCompleted("CheckProbe", probeContacted);
+      // await stepCompleted("CheckProbe", probeContacted);
 
       if (probeType === "xyz") {
         await stepCompleted("BitDimensions", userAcknowledged);

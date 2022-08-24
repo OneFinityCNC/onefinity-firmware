@@ -83,7 +83,7 @@
   :global {
     .textfield-with-options {
       .mdc-deprecated-list-item {
-        height: 35px;
+        height: 32px;
       }
     }
   }
