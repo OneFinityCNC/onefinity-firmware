@@ -103,7 +103,7 @@
         "Done",
       ].filter<Step>(isStep);
 
-      // await stepCompleted("CheckProbe", probeContacted);
+      await stepCompleted("CheckProbe", probeContacted);
 
       if (probeType === "xyz") {
         await stepCompleted("BitDimensions", userAcknowledged);
@@ -318,6 +318,8 @@
         {:else}
           Place the probe block face down, with the bit above the recess.
         {/if}
+
+        <p>The probing procedure will begin as soon as you click 'Next'.</p>
       {:else if currentStep === "Probe"}
         Probing in progress...
       {:else if currentStep === "Done"}
