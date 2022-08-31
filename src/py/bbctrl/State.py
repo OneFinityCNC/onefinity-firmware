@@ -1,15 +1,15 @@
-import traceback
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
 import copy
+import iw_parse
 import json
-import uuid
 import os
 import socket
-import iw_parse
-import threading
 import subprocess
+import threading
 import time
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+import traceback
+import uuid
 
 
 def call_get_output(cmd):

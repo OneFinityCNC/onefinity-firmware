@@ -1,11 +1,12 @@
-import os
-import tempfile
+from tornado import gen
+from tornado.escape import url_unescape
+from tornado.web import HTTPError
 import bbctrl
 import glob
+import os
+import tempfile
 import tornado
-from tornado import gen
-from tornado.web import HTTPError
-from tornado.escape import url_unescape;
+
 
 def safe_remove(path):
     try:
@@ -16,9 +17,10 @@ def safe_remove(path):
 
 @tornado.web.stream_request_body
 class FileHandler(bbctrl.APIHandler):
+
     def prepare(self):
         if self.request.method == 'PUT':
-            self.request.connection.set_max_body_size(2 ** 30)
+            self.request.connection.set_max_body_size(2**30)
 
             filename = self.request.path.split('/')[-1]
             self.uploadFilename = url_unescape(filename) \
@@ -57,14 +59,14 @@ class FileHandler(bbctrl.APIHandler):
 
         self.uploadFile.close()
 
-        del(self.uploadFile)
+        del (self.uploadFile)
 
         self.get_ctrl().preplanner.invalidate(self.uploadFilename)
         self.get_ctrl().state.add_file(self.uploadFilename)
-        self.get_log('FileHandler').info(
-            'GCode received: ' + self.uploadFilename)
+        self.get_log('FileHandler').info('GCode received: ' +
+                                         self.uploadFilename)
 
-        del(self.uploadFilename)
+        del (self.uploadFilename)
 
     @gen.coroutine
     def get(self, filename):

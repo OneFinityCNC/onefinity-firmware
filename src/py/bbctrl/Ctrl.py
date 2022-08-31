@@ -1,8 +1,9 @@
-import os
 import bbctrl
+import os
 
 
 class Ctrl(object):
+
     def __init__(self, args, ioloop, id):
         self.args = args
         self.ioloop = bbctrl.IOLoop(ioloop)
@@ -42,7 +43,8 @@ class Ctrl(object):
             self.log.get('Ctrl').exception(
                 'Internal error: Control initialization failed')
 
-    def __del__(self): print('Ctrl deleted')
+    def __del__(self):
+        print('Ctrl deleted')
 
     def clear_timeout(self):
         if self.timeout is not None:

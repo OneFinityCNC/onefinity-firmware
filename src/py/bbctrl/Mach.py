@@ -1,7 +1,6 @@
-import bbctrl
 from bbctrl.Comm import Comm
+import bbctrl
 import bbctrl.Cmd as Cmd
-
 
 # Axis homing procedure:
 #
@@ -49,10 +48,11 @@ for more information.\
 
 
 def overrides(interface_class):
+
     def overrider(method):
         if not method.__name__ in dir(interface_class):
-            raise Exception('%s does not override %s' % (
-                method.__name__, interface_class.__name__))
+            raise Exception('%s does not override %s' %
+                            (method.__name__, interface_class.__name__))
 
         return method
 
@@ -60,6 +60,7 @@ def overrides(interface_class):
 
 
 class Mach(Comm):
+
     def __init__(self, ctrl, avr):
         super().__init__(ctrl, avr)
 
@@ -76,20 +77,32 @@ class Mach(Comm):
 
         super().reboot()
 
-    def _get_state(self): return self.ctrl.state.get('xx', '')
-    def _is_estopped(self): return self._get_state() == 'ESTOPPED'
-    def _is_holding(self): return self._get_state() == 'HOLDING'
-    def _is_ready(self): return self._get_state() == 'READY'
-    def _get_pause_reason(self): return self.ctrl.state.get('pr', '')
-    def _get_cycle(self): return self.ctrl.state.get('cycle', 'idle')
+    def _get_state(self):
+        return self.ctrl.state.get('xx', '')
+
+    def _is_estopped(self):
+        return self._get_state() == 'ESTOPPED'
+
+    def _is_holding(self):
+        return self._get_state() == 'HOLDING'
+
+    def _is_ready(self):
+        return self._get_state() == 'READY'
+
+    def _get_pause_reason(self):
+        return self.ctrl.state.get('pr', '')
+
+    def _get_cycle(self):
+        return self.ctrl.state.get('cycle', 'idle')
 
     def _is_paused(self):
         if not self._is_holding() or self.unpausing:
             return False
-        return self._get_pause_reason() in (
-            'User pause', 'Program pause', 'Optional pause')
+        return self._get_pause_reason() in ('User pause', 'Program pause',
+                                            'Optional pause')
 
-    def _set_cycle(self, cycle): self.ctrl.state.set('cycle', cycle)
+    def _set_cycle(self, cycle):
+        self.ctrl.state.set('cycle', cycle)
 
     def _begin_cycle(self, cycle):
         current = self._get_cycle()
@@ -126,9 +139,8 @@ class Mach(Comm):
             self.planner.reset(stop=False)
 
         # Exit cycle if state changed to READY
-        if (state_changed and self._get_cycle() != 'idle' and
-            self._is_ready() and not self.planner.is_busy() and
-                not super().is_active()):
+        if (state_changed and self._get_cycle() != 'idle' and self._is_ready()
+                and not self.planner.is_busy() and not super().is_active()):
             self.planner.position_change()
             self._set_cycle('idle')
 
@@ -152,9 +164,9 @@ class Mach(Comm):
         # Must be after holding commands above
         op = self.ctrl.state.get('optional_pause', False)
         pr = self._get_pause_reason()
-        if ((state_changed or 'pr' in update) and self._is_holding() and
-            (pr in ('Switch found', 'User stop') or
-             (pr == 'Optional pause' and not op))):
+        if ((state_changed or 'pr' in update) and self._is_holding()
+                and (pr in ('Switch found', 'User stop') or
+                     (pr == 'Optional pause' and not op))):
             self._unpause()
 
     def _unpause(self):
@@ -174,7 +186,8 @@ class Mach(Comm):
     def _i2c_block(self, block):
         super().i2c_command(block[0], block=block[1:])
 
-    def _i2c_set(self, name, value): self._i2c_block(Cmd.set(name, value))
+    def _i2c_set(self, name, value):
+        self._i2c_block(Cmd.set(name, value))
 
     @overrides(Comm)
     def comm_next(self):
@@ -255,8 +268,8 @@ class Mach(Comm):
             # Error when axes cannot be homed
             reason = state.axis_home_fail_reason(axis)
             if reason is not None:
-                self.mlog.error('Cannot home %s axis: %s' % (
-                    axis.upper(), reason))
+                self.mlog.error('Cannot home %s axis: %s' %
+                                (axis.upper(), reason))
                 continue
 
             if mode == 'manual':
@@ -279,8 +292,11 @@ class Mach(Comm):
             self.planner.mdi(gcode, False)
             super().resume()
 
-    def unhome(self, axis): self.mdi('G28.2 %c0' % axis)
-    def estop(self): super().estop()
+    def unhome(self, axis):
+        self.mdi('G28.2 %c0' % axis)
+
+    def estop(self):
+        super().estop()
 
     def clear(self):
         if self._is_estopped():
@@ -290,7 +306,8 @@ class Mach(Comm):
     def fake_probe_contact(self):
         self._i2c_set('pt', 2)
         self.ctrl.state.set('pw', 0)
-        self.timer = self.ctrl.ioloop.call_later(0.5, self.clear_fake_probe_contact)
+        self.timer = self.ctrl.ioloop.call_later(0.5,
+                                                 self.clear_fake_probe_contact)
 
     def clear_fake_probe_contact(self):
         self._i2c_set('pt', 1)
@@ -316,7 +333,8 @@ class Mach(Comm):
             self.stopping = True
         super().i2c_command(Cmd.STOP)
 
-    def pause(self): super().pause()
+    def pause(self):
+        super().pause()
 
     def unpause(self):
         if self._is_paused():
@@ -350,7 +368,8 @@ class Mach(Comm):
     def override_speed(self, override):
         self._i2c_set('so', int(1000 * override))
 
-    def modbus_read(self, addr): self._i2c_block(Cmd.modbus_read(addr))
+    def modbus_read(self, addr):
+        self._i2c_block(Cmd.modbus_read(addr))
 
     def modbus_write(self, addr, value):
         self._i2c_block(Cmd.modbus_write(addr, value))

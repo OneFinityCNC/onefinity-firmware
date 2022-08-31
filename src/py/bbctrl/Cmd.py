@@ -1,64 +1,35 @@
-#!/usr/bin/env python3
-
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
-import struct
 import base64
 import json
+import struct
 
 # Keep this in sync with AVR code command.def
-SET          = '$'
-SET_SYNC     = '#'
-MODBUS_READ  = 'm'
+SET = '$'
+SET_SYNC = '#'
+MODBUS_READ = 'm'
 MODBUS_WRITE = 'M'
-SEEK         = 's'
-SET_AXIS     = 'a'
-LINE         = 'l'
-SYNC_SPEED   = '%'
-SPEED        = 'p'
-INPUT        = 'I'
-DWELL        = 'd'
-PAUSE        = 'P'
-STOP         = 'S'
-UNPAUSE      = 'U'
-JOG          = 'j'
-REPORT       = 'r'
-REBOOT       = 'R'
-RESUME       = 'c'
-ESTOP        = 'E'
-SHUTDOWN     = 'X'
-CLEAR        = 'C'
-FLUSH        = 'F'
-DUMP         = 'D'
-HELP         = 'h'
+SEEK = 's'
+SET_AXIS = 'a'
+LINE = 'l'
+SYNC_SPEED = '%'
+SPEED = 'p'
+INPUT = 'I'
+DWELL = 'd'
+PAUSE = 'P'
+STOP = 'S'
+UNPAUSE = 'U'
+JOG = 'j'
+REPORT = 'r'
+REBOOT = 'R'
+RESUME = 'c'
+ESTOP = 'E'
+SHUTDOWN = 'X'
+CLEAR = 'C'
+FLUSH = 'F'
+DUMP = 'D'
+HELP = 'h'
 
 SEEK_ACTIVE = 1 << 0
-SEEK_ERROR  = 1 << 1
+SEEK_ERROR = 1 << 1
 
 
 def encode_float(x):
@@ -95,9 +66,16 @@ def set_float(name, value):
     return SET_SYNC + '%s=:%s' % (name, encode_float(value))
 
 
-def modbus_read(addr): return MODBUS_READ + '%d' % addr
-def modbus_write(addr, value): return MODBUS_WRITE + '%d=%d' % (addr, value)
-def set_axis(axis, position): return SET_AXIS + axis + encode_float(position)
+def modbus_read(addr):
+    return MODBUS_READ + '%d' % addr
+
+
+def modbus_write(addr, value):
+    return MODBUS_WRITE + '%d=%d' % (addr, value)
+
+
+def set_axis(axis, position):
+    return SET_AXIS + axis + encode_float(position)
 
 
 def line(target, exitVel, maxAccel, maxJerk, times, speeds):
@@ -111,7 +89,7 @@ def line(target, exitVel, maxAccel, maxJerk, times, speeds):
     # S-Curve time parameters
     for i in range(7):
         if times[i]:
-            cmd += str(i) + encode_float(times[i] / 60000) # to mins
+            cmd += str(i) + encode_float(times[i] / 60000)  # to mins
 
     # Speeds
     for dist, speed in speeds:
@@ -120,7 +98,8 @@ def line(target, exitVel, maxAccel, maxJerk, times, speeds):
     return cmd
 
 
-def speed(value): return SPEED + encode_float(value)
+def speed(value):
+    return SPEED + encode_float(value)
 
 
 def sync_speed(dist, speed):
@@ -135,28 +114,29 @@ def input(port, mode, timeout):
     if port == 'digital-in-1': type, index = 'd', 1
     if port == 'digital-in-2': type, index = 'd', 2
     if port == 'digital-in-3': type, index = 'd', 3
-    if port == 'analog-in-0':  type, index = 'a', 0
-    if port == 'analog-in-1':  type, index = 'a', 1
-    if port == 'analog-in-2':  type, index = 'a', 2
-    if port == 'analog-in-3':  type, index = 'a', 3
+    if port == 'analog-in-0': type, index = 'a', 0
+    if port == 'analog-in-1': type, index = 'a', 1
+    if port == 'analog-in-2': type, index = 'a', 2
+    if port == 'analog-in-3': type, index = 'a', 3
 
     # Mode
     if mode == 'immediate': m = 0
-    if mode == 'rise':      m = 1
-    if mode == 'fall':      m = 2
-    if mode == 'high':      m = 3
-    if mode == 'low':       m = 4
+    if mode == 'rise': m = 1
+    if mode == 'fall': m = 2
+    if mode == 'high': m = 3
+    if mode == 'low': m = 4
 
     return '%s%s%d%d%s' % (INPUT, type, index, m, encode_float(timeout))
 
 
 def output(port, value):
-    if port == 'mist':  return '#1oa=' + ('1' if value else '0')
+    if port == 'mist': return '#1oa=' + ('1' if value else '0')
     if port == 'flood': return '#2oa=' + ('1' if value else '0')
     raise Exception('Unsupported output "%s"' % port)
 
 
-def dwell(seconds): return DWELL + encode_float(seconds)
+def dwell(seconds):
+    return DWELL + encode_float(seconds)
 
 
 def pause(type):
@@ -168,7 +148,8 @@ def pause(type):
     return '%s%d' % (PAUSE, type)
 
 
-def jog(axes): return JOG + encode_axes(axes)
+def jog(axes):
+    return JOG + encode_axes(axes)
 
 
 def seek(switch, active, error):
@@ -177,7 +158,7 @@ def seek(switch, active, error):
 
     flags = 0
     if active: flags |= SEEK_ACTIVE
-    if error:  flags |= SEEK_ERROR
+    if error: flags |= SEEK_ERROR
     cmd += chr(flags + ord('0'))
 
     return cmd
@@ -213,7 +194,6 @@ def decode_command(cmd):
 
             if name in 'xyzabcuvw': data[name] = value
 
-
     elif cmd[0] == SEEK:
         data['type'] = 'seek'
 
@@ -225,9 +205,9 @@ def decode_command(cmd):
 
     elif cmd[0] == LINE:
         data['type'] = 'line'
-        data['exit-vel']  = decode_float(cmd[1:7])
+        data['exit-vel'] = decode_float(cmd[1:7])
         data['max-accel'] = decode_float(cmd[7:13])
-        data['max-jerk']  = decode_float(cmd[13:19])
+        data['max-jerk'] = decode_float(cmd[13:19])
 
         data['target'] = {}
         data['times'] = [0] * 7
@@ -244,16 +224,24 @@ def decode_command(cmd):
     elif cmd[0] == SYNC_SPEED:
         data['type'] = 'speed'
         data['offset'] = decode_float(cmd[1:7])
-        data['speed']  = decode_float(cmd[7:13])
+        data['speed'] = decode_float(cmd[7:13])
 
-    elif cmd[0] == REPORT:   data['type'] = 'report'
-    elif cmd[0] == PAUSE:    data['type'] = 'pause'
-    elif cmd[0] == UNPAUSE:  data['type'] = 'unpause'
-    elif cmd[0] == ESTOP:    data['type'] = 'estop'
-    elif cmd[0] == SHUTDOWN: data['type'] = 'shutdown'
-    elif cmd[0] == CLEAR:    data['type'] = 'clear'
-    elif cmd[0] == FLUSH:    data['type'] = 'flush'
-    elif cmd[0] == RESUME:   data['type'] = 'resume'
+    elif cmd[0] == REPORT:
+        data['type'] = 'report'
+    elif cmd[0] == PAUSE:
+        data['type'] = 'pause'
+    elif cmd[0] == UNPAUSE:
+        data['type'] = 'unpause'
+    elif cmd[0] == ESTOP:
+        data['type'] = 'estop'
+    elif cmd[0] == SHUTDOWN:
+        data['type'] = 'shutdown'
+    elif cmd[0] == CLEAR:
+        data['type'] = 'clear'
+    elif cmd[0] == FLUSH:
+        data['type'] = 'flush'
+    elif cmd[0] == RESUME:
+        data['type'] = 'resume'
 
     return data
 

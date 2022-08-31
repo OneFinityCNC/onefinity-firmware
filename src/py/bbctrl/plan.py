@@ -1,51 +1,22 @@
 #!/usr/bin/env python3
 
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
-import sys
 import argparse
+import camotics.gplan as gplan  # pylint: disable=no-name-in-module,import-error
+import gzip
 import json
-import time
+import math
 import math
 import os
 import re
-import gzip
 import struct
-import math
-import camotics.gplan as gplan # pylint: disable=no-name-in-module,import-error
+import sys
+import time
 
-
-reLogLine = re.compile(
-    r'^(?P<level>[A-Z])[0-9 ]:'
-    r'((?P<file>[^:]+):)?'
-    r'((?P<line>\d+):)?'
-    r'((?P<column>\d+):)?'
-    r'(?P<msg>.*)$')
+reLogLine = re.compile(r'^(?P<level>[A-Z])[0-9 ]:'
+                       r'((?P<file>[^:]+):)?'
+                       r'((?P<line>\d+):)?'
+                       r'((?P<column>\d+):)?'
+                       r'(?P<msg>.*)$')
 
 
 def compute_unit(a, b):
@@ -77,6 +48,7 @@ def compute_move(start, unit, dist):
 
 
 class Plan(object):
+
     def __init__(self, path, state, config):
         self.path = path
         self.state = state
@@ -90,11 +62,14 @@ class Plan(object):
         self.planner.load(self.path, config)
 
         self.messages = []
-        self.levels = dict(I = 'info', D = 'debug', W = 'warning', E = 'error',
-                           C = 'critical')
+        self.levels = dict(I='info',
+                           D='debug',
+                           W='warning',
+                           E='error',
+                           C='critical')
 
         # Initialized axis states and bounds
-        self.bounds = dict(min = {}, max = {})
+        self.bounds = dict(min={}, max={})
         for axis in 'xyz':
             self.bounds['min'][axis] = math.inf
             self.bounds['max'][axis] = -math.inf
@@ -105,11 +80,9 @@ class Plan(object):
         self.lastProgressTime = 0
         self.time = 0
 
-
     def add_to_bounds(self, axis, value):
         if value < self.bounds['min'][axis]: self.bounds['min'][axis] = value
         if self.bounds['max'][axis] < value: self.bounds['max'][axis] = value
-
 
     def get_bounds(self):
         # Remove infinity from bounds
@@ -121,14 +94,12 @@ class Plan(object):
 
         return self.bounds
 
-
     def update_speed(self, s):
         if self.currentSpeed == s: return False
         self.currentSpeed = s
         if self.maxSpeed < s: self.maxSpeed = s
 
         return True
-
 
     def get_var_cb(self, name, units):
         value = 0
@@ -139,19 +110,20 @@ class Plan(object):
 
         return value
 
-
     def log_cb(self, level, msg, filename, line, column):
         if level in self.levels: level = self.levels[level]
 
         # Ignore missing tool warning
-        if (level == 'warning' and
-            msg.startswith('Auto-creating missing tool')):
+        if (level == 'warning'
+                and msg.startswith('Auto-creating missing tool')):
             return
 
         self.messages.append(
-            dict(level = level, msg = msg, filename = filename, line = line,
-                 column = column))
-
+            dict(level=level,
+                 msg=msg,
+                 filename=filename,
+                 line=line,
+                 column=column))
 
     def _log_cb(self, line):
         line = line.strip()
@@ -171,7 +143,6 @@ class Plan(object):
 
         self.log_cb(level, msg, filename, line, column)
 
-
     def progress(self, x):
         if time.time() - self.lastProgressTime < 1 and x != 1: return
         self.lastProgressTime = time.time()
@@ -183,7 +154,6 @@ class Plan(object):
 
         sys.stdout.write(p)
         sys.stdout.flush()
-
 
     def _run(self):
         start = time.clock()
@@ -197,14 +167,14 @@ class Plan(object):
         try:
             while self.planner.has_more():
                 cmd = self.planner.next()
-                self.planner.set_active(cmd['id']) # Release plan
+                self.planner.set_active(cmd['id'])  # Release plan
 
                 # Cannot synchronize with actual machine so fake it
                 if self.planner.is_synchronizing(): self.planner.synchronize(0)
 
                 if cmd['type'] == 'line':
-                    if not (cmd.get('first', False) or
-                            cmd.get('seeking', False)):
+                    if not (cmd.get('first', False)
+                            or cmd.get('seeking', False)):
                         self.time += sum(cmd['times']) / 1000
 
                     target = cmd['target']
@@ -263,7 +233,6 @@ class Plan(object):
         except Exception as e:
             self.log_cb('error', str(e), os.path.basename(self.path), line, 0)
 
-
     def run(self):
         lastS = 0
         speed = 0
@@ -292,27 +261,32 @@ class Plan(object):
                     f2.write(s)
 
         with open('meta.json', 'w') as f:
-            meta = dict(
-                time = self.time,
-                lines = self.lines,
-                maxSpeed = self.maxSpeed,
-                bounds = self.get_bounds(),
-                messages = self.messages)
+            meta = dict(time=self.time,
+                        lines=self.lines,
+                        maxSpeed=self.maxSpeed,
+                        bounds=self.get_bounds(),
+                        messages=self.messages)
 
             json.dump(meta, f)
 
 
-parser = argparse.ArgumentParser(description = 'Buildbotics GCode Planner')
-parser.add_argument('gcode', help = 'The GCode file to plan')
-parser.add_argument('state', help = 'GCode state variables')
-parser.add_argument('config', help = 'Planner config')
+parser = argparse.ArgumentParser(description='Buildbotics GCode Planner')
+parser.add_argument('gcode', help='The GCode file to plan')
+parser.add_argument('state', help='GCode state variables')
+parser.add_argument('config', help='Planner config')
 
-parser.add_argument('--max-time', default = 600,
-                    type = int, help = 'Maximum planning time in seconds')
-parser.add_argument('--max-loop', default = 30,
-                    type = int, help = 'Maximum time in loop in seconds')
-parser.add_argument('--nice', default = 10,
-                    type = int, help = 'Set "nice" process priority')
+parser.add_argument('--max-time',
+                    default=600,
+                    type=int,
+                    help='Maximum planning time in seconds')
+parser.add_argument('--max-loop',
+                    default=30,
+                    type=int,
+                    help='Maximum time in loop in seconds')
+parser.add_argument('--nice',
+                    default=10,
+                    type=int,
+                    help='Set "nice" process priority')
 
 args = parser.parse_args()
 

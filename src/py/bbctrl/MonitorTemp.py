@@ -1,30 +1,3 @@
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
 import time
 
 
@@ -35,10 +8,12 @@ def read_temp():
 
 def set_max_freq(freq):
     filename = '/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq'
-    with open(filename, 'w') as f: f.write('%d\n' % freq)
+    with open(filename, 'w') as f:
+        f.write('%d\n' % freq)
 
 
 class MonitorTemp(object):
+
     def __init__(self, app):
         self.app = app
 
@@ -57,7 +32,6 @@ class MonitorTemp(object):
 
         self.callback()
 
-
     # Scale max CPU based on temperature
     def scale_cpu(self, temp):
         if temp < self.min_temp: cpu_freq = self.max_freq
@@ -69,7 +43,6 @@ class MonitorTemp(object):
 
         set_max_freq(cpu_freq)
 
-
     def update_camera(self, temp):
         if self.app.camera is None: return
 
@@ -77,7 +50,6 @@ class MonitorTemp(object):
         if temp < self.low_camera_temp: self.app.camera.set_overtemp(False)
         elif self.high_camera_temp < temp:
             self.app.camera.set_overtemp(True)
-
 
     def log_warnings(self, temp):
         # Reset temperature warning threshold after timeout
@@ -89,7 +61,6 @@ class MonitorTemp(object):
 
             self.log.info('Hot RaspberryPi at %d°C' % temp)
 
-
     def callback(self):
         try:
             temp = read_temp()
@@ -99,6 +70,7 @@ class MonitorTemp(object):
             self.update_camera(temp)
             self.log_warnings(temp)
 
-        except: self.log.exception('Internal error: Temperature status')
+        except:
+            self.log.exception('Internal error: Temperature status')
 
         self.ioloop.call_later(5, self.callback)

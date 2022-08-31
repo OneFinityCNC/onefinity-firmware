@@ -1,67 +1,39 @@
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
-import bbctrl
 import bbctrl.Cmd as Cmd
 
-
 # Must match regs in pwr firmware
-TEMP_REG        = 0
-VIN_REG         = 1
-VOUT_REG        = 2
-MOTOR_REG       = 3
-LOAD1_REG       = 4
-LOAD2_REG       = 5
-VDD_REG         = 6
-FLAGS_REG       = 7
-VERSION_REG     = 8
+TEMP_REG = 0
+VIN_REG = 1
+VOUT_REG = 2
+MOTOR_REG = 3
+LOAD1_REG = 4
+LOAD2_REG = 5
+VDD_REG = 6
+FLAGS_REG = 7
+VERSION_REG = 8
 
 # Must be kept in sync with pwr firmware
-UNDER_VOLTAGE_FLAG             = 1 << 0
-OVER_VOLTAGE_FLAG              = 1 << 1
-OVER_CURRENT_FLAG              = 1 << 2
-SENSE_ERROR_FLAG               = 1 << 3
-SHUNT_OVERLOAD_FLAG            = 1 << 4
-MOTOR_OVERLOAD_FLAG            = 1 << 5
-LOAD1_SHUTDOWN_FLAG            = 1 << 6
-LOAD2_SHUTDOWN_FLAG            = 1 << 7
-MOTOR_UNDER_VOLTAGE_FLAG       = 1 << 8
+UNDER_VOLTAGE_FLAG = 1 << 0
+OVER_VOLTAGE_FLAG = 1 << 1
+OVER_CURRENT_FLAG = 1 << 2
+SENSE_ERROR_FLAG = 1 << 3
+SHUNT_OVERLOAD_FLAG = 1 << 4
+MOTOR_OVERLOAD_FLAG = 1 << 5
+LOAD1_SHUTDOWN_FLAG = 1 << 6
+LOAD2_SHUTDOWN_FLAG = 1 << 7
+MOTOR_UNDER_VOLTAGE_FLAG = 1 << 8
 MOTOR_VOLTAGE_SENSE_ERROR_FLAG = 1 << 9
 MOTOR_CURRENT_SENSE_ERROR_FLAG = 1 << 10
-LOAD1_SENSE_ERROR_FLAG         = 1 << 11
-LOAD2_SENSE_ERROR_FLAG         = 1 << 12
-VDD_CURRENT_SENSE_ERROR_FLAG   = 1 << 13
-POWER_SHUTDOWN_FLAG            = 1 << 14
-SHUNT_ERROR_FLAG               = 1 << 15
+LOAD1_SENSE_ERROR_FLAG = 1 << 11
+LOAD2_SENSE_ERROR_FLAG = 1 << 12
+VDD_CURRENT_SENSE_ERROR_FLAG = 1 << 13
+POWER_SHUTDOWN_FLAG = 1 << 14
+SHUNT_ERROR_FLAG = 1 << 15
 
 reg_names = 'temp vin vout motor load1 load2 vdd pwr_flags pwr_version'.split()
 
 
 class Pwr():
+
     def __init__(self, ctrl):
         self.ctrl = ctrl
         self.log = ctrl.log.get('Pwr')
@@ -72,7 +44,6 @@ class Pwr():
 
         self._update_cb(False)
 
-
     def check_fault(self, var, status):
         status = bool(status)
 
@@ -81,7 +52,6 @@ class Pwr():
             if status: return True
 
         return False
-
 
     def check_faults(self):
         flags = self.regs[FLAGS_REG]
@@ -141,11 +111,9 @@ class Pwr():
         if self.check_fault('shunt_error', flags & SHUNT_ERROR_FLAG):
             self.log.warning('Shunt error')
 
-
-    def _update_cb(self, now = True):
+    def _update_cb(self, now=True):
         if now: self._update()
         self.ctrl.ioloop.call_later(1, self._update_cb)
-
 
     def _update(self):
         update = {}
@@ -153,7 +121,7 @@ class Pwr():
         try:
             for i in range(len(self.regs)):
                 value = self.ctrl.i2c.read_word(self.i2c_addr + i)
-                if value is None: return # Handle lack of i2c port
+                if value is None: return  # Handle lack of i2c port
 
                 if i == TEMP_REG: value -= 273
                 elif i == FLAGS_REG or i == VERSION_REG: pass
@@ -169,7 +137,7 @@ class Pwr():
                 if i == FLAGS_REG: self.check_faults()
 
         except Exception as e:
-            if i < 6: # Older pwr firmware does not have regs > 5
+            if i < 6:  # Older pwr firmware does not have regs > 5
                 self.failures += 1
                 msg = 'Pwr communication failed at reg %d: %s' % (i, e)
                 if self.failures != 5: self.log.info(msg)
