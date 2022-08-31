@@ -21,7 +21,7 @@ gamepadConfigs = {
         "sign-z": -1,
         "deadband": 0.15
     },
-    "5C936FF2": {
+    "9E2B3A63": {
         "description": "Logitech 710, X mode",
         "EV_KEY:308": "speed-4",
         "EV_KEY:305": "speed-3",
@@ -35,7 +35,7 @@ gamepadConfigs = {
         "EV_KEY:310": "lock-y",
         "EV_KEY:311": "lock-x",
     },
-    "10E159EC": {
+    "B98EF4EC": {
         "description": "Logitech 710, D mode",
         "EV_KEY:307": "speed-4",
         "EV_KEY:306": "speed-3",
@@ -49,7 +49,7 @@ gamepadConfigs = {
         "EV_KEY:308": "lock-y",
         "EV_KEY:309": "lock-x",
     },
-    "5443E73C": {
+    "268256FD": {
         "description": "EasySMX ESM-9013, top lights mode",
         "EV_KEY:308": "speed-4",
         "EV_KEY:305": "speed-3",
@@ -63,7 +63,7 @@ gamepadConfigs = {
         "EV_KEY:310": "lock-y",
         "EV_KEY:311": "lock-x",
     },
-    "951CA031": {
+    "23CEC0CB": {
         "description": "EasySMX ESM-9013, left lights mode",
         "EV_KEY:304": "speed-4",
         "EV_KEY:305": "speed-3",
@@ -77,7 +77,7 @@ gamepadConfigs = {
         "EV_KEY:308": "lock-y",
         "EV_KEY:309": "lock-x",
     },
-    "0BF75ED2": {
+    "370DCB72": {
         "description": "EasySMX ESM-9013, bottom lights mode",
         "EV_KEY:308": "speed-4",
         "EV_KEY:305": "speed-3",
@@ -91,7 +91,7 @@ gamepadConfigs = {
         "EV_KEY:310": "lock-y",
         "EV_KEY:311": "lock-x",
     },
-    "B3907139": {
+    "0BD0841F": {
         "description": "Sony Playstation 4 Dual-Shock Controller",
         "EV_KEY:307": "speed-4",
         "EV_KEY:306": "speed-3",
@@ -106,17 +106,6 @@ gamepadConfigs = {
         "EV_KEY:309": "lock-x",
     }
 }
-
-udevPropertiesToLog = ["ID_MODEL", "ID_SERIAL", "ID_SERIAL_SHORT", "ID_VENDOR"]
-
-udevPropertiesToIgnore = [
-    ".INPUT_CLASS", "ACTION", "DEVLINKS", "DEVNAME", "DEVPATH", "ID_BUS",
-    "ID_FOR_SEAT", "ID_INPUT", "ID_INPUT_JOYSTICK", "ID_MODEL_ID",
-    "ID_MODEL_ENC", "ID_PATH", "ID_PATH_TAG", "ID_REVISION", "ID_TYPE",
-    "ID_USB_DRIVER", "ID_USB_INTERFACES", "ID_USB_INTERFACE_NUM",
-    "ID_VENDOR_ENC", "ID_VENDOR_ID", "LIBINPUT_DEVICE_GROUP", "MAJOR", "MINOR",
-    "SEQNUM", "SUBSYSTEM", "TAGS", "USEC_INITIALIZED"
-]
 
 
 def safe_int(s, base=10, val=None):
@@ -175,12 +164,11 @@ class Gamepad(object):
                 "version": _evdev.info.version,
                 "capabilities": self._capabilities,
             },
-            "udev":
-            {key: get_udev_prop(_udev, key)
-             for key in udevPropertiesToLog}
+            "udev": {key: _udev.properties[key]
+                     for key in _udev.properties}
         }
 
-        json = to_sorted_json(self._details)
+        json = to_sorted_json(self._details["evdev"])
         self.hash = hashlib.sha256(json.encode()).hexdigest()[-8:].upper()
 
         self.config = {
@@ -307,15 +295,6 @@ class Jog(object):
                         {key: udev.properties[key]
                          for key in udev.properties})))
                 continue
-
-            uniqueProperties = set(udev.properties).difference(
-                udevPropertiesToIgnore).difference(udevPropertiesToLog)
-            if len(uniqueProperties) > 0:
-                self.log.info("Unique properties: {}".format(
-                    to_sorted_json({
-                        key: udev.properties[key]
-                        for key in uniqueProperties
-                    })))
 
             if udev.action == 'add':
                 self._listen(udev.device_node)
