@@ -18,7 +18,6 @@ setup(
     package_dir={'': 'src/py'},
     packages=[
         'bbctrl',
-        'inevent',
         'camotics',
         'iw_parse'
     ],

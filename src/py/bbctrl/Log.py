@@ -128,7 +128,7 @@ class Log(object):
     def remove_listener(self, listener): self.listeners.remove(listener)
 
 
-    def get(self, name, level = None):
+    def get(self, name, level = None) -> Logger:
         if not name in self.loggers:
             self.loggers[name] = Logger(self, name, self.level)
         return self.loggers[name]
