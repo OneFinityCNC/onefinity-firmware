@@ -1,5 +1,5 @@
 <script type="ts">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions, InitialFocus } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import Radio from "@smui/radio";
   import FormField from "@smui/form-field";
@@ -53,7 +53,7 @@
   </Content>
 
   <Actions>
-    <Button>
+    <Button use={[InitialFocus]}>
       <Label>Cancel</Label>
     </Button>
     <Button

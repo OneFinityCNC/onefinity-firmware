@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions, InitialFocus } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import TextField from "@smui/textfield";
   import MessageDialog from "$dialogs/MessageDialog.svelte";
@@ -73,7 +73,10 @@
   <Content id="change-hostname-dialog-content">
     <TextField
       bind:value={hostname}
-      use={[[virtualKeyboardChange, (newValue) => (hostname = newValue)]]}
+      use={[
+        InitialFocus,
+        [virtualKeyboardChange, (newValue) => (hostname = newValue)],
+      ]}
       label="New Hostname"
       spellcheck="false"
       variant="filled"

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions, InitialFocus } from "@smui/dialog";
   import TextField from "@smui/textfield";
   import Button, { Label } from "@smui/button";
   import { ControllerMethods } from "$lib/RegisterControllerMethods";
@@ -31,7 +31,10 @@
       label="Absolute"
       type="number"
       bind:value
-      use={[[virtualKeyboardChange, (newValue) => (value = newValue)]]}
+      use={[
+        InitialFocus,
+        [virtualKeyboardChange, (newValue) => (value = newValue)],
+      ]}
       variant="filled"
       style="width: 100%;"
     />

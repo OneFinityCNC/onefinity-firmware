@@ -58,7 +58,10 @@
     {#if needPassword}
       <TextField
         bind:value={password}
-        use={[[virtualKeyboardChange, (newValue) => (password = newValue)]]}
+        use={[
+          InitialFocus,
+          [virtualKeyboardChange, (newValue) => (password = newValue)],
+        ]}
         label="Password"
         spellcheck="false"
         variant="filled"
@@ -91,7 +94,6 @@
 
     <Button
       defaultAction
-      use={[InitialFocus]}
       on:click={onConfirm}
       disabled={needPassword && (password.length < 8 || password.length > 128)}
     >

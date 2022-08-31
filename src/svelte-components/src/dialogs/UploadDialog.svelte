@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions, InitialFocus } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import LinearProgress from "@smui/linear-progress";
 
@@ -71,7 +71,7 @@
   </Content>
 
   <Actions>
-    <Button on:click={onCancel}>
+    <Button on:click={onCancel} use={[InitialFocus]}>
       <Label>Cancel</Label>
     </Button>
   </Actions>

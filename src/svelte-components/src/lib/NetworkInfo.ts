@@ -43,7 +43,13 @@ export function processNetworkInfo(rawNetworkInfo: NetworkInfo) {
         if (network.Name) {
             network.lastSeen = now;
             network.active = rawNetworkInfo.wifi.ssid === network.Name;
-            networksByName[network.Name] = network;
+
+            // There can be many entries for the same ssid, so
+            // we want to take the one with the highest quality
+            const currentNetwork = networksByName[network.Name] ?? { Quality: 0 };
+            if (network.Quality >= currentNetwork.Quality) {
+                networksByName[network.Name] = network;
+            }
         }
     }
 

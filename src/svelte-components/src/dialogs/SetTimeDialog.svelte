@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions, InitialFocus } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
   import TextField from "@smui/textfield";
   import CircularProgress from "@smui/circular-progress";
@@ -154,7 +154,10 @@
         <Label>Date & Time</Label>
         <TextField
           bind:value
-          use={[[virtualKeyboardChange, (newValue) => (value = newValue)]]}
+          use={[
+            InitialFocus,
+            [virtualKeyboardChange, (newValue) => (value = newValue)],
+          ]}
           label="Time"
           type="datetime-local"
           variant="filled"

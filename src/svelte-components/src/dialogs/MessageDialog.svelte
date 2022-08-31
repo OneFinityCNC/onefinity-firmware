@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Title, Content, Actions, InitialFocus } from "@smui/dialog";
   import Button, { Label } from "@smui/button";
 
   export let open: boolean;
@@ -23,7 +23,7 @@
 
   {#if !noaction}
     <Actions>
-      <Button defaultAction>
+      <Button defaultAction use={[InitialFocus]}>
         <Label>OK</Label>
       </Button>
     </Actions>
