@@ -8,28 +8,28 @@ import tornado
 
 from pkg_resources import Requirement, resource_filename
 
+from bbctrl.RequestHandler import RequestHandler
 from bbctrl.APIHandler import APIHandler
-from bbctrl.AVR import AVR
-from bbctrl.Camera import Camera, VideoHandler
-from bbctrl.Comm import Comm
-from bbctrl.CommandQueue import CommandQueue
-from bbctrl.Config import Config
-from bbctrl.Ctrl import Ctrl
 from bbctrl.FileHandler import FileHandler
-from bbctrl.I2C import I2C
-from bbctrl.IOLoop import IOLoop
-from bbctrl.Jog import Jog
+from bbctrl.Config import Config
 from bbctrl.Mach import Mach
-from bbctrl.MonitorTemp import MonitorTemp
+from bbctrl.Web import Web
+from bbctrl.Jog import Jog
+from bbctrl.Ctrl import Ctrl
+from bbctrl.Pwr import Pwr
+from bbctrl.I2C import I2C
 from bbctrl.Planner import Planner
 from bbctrl.Preplanner import Preplanner
-from bbctrl.Pwr import Pwr
-from bbctrl.RequestHandler import RequestHandler
 from bbctrl.State import State
-from bbctrl.Web import Web
+from bbctrl.Comm import Comm
+from bbctrl.CommandQueue import CommandQueue
+from bbctrl.Camera import Camera, VideoHandler
+from bbctrl.AVR import AVR
+from bbctrl.IOLoop import IOLoop
+from bbctrl.MonitorTemp import MonitorTemp
 import bbctrl.Cmd as Cmd
-import bbctrl.Log as log
 import bbctrl.v4l2 as v4l2
+import bbctrl.Log as log
 
 ctrl = None
 
