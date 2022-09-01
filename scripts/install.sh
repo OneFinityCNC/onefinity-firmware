@@ -156,6 +156,11 @@ if $UPDATE_PY; then
     service bbctrl restart
 fi
 
+# Install the service that turns off the screen during shutdown
+cp ./installer/config/bbctrl-poweroff.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable bbctrl-poweroff
+
 # Expand the file system if necessary
 chmod +x ./installer/scripts/resize_root_fs.sh
 ./installer/scripts/resize_root_fs.sh

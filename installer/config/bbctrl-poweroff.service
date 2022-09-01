@@ -1,0 +1,15 @@
+[Unit]
+Description=Turn off HDMI at powerdown
+DefaultDependencies=no
+Before=umount.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c ' \
+    killall xinit \
+    && plymouth change-mode --shutdown show-splash \
+    && sleep 10s \
+    && /usr/bin/vcgencmd display_power 0 '
+
+[Install]
+WantedBy=poweroff.target

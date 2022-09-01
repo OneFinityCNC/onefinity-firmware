@@ -9,7 +9,7 @@ RUN    apt update \
     && apt install -y \
         build-essential git wget binfmt-support qemu gcc-9 \
         parted gcc-avr avr-libc avrdude python3 python3-pip python3-tornado \
-        curl unzip python3-setuptools gcc-arm-linux-gnueabihf bc vim locate sudo \
+        inetutils-ping curl unzip python3-setuptools gcc-arm-linux-gnueabihf bc vim locate sudo \
     && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 9 \
     && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt install -y nodejs
