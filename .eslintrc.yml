@@ -1,0 +1,82 @@
+env:
+  es2021: true
+  node: true
+  browser: true
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+overrides: []
+parser: "@typescript-eslint/parser"
+parserOptions:
+  ecmaVersion: latest
+  sourceType: module
+plugins:
+  - "@typescript-eslint"
+globals:
+  Vue: readonly
+  THREE: readonly
+  SvelteComponents: readonly
+  $: readonly
+  Clusterize: readonly
+  SockJS: readonly
+rules:
+  indent:
+    - off
+  "@typescript-eslint/indent":
+    - error
+    - 4
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - double
+    - allowTemplateLiterals: true
+      avoidEscape: true
+  semi:
+    - error
+    - always
+  "@typescript-eslint/no-explicit-any":
+    - off
+  "@typescript-eslint/no-unused-vars":
+    - error
+    - argsIgnorePattern: _.*
+  no-unused-vars:
+    - error
+  no-trailing-spaces:
+    - error
+  key-spacing:
+    - error
+  space-before-blocks:
+    - error
+  block-spacing:
+    - error
+  brace-style:
+    - error
+  curly:
+    - error
+  keyword-spacing:
+    - error
+  "@typescript-eslint/no-var-requires":
+    - off
+  no-multiple-empty-lines:
+    - error
+    - max: 1
+  func-call-spacing:
+    - error
+    - never
+  padding-line-between-statements:
+    - error
+    - blankLine: always
+      prev: function
+      next: function
+  no-var:
+    - error
+  no-unused-expressions:
+    - error
+  prefer-const:
+    - error
+  prefer-template:
+    - error
+  template-curly-spacing:
+    - error

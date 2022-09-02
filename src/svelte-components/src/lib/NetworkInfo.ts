@@ -31,15 +31,15 @@ const empty: NetworkInfo = {
         ssid: "",
         networks: []
     }
-}
+};
 
 export const networkInfo = writable<NetworkInfo>(empty);
 
 export function processNetworkInfo(rawNetworkInfo: NetworkInfo) {
     const now = Date.now();
-    const networksByName: Record<string, WifiNetwork> = {}
+    const networksByName: Record<string, WifiNetwork> = {};
 
-    for (let network of rawNetworkInfo.wifi.networks) {
+    for (const network of rawNetworkInfo.wifi.networks) {
         if (network.Name) {
             network.lastSeen = now;
             network.active = rawNetworkInfo.wifi.ssid === network.Name;
@@ -53,7 +53,7 @@ export function processNetworkInfo(rawNetworkInfo: NetworkInfo) {
         }
     }
 
-    for (let network of Object.values(networksByName)) {
+    for (const network of Object.values(networksByName)) {
         if (network.lastSeen - now > 30000) {
             delete networksByName[network.Name];
         }

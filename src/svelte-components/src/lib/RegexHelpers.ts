@@ -1,9 +1,3 @@
-type NumberWithUnit = {
-    value: number,
-    metric: boolean,
-    toMetric: () => number;
-}
-
 function numberWithUnitToMetric() {
     return this.metric ? this.value : this.value * 25.4;
 }
@@ -38,12 +32,13 @@ function formatFraction(value: number) {
 export const numberWithUnit = {
     regex: /^\s*(?:(\d+)\s*\/\s*(\d+)|(\d*\.\d+)|(\d+(?:\.\d+)?))\s*("|in|inch|inches|mm|millimeters)\s*$/,
     parse: function (str: string) {
+        // eslint-disable-next-line prefer-const
         let [, numerator, denominator, decimal1, decimal2, unit]: any = str?.match(numberWithUnit.regex) ?? [];
 
-        numerator = Number.parseFloat(numerator)
-        denominator = Number.parseFloat(denominator)
-        decimal1 = Number.parseFloat(decimal1)
-        decimal2 = Number.parseFloat(decimal2)
+        numerator = Number.parseFloat(numerator);
+        denominator = Number.parseFloat(denominator);
+        decimal1 = Number.parseFloat(decimal1);
+        decimal2 = Number.parseFloat(decimal2);
 
         const metric = (unit ?? "").includes("m");
 
@@ -81,10 +76,10 @@ export const numberWithUnit = {
                 return "";
 
             case value.metric:
-                return `${value.value} mm`
+                return `${value.value} mm`;
 
             default:
-                return `${formatFraction(value.value)} in`
+                return `${formatFraction(value.value)} in`;
         }
     }
-}
+};

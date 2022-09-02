@@ -1,7 +1,7 @@
 <script lang="ts">
     import Dialog, { Title, Actions, InitialFocus } from "@smui/dialog";
     import Button, { Label } from "@smui/button";
-    import * as Api from "$lib/api"
+    import * as Api from "$lib/api";
 
     export let open;
 

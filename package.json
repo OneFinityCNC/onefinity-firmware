@@ -8,7 +8,14 @@
     "postinstall": "cd src/svelte-components && npm i"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.36.1",
+    "@typescript-eslint/parser": "^5.36.1",
     "browserify": "^17.0.0",
+    "eslint": "^8.23.0",
+    "eslint-config-standard-with-typescript": "^22.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.5",
+    "eslint-plugin-promise": "^6.0.1",
     "jshint": "^2.13.4",
     "jstransformer-escape-html": "^1.1.0",
     "jstransformer-scss": "^2.0.0",
