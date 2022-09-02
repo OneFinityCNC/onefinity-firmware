@@ -198,7 +198,7 @@ module.exports = {
             }
 
             const p = this.plan_time / this.toolpath.time;
-            return Math.max(1, p);
+            return Math.min(1, p);
         }
     },
 
