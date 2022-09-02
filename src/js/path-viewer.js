@@ -26,7 +26,7 @@ module.exports = {
 
     computed: {
         target: function () {
-            return $(this.$el).find(".path-viewer-content")[0];
+            return this.$el.querySelector(".path-viewer-content");
         },
 
         webglAvailable: function() {
@@ -122,7 +122,7 @@ module.exports = {
             }
 
             async function get(url) {
-                const response = await fetch(`${url}?${Math.random()}`);
+                const response = await fetch(`${url}`, { cache: "no-cache" });
                 const arrayBuffer = await response.arrayBuffer();
 
                 return new Float32Array(arrayBuffer);
@@ -187,10 +187,12 @@ module.exports = {
         },
 
         get_dims: function () {
-            const t = $(this.target);
-            const width = t.innerWidth();
-            const height = t.innerHeight();
-            return {width: width, height: height};
+            const computedStyle = window.getComputedStyle(this.target);
+
+            return {
+                width: parseInt(computedStyle.width),
+                height: parseInt(computedStyle.height)
+            };
         },
 
         update_view: function () {

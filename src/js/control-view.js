@@ -1,6 +1,7 @@
 "use strict";
 
 const api = require("./api");
+const utils = require("./utils");
 const cookie = require("./cookie")("bbctrl-");
 
 module.exports = {
@@ -338,10 +339,7 @@ module.exports = {
         },
 
         open: function () {
-            // If we don't reset the form the browser may cache file if name is same
-            // even if contents have changed
-            $(".gcode-file-input")[0].reset();
-            $(".gcode-file-input input").click();
+            utils.clickFileInput("gcode-file-input");
         },
 
         upload: async function (e) {

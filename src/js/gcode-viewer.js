@@ -17,8 +17,7 @@ module.exports = {
         return {
             empty: true,
             file: "",
-            line: -1,
-            scrolling: false
+            line: -1
         };
     },
 
@@ -40,8 +39,8 @@ module.exports = {
     ready: function () {
         this.clusterize = new Clusterize({
             rows: [],
-            scrollElem: $(this.$el).find(".clusterize-scroll")[0],
-            contentElem: $(this.$el).find(".clusterize-content")[0],
+            scrollElem: this.$el.querySelector(".clusterize-scroll"),
+            contentElem: this.$el.querySelector(".clusterize-content"),
             no_data_text: "GCode view...",
             callbacks: {clusterChanged: this.highlight}
         });
@@ -66,7 +65,7 @@ module.exports = {
                 return;
             }
 
-            const response = await fetch(`/api/file/${file}?${Math.random()}`);
+            const response = await fetch(`/api/file/${file}`, { cache: "no-cache" });
             const text = await response.text();
 
             if (text.length > 20e6) {
@@ -101,14 +100,21 @@ module.exports = {
         },
 
         highlight: function () {
-            let e = $(this.$el).find(".highlight");
-            if (e.length) {
-                e.removeClass("highlight");
+            const highlights = this.$el.querySelectorAll(".highlight");
+            for (const highlight of highlights) {
+                highlight.className = (highlight.className || "")
+                    .split(" ")
+                    .filter(c => c !== "highlight")
+                    .join(" ");
             }
 
-            e = $(this.$el).find(`.ln${this.line}`);
-            if (e.length) {
-                e.addClass("highlight");
+            const lines = this.$el.querySelectorAll(`.ln${this.line}`);
+            for (const line of lines) {
+                line.className = (line.className || "")
+                    .split(" ")
+                    .filter(c => c !== "highlight")
+                    .concat(["highlight"])
+                    .join(" ");
             }
         },
 
@@ -133,26 +139,14 @@ module.exports = {
                 line = totalLines;
             }
 
-            const e = $(this.$el).find(".clusterize-scroll");
+            const scroll = this.$el.querySelector(".clusterize-scroll");
 
-            const lineHeight = e[0].scrollHeight / totalLines;
-            const linesPerPage = Math.floor(e[0].clientHeight / lineHeight);
-            const current = e[0].scrollTop / lineHeight;
+            const lineHeight = scroll.scrollHeight / totalLines;
+            const linesPerPage = Math.floor(scroll.clientHeight / lineHeight);
             const target = line - 1 - Math.floor(linesPerPage / 2);
 
             // Update scroll position
-            if (!this.scrolling) {
-                if (target < current - 20 || current + 20 < target) {
-                    e[0].scrollTop = target * lineHeight;
-                } else {
-                    this.scrolling = true;
-                    e.animate({scrollTop: target * lineHeight}, {
-                        complete: function () {
-                            this.scrolling = false;
-                        }.bind(this)
-                    });
-                }
-            }
+            scroll.scrollTop = target * lineHeight;
 
             Vue.nextTick(this.highlight);
         }

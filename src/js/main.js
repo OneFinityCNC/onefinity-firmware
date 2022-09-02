@@ -39,7 +39,7 @@ function uuid(length) {
     return s;
 }
 
-$(function () {
+window.onload = function () {
     if (typeof cookie_get("client-id") == "undefined") {
         cookie_set("client-id", uuid(), 10000);
     }
@@ -145,4 +145,4 @@ $(function () {
 
     // Vue app
     require("./app");
-});
+};

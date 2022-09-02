@@ -16,7 +16,6 @@ globals:
   Vue: readonly
   THREE: readonly
   SvelteComponents: readonly
-  $: readonly
   Clusterize: readonly
   SockJS: readonly
 rules:
@@ -79,4 +78,6 @@ rules:
   prefer-template:
     - error
   template-curly-spacing:
+    - error
+  require-await:
     - error

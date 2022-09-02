@@ -1,17 +1,28 @@
 "use strict";
 
-async function callApi(method, url, body) {
+async function callApi(method, url, data) {
     try {
+        const headers = {};
+        let body = undefined;
+
+        if (data) {
+            if (data instanceof FormData) {
+                body = data;
+            } else {
+                headers["Content-Type"] = "application/json; charset=utf-8";
+                body = JSON.stringify(data);
+            }
+        }
+
         const response = await fetch(`/api/${url}`, {
             method,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body
+            headers,
+            body,
+            cache: "no-cache",
         });
 
         if (response.ok) {
-            return response.json();
+            return await response.json();
         }
 
         throw new Error(await response.text());

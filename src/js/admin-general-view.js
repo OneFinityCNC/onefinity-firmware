@@ -1,6 +1,7 @@
 "use strict";
 
 const api = require("./api");
+const utils = require("./utils");
 const merge = require("lodash.merge");
 
 const config_defaults = require("../resources/onefinity_defaults.json");
@@ -34,10 +35,7 @@ module.exports = {
         },
 
         restore_config: function () {
-            // If we don't reset the form the browser may cache file if name is same
-            // even if contents have changed
-            $(".restore-config")[0].reset();
-            $(".restore-config input").click();
+            utils.clickFileInput("restore-config");
         },
 
         restore: function (e) {
@@ -51,8 +49,9 @@ module.exports = {
                 let config;
                 try {
                     config = JSON.parse(target.result);
-                } catch (ex) {
-                    api.alert("Invalid config file");
+                } catch (error) {
+                    console.error("Invalid config file:", error);
+                    alert("Invalid config file");
                     return;
                 }
 
@@ -64,7 +63,8 @@ module.exports = {
                         message: "Configuration restored"
                     });
                 } catch (error) {
-                    api.alert("Restore failed", error);
+                    console.error("Restore failed:", error);
+                    alert("Restore failed");
                 }
             };
 
@@ -86,9 +86,9 @@ module.exports = {
                     title: "Success",
                     message: "Configuration restored"
                 });
-            } catch (err) {
-                api.alert("Restore failed");
-                console.error("Restore failed", err);
+            } catch (error) {
+                console.error("Restore failed:", error);
+                alert("Restore failed");
             }
         },
 
@@ -101,10 +101,7 @@ module.exports = {
         },
 
         upload_firmware: function () {
-            // If we don't reset the form the browser may cache file if name is same
-            // even if contents have changed
-            $(".upload-firmware")[0].reset();
-            $(".upload-firmware input").click();
+            utils.clickFileInput("upload-firmware");
         },
 
         upload: function (e) {

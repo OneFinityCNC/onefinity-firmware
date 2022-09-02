@@ -225,7 +225,7 @@ module.exports = new Vue({
     },
 
     ready: function () {
-        $(window).on("hashchange", this.parse_hash);
+        window.onhashchange = () => this.parse_hash();
         this.connect();
 
         SvelteComponents.registerControllerMethods({
@@ -268,37 +268,25 @@ module.exports = new Vue({
             try {
                 await api.put("upgrade");
                 this.firmwareUpgrading = true;
-            } catch (err) {
-                api.alert("Error during upgrade.");
-                console.error("Error during upgrade", err);
+            } catch (error) {
+                console.error("Error during upgrade:", error);
+                alert("Error during upgrade");
             }
         },
 
-        upload_confirmed: function () {
+        upload_confirmed: async function () {
             this.confirmUpload = false;
 
             const form = new FormData();
             form.append("firmware", this.firmware);
 
-            $.ajax({
-                url: "/api/firmware/update",
-                type: "PUT",
-                data: form,
-                cache: false,
-                contentType: false,
-                processData: false,
-            })
-                .success(
-                    function () {
-                        this.firmwareUpgrading = true;
-                    }.bind(this)
-                )
-                .error(
-                    function (err) {
-                        api.alert("Firmware update failed");
-                        console.error("Firmware update failed", err);
-                    }.bind(this)
-                );
+            try {
+                await api.put("firmware/update", form);
+                this.firmwareUpgrading = true;
+            } catch (error) {
+                console.error("Firmware update failed:", error);
+                alert("Firmware update failed");
+            }
         },
 
         show_upgrade: function () {
@@ -418,7 +406,8 @@ module.exports = new Vue({
                 await api.put("config/save", this.config);
                 this.modified = false;
             } catch (error) {
-                api.alert("Save failed", error);
+                console.error("Save failed:", error);
+                alert("Save failed");
             }
         },
 
@@ -434,7 +423,7 @@ module.exports = new Vue({
             // Acknowledge messages
             if (this.state.messages.length) {
                 const id = this.state.messages.slice(-1)[0].id;
-                api.put("message/" + id + "/ack");
+                api.put(`message/${id}/ack`);
             }
         },
     },

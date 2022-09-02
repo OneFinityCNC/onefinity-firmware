@@ -24,18 +24,18 @@ async function doFetch(method: HttpMethod, url: string, data: any, config: Reque
     }
 }
 
-export async function GET(url: string, config: RequestInit = {}) {
+export function GET(url: string, config: RequestInit = {}) {
     return doFetch("GET", url, undefined, config);
 }
 
-export async function PUT(url: string, data: any = undefined, config: RequestInit = {}) {
+export function PUT(url: string, data: any = undefined, config: RequestInit = {}) {
     return doFetch("PUT", url, data, config);
 }
 
-export async function POST(url: string, data: any = undefined, config: RequestInit = {}) {
+export function POST(url: string, data: any = undefined, config: RequestInit = {}) {
     return doFetch("POST", url, data, config);
 }
 
-export async function DELETE(url: string, config = {}) {
+export function DELETE(url: string, config = {}) {
     return doFetch("DELETE", url, undefined, config);
 }
