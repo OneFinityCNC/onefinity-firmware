@@ -116,11 +116,12 @@ if [ ! -e ~pi/.ratpoisonrc ]; then
 fi
 
 # Configure the Plymouth graphical bootloader with the Onefinity theme
-if [ ! -e /usr/share/plymouth/themes/onefinity/onefinity.plymouth ]; then
-    mkdir -p /usr/share/plymouth/themes/onefinity/
-    cp -av installer/splash/* /usr/share/plymouth/themes/onefinity/
-    plymouth-set-default-theme -R onefinity
-fi
+rm -rf /usr/share/plymouth/themes/buildbotics
+rm -rf /usr/share/plymouth/themes/onefinity
+mkdir -p /usr/share/plymouth/themes/onefinity/
+cp -av installer/splash/* /usr/share/plymouth/themes/onefinity/
+plymouth-set-default-theme -R onefinity
+
 grep 'quiet splash plymouth.ignore-serial-consoles logo.nologo' /boot/cmdline.txt >/dev/null
 if [ $? -ne 0 ]; then
     echo -n " quiet splash plymouth.ignore-serial-consoles logo.nologo" >> /boot/cmdline.txt
