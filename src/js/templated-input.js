@@ -3,7 +3,7 @@
 module.exports = {
     replace: true,
     template: "#templated-input-template",
-    props: ["name", "model", "template"],
+    props: [ "name", "model", "template" ],
 
     data: function () {
         return { view: "" };

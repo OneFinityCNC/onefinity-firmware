@@ -2,7 +2,7 @@
 
 module.exports = {
     template: "#io-indicator-template",
-    props: ["name", "state"],
+    props: [ "name", "state" ],
 
     computed: {
         klass: function () {

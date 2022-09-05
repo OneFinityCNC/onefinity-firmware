@@ -6,7 +6,7 @@ const font = require("./helvetiker_regular.typeface.json");
 
 module.exports = {
     template: "#path-viewer-template",
-    props: ["toolpath"],
+    props: [ "toolpath" ],
 
     data: function () {
         return {
@@ -128,7 +128,7 @@ module.exports = {
                 return new Float32Array(arrayBuffer);
             }
 
-            const [positions, speeds] = await Promise.all([
+            const [ positions, speeds ] = await Promise.all([
                 get(`/api/path/${this.toolpath.filename}/positions`),
                 get(`/api/path/${this.toolpath.filename}/speeds`)
             ]);
@@ -275,7 +275,7 @@ module.exports = {
 
             try {
                 // Renderer
-                this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
                 this.renderer.setPixelRatio(window.devicePixelRatio);
                 this.renderer.setClearColor(0, 0);
                 this.target.appendChild(this.renderer.domElement);
@@ -502,7 +502,7 @@ module.exports = {
 
         get_color: function (speed) {
             if (isNaN(speed)) {
-                return [255, 0, 0];
+                return [ 255, 0, 0 ];
             } // Rapid
 
             let intensity = speed / this.toolpath.maxSpeed;
@@ -510,7 +510,7 @@ module.exports = {
                 intensity = 1;
             }
 
-            return [0, 255 * intensity, 127 * (1 - intensity)];
+            return [ 0, 255 * intensity, 127 * (1 - intensity) ];
         },
 
         draw_path: function (scene) {
@@ -595,7 +595,7 @@ module.exports = {
 
         draw_bbox: function (scene, bbox) {
             const geometry = this.create_bbox_geom(bbox);
-            const material = new THREE.LineBasicMaterial({color: 0xffffff});
+            const material = new THREE.LineBasicMaterial({ color: 0xffffff });
             const line = new THREE.LineSegments(geometry, material);
 
             line.visible = this.showBBox;
@@ -607,7 +607,7 @@ module.exports = {
 
         draw_envelope: function (scene) {
             const geometry = this.create_empty_geom();
-            const material = new THREE.LineBasicMaterial({color: 0x00f7ff});
+            const material = new THREE.LineBasicMaterial({ color: 0x00f7ff });
             const line = new THREE.LineSegments(geometry, material);
 
             line.visible = this.showBBox;
@@ -769,5 +769,5 @@ module.exports = {
         }
     },
 
-    mixins: [require("./axis-vars")]
+    mixins: [ require("./axis-vars") ]
 };

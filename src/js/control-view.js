@@ -6,7 +6,7 @@ const cookie = require("./cookie")("bbctrl-");
 
 module.exports = {
     template: "#control-view-template",
-    props: ["config", "template", "state"],
+    props: [ "config", "template", "state" ],
 
     data: function () {
         return {
@@ -245,7 +245,7 @@ module.exports = {
             const weight = `font-weight:${this.jog_incr === value ? "bold" : "normal"}`;
             const color = this.jog_incr === value ? "color:#0078e7" : "";
 
-            return [weight, color].join(";");
+            return [ weight, color ].join(";");
         },
 
         jog_fn: function (x_jog, y_jog, z_jog, a_jog) {
@@ -342,7 +342,7 @@ module.exports = {
             utils.clickFileInput("gcode-file-input");
         },
 
-        upload: async function (e) {
+        upload: function (e) {
             const files = e.target.files || e.dataTransfer.files;
             if (!files.length) {
                 return;
@@ -495,5 +495,5 @@ module.exports = {
         }
     },
 
-    mixins: [require("./axis-vars")]
+    mixins: [ require("./axis-vars") ]
 };

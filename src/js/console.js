@@ -4,7 +4,7 @@ function _msg_equal(a, b) {
     return a.level == b.level
         && a.source == b.source
         && a.where == b.where
-        &&a.msg == b.msg;
+        && a.msg == b.msg;
 }
 
 // Shared among all instances

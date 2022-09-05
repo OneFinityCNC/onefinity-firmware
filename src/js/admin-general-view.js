@@ -15,7 +15,7 @@ const variant_defaults = {
 
 module.exports = {
     template: "#admin-general-view-template",
-    props: ["config", "state"],
+    props: [ "config", "state" ],
 
     data: function () {
         return {

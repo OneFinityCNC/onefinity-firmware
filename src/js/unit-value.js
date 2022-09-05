@@ -3,7 +3,7 @@
 module.exports = {
     replace: true,
     template: '{{text}}<span class="unit">{{metric ? unit : iunit}}</span>',
-    props: ["value", "precision", "unit", "iunit", "scale"],
+    props: [ "value", "precision", "unit", "iunit", "scale" ],
 
     computed: {
         metric: {

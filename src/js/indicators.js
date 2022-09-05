@@ -4,7 +4,7 @@ const modbus = require("./modbus.js");
 
 module.exports = {
     template: "#indicators-template",
-    props: ["state"],
+    props: [ "state" ],
 
     computed: {
         modbus_status: function () {

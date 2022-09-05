@@ -2,7 +2,7 @@
 
 const entityMap = {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-    "/": "&#x2F;", "`": "&#x60;", "=": "&#x3D;"};
+    "/": "&#x2F;", "`": "&#x60;", "=": "&#x3D;" };
 
 function escapeHTML(s) {
     return s.replace(/[&<>"'`=\\/]/g, function (c) {
@@ -42,7 +42,7 @@ module.exports = {
             scrollElem: this.$el.querySelector(".clusterize-scroll"),
             contentElem: this.$el.querySelector(".clusterize-content"),
             no_data_text: "GCode view...",
-            callbacks: {clusterChanged: this.highlight}
+            callbacks: { clusterChanged: this.highlight }
         });
     },
 
@@ -69,7 +69,7 @@ module.exports = {
             const text = await response.text();
 
             if (text.length > 20e6) {
-                this.clusterize.update(["File is large - gcode view disabled"]);
+                this.clusterize.update([ "File is large - gcode view disabled" ]);
             } else {
                 const lines = escapeHTML(text.trimRight())
                     .split(/[\r\n]/)
@@ -113,7 +113,7 @@ module.exports = {
                 line.className = (line.className || "")
                     .split(" ")
                     .filter(c => c !== "highlight")
-                    .concat(["highlight"])
+                    .concat([ "highlight" ])
                     .join(" ");
             }
         },

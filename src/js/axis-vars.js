@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-    props: ["state", "config"],
+    props: [ "state", "config" ],
 
     computed: {
         metric: function () {

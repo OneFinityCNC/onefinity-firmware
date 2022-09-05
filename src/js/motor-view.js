@@ -2,7 +2,7 @@
 
 module.exports = {
     template: "#motor-view-template",
-    props: ["index", "config", "template", "state"],
+    props: [ "index", "config", "template", "state" ],
 
     computed: {
         metric: function () {

@@ -3,7 +3,7 @@
 module.exports = {
     replace: true,
     template: "#modbus-reg-view-template",
-    props: ["index", "model", "template", "enable"],
+    props: [ "index", "model", "template", "enable" ],
 
     computed: {
         has_user_value: function () {

@@ -6,7 +6,7 @@ const merge = require("lodash.merge");
 
 module.exports = {
     template: "#tool-view-template",
-    props: ["config", "template", "state"],
+    props: [ "config", "template", "state" ],
 
     data: function () {
         return {

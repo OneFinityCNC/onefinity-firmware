@@ -22,9 +22,9 @@ const OrbitControls = function (object, domElement) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const scope = this;
 
-    const changeEvent = {type: "change"};
-    const startEvent  = {type: "start"};
-    const endEvent    = {type: "end"};
+    const changeEvent = { type: "change" };
+    const startEvent  = { type: "start" };
+    const endEvent    = { type: "end" };
 
     const STATE = {
         NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4
@@ -106,7 +106,7 @@ const OrbitControls = function (object, domElement) {
     this.enableKeys = true;
 
     // The four arrow keys
-    this.keys = {LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40};
+    this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
     // Mouse buttons
     this.mouseButtons = {
