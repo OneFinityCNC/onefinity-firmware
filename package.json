@@ -1,6 +1,6 @@
 {
     "name": "bbctrl",
-    "version": "1.0.10b16",
+    "version": "1.0.10b17",
     "homepage": "https://onefinitycnc.com/",
     "repository": "https://github.com/OneFinityCNC/onefinity",
     "license": "GPL-3.0+",
@@ -16,6 +16,7 @@
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-n": "^15.2.5",
         "eslint-plugin-promise": "^6.0.1",
+        "glob": "^8.0.3",
         "jshint": "^2.13.4",
         "jstransformer-escape-html": "^1.1.0",
         "jstransformer-scss": "^2.0.0",
