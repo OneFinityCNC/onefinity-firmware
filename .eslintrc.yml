@@ -10,6 +10,7 @@ parser: "@typescript-eslint/parser"
 parserOptions:
   ecmaVersion: latest
   sourceType: module
+  tsconfigRootDir: ./src/svelte-components
 plugins:
   - "@typescript-eslint"
 globals:
@@ -77,7 +78,15 @@ rules:
     - error
   prefer-template:
     - error
+  object-curly-spacing:
+    - error
+    - always
+  array-bracket-spacing:
+    - error
+    - always
   template-curly-spacing:
     - error
   require-await:
+    - error
+  space-infix-ops:
     - error
