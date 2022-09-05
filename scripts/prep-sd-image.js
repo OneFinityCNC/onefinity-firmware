@@ -1,12 +1,21 @@
 #!/usr/bin/env node
 
-const { basename, extname, resolve } = require("path");
+const merge = require("lodash.merge");
+const { basename, resolve } = require("path");
 const { parseArgs } = require("node:util");
-const { statSync, rmdirSync, copyFileSync } = require("fs");
+const { statSync, rmdirSync, copyFileSync, writeFileSync } = require("fs");
 const { execSync } = require("child_process");
 const { exit } = require("process");
 const { glob } = require("glob");
-const packageJSON = require("../package.json")
+const packageJSON = require("../package.json");
+const config_defaults = require("../src/resources/onefinity_defaults.json");
+
+const variant_defaults = {
+    machinist_x35: require("../src/resources/onefinity_machinist_x35_defaults.json"),
+    woodworker_x35: require("../src/resources/onefinity_woodworker_x35_defaults.json"),
+    woodworker_x50: require("../src/resources/onefinity_woodworker_x50_defaults.json"),
+    journeyman_x50: require("../src/resources/onefinity_journeyman_x50_defaults.json")
+};
 
 const ARGS_CONFIG = {
     options: {
@@ -254,13 +263,11 @@ function prepareFilesystem(loopback) {
             runCommand(`mount ${loopback} ${mountpoint}`);
 
             scrub(mountpoint, [
-                "/etc/ssh/*_host_*",
                 "/var/swap",
                 "/tmp/*",
                 "/usr/**/__pycache__",
                 "/usr/**/*.py[co]",
                 "/usr/share/doc/*",
-                "/usr/share/plymouth/themes/buildbotics",
                 "/var/@(cache|backups|log|tmp)/*",
                 "/var/lib/apt/lists/*",
                 "/var/lib/bbctrl/@(firmware|plans|upload)/*",
@@ -275,6 +282,14 @@ function prepareFilesystem(loopback) {
 
         doStep("Injecting files...", () => {
             copyFileSync(resolve(`${__dirname}/../installer/Team Onefinity.ngc`), resolve(`${mountpoint}/var/lib/bbctrl/upload/Team Onefinity.ngc`));
+
+            writeFileSync(`${mountpoint}/var/lib/bbctrl/config.json`,
+                JSON.stringify(merge(
+                    {},
+                    config_defaults,
+                    variant_defaults.woodworker_x35
+                ), null, 4)
+            );
         });
     } finally {
         finallyHandler();
