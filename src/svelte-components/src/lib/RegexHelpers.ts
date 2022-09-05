@@ -33,7 +33,7 @@ export const numberWithUnit = {
     regex: /^\s*(?:(\d+)\s*\/\s*(\d+)|(\d*\.\d+)|(\d+(?:\.\d+)?))\s*("|in|inch|inches|mm|millimeters)\s*$/,
     parse: function (str: string) {
         // eslint-disable-next-line prefer-const
-        let [, numerator, denominator, decimal1, decimal2, unit]: any = str?.match(numberWithUnit.regex) ?? [];
+        let [ , numerator, denominator, decimal1, decimal2, unit ]: any = str?.match(numberWithUnit.regex) ?? [];
 
         numerator = Number.parseFloat(numerator);
         denominator = Number.parseFloat(denominator);

@@ -23,8 +23,8 @@ const OrbitControls = function (object, domElement) {
     const scope = this;
 
     const changeEvent = { type: "change" };
-    const startEvent  = { type: "start" };
-    const endEvent    = { type: "end" };
+    const startEvent = { type: "start" };
+    const endEvent = { type: "end" };
 
     const STATE = {
         NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4
@@ -68,13 +68,13 @@ const OrbitControls = function (object, domElement) {
 
     // How far you can orbit vertically, upper and lower limits.
     // Range is 0 to Math.PI radians.
-    this.minPolarAngle = 0;        // radians
+    this.minPolarAngle = 0; // radians
     this.maxPolarAngle = Math.PI; // radians
 
     // How far you can orbit horizontally, upper and lower limits.
     // If set, must be a sub-interval of the interval [- Math.PI, Math.PI].
     this.minAzimuthAngle = -Infinity; // radians
-    this.maxAzimuthAngle = Infinity;  // radians
+    this.maxAzimuthAngle = Infinity; // radians
 
     // Set to true to enable damping (inertia)
     // If damping is enabled, call controls.update() in your animation loop

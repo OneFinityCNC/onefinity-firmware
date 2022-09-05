@@ -19,6 +19,8 @@ globals:
   SvelteComponents: readonly
   Clusterize: readonly
   SockJS: readonly
+ignorePatterns:
+  - "**/dist/**/*"
 rules:
   indent:
     - off
@@ -56,6 +58,8 @@ rules:
   curly:
     - error
   keyword-spacing:
+    - error
+  no-multi-spaces:
     - error
   "@typescript-eslint/no-var-requires":
     - off

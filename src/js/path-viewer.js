@@ -464,10 +464,10 @@ module.exports = {
             geometry.translate(0, -length - radius, 0);
             group.add(new THREE.Mesh(geometry, material));
 
-            if (axis == 0)      {
+            if (axis == 0) {
                 group.rotateZ((up ? 0.5 : 1.5) * Math.PI);
             } else if (axis == 1) {
-                group.rotateX((up ? 0   : 1  ) * Math.PI);
+                group.rotateX((up ? 0 : 1 ) * Math.PI);
             } else if (axis == 2) {
                 group.rotateX((up ? 1.5 : 0.5) * Math.PI);
             }
