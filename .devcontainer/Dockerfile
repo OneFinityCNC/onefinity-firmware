@@ -8,7 +8,7 @@ RUN    apt update \
     && apt upgrade -y \
     && apt install -y \
     build-essential git wget binfmt-support qemu gcc-9 \
-    parted gcc-avr avr-libc avrdude python3 python3-pip python3-tornado \
+    parted udev gcc-avr avr-libc avrdude python3 python3-pip python3-tornado \
     inetutils-ping curl unzip python3-setuptools gcc-arm-linux-gnueabihf bc vim locate sudo \
     && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 9 \
     && /usr/bin/python3 -m pip install -U yapf \
