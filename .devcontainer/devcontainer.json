@@ -1,26 +1,35 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/blob/v0.241.1/containers/debian
 {
-	"name": "Debian",
-	"build": {
-		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick an Debian version: bullseye, buster
-		// Use bullseye on local arm64/Apple Silicon.
-		"args": { "VARIANT": "bullseye" }
-	},
-
-	"runArgs": ["--privileged"],
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
-	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
-
-	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	// "remoteUser": "vscode",
-	
-	"features": {
-		"sshd": "latest"
-	}
+    "name": "Debian",
+    "build": {
+        "dockerfile": "Dockerfile",
+        // Update 'VARIANT' to pick an Debian version: bullseye, buster
+        // Use bullseye on local arm64/Apple Silicon.
+        "args": {
+            "VARIANT": "bullseye"
+        }
+    },
+    "runArgs": [
+        // The primary reason this is here is to enable loopback devices,
+        // which are used for mounting disk images during builds, etc.
+        "--privileged"
+    ],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+    //
+    // Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
+    // "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
+    "features": {
+        "sshd": "latest"
+    },
+    "extensions": [
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "ms-vscode.makefile-tools",
+        "ms-python.python",
+        "svelte.svelte-vscode",
+        "redhat.vscode-yaml"
+    ]
 }
