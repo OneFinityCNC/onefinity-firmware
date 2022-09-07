@@ -68,7 +68,7 @@ if should_resize_root_partition; then
     #   Remove itself from the registered systemd services
     #   Delete itself from the filesystem
     #   Therefore, never run again
-    cp scripts/resize2fs_once /etc/init.d/resize2fs_once
+    cp ./installer/scripts/resize2fs_once /etc/init.d/resize2fs_once
     chmod +x /etc/init.d/resize2fs_once
     systemctl enable resize2fs_once
 
