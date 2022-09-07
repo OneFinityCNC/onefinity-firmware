@@ -7,11 +7,11 @@ module.exports = {
     props: [ "state" ],
 
     computed: {
-        modbus_status: function () {
+        modbus_status: function() {
             return modbus.status_to_string(this.state.mx);
         },
 
-        sense_error: function () {
+        sense_error: function() {
             let error = "";
 
             if (this.state.motor_voltage_sense_error) {
@@ -35,11 +35,11 @@ module.exports = {
     },
 
     methods: {
-        is_motor_enabled: function (motor) {
+        is_motor_enabled: function(motor) {
             return typeof this.state[`${motor}me`] != "undefined" && this.state[`${motor}me`];
         },
 
-        get_min_pin: function (motor) {
+        get_min_pin: function(motor) {
             switch (motor) {
                 case 0: return 3;
                 case 1: return 5;
@@ -48,7 +48,7 @@ module.exports = {
             }
         },
 
-        get_max_pin: function (motor) {
+        get_max_pin: function(motor) {
             switch (motor) {
                 case 0: return 4;
                 case 1: return 8;
@@ -57,7 +57,7 @@ module.exports = {
             }
         },
 
-        motor_fault_class: function (motor, bit) {
+        motor_fault_class: function(motor, bit) {
             if (typeof motor == "undefined") {
                 const status = this.state["fa"];
 
@@ -78,7 +78,7 @@ module.exports = {
                 "fa-thumbs-up success";
         },
 
-        motor_reset: function (motor) {
+        motor_reset: function(motor) {
             if (typeof motor == "undefined") {
                 let cmd = "";
                 for (let i = 0; i < 4; i++) {

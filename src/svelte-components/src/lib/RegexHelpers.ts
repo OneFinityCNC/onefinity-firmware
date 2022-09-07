@@ -31,7 +31,7 @@ function formatFraction(value: number) {
 
 export const numberWithUnit = {
     regex: /^\s*(?:(\d+)\s*\/\s*(\d+)|(\d*\.\d+)|(\d+(?:\.\d+)?))\s*("|in|inch|inches|mm|millimeters)\s*$/,
-    parse: function (str: string) {
+    parse: function(str: string) {
         // eslint-disable-next-line prefer-const
         let [ , numerator, denominator, decimal1, decimal2, unit ]: any = str?.match(numberWithUnit.regex) ?? [];
 
@@ -68,7 +68,7 @@ export const numberWithUnit = {
                 return undefined;
         }
     },
-    normalize: function (str) {
+    normalize: function(str) {
         const value = this.parse(str);
 
         switch (true) {

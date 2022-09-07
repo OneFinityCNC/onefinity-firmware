@@ -8,12 +8,12 @@ module.exports = {
     computed: {
         metric: {
             cache: false,
-            get: function () {
+            get: function() {
                 return this.$root.display_units === "METRIC";
             }
         },
 
-        text: function () {
+        text: function() {
             let value = this.value;
             if (typeof value == "undefined") {
                 return "";
@@ -27,7 +27,7 @@ module.exports = {
         }
     },
 
-    ready: function () {
+    ready: function() {
         if (typeof this.precision == "undefined") {
             this.precision = 0;
         }

@@ -8,7 +8,7 @@ module.exports = {
     template: "#path-viewer-template",
     props: [ "toolpath" ],
 
-    data: function () {
+    data: function() {
         return {
             enabled: false,
             loading: false,
@@ -25,7 +25,7 @@ module.exports = {
     },
 
     computed: {
-        target: function () {
+        target: function() {
             return this.$el.querySelector(".path-viewer-content");
         },
 
@@ -44,65 +44,65 @@ module.exports = {
     },
 
     watch: {
-        toolpath: function () {
+        toolpath: function() {
             Vue.nextTick(this.update);
         },
 
-        surfaceMode: function (mode) {
+        surfaceMode: function(mode) {
             this.update_surface_mode(mode);
         },
 
-        small: function (enable) {
+        small: function(enable) {
             cookie.set_bool("small-path-view", enable);
             Vue.nextTick(this.update_view);
         },
 
-        showPath: function (enable) {
+        showPath: function(enable) {
             cookie.set_bool("show-path", enable);
             this.set_visible(this.pathView, enable);
         },
 
-        showTool: function (enable) {
+        showTool: function(enable) {
             cookie.set_bool("show-tool", enable);
             this.set_visible(this.toolView, enable);
         },
 
-        showAxes: function (enable) {
+        showAxes: function(enable) {
             cookie.set_bool("show-axes", enable);
             this.set_visible(this.axesView, enable);
         },
 
-        showIntensity: function (enable) {
+        showIntensity: function(enable) {
             cookie.set_bool("show-intensity", enable);
             Vue.nextTick(this.update);
         },
 
-        showBBox: function (enable) {
+        showBBox: function(enable) {
             cookie.set_bool("show-bbox", enable);
             this.set_visible(this.bboxView, enable);
             this.set_visible(this.envelopeView, enable);
         },
 
-        x: function () {
+        x: function() {
             this.axis_changed();
         },
 
-        y: function () {
+        y: function() {
             this.axis_changed();
         },
 
-        z: function () {
+        z: function() {
             this.axis_changed();
         }
     },
 
-    ready: function () {
+    ready: function() {
         this.graphics();
         Vue.nextTick(this.update);
     },
 
     methods: {
-        update: async function () {
+        update: async function() {
             if (!this.webglAvailable) {
                 return;
             }
@@ -145,7 +145,7 @@ module.exports = {
             this.update_view();
         },
 
-        update_surface_mode: function (mode) {
+        update_surface_mode: function(mode) {
             if (!this.enabled) {
                 return;
             }
@@ -159,7 +159,7 @@ module.exports = {
             this.set_visible(this.workpieceMesh, mode == "solid");
         },
 
-        load_surface: function (surface) {
+        load_surface: function(surface) {
             if (typeof surface == "undefined") {
                 this.vertices = undefined;
                 this.normals = undefined;
@@ -179,14 +179,14 @@ module.exports = {
             }
         },
 
-        set_visible: function (target, visible) {
+        set_visible: function(target, visible) {
             if (typeof target != "undefined") {
                 target.visible = visible;
             }
             this.dirty = true;
         },
 
-        get_dims: function () {
+        get_dims: function() {
             const computedStyle = window.getComputedStyle(this.target);
 
             return {
@@ -195,7 +195,7 @@ module.exports = {
             };
         },
 
-        update_view: function () {
+        update_view: function() {
             if (!this.enabled) {
                 return;
             }
@@ -215,7 +215,7 @@ module.exports = {
             this.dirty = true;
         },
 
-        update_tool: function (tool) {
+        update_tool: function(tool) {
             if (!this.enabled) {
                 return;
             }
@@ -233,7 +233,7 @@ module.exports = {
             tool.position.z = this.z.pos;
         },
 
-        update_envelope: function (envelope) {
+        update_envelope: function(envelope) {
             if (!this.enabled || !this.axes.homed) {
                 return;
             }
@@ -262,13 +262,13 @@ module.exports = {
             }
         },
 
-        axis_changed: function () {
+        axis_changed: function() {
             this.update_tool();
             this.update_envelope();
             this.dirty = true;
         },
 
-        graphics: function () {
+        graphics: function() {
             if (!this.webglAvailable) {
                 return;
             }
@@ -318,8 +318,8 @@ module.exports = {
             this.controls.enableZoom = true;
 
             // Move lights with scene
-            this.controls.addEventListener("change", function (scope) {
-                return function () {
+            this.controls.addEventListener("change", function(scope) {
+                return function() {
                     keyLight.position.copy(scope.camera.position);
                     fillLight.position.copy(scope.camera.position);
                     backLight.position.copy(scope.camera.position);
@@ -337,7 +337,7 @@ module.exports = {
             this.render();
         },
 
-        create_surface_material: function () {
+        create_surface_material: function() {
             return new THREE.MeshPhongMaterial({
                 specular: 0x111111,
                 shininess: 10,
@@ -346,7 +346,7 @@ module.exports = {
             });
         },
 
-        draw_loading: function () {
+        draw_loading: function() {
             this.scene = new THREE.Scene();
 
             const geometry = new THREE.TextGeometry("Loading 3D View...", {
@@ -369,7 +369,7 @@ module.exports = {
             this.update_view();
         },
 
-        draw_workpiece: function (scene, material) {
+        draw_workpiece: function(scene, material) {
             if (typeof this.workpiece == "undefined") {
                 return;
             }
@@ -397,7 +397,7 @@ module.exports = {
             return mesh;
         },
 
-        draw_surface: function (scene, material) {
+        draw_surface: function(scene, material) {
             if (typeof this.vertices == "undefined") {
                 return;
             }
@@ -413,7 +413,7 @@ module.exports = {
             return new THREE.Mesh(geometry, material);
         },
 
-        draw_tool: function (scene, bbox) {
+        draw_tool: function(scene, bbox) {
             // Tool size is relative to bounds
             const size = bbox.getSize(new THREE.Vector3());
             let length = (size.x + size.y + size.z) / 24;
@@ -441,7 +441,7 @@ module.exports = {
             return mesh;
         },
 
-        draw_axis: function (axis, up, length, radius) {
+        draw_axis: function(axis, up, length, radius) {
             let color;
 
             if (axis == 0) {
@@ -475,7 +475,7 @@ module.exports = {
             return group;
         },
 
-        draw_axes: function (scene, bbox) {
+        draw_axes: function(scene, bbox) {
             const size = bbox.getSize(new THREE.Vector3());
             let length = (size.x + size.y + size.z) / 3;
             length /= 10;
@@ -500,7 +500,7 @@ module.exports = {
             return group;
         },
 
-        get_color: function (speed) {
+        get_color: function(speed) {
             if (isNaN(speed)) {
                 return [ 255, 0, 0 ];
             } // Rapid
@@ -513,7 +513,7 @@ module.exports = {
             return [ 0, 255 * intensity, 127 * (1 - intensity) ];
         },
 
-        draw_path: function (scene) {
+        draw_path: function(scene) {
             const geometry = new THREE.BufferGeometry();
             const material = new THREE.LineBasicMaterial({
                 vertexColors: THREE.VertexColors,
@@ -543,14 +543,14 @@ module.exports = {
             return line;
         },
 
-        create_empty_geom: function () {
+        create_empty_geom: function() {
             const geometry = new THREE.BufferGeometry();
             geometry.addAttribute("position",
                 new THREE.Float32BufferAttribute([], 3));
             return geometry;
         },
 
-        create_bbox_geom: function (bbox) {
+        create_bbox_geom: function(bbox) {
             const vertices = [];
 
             if (!bbox.isEmpty()) {
@@ -593,7 +593,7 @@ module.exports = {
             return geometry;
         },
 
-        draw_bbox: function (scene, bbox) {
+        draw_bbox: function(scene, bbox) {
             const geometry = this.create_bbox_geom(bbox);
             const material = new THREE.LineBasicMaterial({ color: 0xffffff });
             const line = new THREE.LineSegments(geometry, material);
@@ -605,7 +605,7 @@ module.exports = {
             return line;
         },
 
-        draw_envelope: function (scene) {
+        draw_envelope: function(scene) {
             const geometry = this.create_empty_geom();
             const material = new THREE.LineBasicMaterial({ color: 0x00f7ff });
             const line = new THREE.LineSegments(geometry, material);
@@ -618,7 +618,7 @@ module.exports = {
             return line;
         },
 
-        draw: function (scene) {
+        draw: function(scene) {
             // Lights
             scene.add(this.ambient);
             scene.add(this.lights);
@@ -639,7 +639,7 @@ module.exports = {
             this.envelopeView = this.draw_envelope(scene);
         },
 
-        render: function () {
+        render: function() {
             window.requestAnimationFrame(this.render);
 
             if (typeof this.scene == "undefined") {
@@ -652,7 +652,7 @@ module.exports = {
             }
         },
 
-        get_model_bounds: function () {
+        get_model_bounds: function() {
             const bbox = new THREE.Box3(new THREE.Vector3(0, 0, 0),
                 new THREE.Vector3(0.00001, 0.00001, 0.00001));
 
@@ -671,7 +671,7 @@ module.exports = {
             return bbox;
         },
 
-        snap: function (view) {
+        snap: function(view) {
             if (this.loading) {
                 return;
             }

@@ -8,7 +8,7 @@ module.exports = {
     template: "#control-view-template",
     props: [ "config", "template", "state" ],
 
-    data: function () {
+    data: function() {
         return {
             current_time: "",
             mach_units: this.$root.state.metric ? "METRIC" : "IMPERIAL",
@@ -52,12 +52,12 @@ module.exports = {
     },
 
     watch: {
-        jog_incr: function (value) {
+        jog_incr: function(value) {
             localStorage.setItem("jog_incr", value);
         },
 
         "state.metric": {
-            handler: function (metric) {
+            handler: function(metric) {
                 this.mach_units = metric
                     ? "METRIC"
                     : "IMPERIAL";
@@ -65,21 +65,21 @@ module.exports = {
             immediate: true
         },
 
-        "state.line": function () {
+        "state.line": function() {
             if (this.mach_state != "HOMING") {
                 this.$broadcast("gcode-line", this.state.line);
             }
         },
 
-        "state.selected_time": function () {
+        "state.selected_time": function() {
             this.load();
         },
 
-        jog_step: function () {
+        jog_step: function() {
             cookie.set_bool("jog-step", this.jog_step);
         },
 
-        jog_adjust: function () {
+        jog_adjust: function() {
             cookie.set("jog-adjust", this.jog_adjust);
         }
     },
@@ -87,19 +87,19 @@ module.exports = {
     computed: {
         display_units: {
             cache: false,
-            get: function () {
+            get: function() {
                 return this.$root.display_units;
             },
-            set: function (value) {
+            set: function(value) {
                 this.$root.display_units = value;
             }
         },
 
-        metric: function () {
+        metric: function() {
             return this.display_units === "METRIC";
         },
 
-        mach_state: function () {
+        mach_state: function() {
             const cycle = this.state.cycle;
             const state = this.state.xx;
 
@@ -110,46 +110,46 @@ module.exports = {
             return state || "";
         },
 
-        pause_reason: function () {
+        pause_reason: function() {
             return this.state.pr;
         },
 
-        is_running: function () {
+        is_running: function() {
             return this.mach_state == "RUNNING" || this.mach_state == "HOMING";
         },
 
-        is_stopping: function () {
+        is_stopping: function() {
             return this.mach_state == "STOPPING";
         },
 
-        is_holding: function () {
+        is_holding: function() {
             return this.mach_state == "HOLDING";
         },
 
-        is_ready: function () {
+        is_ready: function() {
             return this.mach_state == "READY";
         },
 
-        is_idle: function () {
+        is_idle: function() {
             return this.state.cycle == "idle";
         },
 
-        is_paused: function () {
+        is_paused: function() {
             return this.is_holding && (this.pause_reason == "User pause" || this.pause_reason == "Program pause");
         },
 
-        can_mdi: function () {
+        can_mdi: function() {
             return this.is_idle || this.state.cycle == "mdi";
         },
 
-        can_set_axis: function () {
+        can_set_axis: function() {
             return this.is_idle;
 
             // TODO allow setting axis position during pause
             // return this.is_idle || this.is_paused;
         },
 
-        message: function () {
+        message: function() {
             if (this.mach_state == "ESTOPPED") {
                 return this.state.er;
             }
@@ -165,15 +165,15 @@ module.exports = {
             return "";
         },
 
-        highlight_state: function () {
+        highlight_state: function() {
             return this.mach_state == "ESTOPPED" || this.mach_state == "HOLDING";
         },
 
-        plan_time: function () {
+        plan_time: function() {
             return this.state.plan_time;
         },
 
-        plan_time_remaining: function () {
+        plan_time_remaining: function() {
             if (!(this.is_stopping || this.is_running || this.is_holding)) {
                 return 0;
             }
@@ -181,7 +181,7 @@ module.exports = {
             return this.toolpath.time - this.plan_time;
         },
 
-        eta: function () {
+        eta: function() {
             if (this.mach_state != "RUNNING") {
                 return "";
             }
@@ -192,7 +192,7 @@ module.exports = {
             return d.toLocaleString();
         },
 
-        progress: function () {
+        progress: function() {
             if (!this.toolpath.time || this.is_ready) {
                 return 0;
             }
@@ -203,17 +203,17 @@ module.exports = {
     },
 
     events: {
-        jog: function (axis, power) {
+        jog: function(axis, power) {
             const data = { ts: new Date().getTime() };
             data[axis] = power;
             api.put("jog", data);
         },
 
-        back2zero: function (axis0, axis1) {
+        back2zero: function(axis0, axis1) {
             this.send(`G0 ${axis0}0 ${axis1}0`);
         },
 
-        step: function (axis, value) {
+        step: function(axis, value) {
             this.send(`
                 M70
                 G91
@@ -223,7 +223,7 @@ module.exports = {
         },
     },
 
-    ready: function () {
+    ready: function() {
         this.load();
 
         setInterval(() => {
@@ -248,7 +248,7 @@ module.exports = {
             return [ weight, color ].join(";");
         },
 
-        jog_fn: function (x_jog, y_jog, z_jog, a_jog) {
+        jog_fn: function(x_jog, y_jog, z_jog, a_jog) {
             const amount = this.jog_incr_amounts[this.display_units][this.jog_incr];
 
             const xcmd = `X${x_jog * amount}`;
@@ -263,11 +263,11 @@ module.exports = {
             `);
         },
 
-        send: function (msg) {
+        send: function(msg) {
             this.$dispatch("send", msg);
         },
 
-        load: function () {
+        load: function() {
             const file_time = this.state.selected_time;
             const file = this.state.selected;
             if (this.last_file == file && this.last_file_time == file_time) {
@@ -283,7 +283,7 @@ module.exports = {
             this.load_toolpath(file, file_time);
         },
 
-        load_toolpath: async function (file, file_time) {
+        load_toolpath: async function(file, file_time) {
             this.toolpath = {};
 
             if (!file || this.last_file_time != file_time) {
@@ -314,7 +314,7 @@ module.exports = {
             }
         },
 
-        submit_mdi: function () {
+        submit_mdi: function() {
             this.send(this.mdi);
 
             if (!this.history.length || this.history[0] != this.mdi) {
@@ -324,7 +324,7 @@ module.exports = {
             this.mdi = "";
         },
 
-        mdi_start_pause: function () {
+        mdi_start_pause: function() {
             if (this.state.xx == "RUNNING") {
                 this.pause();
             } else if (this.state.xx == "STOPPING" || this.state.xx == "HOLDING") {
@@ -334,15 +334,15 @@ module.exports = {
             }
         },
 
-        load_history: function (index) {
+        load_history: function(index) {
             this.mdi = this.history[index];
         },
 
-        open: function () {
+        open: function() {
             utils.clickFileInput("gcode-file-input");
         },
 
-        upload: function (e) {
+        upload: function(e) {
             const files = e.target.files || e.dataTransfer.files;
             if (!files.length) {
                 return;
@@ -372,7 +372,7 @@ module.exports = {
             });
         },
 
-        delete_current: function () {
+        delete_current: function() {
             if (this.state.selected) {
                 api.delete(`file/${this.state.selected}`);
             }
@@ -380,12 +380,12 @@ module.exports = {
             this.deleteGCode = false;
         },
 
-        delete_all: function () {
+        delete_all: function() {
             api.delete("file");
             this.deleteGCode = false;
         },
 
-        home: function (axis) {
+        home: function(axis) {
             this.ask_home = false;
 
             if (typeof axis == "undefined") {
@@ -397,31 +397,31 @@ module.exports = {
             }
         },
 
-        set_home: function (axis, position) {
+        set_home: function(axis, position) {
             api.put(`home/${axis}/set`, { position: parseFloat(position) });
         },
 
-        unhome: function (axis) {
+        unhome: function(axis) {
             api.put(`home/${axis}/clear`);
         },
 
-        show_set_position: function (axis) {
+        show_set_position: function(axis) {
             SvelteComponents.showDialog("SetAxisPosition", { axis });
         },
 
-        showMoveToZeroDialog: function (axes) {
+        showMoveToZeroDialog: function(axes) {
             SvelteComponents.showDialog("MoveToZero", { axes });
         },
 
-        showToolpathMessageDialog: function (axis) {
+        showToolpathMessageDialog: function(axis) {
             SvelteComponents.showDialog("Message", { title: this[axis].toolmsg });
         },
 
-        set_position: function (axis, position) {
+        set_position: function(axis, position) {
             api.put(`position/${axis}`, { "position": parseFloat(position) });
         },
 
-        zero_all: function () {
+        zero_all: function() {
             for (const axis of "xyzabc") {
                 if (this[axis].enabled) {
                     this.zero(axis);
@@ -429,7 +429,7 @@ module.exports = {
             }
         },
 
-        zero: function (axis) {
+        zero: function(axis) {
             if (typeof axis == "undefined") {
                 this.zero_all();
             } else {
@@ -437,7 +437,7 @@ module.exports = {
             }
         },
 
-        start_pause: function () {
+        start_pause: function() {
             if (this.state.xx == "RUNNING") {
                 this.pause();
             } else if (this.state.xx == "STOPPING" || this.state.xx == "HOLDING") {
@@ -447,39 +447,39 @@ module.exports = {
             }
         },
 
-        start: function () {
+        start: function() {
             api.put("start");
         },
 
-        pause: function () {
+        pause: function() {
             api.put("pause");
         },
 
-        unpause: function () {
+        unpause: function() {
             api.put("unpause");
         },
 
-        optional_pause: function () {
+        optional_pause: function() {
             api.put("pause/optional");
         },
 
-        stop: function () {
+        stop: function() {
             api.put("stop");
         },
 
-        step: function () {
+        step: function() {
             api.put("step");
         },
 
-        override_feed: function () {
+        override_feed: function() {
             api.put(`override/feed/${this.feed_override}`);
         },
 
-        override_speed: function () {
+        override_speed: function() {
             api.put(`override/speed/${this.speed_override}`);
         },
 
-        current: function (axis, value) {
+        current: function(axis, value) {
             const x = value / 32.0;
             if (this.state[`${axis}pl`] == x) {
                 return;
@@ -490,7 +490,7 @@ module.exports = {
             this.send(JSON.stringify(data));
         },
 
-        showProbeDialog: function (probeType) {
+        showProbeDialog: function(probeType) {
             SvelteComponents.showDialog("Probe", { probeType });
         }
     },

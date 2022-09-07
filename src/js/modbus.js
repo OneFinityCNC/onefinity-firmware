@@ -11,7 +11,7 @@ const constants = {
 
 module.exports = {
     ...constants,
-    status_to_string: function (status) {
+    status_to_string: function(status) {
         switch (status) {
             case constants.OK: return "Ok";
             case constants.CRC: return "CRC error";

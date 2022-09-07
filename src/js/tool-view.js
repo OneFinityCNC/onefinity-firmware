@@ -8,7 +8,7 @@ module.exports = {
     template: "#tool-view-template",
     props: [ "config", "template", "state" ],
 
-    data: function () {
+    data: function() {
         return {
             address: 0,
             value: 0,
@@ -91,41 +91,41 @@ module.exports = {
     },
 
     watch: {
-        "state.mr": function () {
+        "state.mr": function() {
             this.value = this.state.mr;
         }
     },
 
     events: {
-        "input-changed": function () {
+        "input-changed": function() {
             this.$dispatch("config-changed");
 
             return false;
         },
     },
 
-    ready: function () {
+    ready: function() {
         this.value = this.state.mr;
     },
 
     computed: {
-        regs_tmpl: function () {
+        regs_tmpl: function() {
             return this.template["modbus-spindle"].regs;
         },
 
-        tool_type: function () {
+        tool_type: function() {
             return this.config.tool["tool-type"].toUpperCase();
         },
 
-        selected_tool: function () {
+        selected_tool: function() {
             return this.config.tool["selected-tool"];
         },
 
-        is_pwm_spindle: function () {
+        is_pwm_spindle: function() {
             return this.selected_tool == "pwm";
         },
 
-        is_modbus: function () {
+        is_modbus: function() {
             switch (this.selected_tool) {
                 case "disabled":
                 case "laser":
@@ -138,13 +138,13 @@ module.exports = {
             }
         },
 
-        modbus_status: function () {
+        modbus_status: function() {
             return modbus.status_to_string(this.state.mx);
         }
     },
 
     methods: {
-        change_selected_tool: function () {
+        change_selected_tool: function() {
             const selectedToolSettings = this.config["selected-tool-settings"] || {};
             const settings = selectedToolSettings[this.selected_tool] || {};
             this.config.tool = merge({}, this.config.tool, settings["tool"]);
@@ -157,7 +157,7 @@ module.exports = {
             this.$dispatch("config-changed");
         },
 
-        show_tool_settings: function (key) {
+        show_tool_settings: function(key) {
             switch (true) {
                 case key === "tool-type":
                 case key === "selected-tool":
@@ -181,38 +181,38 @@ module.exports = {
             }
         },
 
-        get_reg_type: function (reg) {
+        get_reg_type: function(reg) {
             return this.regs_tmpl.template["reg-type"].values[this.state[`${reg}vt`]];
         },
 
-        get_reg_addr: function (reg) {
+        get_reg_addr: function(reg) {
             return this.state[`${reg}va`];
         },
 
-        get_reg_value: function (reg) {
+        get_reg_value: function(reg) {
             return this.state[`${reg}vv`];
         },
 
-        get_reg_fails: function (reg) {
+        get_reg_fails: function(reg) {
             const fails = this.state[`${reg}vr`];
             return fails == 255 ? "Max" : fails;
         },
 
-        show_modbus_field: function (key) {
+        show_modbus_field: function(key) {
             return key != "regs" && (key != "multi-write" || this.tool_type == "CUSTOM MODBUS VFD");
         },
 
-        read: function (e) {
+        read: function(e) {
             e.preventDefault();
             api.put("modbus/read", { address: this.address });
         },
 
-        write: function (e) {
+        write: function(e) {
             e.preventDefault();
             api.put("modbus/write", { address: this.address, value: this.value });
         },
 
-        customize: function (e) {
+        customize: function(e) {
             e.preventDefault();
             this.config.tool["tool-type"] = "Custom Modbus VFD";
 
@@ -227,7 +227,7 @@ module.exports = {
             this.$dispatch("config-changed");
         },
 
-        clear: function (e) {
+        clear: function(e) {
             e.preventDefault();
             this.config.tool["tool-type"] = "Custom Modbus VFD";
 
@@ -241,7 +241,7 @@ module.exports = {
             this.$dispatch("config-changed");
         },
 
-        reset_failures: function (e) {
+        reset_failures: function(e) {
             e.preventDefault();
             const regs = this.config["modbus-spindle"].regs;
             for (let reg = 0; reg < regs.length; reg++) {

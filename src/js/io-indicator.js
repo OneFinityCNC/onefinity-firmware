@@ -5,7 +5,7 @@ module.exports = {
     props: [ "name", "state" ],
 
     computed: {
-        klass: function () {
+        klass: function() {
             switch (this.name) {
                 case "min-switch-0": return this.get_motor_min_class(0);
                 case "min-switch-1": return this.get_motor_min_class(1);
@@ -25,7 +25,7 @@ module.exports = {
             }
         },
 
-        tooltip: function () {
+        tooltip: function() {
             switch (this.name) {
                 case "min-switch-0": return this.get_motor_min_tooltip(0);
                 case "min-switch-1": return this.get_motor_min_tooltip(1);
@@ -47,7 +47,7 @@ module.exports = {
     },
 
     methods: {
-        get_io_state_class: function (active, state) {
+        get_io_state_class: function(active, state) {
             if (typeof active == "undefined" || typeof state == "undefined") {
                 return "fa-exclamation-triangle warn";
             }
@@ -60,7 +60,7 @@ module.exports = {
             return `${icon} ${active ? "active" : "inactive"}`;
         },
 
-        get_input_active: function (stateCode, typeCode) {
+        get_input_active: function(stateCode, typeCode) {
             const type = this.state[typeCode];
             const state = this.state[stateCode];
 
@@ -73,23 +73,23 @@ module.exports = {
             return false;
         },
 
-        get_input_class: function (stateCode, typeCode) {
+        get_input_class: function(stateCode, typeCode) {
             return this.get_io_state_class(this.get_input_active(stateCode, typeCode), this.state[stateCode]);
         },
 
-        get_output_class: function (output) {
+        get_output_class: function(output) {
             return this.get_io_state_class(this.state[`${output}oa`], this.state[`${output}os`]);
         },
 
-        get_motor_min_class: function (motor) {
+        get_motor_min_class: function(motor) {
             return this.get_input_class(`${motor}lw`, `${motor}ls`);
         },
 
-        get_motor_max_class: function (motor) {
+        get_motor_max_class: function(motor) {
             return this.get_input_class(`${motor}xw`, `${motor}xs`);
         },
 
-        get_tooltip: function (mode, active, state) {
+        get_tooltip: function(mode, active, state) {
             if (typeof mode == "undefined" || typeof active == "undefined" || typeof state == "undefined") {
                 return "Invalid";
             }
@@ -107,7 +107,7 @@ module.exports = {
             return `Mode: ${mode}\nActive: ${active ? "True" : "False"}\nLevel: ${state}`;
         },
 
-        get_input_tooltip: function (stateCode, typeCode) {
+        get_input_tooltip: function(stateCode, typeCode) {
             let type = this.state[typeCode];
             if (type == 0) {
                 return "Disabled";
@@ -123,7 +123,7 @@ module.exports = {
             return this.get_tooltip(type, active, state);
         },
 
-        get_output_tooltip: function (output) {
+        get_output_tooltip: function(output) {
             let mode = this.state[`${output}om`];
 
             switch (mode) {
@@ -144,11 +144,11 @@ module.exports = {
             return this.get_tooltip(mode, active, state);
         },
 
-        get_motor_min_tooltip: function (motor) {
+        get_motor_min_tooltip: function(motor) {
             return this.get_input_tooltip(`${motor}lw`, `${motor}ls`);
         },
 
-        get_motor_max_tooltip: function (motor) {
+        get_motor_max_tooltip: function(motor) {
             return this.get_input_tooltip(`${motor}xw`, `${motor}xs`);
         }
     }

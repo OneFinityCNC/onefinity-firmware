@@ -17,7 +17,7 @@
 //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: two-finger move
 
-const OrbitControls = function (object, domElement) {
+const OrbitControls = function(object, domElement) {
     // internals
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const scope = this;
@@ -119,21 +119,21 @@ const OrbitControls = function (object, domElement) {
     this.zoom0 = this.object.zoom;
 
     // public methods
-    this.getPolarAngle = function () {
+    this.getPolarAngle = function() {
         return spherical.phi;
     };
 
-    this.getAzimuthalAngle = function () {
+    this.getAzimuthalAngle = function() {
         return spherical.theta;
     };
 
-    this.saveState = function () {
+    this.saveState = function() {
         scope.target0.copy(scope.target);
         scope.position0.copy(scope.object.position);
         scope.zoom0 = scope.object.zoom;
     };
 
-    this.reset = function () {
+    this.reset = function() {
         scope.target.copy(scope.target0);
         scope.object.position.copy(scope.position0);
         scope.object.zoom = scope.zoom0;
@@ -145,7 +145,7 @@ const OrbitControls = function (object, domElement) {
         state = STATE.NONE;
     };
 
-    this.update = function () {
+    this.update = function() {
         const offset = new THREE.Vector3();
 
         // so camera.up is the orbit axis
@@ -228,7 +228,7 @@ const OrbitControls = function (object, domElement) {
         };
     }();
 
-    this.dispose = function () {
+    this.dispose = function() {
         scope.domElement.removeEventListener("contextmenu", onContextMenu, false);
         scope.domElement.removeEventListener("mousedown", onMouseDown, false);
         scope.domElement.removeEventListener("wheel", onMouseWheel, false);
@@ -256,7 +256,7 @@ const OrbitControls = function (object, domElement) {
         sphericalDelta.phi -= angle;
     }
 
-    const panLeft = function () {
+    const panLeft = function() {
         const v = new THREE.Vector3();
 
         return function panLeft(distance, objectMatrix) {
@@ -266,7 +266,7 @@ const OrbitControls = function (object, domElement) {
         };
     }();
 
-    const panUp = function () {
+    const panUp = function() {
         const v = new THREE.Vector3();
 
         return function panUp(distance, objectMatrix) {
@@ -289,7 +289,7 @@ const OrbitControls = function (object, domElement) {
     }
 
     // deltaX and deltaY are in pixels; right and down are positive
-    const pan = function () {
+    const pan = function() {
         const offset = new THREE.Vector3();
 
         return function pan(deltaX, deltaY) {

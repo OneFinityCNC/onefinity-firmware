@@ -5,7 +5,7 @@ const entityMap = {
     "/": "&#x2F;", "`": "&#x60;", "=": "&#x3D;" };
 
 function escapeHTML(s) {
-    return s.replace(/[&<>"'`=\\/]/g, function (c) {
+    return s.replace(/[&<>"'`=\\/]/g, function(c) {
         return entityMap[c];
     });
 }
@@ -13,7 +13,7 @@ function escapeHTML(s) {
 module.exports = {
     template: "#gcode-viewer-template",
 
-    data: function () {
+    data: function() {
         return {
             empty: true,
             file: "",
@@ -22,21 +22,21 @@ module.exports = {
     },
 
     events: {
-        "gcode-load": function (file) {
+        "gcode-load": function(file) {
             this.load(file);
         },
-        "gcode-clear": function () {
+        "gcode-clear": function() {
             this.clear();
         },
-        "gcode-reload": function (file) {
+        "gcode-reload": function(file) {
             this.reload(file);
         },
-        "gcode-line": function (line) {
+        "gcode-line": function(line) {
             this.update_line(line);
         }
     },
 
-    ready: function () {
+    ready: function() {
         this.clusterize = new Clusterize({
             rows: [],
             scrollElem: this.$el.querySelector(".clusterize-scroll"),
@@ -46,7 +46,7 @@ module.exports = {
         });
     },
 
-    attached: function () {
+    attached: function() {
         if (typeof this.clusterize != "undefined") {
             this.clusterize.refresh(true);
         }
@@ -83,14 +83,14 @@ module.exports = {
             Vue.nextTick(this.update_line);
         },
 
-        clear: function () {
+        clear: function() {
             this.empty = true;
             this.file = "";
             this.line = -1;
             this.clusterize.clear();
         },
 
-        reload: function (file) {
+        reload: function(file) {
             if (file != this.file) {
                 return;
             }
@@ -99,7 +99,7 @@ module.exports = {
             this.load(file);
         },
 
-        highlight: function () {
+        highlight: function() {
             const highlights = this.$el.querySelectorAll(".highlight");
             for (const highlight of highlights) {
                 highlight.className = (highlight.className || "")

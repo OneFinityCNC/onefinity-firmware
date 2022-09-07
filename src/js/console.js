@@ -13,14 +13,14 @@ const messages = [];
 module.exports = {
     template: "#console-template",
 
-    data: function () {
+    data: function() {
         return {
             messages
         };
     },
 
     events: {
-        log: function (msg) {
+        log: function(msg) {
             // There may be multiple instances of this module so ignore messages
             // that have already been processed.
             if (msg.logged) {
@@ -65,7 +65,7 @@ module.exports = {
     },
 
     methods: {
-        clear: function () {
+        clear: function() {
             messages.splice(0, messages.length);
         },
     }

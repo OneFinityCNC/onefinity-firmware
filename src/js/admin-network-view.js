@@ -1,7 +1,7 @@
 module.exports = {
     template: "#admin-network-view-template",
 
-    attached: function () {
+    attached: function() {
         this.svelteComponent = SvelteComponents.createComponent(
             "AdminNetworkView",
             document.getElementById("admin-network")

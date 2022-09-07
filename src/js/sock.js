@@ -1,6 +1,6 @@
 "use strict";
 
-const Sock = function (url, retry, timeout) {
+const Sock = function(url, retry, timeout) {
     if (!(this instanceof Sock)) {
         return new Sock(url, retry);
     }
@@ -21,37 +21,37 @@ const Sock = function (url, retry, timeout) {
     this.connect();
 };
 
-Sock.prototype.onmessage = function () {
+Sock.prototype.onmessage = function() {
     // Ignore
 };
 
-Sock.prototype.onopen = function () {
+Sock.prototype.onopen = function() {
     // Ignore
 };
 
-Sock.prototype.onclose = function () {
+Sock.prototype.onclose = function() {
     // Ignore
 };
 
-Sock.prototype.connect = function () {
+Sock.prototype.connect = function() {
     console.debug("connecting to", this.url);
     this.close();
 
     this._sock = new SockJS(this.url);
 
-    this._sock.onmessage = function (e) {
+    this._sock.onmessage = function(e) {
         console.debug("msg:", e.data);
         this.heartbeat("msg");
         this.onmessage(e);
     }.bind(this);
 
-    this._sock.onopen = function () {
+    this._sock.onopen = function() {
         console.debug("connected");
         this.heartbeat("open");
         this.onopen();
     }.bind(this);
 
-    this._sock.onclose = function () {
+    this._sock.onclose = function() {
         console.debug("disconnected");
         this._cancel_timeout();
 
@@ -62,7 +62,7 @@ Sock.prototype.connect = function () {
     }.bind(this);
 };
 
-Sock.prototype._timedout = function () {
+Sock.prototype._timedout = function() {
     // Divide timeout so slow browser doesn't trigger timeouts when the
     // connection is good.
     if (this.divisions <= ++this.count) {
@@ -75,23 +75,23 @@ Sock.prototype._timedout = function () {
     }
 };
 
-Sock.prototype._cancel_timeout = function () {
+Sock.prototype._cancel_timeout = function() {
     clearTimeout(this._timeout);
     this._timeout = undefined;
     this.count = 0;
 };
 
-Sock.prototype._set_timeout = function () {
+Sock.prototype._set_timeout = function() {
     this._timeout = setTimeout(this._timedout.bind(this),
         this.timeout / this.divisions);
 };
 
-Sock.prototype.heartbeat = function () {
+Sock.prototype.heartbeat = function() {
     this._cancel_timeout();
     this._set_timeout();
 };
 
-Sock.prototype.close = function () {
+Sock.prototype.close = function() {
     if (typeof this._sock != "undefined") {
         const sock = this._sock;
         this._sock = undefined;
@@ -99,7 +99,7 @@ Sock.prototype.close = function () {
     }
 };
 
-Sock.prototype.send = function (msg) {
+Sock.prototype.send = function(msg) {
     this._sock.send(msg);
 };
 

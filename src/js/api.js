@@ -34,7 +34,7 @@ async function callApi(method, url, data) {
 }
 
 module.exports = {
-    get: function (url) {
+    get: function(url) {
         return callApi("GET", url);
     },
 
@@ -42,7 +42,7 @@ module.exports = {
         return callApi("PUT", url, body);
     },
 
-    delete: function (url) {
+    delete: function(url) {
         return callApi("DELETE", url);
     }
 };

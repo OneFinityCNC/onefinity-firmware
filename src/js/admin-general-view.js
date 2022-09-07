@@ -17,7 +17,7 @@ module.exports = {
     template: "#admin-general-view-template",
     props: [ "config", "state" ],
 
-    data: function () {
+    data: function() {
         return {
             confirmReset: false,
             autoCheckUpgrade: true,
@@ -25,20 +25,20 @@ module.exports = {
         };
     },
 
-    ready: function () {
+    ready: function() {
         this.autoCheckUpgrade = this.config.admin["auto-check-upgrade"];
     },
 
     methods: {
-        backup: function () {
+        backup: function() {
             document.getElementById("download-target").src = "/api/config/download";
         },
 
-        restore_config: function () {
+        restore_config: function() {
             utils.clickFileInput("restore-config");
         },
 
-        restore: function (e) {
+        restore: function(e) {
             const files = e.target.files || e.dataTransfer.files;
             if (!files.length) {
                 return;
@@ -71,7 +71,7 @@ module.exports = {
             fileReader.readAsText(files[0]);
         },
 
-        reset: async function () {
+        reset: async function() {
             const config = merge(
                 {},
                 config_defaults,
@@ -92,19 +92,19 @@ module.exports = {
             }
         },
 
-        check: function () {
+        check: function() {
             this.$dispatch("check");
         },
 
-        upgrade: function () {
+        upgrade: function() {
             this.$dispatch("upgrade");
         },
 
-        upload_firmware: function () {
+        upload_firmware: function() {
             utils.clickFileInput("upload-firmware");
         },
 
-        upload: function (e) {
+        upload: function(e) {
             const files = e.target.files || e.dataTransfer.files;
             if (!files.length) {
                 return;
@@ -112,7 +112,7 @@ module.exports = {
             this.$dispatch("upload", files[0]);
         },
 
-        change_auto_check_upgrade: function () {
+        change_auto_check_upgrade: function() {
             this.config.admin["auto-check-upgrade"] = this.autoCheckUpgrade;
             this.$dispatch("config-changed");
         }

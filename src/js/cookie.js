@@ -1,12 +1,12 @@
 "use strict";
 
-module.exports = function (prefix) {
+module.exports = function(prefix) {
     if (typeof prefix == "undefined") {
         prefix = "";
     }
 
     const cookie = {
-        get: function (name, defaultValue) {
+        get: function(name, defaultValue) {
             const decodedCookie = decodeURIComponent(document.cookie);
             const ca = decodedCookie.split(";");
             name = `${prefix + name}=`;
@@ -24,7 +24,7 @@ module.exports = function (prefix) {
             return defaultValue;
         },
 
-        set: function (name, value, days) {
+        set: function(name, value, days) {
             let offset = 2147483647; // Max value
             if (typeof days != "undefined") {
                 offset = days * 24 * 60 * 60 * 1000;
@@ -36,11 +36,11 @@ module.exports = function (prefix) {
             document.cookie = `${prefix}${name}=${value};${expires};path=/`;
         },
 
-        set_bool: function (name, value) {
+        set_bool: function(name, value) {
             cookie.set(name, value ? "true" : "false");
         },
 
-        get_bool: function (name, defaultValue) {
+        get_bool: function(name, defaultValue) {
             return cookie.get(name, defaultValue ? "true" : "false") == "true";
         }
     };

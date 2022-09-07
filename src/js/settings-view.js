@@ -1,7 +1,7 @@
 module.exports = {
     template: "#settings-view-template",
 
-    attached: function () {
+    attached: function() {
         this.svelteComponent = SvelteComponents.createComponent(
             "SettingsView",
             document.getElementById("settings")

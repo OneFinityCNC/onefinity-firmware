@@ -20,7 +20,12 @@ globals:
   Clusterize: readonly
   SockJS: readonly
 ignorePatterns:
-  - "**/dist/**/*"
+  - /src/svelte-components/dist
+  - /src/static
+  - /build
+  - /dist
+  - /rpi-share
+  - /src/py/bbctrl/http
 rules:
   indent:
     - off
@@ -45,6 +50,7 @@ rules:
     - argsIgnorePattern: _.*
   no-unused-vars:
     - error
+    - argsIgnorePattern: _.*
   no-trailing-spaces:
     - error
   key-spacing:
@@ -94,3 +100,8 @@ rules:
     - error
   space-infix-ops:
     - error
+  space-before-function-paren:
+    - error
+    - anonymous: never
+      named: never
+      asyncArrow: always

@@ -91,7 +91,7 @@ function update_object(dst, src, remove) {
 module.exports = new Vue({
     el: "body",
 
-    data: function () {
+    data: function() {
         return {
             status: "connecting",
             currentView: "loading",
@@ -136,7 +136,7 @@ module.exports = new Vue({
         "help-view": { template: "#help-view-template" },
         "cheat-sheet-view": {
             template: "#cheat-sheet-view-template",
-            data: function () {
+            data: function() {
                 return {
                     showUnimplemented: false
                 };
@@ -145,32 +145,32 @@ module.exports = new Vue({
     },
 
     watch: {
-        display_units: function (value) {
+        display_units: function(value) {
             localStorage.setItem("display_units", value);
             SvelteComponents.setDisplayUnits(value);
         },
     },
 
     events: {
-        "config-changed": function () {
+        "config-changed": function() {
             this.modified = true;
         },
 
-        send: function (msg) {
+        send: function(msg) {
             if (this.status == "connected") {
                 this.sock.send(msg);
             }
         },
 
-        connected: function () {
+        connected: function() {
             this.update();
         },
 
-        update: function () {
+        update: function() {
             this.update();
         },
 
-        check: async function () {
+        check: async function() {
             try {
                 const response = await fetch("https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/latest.txt", {
                     cache: "no-cache"
@@ -182,17 +182,17 @@ module.exports = new Vue({
             }
         },
 
-        upgrade: function () {
+        upgrade: function() {
             this.confirmUpgrade = true;
         },
 
-        upload: function (firmware) {
+        upload: function(firmware) {
             this.firmware = firmware;
             this.firmwareName = firmware.name;
             this.confirmUpload = true;
         },
 
-        error: function (msg) {
+        error: function(msg) {
             // Honor user error blocking
             if (Date.now() - this.errorTimeoutStart < this.errorTimeout * 1000) {
                 return;
@@ -210,7 +210,7 @@ module.exports = new Vue({
     },
 
     computed: {
-        popupMessages: function () {
+        popupMessages: function() {
             const msgs = [];
 
             for (let i = 0; i < this.state.messages.length; i++) {
@@ -224,7 +224,7 @@ module.exports = new Vue({
         },
     },
 
-    ready: function () {
+    ready: function() {
         window.onhashchange = () => this.parse_hash();
         this.connect();
 
@@ -234,12 +234,12 @@ module.exports = new Vue({
     },
 
     methods: {
-        block_error_dialog: function () {
+        block_error_dialog: function() {
             this.errorTimeoutStart = Date.now();
             this.errorShow = false;
         },
 
-        toggle_video: function () {
+        toggle_video: function() {
             if (this.video_size == "small") {
                 this.video_size = "large";
             } else if (this.video_size == "large") {
@@ -248,13 +248,13 @@ module.exports = new Vue({
             cookie.set("video-size", this.video_size);
         },
 
-        toggle_crosshair: function (e) {
+        toggle_crosshair: function(e) {
             e.preventDefault();
             this.crosshair = !this.crosshair;
             cookie.set("crosshair", this.crosshair);
         },
 
-        estop: function () {
+        estop: function() {
             if (this.state.xx == "ESTOPPED") {
                 api.put("clear");
             } else {
@@ -262,7 +262,7 @@ module.exports = new Vue({
             }
         },
 
-        upgrade_confirmed: async function () {
+        upgrade_confirmed: async function() {
             this.confirmUpgrade = false;
 
             try {
@@ -274,7 +274,7 @@ module.exports = new Vue({
             }
         },
 
-        upload_confirmed: async function () {
+        upload_confirmed: async function() {
             this.confirmUpload = false;
 
             const form = new FormData();
@@ -289,7 +289,7 @@ module.exports = new Vue({
             }
         },
 
-        show_upgrade: function () {
+        show_upgrade: function() {
             if (!this.latestVersion) {
                 return false;
             }
@@ -297,11 +297,11 @@ module.exports = new Vue({
             return is_newer_version(this.config.version, this.latestVersion);
         },
 
-        showShutdownDialog: function () {
+        showShutdownDialog: function() {
             SvelteComponents.showDialog("Shutdown");
         },
 
-        update: async function () {
+        update: async function() {
             const config = await api.get("config/load");
 
             update_object(this.config, config, true);
@@ -319,7 +319,7 @@ module.exports = new Vue({
             SvelteComponents.handleConfigUpdate(this.config);
         },
 
-        connect: function () {
+        connect: function() {
             this.sock = new Sock(`//${location.host}/sockjs`);
 
             this.sock.onmessage = (e) => {
@@ -368,7 +368,7 @@ module.exports = new Vue({
             };
         },
 
-        parse_hash: function () {
+        parse_hash: function() {
             const hash = location.hash.substr(1);
 
             if (!hash.trim().length) {
@@ -385,7 +385,7 @@ module.exports = new Vue({
             this.currentView = parts[0];
         },
 
-        save: async function () {
+        save: async function() {
             const selected_tool = this.config.tool["selected-tool"];
             const saveModbus =
                 selected_tool !== "pwm" &&
@@ -411,7 +411,7 @@ module.exports = new Vue({
             }
         },
 
-        close_messages: function (action) {
+        close_messages: function(action) {
             if (action == "stop") {
                 api.put("stop");
             }

@@ -4,51 +4,51 @@ module.exports = {
     props: [ "state", "config" ],
 
     computed: {
-        metric: function () {
+        metric: function() {
             return this.$root.display_units === "METRIC";
         },
 
-        x: function () {
+        x: function() {
             return this._compute_axis("x");
         },
 
-        y: function () {
+        y: function() {
             return this._compute_axis("y");
         },
 
-        z: function () {
+        z: function() {
             return this._compute_axis("z");
         },
 
-        a: function () {
+        a: function() {
             return this._compute_axis("a");
         },
 
-        b: function () {
+        b: function() {
             return this._compute_axis("b");
         },
 
-        c: function () {
+        c: function() {
             return this._compute_axis("c");
         },
 
-        axes: function () {
+        axes: function() {
             return this._compute_axes();
         }
     },
 
     methods: {
-        _convert_length: function (value) {
+        _convert_length: function(value) {
             return this.metric
                 ? value
                 : value / 25.4;
         },
 
-        _length_str: function (value) {
+        _length_str: function(value) {
             return this._convert_length(value).toLocaleString() + (this.metric ? " mm" : " in");
         },
 
-        _compute_axis: function (axis) {
+        _compute_axis: function(axis) {
             const abs = this.state[`${axis}p`] || 0;
             const off = this.state[`offset_${axis}`];
             const motor_id = this._get_motor_id(axis);
@@ -182,7 +182,7 @@ module.exports = {
             };
         },
 
-        _get_motor_id: function (axis) {
+        _get_motor_id: function(axis) {
             for (let i = 0; i < this.config.motors.length; i++) {
                 const motor = this.config.motors[i];
                 if (motor.axis.toLowerCase() == axis) {
@@ -193,7 +193,7 @@ module.exports = {
             return -1;
         },
 
-        _compute_axes: function () {
+        _compute_axes: function() {
             let homed = false;
 
             for (const name of "xyzabc") {
