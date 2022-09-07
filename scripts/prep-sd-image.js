@@ -42,6 +42,19 @@ const REQUIRED_TOOLS = [
     "zerofree"
 ];
 
+const SYSTEM_FILES = [
+    "/var/swap",
+    "/tmp/*",
+    "/usr/**/__pycache__",
+    "/usr/**/*.py[co]",
+    "/usr/share/doc/*",
+    "/var/@(cache|backups|log|tmp)/*",
+    "/var/lib/apt/lists/*",
+    "/var/lib/bbctrl/@(firmware|plans|upload)/*",
+    "/var/lib/bbctrl/@(config|gamepads).json",
+    "/var/lib/dhcpcd5/*"
+];
+
 const USER_FILES = [
     ".bash_history",
     ".nano",
@@ -252,6 +265,9 @@ function prepareFilesystem(loopback) {
     const mountpoint = runCommand("mktemp -d");
 
     const finallyHandler = () => {
+        info("Sleeping for 10 seconds, to allow the filesystem to flush");
+        runCommand("sleep 10");
+
         info("Unmounting the filesystem");
         runCommand(`umount "${mountpoint}"`);
         rmdirSync(mountpoint);
@@ -262,26 +278,17 @@ function prepareFilesystem(loopback) {
         doStep("Removing unnecessary files from the filesystem...", () => {
             runCommand(`mount ${loopback} ${mountpoint}`);
 
-            scrub(mountpoint, [
-                "/var/swap",
-                "/tmp/*",
-                "/usr/**/__pycache__",
-                "/usr/**/*.py[co]",
-                "/usr/share/doc/*",
-                "/var/@(cache|backups|log|tmp)/*",
-                "/var/lib/apt/lists/*",
-                "/var/lib/bbctrl/@(firmware|plans|upload)/*",
-                "/var/lib/bbctrl/@(config|gamepads).json",
-                "/var/lib/dhcpcd5/*"
-            ]);
-
+            scrub(mountpoint, SYSTEM_FILES);
             scrubUserFiles(mountpoint, "/root");
             scrubUserFiles(mountpoint, "/home/bbmc");
             scrubUserFiles(mountpoint, "/home/pi");
         });
 
         doStep("Injecting files...", () => {
-            copyFileSync(resolve(`${__dirname}/../installer/Team Onefinity.ngc`), resolve(`${mountpoint}/var/lib/bbctrl/upload/Team Onefinity.ngc`));
+            copyFileSync(
+                resolve(`${__dirname}/../installer/gcode/Team Onefinity.ngc`),
+                resolve(`${mountpoint}/var/lib/bbctrl/upload/Team Onefinity.ngc`)
+            );
 
             writeFileSync(`${mountpoint}/var/lib/bbctrl/config.json`,
                 JSON.stringify(merge(
