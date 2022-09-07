@@ -51,7 +51,7 @@ fi
 grep dwc_otg.fiq_fsm_mask /boot/cmdline.txt >/dev/null
 if [ $? -ne 0 ]; then
     mount -o remount,rw /boot &&
-    sed -i 's/\(.*\)/\1 dwc_otg.fiq_fsm_mask=0x3/' /boot/cmdline.txt
+    sed -i -E 's/(.*)/\1 dwc_otg.fiq_fsm_mask=0x3/' /boot/cmdline.txt
     mount -o remount,ro /boot
     REBOOT=true
 fi
@@ -60,22 +60,22 @@ fi
 grep cgroup_memory /boot/cmdline.txt >/dev/null
 if [ $? -ne 0 ]; then
     mount -o remount,rw /boot &&
-    sed -i 's/\(.*\)/\1 cgroup_memory=1/' /boot/cmdline.txt
+    sed -i -E 's/(.*)/\1 cgroup_memory=1/' /boot/cmdline.txt
     mount -o remount,ro /boot
     REBOOT=true
 fi
 
 # Remove Hawkeye
 if [ -e /etc/init.d/hawkeye ]; then
-    apt-get remove --purge -y hawkeye
+    apt-get purge -y hawkeye
 fi
 
 # Decrease boot delay
-sed -i 's/^TimeoutStartSec=.*$/TimeoutStartSec=1/' \
+sed -i -E 's/^TimeoutStartSec=.*$/TimeoutStartSec=1/' \
     /etc/systemd/system/network-online.target.wants/networking.service
 
 # Change to US keyboard layout
-sed -i 's/^XKBLAYOUT="gb"$/XKBLAYOUT="us" # Comment stops change on upgrade/' /etc/default/keyboard
+sed -i -E 's/^XKBLAYOUT="gb"$/XKBLAYOUT="us" # Comment stops change on upgrade/' /etc/default/keyboard
 
 # Set the default locale to en_US
 grep '^en_US.UTF-8 UTF-8' /etc/locale.gen >/dev/null
@@ -89,16 +89,33 @@ fi
 diff ./installer/config/11-automount.rules /etc/udev/rules.d/11-automount.rules >/dev/null
 if [ $? -ne 0 ]; then
   cp ./installer/config/11-automount.rules /etc/udev/rules.d/
-  sed -i 's/^\(MountFlags=slave\)/#\1/' \
+  sed -i -E 's/^(MountFlags=slave)/#\1/' \
       /lib/systemd/system/systemd-udevd.service
   REBOOT=true
 fi
 
-# Increase swap
-grep 'CONF_SWAPSIZE=1000' /etc/dphys-swapfile >/dev/null
-if [ $? -ne 0 ]; then
-    sed -i 's/^CONF_SWAPSIZE=.*$/CONF_SWAPSIZE=1000/' /etc/dphys-swapfile
-    REBOOT=true
+# Disable disk-based swap
+if [ -e /etc/dphys-swapfile ]; then
+    apt-get purge -y dphys-swapfile
+    rm -f /var/swap
+fi
+
+# Enable zram swap
+# See https://github.com/ecdye/zram-config
+# The zram-config-main.zip is a downloaded snapshot of the git repository
+if [ ! -e /usr/local/sbin/zram-config ]; then
+    modprobe -a lz4 zram
+
+    unzip ./installer/linux-packages/zram-config-main.zip -d /tmp
+    /tmp/zram-config-main/install.bash
+
+    sed -i -E 's/^(swap\s+)(lzo-rle)(.*)$/\1lz4\3/' /etc/ztab
+    sed -i -E 's/^(swap.*)150\s*$/\1100/' /etc/ztab
+    sed -i -E 's/^(log.*)$/#\1/' /etc/ztab
+
+    systemctl restart zram-config
+
+    rm -rf /tmp/zram-config
 fi
 
 # Install .Xresources & .xinitrc
@@ -119,7 +136,7 @@ fi
 rm -rf /usr/share/plymouth/themes/buildbotics
 rm -rf /usr/share/plymouth/themes/onefinity
 mkdir -p /usr/share/plymouth/themes/onefinity/
-cp -av installer/splash/* /usr/share/plymouth/themes/onefinity/
+cp -av ./installer/splash/* /usr/share/plymouth/themes/onefinity/
 plymouth-set-default-theme -R onefinity
 
 grep 'quiet splash plymouth.ignore-serial-consoles logo.nologo' /boot/cmdline.txt >/dev/null
@@ -142,7 +159,7 @@ cp ./installer/config/rc.local /etc/
 
 # Install bbctrl
 if $UPDATE_PY; then
-    service bbctrl stop
+    systemctl stop bbctrl
 
     rm -rf /usr/local/lib/python*/dist-packages/bbctrl-*
 
@@ -154,7 +171,7 @@ if $UPDATE_PY; then
     HTTP_DIR=$(find /usr/local/lib/ -type d -name "http")
     chmod 777 $HTTP_DIR
 
-    service bbctrl restart
+    systemctl restart bbctrl
 fi
 
 # Install the service that turns off the screen during shutdown
