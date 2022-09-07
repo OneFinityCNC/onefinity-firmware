@@ -113,6 +113,8 @@ if [ ! -e /usr/local/sbin/zram-config ]; then
     sed -i -E 's/^(swap.*)150\s*$/\1100/' /etc/ztab
     sed -i -E 's/^(log.*)$/#\1/' /etc/ztab
 
+    sed -i -E 's/^Type=exec$/Type=simple/' /etc/systemd/system/zram-config.service
+
     systemctl restart zram-config
 
     rm -rf /tmp/zram-config
