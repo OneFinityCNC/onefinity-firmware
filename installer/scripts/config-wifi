@@ -1,47 +1,24 @@
 #!/bin/bash -e
 
-AP=false
 DISABLE=false
 SSID=
 PASS=
-CHANNEL=7
 REBOOT=false
 
 WLAN0_CFG=/etc/network/interfaces.d/wlan0
-HOSTAPD_CFG=/etc/hostapd/hostapd.conf
-DNSMASQ_CFG=/etc/dnsmasq.conf
 DHCPCD_CFG=/etc/dhcpcd.conf
 WPA_CFG=/etc/wpa_supplicant/wpa_supplicant.conf
 
 
 function query_config() {
-    if [ -e $WLAN0_CFG ]; then
-        SSID=$(grep wpa-ssid $WLAN0_CFG |
-                   sed 's/^[[:space:]]*wpa-ssid "\([^"]*\)"/\1/')
-        # echo "{\"ssid\": \"$SSID\", \"mode\": \"client\"}"
-        echo "{\"ssid\": \"$SSID\"}"
-
-    else
-        # if [ -e $HOSTAPD_CFG -a -e /etc/default/hostapd ]; then
-        #     SSID=$(grep ^ssid= $HOSTAPD_CFG | sed 's/^ssid=\(.*\)$/\1/')
-        #     CHANNEL=$(grep ^channel= $HOSTAPD_CFG |
-        #                   sed 's/^channel=\(.*\)$/\1/')
-
-        #     echo -n "{\"ssid\": \"$SSID\", "
-        #     echo "\"channel\": $CHANNEL, \"mode\": \"ap\"}"
-
-        # else
-        #     echo "{\"mode\": \"disabled\"}"
-        # fi
-
-        echo "{}"
-    fi
-
+    SSID=$(grep wpa-ssid $WLAN0_CFG |
+                sed 's/^[[:space:]]*wpa-ssid "\([^"]*\)"/\1/')
+    echo "{\"ssid\": \"$SSID\"}"
 }
 
 
 function disable_wifi() {
-    rm -f $WLAN0_CFG $HOSTAPD_CFG /etc/default/hostapd
+    rm -f $WLAN0_CFG
 }
 
 
@@ -88,12 +65,6 @@ function configure_dhcpcd() {
     echo "option interface_mtu"
     echo "require dhcp_server_identifier"
     echo "slaac private"
-
-    if $AP; then
-        echo
-        echo "interface wlan0"
-        echo "  static ip_address=192.168.43.1/24"
-    fi
 }
 
 
@@ -106,71 +77,6 @@ function configure_wifi() {
 }
 
 
-function configure_dnsmasq() {
-    echo "interface=wlan0"
-    echo "domain-needed"
-    echo "bogus-priv"
-    echo "dhcp-range=192.168.43.2,192.168.43.20,255.255.255.0,12h"
-}
-
-
-function configure_hostapd() {
-    echo "interface=wlan0"
-    echo "driver=nl80211"
-    echo "ssid=$SSID"
-    echo "hw_mode=g"
-    echo "channel=$CHANNEL"
-    echo "wmm_enabled=0"
-    echo "macaddr_acl=0"
-    echo "auth_algs=1"
-    echo "ignore_broadcast_ssid=0"
-    echo "wpa=2"
-    echo "wpa_passphrase=$PASS"
-    echo "wpa_key_mgmt=WPA-PSK"
-    echo "wpa_pairwise=TKIP"
-    echo "rsn_pairwise=CCMP"
-}
-
-
-function is_installed() {
-    dpkg-query -W --showformat='${Status}' $1 |
-        grep "install ok installed" >/dev/null
-    if [ $? -eq 0 ]; then echo true; else echo false; fi
-}
-
-
-function configure_ap() {
-    disable_wifi
-
-    # Install packages
-    (
-        $(is_installed dnsmasq) &&
-        $(is_installed hostapd) &&
-        $(is_installed iptables-persistent)
-
-    ) || (
-        export DEBIAN_FRONTEND=noninteractive
-        apt-get update
-        apt-get install -yq dnsmasq hostapd iptables-persistent
-    )
-
-    configure_dhcpcd  > $DHCPCD_CFG
-    configure_dnsmasq > $DNSMASQ_CFG
-    configure_hostapd > $HOSTAPD_CFG
-
-    echo "DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"" > /etc/default/hostapd
-
-    # Enable IP forwarding
-    sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
-    echo 1 > /proc/sys/net/ipv4/ip_forward
-
-    # Enable IP masquerading
-    iptables -t nat -F
-    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-    iptables-save > /etc/iptables/rules.v4
-}
-
-
 function usage() {
     echo "Usage: config-wifi [OPTIONS]"
     echo
@@ -178,12 +84,10 @@ function usage() {
     echo
     echo "OPTIONS:"
     echo
-    echo "  -a             Configure access point."
     echo "  -d             Disable wifi."
     echo "  -r             Reboot when done."
     echo "  -s <SSID>      Set SSID."
     echo "  -p <PASS>      Set password."
-    echo "  -c <CHANNEL>   Set wifi channel."
     echo "  -j             Report wifi config as JSON data."
     echo
 }
@@ -192,12 +96,10 @@ function usage() {
 # Parse args
 while [ $# -ne 0 ]; do
     case "$1" in
-        -a) AP=true ;;
         -d) DISABLE=true ;;
         -r) REBOOT=true; ;;
         -s) SSID="$2"; shift ;;
         -p) PASS="$2"; shift ;;
-        -c) CHANNEL="$2"; shift ;;
         -j) query_config; exit 0 ;;
 
         -h)
@@ -217,7 +119,6 @@ done
 
 if $DISABLE; then
     disable_wifi
-
 else
     # Check args
     function clean_str() {
@@ -241,21 +142,9 @@ else
       fi
     fi
 
-    echo "$CHANNEL" | grep '^[0-9]\{1,2\}' > /dev/null
-    if [ $? -ne 0 ]; then
-        echo "Invalid channel '$CHANNEL'"
-        exit 1
-    fi
-
     # Execute
-    if $AP; then
-        echo "Configuring Wifi access point"
-        configure_ap
-
-    else
-        echo "Configuring Wifi"
-        configure_wifi
-    fi
+    echo "Configuring Wifi"
+    configure_wifi
 fi
 
 
