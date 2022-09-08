@@ -1,30 +1,30 @@
 #!/usr/bin/env -S bash -e
 
 APT_PACKAGES=(
-    "build-essential"
-    "git"
-    "wget"
-    "binfmt-support"
-    "qemu"
-    "gcc-9"
-    "parted"
-    "udev"
-    "zerofree"
-    "gcc-avr"
-    "avr-libc"
-    "avrdude"
-    "python3"
-    "python3-pip"
-    "python3-tornado"
-    "inetutils-ping"
-    "curl"
-    "unzip"
-    "python3-setuptools"
-    "gcc-arm-linux-gnueabihf"
-    "bc"
-    "vim"
-    "locate"
-    "sudo"
+	"build-essential"
+	"git"
+	"wget"
+	"binfmt-support"
+	"qemu"
+	"gcc-9"
+	"parted"
+	"udev"
+	"zerofree"
+	"gcc-avr"
+	"avr-libc"
+	"avrdude"
+	"python3"
+	"python3-pip"
+	"python3-tornado"
+	"inetutils-ping"
+	"curl"
+	"unzip"
+	"python3-setuptools"
+	"gcc-arm-linux-gnueabihf"
+	"bc"
+	"vim"
+	"locate"
+	"sudo"
 )
 
 apt-get update
@@ -42,5 +42,5 @@ apt-get install -y nodejs
 mkdir -p /root/.ssh
 cat > /root/.ssh/config <<- END
 Host onefinity
-    User bbmc
+	User bbmc
 END
