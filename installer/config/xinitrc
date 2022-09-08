@@ -15,8 +15,7 @@ while true; do
         xrdb /home/pi/.Xresources
 
         # Start browser
-        /usr/local/bin/browser --no-first-run --disable-infobars \
-         --noerrdialogs --disable-3d-apis http://localhost/
+        /usr/local/bin/browser --no-first-run --disable-infobars --noerrdialogs --disable-3d-apis http://localhost/
     fi
 
     sleep 1

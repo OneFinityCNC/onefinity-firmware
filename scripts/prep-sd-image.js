@@ -3,7 +3,7 @@
 const merge = require("lodash.merge");
 const { basename, resolve } = require("path");
 const { parseArgs } = require("node:util");
-const { statSync, rmdirSync, copyFileSync, writeFileSync } = require("fs");
+const { statSync, rmdirSync, copyFileSync, writeFileSync, readFileSync } = require("fs");
 const { execSync } = require("child_process");
 const { exit } = require("process");
 const { glob } = require("glob");
@@ -66,16 +66,7 @@ const USER_FILES = [
     ".pki",
     ".ratpoison_history",
     ".Xauthority",
-    {
-        pattern: ".config/**",
-        ignore: [
-            "**/home/pi/.config",
-            "**/home/pi/.config/chromium",
-            "**/home/pi/.config/chromium/Default",
-            "**/home/pi/.config/chromium/Default/Extensions",
-            "**/home/pi/.config/chromium/Default/Extensions/*"
-        ]
-    },
+    ".config",
     "Downloads",
     "splash.png"
 ];
@@ -124,6 +115,7 @@ function main() {
             shrinkPartition(target, loopback, meta);
             zerofree(loopback);
             truncateImage(target, meta);
+            configureAutoExpand(target, meta);
             compress(target, meta);
         });
     } catch (error) {
@@ -223,41 +215,72 @@ function gatherMetadata(file) {
             }
         });
 
-        const [ number, start, end, size, type, filesystem, flags ] = partedOutput
+        const [ bootPartition, rootPartition ] = partedOutput
             .split("\n")
-            .at(-1)
-            .trim()
-            .split(/\s+/)
-            .map(col => parseInt(col) || col);
+            .slice(-2)
+            .map(line => line
+                .trim()
+                .split(/\s+/)
+                .map(col => parseInt(col) || col)
+            )
+            .map(columns => ({
+                number: columns[0],
+                start: columns[1],
+                end: columns[2],
+                size: columns[3],
+                type: columns[4],
+                filesystem: columns[5],
+                flags: columns[6]
+            }));
 
         return {
             initialImageSize,
-            rootPartition: {
-                number,
-                start,
-                end,
-                size,
-                type,
-                filesystem,
-                flags
-            }
+            bootPartition,
+            rootPartition
         };
     });
-
-/*
-currentsize="$(echo "$tune2fs_output" | grep '^Block count:' | tr -d ' ' | cut -d ':' -f 2)"
-blocksize="$(echo "$tune2fs_output" | grep '^Block size:' | tr -d ' ' | cut -d ':' -f 2)"
-partnewsize=$(($currentsize * $blocksize))
-newpartend=$(($partstart + $partnewsize))
-
-*/
 }
 
 function checkAndRepair(loopback) {
     return doStep("Checking the filesystem...", () => {
-        runCommand(`e2fsck -yf ${loopback}`, {
-            stdio: "inherit"
+        let success = true;
+
+        runCommand(`e2fsck -pf "${loopback}"`, {
+            stdio: "inherit",
+            onError: error => {
+                success = error.status < 4;
+                if (error.status >= 4) {
+                    info(`First e2fsck returned '${error.status}'.`);
+                }
+            }
         });
+
+        if (!success) {
+            info("Trying harder to fix the image");
+            runCommand(`e2fsck -y "${loopback}"`, {
+                stdio: "inherit",
+                onError: error => {
+                    success = error.status < 4;
+                    if (error.status >= 4) {
+                        info(`Second e2fsck returned '${error.status}'.`);
+                    }
+                }
+            });
+        }
+
+        if (!success) {
+            info("The filesystem must be pretty damaged.  Trying again with the alternate superblock.");
+            runCommand(`e2fsck -yf -b 32768 "${loopback}"`, {
+                stdio: "inherit",
+                onError: error => {
+                    if (error.status >= 4) {
+                        logErrorAndExit(`The final e2fsck attempt returned '${error.status}'.  Giving up.`, error);
+                    }
+                }
+            });
+        }
+
+        runCommand("sync");
     });
 }
 
@@ -265,12 +288,11 @@ function prepareFilesystem(loopback) {
     const mountpoint = runCommand("mktemp -d");
 
     const finallyHandler = () => {
-        info("Sleeping for 10 seconds, to allow the filesystem to flush");
-        runCommand("sleep 10");
-
         info("Unmounting the filesystem");
         runCommand(`umount "${mountpoint}"`);
         rmdirSync(mountpoint);
+
+        runCommand("sync");
     };
     const unregister = registerSignalHandler(finallyHandler);
 
@@ -278,7 +300,7 @@ function prepareFilesystem(loopback) {
         doStep("Removing unnecessary files from the filesystem...", () => {
             runCommand(`mount ${loopback} ${mountpoint}`);
 
-            scrub(mountpoint, SYSTEM_FILES);
+            scrubFiles(mountpoint, SYSTEM_FILES);
             scrubUserFiles(mountpoint, "/root");
             scrubUserFiles(mountpoint, "/home/bbmc");
             scrubUserFiles(mountpoint, "/home/pi");
@@ -297,7 +319,15 @@ function prepareFilesystem(loopback) {
                     variant_defaults.woodworker_x35
                 ), null, 4)
             );
+
+            const virtualKeyboardZip = resolve(`${__dirname}/../installer/linux-packages/virtualKeyboard.zip`);
+            const userPiHome = resolve(`${mountpoint}/home/pi`);
+            runCommand(`unzip "${virtualKeyboardZip}" -d "${userPiHome}"`);
+
+            runCommand(`chown -R 1000:1000 ${userPiHome}/.config`);
         });
+
+        runCommand("sync");
     } finally {
         finallyHandler();
         unregister();
@@ -306,12 +336,24 @@ function prepareFilesystem(loopback) {
 
 function shrinkFilesystem(loopback) {
     return doStep(`Shrinking the root filesystem`, () => {
-        runCommand(`resize2fs -p "${loopback}" -M`, {
-            stdio: "inherit",
-            onError: error => {
-                logErrorAndExit("Error while resizing", error);
-            }
-        });
+        // We run the shrink step multiple times, because
+        // each time, resize2fs can shrink it a little more,
+        // until eventually it can't.
+        //
+        // TODO: Switch to using pipes to both display the output and capture it
+        // We can then look at the output to determine when to stop, rather than
+        // using a fixed count for loop.
+        // See: https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
+        for (let i = 0; i < 5; ++i) {
+            runCommand(`resize2fs -p "${loopback}" -M`, {
+                stdio: "inherit",
+                onError: error => {
+                    logErrorAndExit("Error while resizing", error);
+                }
+            });
+
+            runCommand("sync");
+        }
     });
 }
 
@@ -333,6 +375,8 @@ function shrinkPartition(target, loopback, meta) {
         runCommand(`parted -s "${target}" unit B mkpart "${meta.rootPartition.type}" "${meta.rootPartition.start}" "${newEnd}"`, {
             onError: error => logErrorAndExit("parted failed while recreating the root partition", error)
         });
+
+        runCommand("sync");
     });
 }
 
@@ -342,26 +386,85 @@ function zerofree(loopback) {
         runCommand(`zerofree -v "${loopback}"`, {
             stdio: "inherit"
         });
+
+        runCommand("sync");
     });
 }
 
 function truncateImage(target, meta) {
     return doStep(`Shrinking the image`, () => {
-        const partedOutput = runCommand(`parted -s "${target}" unit B print free`, {
+        const partedOutput = runCommand(`parted -sm "${target}" unit B print free`, {
             onError: error => logErrorAndExit("parted failed while shrinking the image", error)
         });
 
-        const [ startOfFreeSpace ] = partedOutput
+        // The output of the parted command above will look something like this:
+        //
+        // BYT;
+        // image.img:31914983424B:file:512:512:msdos::;
+        // 1:16384B:1048575B:1032192B:free;
+        // 1:1048576B:135266303B:134217728B:fat32::boot;
+        // 2:135266304B:2002096639B:1866830336B:ext4::;
+        // 1:2002096640B:31914983423B:29912886784B:free;
+        //
+        // The format is:
+        // "number":"begin":"end":"size":"filesystem-type":"partition-name":"flags-set";
+        //
+        // We're interested in the last line only, to determine
+        // the start of the free space in the image, after the partitions
+
+        const [ , startOfFreeSpace, , , type ] = partedOutput
             .split("\n")
             .at(-1)
-            .trim()
-            .split(/\s+/)
+            .replace(/^([^;]+);.*$/, "$1")
+            .split(":")
             .map(col => parseInt(col) || col);
 
+        if (type !== "free") {
+            info("There is no free space after the root partition, skipping image shrinking.");
+            return;
+        }
+
         runCommand(`truncate -s "${startOfFreeSpace}" "${target}"`);
+        runCommand("sync");
 
         const { size: newSize } = statSync(target);
         info(`Shrunk ${target} from ${meta.initialImageSize} to ${newSize}`);
+    });
+}
+
+function configureAutoExpand(target, meta) {
+    const mountpoint = runCommand("mktemp -d");
+
+    return doStep("Configuring the root partition to autoexpand on first boot...", () => {
+        const loopback = runCommand(`losetup -f --show -o "${meta.bootPartition.start}" "${target}"`);
+
+        const finallyHandler = () => {
+            info("Unmounting the filesystem");
+
+            runCommand("sync");
+
+            runCommand(`umount "${mountpoint}"`);
+            runCommand(`losetup -d ${loopback}`);
+            rmdirSync(mountpoint);
+
+            runCommand("sync");
+        };
+        const unregister = registerSignalHandler(finallyHandler);
+
+        try {
+            runCommand(`mount ${loopback} ${mountpoint}`);
+
+            let cmdline = readFileSync(`${mountpoint}/cmdline.txt`, { encoding: "utf8" });
+            if (cmdline.match(/init_resize/)) {
+                logErrorAndExit("init_resize is already in /boot/cmdline.txt");
+            }
+
+            cmdline = `${cmdline.trim()} init=/usr/lib/raspi-config/init_resize.sh`;
+            writeFileSync(`${mountpoint}/cmdline.txt`, cmdline, { encoding: "utf8" });
+        } finally {
+            finallyHandler();
+            unregister();
+        }
     });
 }
 
@@ -378,7 +481,7 @@ function compress(target, meta) {
     });
 }
 
-function scrub(mountpoint, patterns) {
+function scrubFiles(mountpoint, patterns) {
     for (const _pattern of patterns) {
         const { pattern, ignore } = (typeof _pattern === "string")
             ? { pattern: _pattern }
@@ -402,7 +505,7 @@ function scrub(mountpoint, patterns) {
 }
 
 function scrubUserFiles(mountpoint, homedir) {
-    scrub(mountpoint, USER_FILES.map(item => {
+    scrubFiles(mountpoint, USER_FILES.map(item => {
         if (typeof item === "string") {
             return `${homedir}/${item}`;
         }
@@ -478,11 +581,17 @@ function logErrorAndExit(msg, error) {
     );
 
     if (error) {
-        console.error("Error:", {
+        console.error("Error:", JSON.stringify({
             name: error.name,
             code: error.code,
+            status: error.status,
+            signal: error.signal,
+            error: error.error,
+            pid: error.pid,
+            output: error.output,
+            msg: error.msg,
             message: error.message
-        });
+        }, null, 4));
     }
 
     exit(1);
