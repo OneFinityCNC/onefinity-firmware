@@ -37,7 +37,6 @@ should_resize_root_partition() {
 
     if [ "$ROOT_PART_END" -gt "$TARGET_END" ]; then
         FAIL_REASON="Root partition runs past the end of device"
-        echo $FAIL_REASON
         return 1
     fi
 
@@ -60,17 +59,8 @@ if should_resize_root_partition; then
         #   Remove itself from /boot/cmdline.txt
         #   Reboot the machine
         sudo mount /boot -o rw,remount
-        sed -i 's/\(.*\)/\1 init=\/usr\/lib\/raspi-config\/init_resize.sh/' /boot/cmdline.txt
+        sed -i -E 's|(.*)|\1 init=/usr/lib/raspi-config/init_resize.sh|' /boot/cmdline.txt
     fi
-
-    # On the first boot after init_resize, resize2fs_once will:
-    #   Resize the root fs to fill its partition
-    #   Remove itself from the registered systemd services
-    #   Delete itself from the filesystem
-    #   Therefore, never run again
-    cp ./installer/scripts/resize2fs_once /etc/init.d/resize2fs_once
-    chmod +x /etc/init.d/resize2fs_once
-    systemctl enable resize2fs_once
 
     exit 0
 else
