@@ -1,6 +1,7 @@
 <script type="ts">
     import Dialog, { Title, Content, Actions } from "@smui/dialog";
     import Button, { Label } from "@smui/button";
+    import LinearProgress from "@smui/linear-progress";
     import { waitForChange } from "$lib/StoreHelpers";
     import { ControllerMethods } from "$lib/RegisterControllerMethods";
     import { Config } from "$lib/ConfigStore";
@@ -14,6 +15,14 @@
     } from "$lib/ControllerState";
     import { numberWithUnit } from "$lib/RegexHelpers";
     import TextFieldWithOptions from "$components/TextFieldWithOptions.svelte";
+    import Icon from "svelte-icon";
+    import BitDiameter from "../svgs/probe-bit-diameter.svg?raw";
+    import CheckXYZ from "../svgs/probe-check-xyz.svg?raw";
+    import CheckZ from "../svgs/probe-check-z.svg?raw";
+    import PlaceXYZ from "../svgs/probe-place-xyz.svg?raw";
+    import PlaceZ from "../svgs/probe-place-z.svg?raw";
+    import PutAwayXYZ from "../svgs/probe-put-away-xyz.svg?raw";
+    import PutAwayZ from "../svgs/probe-put-away-z.svg?raw";
 
     const ValidSteps = [
         "None",
@@ -233,7 +242,7 @@
                 G38.2 Z -2 F${slowSeek}
                 G92 Z ${zOffset}
             
-                G91 G0 Z 3
+                G91 G0 Z 25
 
                 M2
             `);
@@ -301,10 +310,16 @@
                 {/each}
             </ul>
         </div>
-        <p>
+        <p style="width: 100%">
             {#if currentStep === "CheckProbe"}
                 Attach the probe magnet to the collet, then touch the probe
                 block to the bit.
+
+                <Icon
+                    data={probeType === "xyz" ? CheckXYZ : CheckZ}
+                    size="300px"
+                    class="probe-icon-svg"
+                />
             {:else if currentStep === "BitDimensions"}
                 <TextFieldWithOptions
                     label="Cutter diameter"
@@ -316,6 +331,8 @@
                     valid={isFinite(cutterDiameterMetric)}
                     helperText={`Examples: 1/2", 10 mm, 0.25 in`}
                 />
+
+                <Icon data={BitDiameter} size="150px" class="probe-icon-svg" />
             {:else if currentStep === "PlaceProbeBlock"}
                 {#if probeType === "xyz"}
                     Place the probe block face up, on the lower-left corner of
@@ -325,12 +342,21 @@
                     recess.
                 {/if}
 
+                <Icon
+                    data={probeType === "xyz" ? PlaceXYZ : PlaceZ}
+                    width="304px"
+                    height="129px"
+                    class="probe-icon-svg"
+                />
+
                 <p>
                     The probing procedure will begin as soon as you click
                     'Next'.
                 </p>
             {:else if currentStep === "Probe"}
                 Probing in progress...
+
+                <LinearProgress indeterminate />
             {:else if currentStep === "Done"}
                 {#if $probingFailed}
                     Could not find the probe block during probing!
@@ -343,6 +369,13 @@
                     </p>
                 {:else}
                     Don't forget to put away the probe!
+
+                    <Icon
+                        data={probeType === "xyz" ? PutAwayXYZ : PutAwayZ}
+                        width="329px"
+                        height="256px"
+                        class="probe-icon-svg"
+                    />
 
                     {#if probeType === "xyz"}
                         <p>The machine will now move to the XY origin.</p>
@@ -381,72 +414,88 @@
     $light: #ddd;
 
     :global {
-        #probe-dialog-content {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .bit-dimensions {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .steps {
-            margin-right: 50px;
-
-            ul {
-                margin: 0 auto;
-                list-style-type: none;
-                counter-reset: steps;
-                margin: 0;
-                font-family: sans-serif;
-                padding-inline-start: 20px;
+        .probe-dialog {
+            .mdc-linear-progress {
+                height: 10px;
+                margin: 10px 0;
             }
 
-            ul li {
-                padding: 0 0 12px 30px;
-                position: relative;
-                margin: 0;
-                white-space: nowrap;
-                color: $text;
+            .mdc-linear-progress__bar-inner {
+                border-top-width: 10px;
+            }
 
-                &:after {
-                    position: absolute;
-                    top: 3px;
-                    left: 0.5px;
-                    content: "";
-                    border: 2px solid $text;
-                    border-radius: 50%;
-                    display: inline-block;
-                    height: 11px;
-                    width: 11px;
-                    text-align: center;
-                    line-height: 12px;
-                    background: transparent;
+            .probe-icon-svg {
+                display: block;
+                margin: 20px auto;
+            }
+
+            #probe-dialog-content {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .bit-dimensions {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .steps {
+                margin-right: 50px;
+
+                ul {
+                    margin: 0 auto;
+                    list-style-type: none;
+                    counter-reset: steps;
+                    margin: 0;
+                    font-family: sans-serif;
+                    padding-inline-start: 20px;
                 }
 
-                &:before {
-                    position: absolute;
-                    left: 7px;
-                    top: 22px;
-                    bottom: 0;
-                    content: "";
-                    width: 0;
-                    border-left: 2px solid $text;
-                }
-
-                &:last-of-type:before {
-                    border: none;
-                }
-
-                &.active {
-                    color: $primary;
-                    font-weight: bold;
+                ul li {
+                    padding: 0 0 12px 30px;
+                    position: relative;
+                    margin: 0;
+                    white-space: nowrap;
+                    color: $text;
 
                     &:after {
-                        border: 3px solid $primary;
-                        top: 2.5px;
-                        left: 0;
+                        position: absolute;
+                        top: 3px;
+                        left: 0.5px;
+                        content: "";
+                        border: 2px solid $text;
+                        border-radius: 50%;
+                        display: inline-block;
+                        height: 11px;
+                        width: 11px;
+                        text-align: center;
+                        line-height: 12px;
+                        background: transparent;
+                    }
+
+                    &:before {
+                        position: absolute;
+                        left: 7px;
+                        top: 22px;
+                        bottom: 0;
+                        content: "";
+                        width: 0;
+                        border-left: 2px solid $text;
+                    }
+
+                    &:last-of-type:before {
+                        border: none;
+                    }
+
+                    &.active {
+                        color: $primary;
+                        font-weight: bold;
+
+                        &:after {
+                            border: 3px solid $primary;
+                            top: 2.5px;
+                            left: 0;
+                        }
                     }
                 }
             }
