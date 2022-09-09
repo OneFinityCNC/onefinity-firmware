@@ -43,5 +43,5 @@ apt-get install -y nodejs
 mkdir -p /root/.ssh
 cat > /root/.ssh/config <<- END
 Host onefinity
-	User bbmc
+        User bbmc
 END
