@@ -11,7 +11,8 @@ module.exports = {
     assertOS,
     assertEffectiveRoot,
     assertFileExists,
-    assertInstalled
+    assertInstalled,
+    doFinally
 };
 
 let signalHandlers = [];
@@ -145,5 +146,16 @@ function assertInstalled(tools) {
             Install them via:
                 apt-get install -y ${missingTools.join(" ")}
         `);
+    }
+}
+
+async function doFinally(doHandler, finallyHandler) {
+    const unregister = registerSignalHandler(finallyHandler);
+
+    try {
+        await doHandler();
+    } finally {
+        unregister();
+        await finallyHandler();
     }
 }

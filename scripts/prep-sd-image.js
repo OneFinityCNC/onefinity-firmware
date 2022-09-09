@@ -3,12 +3,30 @@
 const inquirer = require("inquirer");
 const merge = require("lodash.merge");
 const { resolve } = require("path");
-const { statSync, rmdirSync, copyFileSync, writeFileSync, readFileSync, existsSync, rmSync } = require("fs");
+const {
+    statSync,
+    rmdirSync,
+    copyFileSync,
+    writeFileSync,
+    readFileSync,
+    existsSync,
+    rmSync
+} = require("fs");
 const { exit } = require("process");
 const { glob } = require("glob");
 const packageJSON = require("../package.json");
 const config_defaults = require("../src/resources/onefinity_defaults.json");
-const { info, runCommand, logErrorAndExit, assertOS, assertEffectiveRoot, assertFileExists, assertInstalled, initSignalHandlers, registerSignalHandler } = require("./util");
+const {
+    info,
+    runCommand,
+    logErrorAndExit,
+    assertOS,
+    assertEffectiveRoot,
+    assertFileExists,
+    assertInstalled,
+    initSignalHandlers,
+    doFinally
+} = require("./util");
 
 const variant_defaults = {
     machinist_x35: require("../src/resources/onefinity_machinist_x35_defaults.json"),
@@ -67,20 +85,7 @@ main();
 async function main() {
     let meta;
 
-    const finallyHandler = () => {
-        if (meta) {
-            if (existsSync(meta.imageFilePath)) {
-                rmSync(meta.imageFilePath);
-            }
-
-            if (existsSync(meta.compressedImageFilePath)) {
-                rmSync(meta.compressedImageFilePath);
-            }
-        }
-    };
-    const unregister = registerSignalHandler(finallyHandler);
-
-    try {
+    await doFinally(async () => {
         assertOS();
         assertEffectiveRoot();
         assertFileExists(ORIGINAL_IMAGE_FILENAME);
@@ -104,12 +109,17 @@ async function main() {
         await configureAutoExpand(meta);
         compress(meta);
         moveImageFiles(meta);
-    } catch (error) {
-        finallyHandler();
-        unregister();
+    }, () => {
+        if (meta) {
+            if (existsSync(meta.imageFilePath)) {
+                rmSync(meta.imageFilePath);
+            }
 
-        console.error(error);
-    }
+            if (existsSync(meta.compressedImageFilePath)) {
+                rmSync(meta.compressedImageFilePath);
+            }
+        }
+    });
 }
 
 function createImageFileCopy() {
@@ -130,18 +140,20 @@ function createImageFileCopy() {
 async function attachToLoopback(meta, partition, cb) {
     info("Attaching the image to a loopback device...");
 
-    const start = meta.partitions[partition].start;
-    const loopback = runCommand(`losetup -f --show -o "${start}" "${meta.imageFilePath}"`);
+    let loopback;
+    await doFinally(
+        async () => {
+            const start = meta.partitions[partition].start;
+            loopback = runCommand(`losetup -f --show -o "${start}" "${meta.imageFilePath}"`);
 
-    const finallyHandler = () => runCommand(`losetup -d ${loopback}`);
-    const unregister = registerSignalHandler(finallyHandler);
-
-    try {
-        await cb(loopback);
-    } finally {
-        finallyHandler();
-        unregister();
-    }
+            await cb(loopback);
+        },
+        () => {
+            if (loopback) {
+                runCommand(`losetup -d ${loopback}`);
+            }
+        }
+    );
 }
 
 function prepareImage() {
@@ -417,23 +429,17 @@ function getCompressedFilename(target) {
 async function mountLoopback(loopback, cb) {
     let mountpoint;
 
-    const finallyHandler = () => {
-        if (mountpoint) {
-            runCommand(`umount "${mountpoint}"`);
-            rmdirSync(mountpoint);
-        }
-    };
-    const unregister = registerSignalHandler(finallyHandler);
-
-    try {
+    await doFinally(async () => {
         mountpoint = runCommand("mktemp --tmpdir -d onefinity-raspi-root-XXXXXXXXXX");
 
         runCommand(`mount ${loopback} ${mountpoint}`);
         await cb(mountpoint);
-    } finally {
-        finallyHandler();
-        unregister();
-    }
+    }, () => {
+        if (mountpoint) {
+            runCommand(`umount "${mountpoint}"`);
+            rmdirSync(mountpoint);
+        }
+    });
 }
 
 function scrubFiles(mountpoint, patterns) {
