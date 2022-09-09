@@ -1,1 +1,2 @@
 watchdog==0.10.6
+evdev==1.6.0

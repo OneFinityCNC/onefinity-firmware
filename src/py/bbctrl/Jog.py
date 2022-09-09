@@ -1,93 +1,594 @@
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
+from bbctrl.Ctrl import Ctrl
+from bbctrl.Log import Logger
+from evdev.ecodes import EV, EV_ABS, EV_KEY
+import errno
+import evdev
+import functools
+import hashlib
+import json
+import os
+import pyudev
+import re
+import traceback
+import typing
 
-import inevent
-from inevent.Constants import *
+userGamepadConfigs = {}
+
+gamepadConfigs = {
+    "default": {
+        "sign-x": 1,
+        "sign-y": -1,
+        "sign-z": -1,
+        "deadband": 0.15,
+        "debug": False,
+    },
+    "9E2B3A63": {
+        "description": "Logitech 710, X mode",
+        "EV_KEY:308": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:304": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:4": "axis-z",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+        "EV_ABS:2": "lock-y",
+        "EV_ABS:5": "lock-x",
+    },
+    "B98EF4EC": {
+        "description": "Logitech 710, D mode",
+        "EV_KEY:307": "speed-4",
+        "EV_KEY:306": "speed-3",
+        "EV_KEY:305": "speed-2",
+        "EV_KEY:304": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:308": "lock-y",
+        "EV_KEY:309": "lock-x",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+    },
+    "268256FD": {
+        "description": "EasySMX ESM-9013, top lights mode",
+        "EV_KEY:308": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:304": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:4": "axis-z",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+        "EV_ABS:2": "lock-y",
+        "EV_ABS:5": "lock-x",
+    },
+    "23CEC0CB": {
+        "description": "EasySMX ESM-9013, left lights mode",
+        "EV_KEY:304": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:306": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:308": "lock-y",
+        "EV_KEY:309": "lock-x",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+    },
+    "370DCB72": {
+        "description": "EasySMX ESM-9013, bottom lights mode",
+        "EV_KEY:308": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:304": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+        "EV_KEY:312": "lock-y",
+        "EV_KEY:313": "lock-x",
+    },
+    "0BD0841F": {
+        "description": "Sony Playstation 4 Dual-Shock Controller",
+        "EV_KEY:307": "speed-4",
+        "EV_KEY:306": "speed-3",
+        "EV_KEY:305": "speed-2",
+        "EV_KEY:304": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:308": "lock-y",
+        "EV_KEY:309": "lock-x",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+    },
+    "D09463DD": {
+        "description": "Sony Playstation 5 Controller",
+        "EV_KEY:307": "speed-4",
+        "EV_KEY:306": "speed-3",
+        "EV_KEY:305": "speed-2",
+        "EV_KEY:304": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:308": "lock-y",
+        "EV_KEY:309": "lock-x",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+    },
+    "06656EBD": {
+        "description": "XBox One Controller",
+        "EV_KEY:308": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:304": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:4": "axis-z",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+        "EV_ABS:2": "lock-y",
+        "EV_ABS:5": "lock-x",
+    },
+    "BFF99E89": {
+        "description": "XBox 360 Controller",
+        "EV_KEY:308": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:304": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:4": "axis-z",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+        "EV_ABS:2": "lock-y",
+        "EV_ABS:5": "lock-x",
+    },
+    "4E0C75F7": {
+        "description": "EasySMX ESM-9100 XBox Controller, top lights mode",
+        "EV_KEY:308": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:304": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:4": "axis-z",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:4": "axis-z"
+    },
+    "E310BCC0": {
+        "description": "EasySMX ESM-9100, left lights mode",
+        "EV_KEY:304": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:306": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:308": "lock-y",
+        "EV_KEY:309": "lock-x",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+    },
+    "96D2AC48": {
+        "description": "EasySMX ESM-9100, bottom lights mode",
+        "EV_KEY:308": "speed-4",
+        "EV_KEY:305": "speed-3",
+        "EV_KEY:304": "speed-2",
+        "EV_KEY:307": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:310": "lock-y",
+        "EV_KEY:311": "lock-x",
+        "EV_KEY:312": "lock-y",
+        "EV_KEY:313": "lock-x",
+    },
+}
 
 
-# Listen for input events
-class Jog(inevent.JogHandler):
-    def __init__(self, ctrl):
-        self.ctrl = ctrl
-        self.log = ctrl.log.get('Jog')
+def safe_int(s, base=10, val=None):
+    try:
+        return int(s, base)
+    except ValueError:
+        return val
 
-        config = {
-            "Logitech Logitech RumblePad 2 USB": {
-                "deadband": 0.1,
-                "axes":     [ABS_X, ABS_Y, ABS_RZ, ABS_Z],
-                "dir":      [1, -1, -1, 1],
-                "arrows":   [ABS_HAT0X, ABS_HAT0Y],
-                "speed":    [0x120, 0x121, 0x122, 0x123],
-                "lock":     [0x124, 0x125],
-            },
 
-            "default": {
-                "deadband": 0.1,
-                "axes":     [ABS_X, ABS_Y, ABS_RY, ABS_RX],
-                "dir":      [1, -1, -1, 1],
-                "arrows":   [ABS_HAT0X, ABS_HAT0Y],
-                "speed":    [0x133, 0x130, 0x131, 0x134],
-                "lock":     [0x136, 0x137],
+def get_udev_prop(device: pyudev.Device, propertyName: str):
+    try:
+        return device.properties[propertyName]
+    except:
+        return None
+
+
+def sorted_json(value):
+    return json.dumps(value, sort_keys=True)
+
+
+AbsMinMax = typing.NamedTuple('AbsMinMax', [('min', float), ('max', float)])
+
+
+def processCapabilities(capabilities):
+    result = {}
+
+    for (type, details) in capabilities.items():
+        if type == EV_KEY:
+            result[type] = details
+
+        if type == EV_ABS:
+            result[type] = {
+                code: AbsMinMax(float(info.min), float(info.max))
+                for (code, info) in details
             }
+
+    return result
+
+
+# A forward declaration, so Command can reference it
+class Gamepad(object):
+    pass
+
+
+class Command(object):
+
+    def __init__(self, id: str, event: evdev.InputEvent, value: int,
+                 gamepad: Gamepad):
+        self.id = id
+        self.event = event
+        self.value = value
+        self.gamepad = gamepad
+
+    def __str__(self):
+        return "Command({}={}, Event(type={}, code={}, value={}))".format(
+            self.id, self.value, EV[self.event.type], self.event.code,
+            self.event.value)
+
+
+class Gamepad(object):
+    _logOnceRecord = set()
+    _eventValuesByCode = {}
+
+    def __init__(self, log: Logger, _evdev: evdev.InputDevice,
+                 _udev: pyudev.Device):
+        self._log = log
+        self._evdev = _evdev
+        self._udev = _udev
+
+        self._capabilities = processCapabilities(_evdev.capabilities())
+
+        self._details = {
+            "evdev": {
+                "name": _evdev.name,
+                "vendor": _evdev.info.vendor,
+                "product": _evdev.info.product,
+                "version": _evdev.info.version,
+                "capabilities": self._capabilities,
+            },
+            "udev": {key: _udev.properties[key]
+                     for key in _udev.properties}
         }
 
-        super().__init__(config)
+        json = sorted_json(self._details["evdev"])
+        self.hash = hashlib.sha256(json.encode()).hexdigest()[-8:].upper()
 
-        self.v = [0.0] * 4
-        self.lastV = self.v
-        self.callback()
+        self.config = {
+            **gamepadConfigs.get("default"),
+            **userGamepadConfigs.get("default", {}),
+            **gamepadConfigs.get(self.hash, {}),
+            **userGamepadConfigs.get(self.hash, {})
+        }
 
-        self.processor = inevent.InEvent(ctrl.ioloop, self, types = ['js'])
+    def read(self):
+        return self._evdev.read()
+
+    @property
+    def fd(self):
+        return self._evdev.fd
+
+    @property
+    def devicePath(self):
+        return self._evdev.path
+
+    def getCommandFromEvent(self, event: evdev.InputEvent) -> Command:
+        if event.type not in [EV_ABS, EV_KEY]:
+            return
+
+        value = self.scaleAndClampValue(event)
+
+        lastValue = self._eventValuesByCode.get(event.code)
+        if value == lastValue:
+            return
+
+        self._eventValuesByCode[event.code] = value
+
+        eventSignature = "{}:{}".format(EV[event.type], event.code)
+        commandId = self.config.get(eventSignature)
+
+        if not commandId:
+            self.logOnce("Unmapped event: {}".format(eventSignature))
+            return
+
+        command = Command(commandId, event, value, self)
+
+        self.logDebug(command)
+
+        return command
+
+    def scaleAndClampValue(self, event: evdev.InputEvent):
+        if event.type != EV_ABS:
+            return event.value
+
+        info = self._capabilities[EV_ABS].get(event.code)  # type: AbsMinMax
+        if not info:
+            return 0
+
+        # Clamp the value to the device's min/max range
+        value = float(max(info.min, min(info.max, event.value)))
+
+        # Remap the value from the device range to -1..1
+        value = ((value - info.min) / (info.max - info.min)) * 2.0 - 1.0
+
+        sign = -1 if value < 0 else 1
+        value = abs(value)
+
+        deadband = self.config.get("deadband", 0.15)
+        if value < deadband:
+            return 0
+
+        # Remap the value to use the full range, with the "deadband" range removed
+        # e.g. if value == deadband, the new value will be zero
+        delta = value - deadband
+        range = 1 - deadband
+        value = (delta * sign) / range
+
+        return round(value, 3)
+
+    def log(self, msg):
+        self._log.info("{}: {}".format(self.hash, msg))
+
+    def logOnce(self, msg):
+        if self.config.get("debug") or msg not in self._logOnceRecord:
+            self._logOnceRecord.add(msg)
+            self.log(msg)
+
+    def logDebug(self, msg):
+        if self.config.get("debug"):
+            self.log(msg)
+
+    def __str__(self) -> str:
+        return sorted_json({
+            "devicePath": self.devicePath,
+            "bustype": self._evdev.info.bustype,
+            "details": self._details,
+            "hash": self.hash
+        })
 
 
-    def up(self): self.ctrl.lcd.page_up()
-    def down(self): self.ctrl.lcd.page_down()
-    def left(self): self.ctrl.lcd.page_left()
-    def right(self): self.ctrl.lcd.page_right()
+class Jog(object):
+    gamepads = {}  # type: dict[typing.Union[int, str], Gamepad]
+    lock = {"x": False, "y": False}
+    axes = {"x": 0, "y": 0, "z": 0}
+    speed = 3  # a resonable default speed, not too fast, not too slow
+    changed = False
 
+    def __init__(self, ctrl: Ctrl):
+        self.ctrl = ctrl
+        self.ioloop = ctrl.ioloop
+        self.log = ctrl.log.get('Jog')
 
-    def callback(self):
-        if self.v != self.lastV:
-            self.lastV = self.v
+        self._loadUserGamepadConfigs()
+        self._startMonitoring()
+        self._discoverGamepads()
+        self._updateJogging()
+
+    def _loadUserGamepadConfigs(self):
+        try:
+            path = self.ctrl.get_path('gamepads.json')
+            if os.path.exists(path):
+                with open(path, 'r') as f:
+                    global userGamepadConfigs
+                    userGamepadConfigs = json.load(f)
+        except:
+            self.log.info(traceback.format_exc())
+            self.log.info("Failed to read 'gamepads.json'")
+
+    def _startMonitoring(self):
+        self.udev_context = pyudev.Context()
+        self.monitor = pyudev.Monitor.from_netlink(self.udev_context)
+        self.monitor.filter_by(subsystem='input')
+        self.ctrl.ioloop.add_handler(self.monitor, self._udevHandler,
+                                     self.ctrl.ioloop.READ)
+        self.monitor.start()
+
+    def _udevHandler(self, fd, events):
+        for udev in iter(functools.partial(self.monitor.poll, 0), None):
+            isEventDevice = re.search(r"/event\d+$", udev.device_node or "")
+            if not isEventDevice:
+                continue
+
+            inputJoystick = safe_int(udev.properties["ID_INPUT_JOYSTICK"])
+
+            if inputJoystick != 1:
+                self.log.info("Ignoring non-gamepad device: {}".format(
+                    sorted_json(
+                        {key: udev.properties[key]
+                         for key in udev.properties})))
+                continue
+
+            if udev.action == 'add':
+                self._listen(udev.device_node)
+            elif udev.action == 'remove':
+                self._forget(udev.device_node)
+
+    def _discoverGamepads(self):
+        with open("/proc/bus/input/devices", "r") as file:
+            for line in file:
+                # Matches lines from '/proc/bus/input/devices' that look like:
+                # H: Handlers=js1 event0
+                if not re.match(r"H:\s*Handlers\s*=.*\bjs\d+\b", line):
+                    continue
+
+                match = re.search(r"\bevent\d+\b", line)
+                if not match:
+                    continue
+
+                self._listen("/dev/input/{}".format(match.group()))
+
+    def _listen(self, devicePath: str):
+        gamepad = Gamepad(
+            self.log, evdev.InputDevice(devicePath),
+            pyudev.Devices.from_device_file(self.udev_context, devicePath))
+
+        self.log.info("Found gamepad: {}".format(gamepad))
+
+        self.gamepads[gamepad.fd] = self.gamepads[devicePath] = gamepad
+
+        self.ioloop.add_handler(gamepad.fd, self._gamepadHandler,
+                                self.ioloop.READ)
+
+    def _forget(self, devicePath: str):
+        gamepad = self.gamepads.get(devicePath)
+        if not gamepad:
+            return
+
+        gamepad.log("Gamepad removed: {}".format(devicePath))
+
+        self.ioloop.remove_handler(gamepad.fd)
+        del self.gamepads[gamepad.devicePath]
+        del self.gamepads[gamepad.fd]
+
+    def _gamepadHandler(self, fd, events):
+        gamepad = self.gamepads.get(fd)
+        if not gamepad:
+            self.log.info("Unknown gamepad? {}".format(fd))
+            return
+
+        try:
+            for event in gamepad.read():
+                command = gamepad.getCommandFromEvent(event)
+                self._processCommand(command)
+        except BlockingIOError:
+            pass
+        except OSError as error:
+            if error.errno == errno.ENODEV:
+                self._forget(gamepad.devicePath)
+            else:
+                gamepad.log(traceback.format_exc())
+        except Exception as error:
+            gamepad.log(traceback.format_exc())
+
+    def _processCommand(self, command: Command):
+        if not command:
+            return
+
+        processor = self.commandProcessors.get(command.id)
+        if not processor:
+            command.gamepad.log("Bad command: {}".format(command))
+            return
+
+        processor(self, command)
+
+    def _processSpeedCommand(self, command: Command):
+        match = re.match(r"^speed-(\d)$", command.id)
+        speed = int(match.group(1)) if match else 0
+        if speed not in [1, 2, 3, 4]:
+            command.gamepad.log("Bad speed command: {}".format(command))
+
+        self.changed = self.changed or self.speed != speed
+        self.speed = speed
+
+    def _processAxisCommand(self, command: Command):
+        match = re.match(r"^axis-(.)$", command.id)
+        axis = match.group(1) if match else ""
+        if axis not in ["x", "y", "z"]:
+            command.gamepad.log("Bad axis command: {}".format(command))
+
+        sign = command.gamepad.config.get("sign-{}".format(axis), 1)
+        oldValue = self.axes[axis]
+        locked = self.lock.get(axis, False)
+
+        self.axes[axis] = 0 if locked else command.value * sign
+        self.changed = self.changed or oldValue != self.axes[axis]
+
+        command.gamepad.logDebug(
+            "{}(value={}, oldValue={}, sign={}, locked={})".format(
+                command.id, self.axes[axis], oldValue, sign, locked))
+
+    def _processLockCommand(self, command: Command):
+        match = re.match(r"^lock-(.)$", command.id)
+        axis = match.group(1) if match else ""
+        if axis not in ["x", "y"]:
+            command.gamepad.log("Bad lock command: {}".format(command))
+
+        if command.event.type == EV_ABS:
+            self.lock[axis] = bool(command.value > -0.9)
+        else:
+            self.lock[axis] = bool(command.value)
+
+    def _processDisabled(self, command: Command):
+        pass
+
+    def _updateJogging(self):
+        try:
+            if not self.changed:
+                return
+
+            self.changed = False
+
+            if self.speed == 1: scale = 1.0 / 128.0
+            if self.speed == 2: scale = 1.0 / 32.0
+            if self.speed == 3: scale = 1.0 / 4.0
+            if self.speed == 4: scale = 1.0
+
+            axes = {axis: value * scale for (axis, value) in self.axes.items()}
             try:
-                axes = {}
-                for i in range(len(self.v)): axes["xyzabc"[i]] = self.v[i]
                 self.ctrl.mach.jog(axes)
+            except:
+                self.log.info(traceback.format_exc())
+        finally:
+            # We only update 4 times a second, to keep from overwhelming the system
+            # EV_ABS events can happen hundreds of times a second.
+            self.ctrl.ioloop.call_later(0.25, self._updateJogging)
 
-            except Exception as e:
-                self.log.warning('Jog: %s', e)
-
-        self.ctrl.ioloop.call_later(0.25, self.callback)
-
-
-    def changed(self):
-        scale = 1.0
-        if self.speed == 1: scale = 1.0 / 128.0
-        if self.speed == 2: scale = 1.0 / 32.0
-        if self.speed == 3: scale = 1.0 / 4.0
-
-        self.v = [x * scale for x in self.axes]
+    commandProcessors = {
+        "speed-1": _processSpeedCommand,
+        "speed-2": _processSpeedCommand,
+        "speed-3": _processSpeedCommand,
+        "speed-4": _processSpeedCommand,
+        "axis-x": _processAxisCommand,
+        "axis-y": _processAxisCommand,
+        "axis-z": _processAxisCommand,
+        "lock-x": _processLockCommand,
+        "lock-y": _processLockCommand,
+        "disabled": _processDisabled
+    }  # type: dict[str, typing.Callable[[Command], None]]

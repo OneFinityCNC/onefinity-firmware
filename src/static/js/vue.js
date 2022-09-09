@@ -394,7 +394,7 @@
   var inBrowser = typeof window !== 'undefined' && Object.prototype.toString.call(window) !== '[object Object]';
 
   // detect devtools
-  var devtools = inBrowser && window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
+  var devtools = false;
 
   // UA sniffing for working around browser-specific quirks
   var UA = inBrowser && window.navigator.userAgent.toLowerCase();
@@ -9677,14 +9677,5 @@ var template = Object.freeze({
 
   Vue.version = '1.0.17';
 
-  // devtools global hook
-  /* istanbul ignore next */
-  if (devtools) {
-    devtools.emit('init', Vue);
-  } else if ('development' !== 'production' && inBrowser && /Chrome\/\d+/.test(window.navigator.userAgent)) {
-    console.log('Download the Vue Devtools for a better development experience:\n' + 'https://github.com/vuejs/vue-devtools');
-  }
-
   return Vue;
-
 }));

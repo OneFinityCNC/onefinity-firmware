@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=onefinity
+Description=Onefinity
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/onefinity
+ScriptFile=/usr/share/plymouth/themes/onefinity/onefinity.script

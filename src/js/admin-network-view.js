@@ -1,14 +1,14 @@
 module.exports = {
-  template: "#admin-network-view-template",
+    template: "#admin-network-view-template",
 
-  attached: function () {
-    this.svelteComponent = SvelteComponents.create(
-      "AdminNetworkView",
-      document.getElementById("svelte-root")
-    );
-  },
+    attached: function() {
+        this.svelteComponent = SvelteComponents.createComponent(
+            "AdminNetworkView",
+            document.getElementById("admin-network")
+        );
+    },
 
-  detached: function() {
-    this.svelteComponent.$destroy();
-  }
+    detached: function() {
+        this.svelteComponent.$destroy();
+    }
 };

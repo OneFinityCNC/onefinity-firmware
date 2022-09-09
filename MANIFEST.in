@@ -1,6 +1,6 @@
 include package.json README.md requirements.txt
-graft scripts
-graft python-packages
+graft installer
+include scripts/install.sh
 graft src/py/bbctrl/http
 graft src/py/camotics
 include src/avr/bbctrl-avr-firmware.hex

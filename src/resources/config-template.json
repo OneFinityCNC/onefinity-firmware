@@ -22,11 +22,6 @@
       "max": 100000000,
       "unit": "mm/min²",
       "default": 200000
-    },
-    "probing-prompts": {
-      "help": "Enable or disable safety prompts during and after probing",
-      "type": "bool",
-      "default": true
     }
   },
 
@@ -507,14 +502,14 @@
     },
     "probe-fast-seek": {
       "type": "float",
-      "unit": "mm/m",
+      "unit": "mm/min",
       "min": 0,
       "max": 1000,
       "default": 200
     },
     "probe-slow-seek": {
       "type": "float",
-      "unit": "mm/m",
+      "unit": "mm/min",
       "min": 0,
       "max": 1000,
       "default": 25

@@ -4,6 +4,9 @@ body
 [v-cloak]
   display none
 
+.menu-link
+  z-index unset
+
 tt
   color #000
   background #eee
@@ -29,6 +32,10 @@ tt
   clear right
 
 .header
+  height 140px
+  padding 0
+
+.nav-header
     padding-left 60px
     display flex
 
@@ -282,6 +289,12 @@ span.unit
     // The jogging buttons, etc.
     .control-buttons button
       font-size 150%
+      width 100px
+      height 100px
+
+    .jog-units
+      font-size initial
+      margin-left 5px
 
     &:first-child
       margin 0.5em 0
@@ -350,6 +363,7 @@ span.unit
     .axis
       .name
         text-transform capitalize
+        vertical-align middle
 
       .name, .position
         font-size 24pt
@@ -436,7 +450,7 @@ span.unit
       min-width 8em
       width 100%
 
-    .mach_units
+    .units
       padding 0
 
       select

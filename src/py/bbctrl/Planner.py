@@ -1,46 +1,16 @@
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
+from bbctrl.CommandQueue import CommandQueue
+import bbctrl.Cmd as Cmd
+import camotics.gplan as gplan  # pylint: disable=no-name-in-module,import-error
 import json
 import math
 import re
 import time
-from collections import deque
-import camotics.gplan as gplan # pylint: disable=no-name-in-module,import-error
-import bbctrl.Cmd as Cmd
-from bbctrl.CommandQueue import CommandQueue
 
-
-reLogLine = re.compile(
-    r'^(?P<level>[A-Z])[0-9 ]:'
-    r'((?P<file>[^:]+):)?'
-    r'((?P<line>\d+):)?'
-    r'((?P<column>\d+):)?'
-    r'(?P<msg>.*)$')
+reLogLine = re.compile(r'^(?P<level>[A-Z])[0-9 ]:'
+                       r'((?P<file>[^:]+):)?'
+                       r'((?P<line>\d+):)?'
+                       r'((?P<column>\d+):)?'
+                       r'(?P<msg>.*)$')
 
 
 def log_floats(o):
@@ -50,10 +20,12 @@ def log_floats(o):
     return o
 
 
-def log_json(o): return json.dumps(log_floats(o))
+def log_json(o):
+    return json.dumps(log_floats(o))
 
 
 class Planner():
+
     def __init__(self, ctrl):
         self.ctrl = ctrl
         self.log = ctrl.log.get('Planner')
@@ -64,20 +36,22 @@ class Planner():
 
         ctrl.state.add_listener(self._update)
 
-        self.reset(stop = False)
+        self.reset(stop=False)
         self._report_time()
 
+    def is_busy(self):
+        return self.is_running() or self.cmdq.is_active()
 
-    def is_busy(self): return self.is_running() or self.cmdq.is_active()
-    def is_running(self): return self.planner.is_running()
-    def position_change(self): self._position_dirty = True
+    def is_running(self):
+        return self.planner.is_running()
 
+    def position_change(self):
+        self._position_dirty = True
 
-    def _sync_position(self, force = False):
+    def _sync_position(self, force=False):
         if not force and not self._position_dirty: return
         self._position_dirty = False
         self.planner.set_position(self.ctrl.state.get_position())
-
 
     def get_config(self, mdi, with_limits):
         state = self.ctrl.state
@@ -88,21 +62,22 @@ class Planner():
         cfg = {
             # NOTE Must get current units not configured default units
             'default-units': 'METRIC' if state.get('metric') else 'IMPERIAL',
-            'max-vel':   state.get_axis_vector('vm', 1000),
+            'max-vel': state.get_axis_vector('vm', 1000),
             'max-accel': state.get_axis_vector('am', 1000000),
-            'max-jerk':  state.get_axis_vector('jm', 1000000),
-            'rapid-auto-off':  config.get('rapid-auto-off') and is_pwm,
+            'max-jerk': state.get_axis_vector('jm', 1000000),
+            'rapid-auto-off': config.get('rapid-auto-off') and is_pwm,
             'max-blend-error': deviation,
             'max-merge-error': deviation,
-            'max-arc-error':   deviation / 10,
-            'junction-accel':  config.get('junction-accel'),
+            'max-arc-error': deviation / 10,
+            'junction-accel': config.get('junction-accel'),
         }
 
         # We place an upper limit of 1000 km/min^3 on jerk for MDI movements
         if mdi:
             for axis in 'xyzabc':
                 if axis in cfg['max-jerk']:
-                    cfg['max-jerk'][axis] = min(1000 * 1000000, cfg['max-jerk'][axis])
+                    cfg['max-jerk'][axis] = min(1000 * 1000000,
+                                                cfg['max-jerk'][axis])
 
         if with_limits:
             minLimit = state.get_soft_limit_vector('tn', -math.inf)
@@ -134,13 +109,11 @@ class Planner():
 
         return cfg
 
-
     def _update(self, update):
         if 'id' in update:
             id = update['id']
-            self.planner.set_active(id) # Release planner commands
-            self.cmdq.release(id)       # Synchronize planner variables
-
+            self.planner.set_active(id)  # Release planner commands
+            self.cmdq.release(id)  # Synchronize planner variables
 
     def _get_var_cb(self, name, units):
         value = 0
@@ -149,36 +122,35 @@ class Planner():
             value = self.ctrl.state.get(name[1:], 0)
             try:
                 float(value)
-                if units == 'IMPERIAL': value /= 25.4 # Assume metric
-            except ValueError: value = 0
+                if units == 'IMPERIAL': value /= 25.4  # Assume metric
+            except ValueError:
+                value = 0
 
         self.log.info('Get: %s=%s (units=%s)' % (name, value, units))
 
         return value
-
 
     def _log_cb(self, line):
         line = line.strip()
         m = reLogLine.match(line)
         if not m: return
 
-        level    = m.group('level')
-        msg      = m.group('msg')
+        level = m.group('level')
+        msg = m.group('msg')
         filename = m.group('file')
-        line     = m.group('line')
-        column   = m.group('column')
+        line = m.group('line')
+        column = m.group('column')
 
         where = ':'.join(filter(None.__ne__, [filename, line, column]))
 
         if line is not None: line = int(line)
         if column is not None: column = int(column)
 
-        if   level == 'I': self.log.info    (msg, where = where)
-        elif level == 'D': self.log.debug   (msg, where = where)
-        elif level == 'W': self.log.warning (msg, where = where)
-        elif level == 'E': self.log.error   (msg, where = where)
+        if level == 'I': self.log.info(msg, where=where)
+        elif level == 'D': self.log.debug(msg, where=where)
+        elif level == 'W': self.log.warning(msg, where=where)
+        elif level == 'E': self.log.error(msg, where=where)
         else: self.log.error('Could not parse planner log line: ' + line)
-
 
     def _add_message(self, text):
         self.ctrl.state.add_message(text)
@@ -187,13 +159,11 @@ class Planner():
         if 0 <= line: where = '%s:%d' % (self.where, line)
         else: where = self.where
 
-        self.log.message(text, where = where)
-
+        self.log.message(text, where=where)
 
     def _enqueue_set_cmd(self, id, name, value):
         self.log.info('set(#%d, %s, %s)', id, name, value)
         self.cmdq.enqueue(id, self.ctrl.state.set, name, value)
-
 
     def _report_time(self):
         state = self.ctrl.state.get('xx', '')
@@ -205,38 +175,34 @@ class Planner():
 
             self.ctrl.state.set('plan_time', round(plan_time))
 
-        elif state != 'HOLDING': self.ctrl.state.set('plan_time', 0)
+        elif state != 'HOLDING':
+            self.ctrl.state.set('plan_time', 0)
 
         self.ctrl.ioloop.call_later(1, self._report_time)
 
-
     def _plan_time_restart(self):
         self.plan_time = self.ctrl.state.get('plan_time', 0)
-
 
     def _update_time(self, plan_time, move_time):
         self.current_plan_time = plan_time
         self.move_time = move_time
         self.move_start = time.time()
 
-
     def _enqueue_line_time(self, block):
         if block.get('first', False) or block.get('seeking', False): return
 
         # Sum move times
-        move_time = sum(block['times']) / 1000 # To seconds
+        move_time = sum(block['times']) / 1000  # To seconds
 
         self.cmdq.enqueue(block['id'], self._update_time, self.plan_time,
                           move_time)
 
         self.plan_time += move_time
 
-
     def _enqueue_dwell_time(self, block):
         self.cmdq.enqueue(block['id'], self._update_time, self.plan_time,
                           block['seconds'])
         self.plan_time += block['seconds']
-
 
     def __encode(self, block):
         type, id = block['type'], block['id']
@@ -266,7 +232,7 @@ class Planner():
                 if len(name) != 2 or name[1] not in 'xyzabc':
                     self._enqueue_set_cmd(id, name[1:], value)
 
-            if name == '_feed': # Must come after _enqueue_set_cmd() above
+            if name == '_feed':  # Must come after _enqueue_set_cmd() above
                 return Cmd.set_sync('if', 1 / value if value else 0)
 
             if name[0:1] == '_' and name[1:2] in 'xyzabc':
@@ -281,7 +247,7 @@ class Planner():
 
         if type == 'input':
             # TODO handle timeout
-            self.planner.synchronize(0) # TODO Fix this
+            self.planner.synchronize(0)  # TODO Fix this
             return Cmd.input(block['port'], block['mode'], block['timeout'])
 
         if type == 'output':
@@ -297,10 +263,9 @@ class Planner():
             sw = self.ctrl.state.get_switch_id(block['switch'])
             return Cmd.seek(sw, block['active'], block['error'])
 
-        if type == 'end': return '' # Sends id
+        if type == 'end': return ''  # Sends id
 
         raise Exception('Unknown planner command "%s"' % type)
-
 
     def _encode(self, block):
         cmd = self.__encode(block)
@@ -309,20 +274,17 @@ class Planner():
             self.cmdq.enqueue(block['id'], None)
             return Cmd.set_sync('id', block['id']) + '\n' + cmd
 
-
     def reset_times(self):
         self.move_start = 0
         self.move_time = 0
         self.plan_time = 0
         self.current_plan_time = 0
 
-
     def close(self):
         # Release planner callbacks
         if self.planner is not None:
             self.planner.set_resolver(None)
             self.planner.set_logger(None)
-
 
     def reset(self, *args, **kwargs):
         stop = kwargs.get('stop', True)
@@ -341,14 +303,12 @@ class Planner():
         if resetState:
             self.ctrl.state.reset()
 
-
-    def mdi(self, cmd, with_limits = True):
+    def mdi(self, cmd, with_limits=True):
         self.where = '<mdi>'
         self.log.info('MDI:' + cmd)
         self._sync_position()
         self.planner.load_string(cmd, self.get_config(True, with_limits))
         self.reset_times()
-
 
     def load(self, path):
         self.where = path
@@ -358,7 +318,6 @@ class Planner():
         self.planner.load(path, self.get_config(False, True))
         self.reset_times()
 
-
     def stop(self):
         try:
             self.planner.stop()
@@ -367,7 +326,6 @@ class Planner():
         except:
             self.log.exception('Internal error: Planner stop')
             self.reset()
-
 
     def restart(self):
         try:
@@ -384,7 +342,6 @@ class Planner():
         except:
             self.log.exception('Internal error: Planner restart')
             self.stop()
-
 
     def next(self):
         try:

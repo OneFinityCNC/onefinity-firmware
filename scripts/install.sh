@@ -12,45 +12,46 @@ while [ $# -gt 0 ]; do
     shift 1
 done
 
-
 if $UPDATE_PY; then
     systemctl stop bbctrl
 
     # Update service
     rm -f /etc/init.d/bbctrl
-    cp scripts/bbctrl.service /etc/systemd/system/
+    cp ./installer/config/bbctrl.service /etc/systemd/system/
     systemctl daemon-reload
     systemctl enable bbctrl
 fi
 
 if $UPDATE_AVR; then
-    chmod +x ./scripts/avr109-flash.py
-    ./scripts/avr109-flash.py src/avr/bbctrl-avr-firmware.hex
+    chmod +x ./installer/scripts/avr109-flash.py
+    ./installer/scripts/avr109-flash.py src/avr/bbctrl-avr-firmware.hex
 fi
 
 # Update config.txt
-./scripts/edit-boot-config max_usb_current=1
-./scripts/edit-boot-config config_hdmi_boost=8
+./installer/scripts/edit-boot-config \
+    disable_overscan=1 \
+    framebuffer_width=1280 \
+    framebuffer_height=720 \
+    nohz=on \
+    dtparam=sd_overclock=100 \
+    max_usb_current=1 \
+    config_hdmi_boost=8 \
+    disable_splash=1 \
+    hdmi_force_hotplug=1 \
+    hdmi_group=2 \
+    hdmi_mode=82
 
 # TODO Enable GPU
-#./scripts/edit-boot-config dtoverlay=vc4-kms-v3d
-#./scripts/edit-boot-config gpu_mem=16
+#./installer/scripts/edit-boot-config \
+#    dtoverlay=vc4-kms-v3d \
+#    gpu_mem=16
 #chmod ug+s /usr/lib/xorg/Xorg
-
-# Use the full screen resolution
-# grep "^framebuffer_width=1280$" /boot/config.txt >/dev/null
-# if [ $? -eq 0 ]; then
-#     mount -o remount,rw /boot &&
-#     sed -i 's/^\(framebuffer_.*\)$/#\1/g' /boot/config.txt
-#     mount -o remount,ro /boot
-#     REBOOT=true
-# fi
 
 # Fix camera
 grep dwc_otg.fiq_fsm_mask /boot/cmdline.txt >/dev/null
 if [ $? -ne 0 ]; then
     mount -o remount,rw /boot &&
-    sed -i 's/\(.*\)/\1 dwc_otg.fiq_fsm_mask=0x3/' /boot/cmdline.txt
+    sed -i -E 's/(.*)/\1 dwc_otg.fiq_fsm_mask=0x3/' /boot/cmdline.txt
     mount -o remount,ro /boot
     REBOOT=true
 fi
@@ -59,53 +60,90 @@ fi
 grep cgroup_memory /boot/cmdline.txt >/dev/null
 if [ $? -ne 0 ]; then
     mount -o remount,rw /boot &&
-    sed -i 's/\(.*\)/\1 cgroup_memory=1/' /boot/cmdline.txt
+    sed -i -E 's/(.*)/\1 cgroup_memory=1/' /boot/cmdline.txt
     mount -o remount,ro /boot
     REBOOT=true
 fi
 
 # Remove Hawkeye
 if [ -e /etc/init.d/hawkeye ]; then
-    apt-get remove --purge -y hawkeye
+    apt-get purge -y hawkeye
 fi
 
 # Decrease boot delay
-sed -i 's/^TimeoutStartSec=.*$/TimeoutStartSec=1/' \
+sed -i -E 's/^TimeoutStartSec=.*$/TimeoutStartSec=1/' \
     /etc/systemd/system/network-online.target.wants/networking.service
 
 # Change to US keyboard layout
-sed -i 's/^XKBLAYOUT="gb"$/XKBLAYOUT="us" # Comment stops change on upgrade/' \
-    /etc/default/keyboard
+sed -i -E 's/^XKBLAYOUT="gb"$/XKBLAYOUT="us" # Comment stops change on upgrade/' /etc/default/keyboard
+
+# Set the default locale to en_US
+grep '^en_US.UTF-8 UTF-8' /etc/locale.gen >/dev/null
+if [ $? -ne 0 ]; then
+    perl -pi -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+    locale-gen en_US.UTF-8
+    update-locale en_US.UTF-8
+fi
 
 # Setup USB stick automount
-diff ./scripts/11-automount.rules /etc/udev/rules.d/11-automount.rules \
-     >/dev/null
+diff ./installer/config/11-automount.rules /etc/udev/rules.d/11-automount.rules >/dev/null
 if [ $? -ne 0 ]; then
-  cp ./scripts/11-automount.rules /etc/udev/rules.d/
-  sed -i 's/^\(MountFlags=slave\)/#\1/' \
+  cp ./installer/config/11-automount.rules /etc/udev/rules.d/
+  sed -i -E 's/^(MountFlags=slave)/#\1/' \
       /lib/systemd/system/systemd-udevd.service
   REBOOT=true
 fi
 
-# Increase swap
-grep 'CONF_SWAPSIZE=1000' /etc/dphys-swapfile >/dev/null
-if [ $? -ne 0 ]; then
-    sed -i 's/^CONF_SWAPSIZE=.*$/CONF_SWAPSIZE=1000/' /etc/dphys-swapfile
-    REBOOT=true
+# Disable disk-based swap
+if [ -e /etc/dphys-swapfile ]; then
+    apt-get purge -y dphys-swapfile
+    rm -f /var/swap
+fi
+
+# Enable zram swap
+# See https://github.com/ecdye/zram-config
+# The zram-config-main.zip is a downloaded snapshot of the git repository
+if [ ! -e /usr/local/sbin/zram-config ]; then
+    modprobe -a lz4 zram
+
+    unzip ./installer/linux-packages/zram-config-main.zip -d /tmp
+    /tmp/zram-config-main/install.bash
+
+    sed -i -E 's/^(swap\s+)(lzo-rle)(.*)$/\1lz4\3/' /etc/ztab
+    sed -i -E 's/^(swap.*)150\s*$/\1100/' /etc/ztab
+    sed -i -E 's/^(log.*)$/#\1/' /etc/ztab
+
+    sed -i -E 's/^Type=exec$/Type=simple/' /etc/systemd/system/zram-config.service
+
+    systemctl restart zram-config
+
+    rm -rf /tmp/zram-config
 fi
 
 # Install .Xresources & .xinitrc
-cp scripts/Xresources ~pi/.Xresources
+cp ./installer/config/Xresources ~pi/.Xresources
 chown pi:pi ~pi/.Xresources
-cp scripts/xinitrc ~pi/.xinitrc
+cp ./installer/config/xinitrc ~pi/.xinitrc
 chmod +x ~pi/.xinitrc
 chown pi:pi ~pi/.xinitrc
 
-#Configure the "ratpoison" window manager
+# Configure the "ratpoison" window manager
 if [ ! -e ~pi/.ratpoisonrc ]; then
-    cp scripts/ratpoisonrc ~pi/.ratpoisonrc
+    cp ./installer/config/ratpoisonrc ~pi/.ratpoisonrc
     chmod 644 ~pi/.ratpoisonrc
     chown pi:pi ~pi/.ratpoisonrc
+fi
+
+# Configure the Plymouth graphical bootloader with the Onefinity theme
+rm -rf /usr/share/plymouth/themes/buildbotics
+rm -rf /usr/share/plymouth/themes/onefinity
+mkdir -p /usr/share/plymouth/themes/onefinity/
+cp -av ./installer/splash/* /usr/share/plymouth/themes/onefinity/
+plymouth-set-default-theme -R onefinity
+
+grep 'quiet splash plymouth.ignore-serial-consoles logo.nologo' /boot/cmdline.txt >/dev/null
+if [ $? -ne 0 ]; then
+    echo -n " quiet splash plymouth.ignore-serial-consoles logo.nologo" >> /boot/cmdline.txt
 fi
 
 # Install bbserial
@@ -119,46 +157,51 @@ if [ $? -ne 0 ]; then
 fi
 
 # Install rc.local
-cp scripts/rc.local /etc/
+cp ./installer/config/rc.local /etc/
 
 # Install bbctrl
 if $UPDATE_PY; then
-    service bbctrl stop
+    systemctl stop bbctrl
 
     rm -rf /usr/local/lib/python*/dist-packages/bbctrl-*
 
     # Ensure python dependencies are installed
-    pip3 install --no-index --find-links python-packages -r requirements.txt
+    pip3 install --no-index --find-links installer/python-packages -r requirements.txt
 
     ./setup.py install --force
 
     HTTP_DIR=$(find /usr/local/lib/ -type d -name "http")
     chmod 777 $HTTP_DIR
 
-    service bbctrl restart
+    systemctl restart bbctrl
 fi
 
+# Install the service that turns off the screen during shutdown
+cp ./installer/config/bbctrl-poweroff.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable bbctrl-poweroff
+
 # Expand the file system if necessary
-chmod +x ./scripts/resize_root_fs.sh
-./scripts/resize_root_fs.sh
+chmod +x ./installer/scripts/resize_root_fs.sh
+./installer/scripts/resize_root_fs.sh
 if [ $? -eq 0 ]; then
     REBOOT=true
 fi
 
 # Install our logrotate config
-cp ./scripts/bbctrl-logrotate /etc/logrotate.d/bbctrl
+cp ./installer/config/bbctrl-logrotate /etc/logrotate.d/bbctrl
 chown root:root /etc/logrotate.d/bbctrl
 
 # Ensure logrotate runs on every boot (for systems with no network, thus bad clock)
 if [ ! -e /etc/cron.d/reboot ]; then
-    cp ./scripts/cron_d_reboot /etc/cron.d/reboot
+    cp ./installer/config/cron_d_reboot /etc/cron.d/reboot
     mkdir -p /etc/cron.reboot
-    cp ./scripts/cron_reboot_logrotate /etc/cron.reboot/logrotate
+    cp ./installer/config/cron_reboot_logrotate /etc/cron.reboot/logrotate
 fi
 
 # Delete some cookies that were left behind in older images
-chmod +x ./scripts/delete-cookies.py
-./scripts/delete-cookies.py
+chmod +x ./installer/scripts/delete-cookies.py
+./installer/scripts/delete-cookies.py
 pkill -HUP chromium # Force Chromium to restart, to see the cookie changes
 
 # Get rid of some old files that were left behind in older images

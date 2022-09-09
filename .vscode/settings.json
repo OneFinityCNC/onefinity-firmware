@@ -1,0 +1,31 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/node_modules": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/rpi-share": true,
+        "**/rpi-root": true
+    },
+    "search.exclude": {
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "**/node_modules": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/rpi-share": true,
+        "**/rpi-root": true
+    },
+    "explorer.excludeGitIgnore": true,
+    "git.ignoredRepositories": [
+        "rpi-share/camotics",
+        "rpi-share/cbang"
+    ],
+    "git.autofetch": false,
+    "git.confirmSync": false
+}

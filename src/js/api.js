@@ -1,77 +1,48 @@
-'use strict'
+"use strict";
 
+async function callApi(method, url, data) {
+    try {
+        const headers = {};
+        let body = undefined;
 
-function api_cb(method, url, data, config) {
-  config = $.extend({
-    type: method,
-    url: '/api/' + url,
-    dataType: 'json',
-    cache: false
-  }, config);
+        if (data) {
+            if (data instanceof FormData) {
+                body = data;
+            } else {
+                headers["Content-Type"] = "application/json; charset=utf-8";
+                body = JSON.stringify(data);
+            }
+        }
 
-  if (typeof data == 'object') {
-    config.data = JSON.stringify(data);
-    config.contentType = 'application/json; charset=utf-8';
-  }
+        const response = await fetch(`/api/${url}`, {
+            method,
+            headers,
+            body,
+            cache: "no-cache",
+        });
 
-  var d = $.Deferred();
+        if (response.ok) {
+            return await response.json();
+        }
 
-  $.ajax(config).success(function (data, status, xhr) {
-    d.resolve(data, status, xhr);
+        throw new Error(await response.text());
+    } catch (error) {
+        console.debug(`API Error: ${url}: ${error}`);
 
-  }).error(function (xhr, status, error) {
-    var text = xhr.responseText;
-    try {text = $.parseJSON(xhr.responseText)} catch(e) {}
-    if (!text) text = error;
-
-    d.reject(text, xhr, status, error);
-    console.debug('API Error: ' + url + ': ' + text);
-  });
-
-  return d.promise();
+        throw error;
+    }
 }
-
 
 module.exports = {
-  get: function (url, config) {
-    return api_cb('GET', url, undefined, config);
-  },
+    get: function(url) {
+        return callApi("GET", url);
+    },
 
+    put: function(url, body = undefined) {
+        return callApi("PUT", url, body);
+    },
 
-  put: function(url, data, config) {
-    return api_cb('PUT', url, data, config);
-  },
-
-
-  post: function(url, data, config) {
-    return api_cb('POST', url, data, config);
-  },
-
-
-  upload: function(url, data, config) {
-    config = $.extend({
-      processData: false,
-      contentType: false,
-      cache: false,
-      data: data
-    }, config);
-
-    return api_cb('PUT', url, undefined, config);
-  },
-
-
-  'delete': function (url, config) {
-    return api_cb('DELETE', url, undefined, config);
-  },
-
-
-  alert: function (msg, error) {
-    if (typeof error != 'undefined') {
-      if (typeof error.message != 'undefined')
-        msg += '\n' + error.message;
-      else msg += '\n' + JSON.stringify(error);
+    delete: function(url) {
+        return callApi("DELETE", url);
     }
-
-    alert(msg);
-  }
-}
+};

@@ -18,8 +18,6 @@ setup(
     package_dir={'': 'src/py'},
     packages=[
         'bbctrl',
-        'inevent',
-        'lcd',
         'camotics',
         'iw_parse'
     ],
@@ -30,15 +28,13 @@ setup(
         ]
     },
     scripts=[
-        'scripts/update-bbctrl',
-        'scripts/upgrade-bbctrl',
-        'scripts/sethostname',
-        'scripts/reset-video',
-        'scripts/config-wifi',
-        'scripts/config-screen',
-        'scripts/edit-config',
-        'scripts/edit-boot-config',
-        'scripts/browser',
+        'installer/scripts/update-bbctrl',
+        'installer/scripts/upgrade-bbctrl',
+        'installer/scripts/sethostname',
+        'installer/scripts/config-wifi',
+        'installer/scripts/edit-config',
+        'installer/scripts/edit-boot-config',
+        'installer/scripts/browser',
     ],
     install_requires=[
         'tornado',
