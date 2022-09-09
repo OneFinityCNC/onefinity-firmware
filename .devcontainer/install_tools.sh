@@ -25,6 +25,7 @@ APT_PACKAGES=(
 	"vim"
 	"locate"
 	"sudo"
+    "sshpass"
 )
 
 apt-get update

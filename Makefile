@@ -49,12 +49,6 @@ $(GPLAN_TARGET): $(GPLAN_MOD)
 
 $(GPLAN_MOD): $(GPLAN_IMG)
 	./scripts/gplan-init-build.sh
-	git -C rpi-share/cbang fetch
-	git -C rpi-share/cbang reset --hard FETCH_HEAD
-	git -C rpi-share/cbang checkout 18f1e963107ef26abe750c023355a5c40dd07853
-	git -C rpi-share/camotics fetch
-	git -C rpi-share/camotics reset --hard FETCH_HEAD
-	git -C rpi-share/camotics checkout ec876c80d20fc19837133087cef0c447df5a939d
 	cp ./scripts/gplan-build.sh rpi-share/
 	chmod +x rpi-share/gplan-build.sh
 	sudo ./scripts/rpi-chroot.sh $(GPLAN_IMG) /mnt/host/gplan-build.sh
@@ -104,5 +98,9 @@ $(TARGET_DIR)/%.html: src/pug/%.pug node_modules FORCE
 
 	@mkdir -p $(TARGET_DIR)
 	$(PUG) -O pug-opts.js -P $< -o $(TARGET_DIR) || (rm -f $@; exit 1)
+
+clean:
+	rm -rf rpi-share
+	git clean -fxd
 
 .PHONY: all install clean tidy pkg gplan lint pylint jshint bbserial
