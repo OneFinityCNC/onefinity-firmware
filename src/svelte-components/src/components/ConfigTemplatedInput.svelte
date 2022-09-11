@@ -6,7 +6,11 @@
 
     type Template = {
         type?: string;
-        values?: (string | number)[];
+        values?: (
+            | string
+            | number
+            | { title: string; value: string | number }
+        )[];
         unit?: "string";
         iunit?: "string";
         min?: number;
@@ -97,8 +101,11 @@
         {#if template.values}
             <select {name} bind:value on:change={onChange}>
                 {#each template.values as opt}
-                    <option value={opt} disabled={opt === "-----"}>
-                        {opt}
+                    <option
+                        value={opt?.value ?? opt}
+                        disabled={opt === "-----"}
+                    >
+                        {opt?.title ?? opt}
                     </option>
                 {/each}
             </select>

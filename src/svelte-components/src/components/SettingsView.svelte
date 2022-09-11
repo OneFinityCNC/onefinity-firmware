@@ -44,6 +44,17 @@
         </div>
     </fieldset>
 
+    <h2>Gamepads / Joypads</h2>
+    <fieldset>
+        <ConfigTemplatedInput key={`settings.gamepad-default-type`} />
+    </fieldset>
+
+    <p>
+        If you have a gamepad that is not officially supported, and doesn't seem
+        to be working right, try changing <tt>gamepad-default-type</tt> to one of
+        the other types.
+    </p>
+
     <fieldset>
         <h2>Probe Dimensions</h2>
         {#each Object.keys(configTemplate.probe) as key}

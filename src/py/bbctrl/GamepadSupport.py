@@ -4,7 +4,6 @@ from evdev.ecodes import EV, EV_ABS, EV_KEY
 import errno
 import evdev
 import functools
-import hashlib
 import json
 import os
 import pyudev
@@ -14,16 +13,16 @@ import typing
 
 userGamepadConfigs = {}
 
-gamepadConfigs = {
+factoryGamepadConfigs = {
     "default": {
         "sign-x": 1,
         "sign-y": -1,
         "sign-z": -1,
         "deadband": 0.15,
         "debug": False,
+        "type": "XBOX",
     },
-    "9E2B3A63": {
-        "description": "Logitech 710, X mode",
+    "XBOX": {
         "EV_KEY:308": "speed-4",
         "EV_KEY:305": "speed-3",
         "EV_KEY:304": "speed-2",
@@ -38,8 +37,7 @@ gamepadConfigs = {
         "EV_ABS:2": "lock-y",
         "EV_ABS:5": "lock-x",
     },
-    "B98EF4EC": {
-        "description": "Logitech 710, D mode",
+    "PLAYSTATION": {
         "EV_KEY:307": "speed-4",
         "EV_KEY:306": "speed-3",
         "EV_KEY:305": "speed-2",
@@ -54,24 +52,7 @@ gamepadConfigs = {
         "EV_KEY:310": "lock-y",
         "EV_KEY:311": "lock-x",
     },
-    "268256FD": {
-        "description": "EasySMX ESM-9013, top lights mode",
-        "EV_KEY:308": "speed-4",
-        "EV_KEY:305": "speed-3",
-        "EV_KEY:304": "speed-2",
-        "EV_KEY:307": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:4": "axis-z",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
-        "EV_ABS:2": "lock-y",
-        "EV_ABS:5": "lock-x",
-    },
-    "23CEC0CB": {
-        "description": "EasySMX ESM-9013, left lights mode",
+    "SMX-LEFT": {
         "EV_KEY:304": "speed-4",
         "EV_KEY:305": "speed-3",
         "EV_KEY:306": "speed-2",
@@ -86,8 +67,7 @@ gamepadConfigs = {
         "EV_KEY:310": "lock-y",
         "EV_KEY:311": "lock-x",
     },
-    "370DCB72": {
-        "description": "EasySMX ESM-9013, bottom lights mode",
+    "SMX-BOTTOM": {
         "EV_KEY:308": "speed-4",
         "EV_KEY:305": "speed-3",
         "EV_KEY:304": "speed-2",
@@ -102,117 +82,77 @@ gamepadConfigs = {
         "EV_KEY:312": "lock-y",
         "EV_KEY:313": "lock-x",
     },
-    "0BD0841F": {
-        "description": "Sony Playstation 4 Dual-Shock Controller",
-        "EV_KEY:307": "speed-4",
-        "EV_KEY:306": "speed-3",
-        "EV_KEY:305": "speed-2",
-        "EV_KEY:304": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:5": "axis-z",
-        "EV_KEY:308": "lock-y",
-        "EV_KEY:309": "lock-x",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
-    },
-    "D09463DD": {
-        "description": "Sony Playstation 5 Controller",
-        "EV_KEY:307": "speed-4",
-        "EV_KEY:306": "speed-3",
-        "EV_KEY:305": "speed-2",
-        "EV_KEY:304": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:5": "axis-z",
-        "EV_KEY:308": "lock-y",
-        "EV_KEY:309": "lock-x",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
-    },
-    "06656EBD": {
-        "description": "XBox One Controller",
-        "EV_KEY:308": "speed-4",
-        "EV_KEY:305": "speed-3",
-        "EV_KEY:304": "speed-2",
-        "EV_KEY:307": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:4": "axis-z",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
-        "EV_ABS:2": "lock-y",
-        "EV_ABS:5": "lock-x",
-    },
-    "BFF99E89": {
+    "045E:02A1": {
         "description": "XBox 360 Controller",
-        "EV_KEY:308": "speed-4",
-        "EV_KEY:305": "speed-3",
-        "EV_KEY:304": "speed-2",
-        "EV_KEY:307": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:4": "axis-z",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
-        "EV_ABS:2": "lock-y",
-        "EV_ABS:5": "lock-x",
+        "type": "XBOX"
     },
-    "4E0C75F7": {
-        "description": "EasySMX ESM-9100 XBox Controller, top lights mode",
-        "EV_KEY:308": "speed-4",
-        "EV_KEY:305": "speed-3",
-        "EV_KEY:304": "speed-2",
-        "EV_KEY:307": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:4": "axis-z",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:4": "axis-z"
+    "045E:028E": {
+        "description": "Xbox360 Controller",
+        "type": "XBOX",
     },
-    "E310BCC0": {
-        "description": "EasySMX ESM-9100, left lights mode",
-        "EV_KEY:304": "speed-4",
-        "EV_KEY:305": "speed-3",
-        "EV_KEY:306": "speed-2",
-        "EV_KEY:307": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:5": "axis-z",
-        "EV_KEY:308": "lock-y",
-        "EV_KEY:309": "lock-x",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
+    "045E:028F": {
+        "description": "Xbox360 Wireless Controller",
+        "type": "XBOX",
     },
-    "96D2AC48": {
+    "045E:0B12": {
+        "description": "XBox One Controller",
+        "type": "XBOX"
+    },
+    "046D:C216": {
+        "description": "Logitech F310, D mode",
+        "type": "PLAYSTATION"
+    },
+    "046D:C216": {
+        "description": "Logitech F510, D mode",
+        "type": "PLAYSTATION"
+    },
+    "046D:C219": {
+        "description": "Logitech F710, D mode",
+        "type": "PLAYSTATION"
+    },
+    "046D:C21D": {
+        "description": "Logitech F310, X mode",
+        "type": "XBOX"
+    },
+    "046D:C21E": {
+        "description": "Logitech F510, X mode",
+        "type": "XBOX"
+    },
+    "046D:C21F": {
+        "description": "Logitech 710, X mode",
+        "type": "XBOX"
+    },
+    "054C:05C4": {
+        "description": "Sony Playstation 4 DualShock Controller",
+        "type": "PLAYSTATION"
+    },
+    "054C:09CC": {
+        "description": "Sony Playstation 4 DualShock Controller",
+        "type": "PLAYSTATION"
+    },
+    "054C:0BA0": {
+        "description": "Sony Playstation 4 DualShock Controller",
+        "type": "PLAYSTATION"
+    },
+    "054C:0CE6": {
+        "description": "Sony Playstation 5 DualSense Controller",
+        "type": "PLAYSTATION"
+    },
+    "11C0:5500": {
+        "description": "EasySMX ESM-9013, bottom lights mode",
+        "type": "SMX-BOTTOM"
+    },
+    "11C1:9101": {
+        "description": "EasySMX ESM-9013, left lights mode",
+        "type": "SMX-LEFT"
+    },
+    "20BC:5500": {
         "description": "EasySMX ESM-9100, bottom lights mode",
-        "EV_KEY:308": "speed-4",
-        "EV_KEY:305": "speed-3",
-        "EV_KEY:304": "speed-2",
-        "EV_KEY:307": "speed-1",
-        "EV_ABS:0": "axis-x",
-        "EV_ABS:16": "axis-x",
-        "EV_ABS:1": "axis-y",
-        "EV_ABS:17": "axis-y",
-        "EV_ABS:5": "axis-z",
-        "EV_KEY:310": "lock-y",
-        "EV_KEY:311": "lock-x",
-        "EV_KEY:312": "lock-y",
-        "EV_KEY:313": "lock-x",
+        "type": "SMX-BOTTOM"
+    },
+    "20BC:9100": {
+        "description": "EasySMX ESM-9100, left lights mode",
+        "type": "SMX-LEFT"
     },
 }
 
@@ -252,6 +192,25 @@ def processCapabilities(capabilities):
             }
 
     return result
+
+
+def loadConfig(id):
+    config = {
+        **factoryGamepadConfigs.get("default"),
+        **userGamepadConfigs.get("default", {}),
+        **factoryGamepadConfigs.get(id, {}),
+        **userGamepadConfigs.get(id, {})
+    }
+
+    while "type" in config:
+        type = config.pop("type")
+        config = {
+            **factoryGamepadConfigs.get(type, {}),
+            **userGamepadConfigs.get(type, {}),
+            **config,
+        }
+
+    return config
 
 
 # A forward declaration, so Command can reference it
@@ -298,15 +257,11 @@ class Gamepad(object):
                      for key in _udev.properties}
         }
 
-        json = sorted_json(self._details["evdev"])
-        self.hash = hashlib.sha256(json.encode()).hexdigest()[-8:].upper()
+        self.id = "{:04X}:{:04X}".format(_evdev.info.vendor,
+                                         _evdev.info.product)
+        self.config = loadConfig(self.id)
 
-        self.config = {
-            **gamepadConfigs.get("default"),
-            **userGamepadConfigs.get("default", {}),
-            **gamepadConfigs.get(self.hash, {}),
-            **userGamepadConfigs.get(self.hash, {})
-        }
+        self.log("Configuration Settings: {}".format(self.config))
 
     def read(self):
         return self._evdev.read()
@@ -374,7 +329,7 @@ class Gamepad(object):
         return round(value, 3)
 
     def log(self, msg):
-        self._log.info("{}: {}".format(self.hash, msg))
+        self._log.info("{}: {}".format(self.id, msg))
 
     def logOnce(self, msg):
         if self.config.get("debug") or msg not in self._logOnceRecord:
@@ -390,11 +345,11 @@ class Gamepad(object):
             "devicePath": self.devicePath,
             "bustype": self._evdev.info.bustype,
             "details": self._details,
-            "hash": self.hash
+            "id": self.id
         })
 
 
-class Jog(object):
+class GamepadSupport(object):
     gamepads = {}  # type: dict[typing.Union[int, str], Gamepad]
     lock = {"x": False, "y": False}
     axes = {"x": 0, "y": 0, "z": 0}
@@ -419,8 +374,9 @@ class Jog(object):
                     global userGamepadConfigs
                     userGamepadConfigs = json.load(f)
         except:
+            self.log.info("Failed to read 'gamepads.json':")
             self.log.info(traceback.format_exc())
-            self.log.info("Failed to read 'gamepads.json'")
+            userGamepadConfigs = {}
 
     def _startMonitoring(self):
         self.udev_context = pyudev.Context()
@@ -465,6 +421,8 @@ class Jog(object):
                 self._listen("/dev/input/{}".format(match.group()))
 
     def _listen(self, devicePath: str):
+        self._refreshDefaultGamepadType()
+
         gamepad = Gamepad(
             self.log, evdev.InputDevice(devicePath),
             pyudev.Devices.from_device_file(self.udev_context, devicePath))
@@ -557,6 +515,18 @@ class Jog(object):
 
     def _processDisabled(self, command: Command):
         pass
+
+    def _refreshDefaultGamepadType(self):
+        defaultGamepadType = self.ctrl.config.get("gamepad-default-type")
+
+        if defaultGamepadType is not None:
+            default = factoryGamepadConfigs.get("default", {})
+            default["type"] = defaultGamepadType
+            factoryGamepadConfigs["default"] = default
+
+            default = userGamepadConfigs.get("default")
+            if default is not None:
+                default.pop("type", None)
 
     def _updateJogging(self):
         try:

@@ -14,7 +14,7 @@ from bbctrl.FileHandler import FileHandler
 from bbctrl.Config import Config
 from bbctrl.Mach import Mach
 from bbctrl.Web import Web
-from bbctrl.Jog import Jog
+from bbctrl.GamepadSupport import GamepadSupport
 from bbctrl.Ctrl import Ctrl
 from bbctrl.Pwr import Pwr
 from bbctrl.I2C import I2C
