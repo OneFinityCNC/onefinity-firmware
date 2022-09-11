@@ -5,6 +5,7 @@ matchAll.shim();
 
 import AdminNetworkView from "$components/AdminNetworkView.svelte";
 import SettingsView from "$components/SettingsView.svelte";
+import HelpView from "$components/HelpView.svelte";
 import DialogHost, { showDialog } from "$dialogs/DialogHost.svelte";
 import { handleConfigUpdate, setDisplayUnits } from "$lib/ConfigStore";
 import { handleControllerStateUpdate } from "$lib/ControllerState";
@@ -17,6 +18,9 @@ export function createComponent(component: string, target: HTMLElement, props: R
 
         case "SettingsView":
             return new SettingsView({ target, props });
+
+        case "HelpView":
+            return new HelpView({ target, props });
 
         case "DialogHost":
             return new DialogHost({ target, props });

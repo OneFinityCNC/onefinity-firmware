@@ -133,7 +133,7 @@ module.exports = new Vue({
         "io-view": require("./io-view"),
         "admin-general-view": require("./admin-general-view"),
         "admin-network-view": require("./admin-network-view"),
-        "help-view": { template: "#help-view-template" },
+        "help-view": require("./help-view"),
         "cheat-sheet-view": {
             template: "#cheat-sheet-view-template",
             data: function() {
