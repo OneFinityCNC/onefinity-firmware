@@ -78,10 +78,7 @@
     <Content id="change-hostname-dialog-content">
         <TextField
             bind:value={hostname}
-            use={[
-                InitialFocus,
-                [virtualKeyboardChange, (newValue) => (hostname = newValue)],
-            ]}
+            use={[InitialFocus, virtualKeyboardChange((v) => (hostname = v))]}
             label="New Hostname"
             spellcheck="false"
             variant="filled"

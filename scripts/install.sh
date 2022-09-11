@@ -27,7 +27,13 @@ if $UPDATE_AVR; then
     ./installer/scripts/avr109-flash.py src/avr/bbctrl-avr-firmware.hex
 fi
 
-# Update config.txt
+# Set a default time-zone, if one has not been set
+timedatectl | grep 'Time zone: Etc/UTC' >/dev/null
+if [ $? -eq 0 ]; then
+    timedatectl set-timezone America/Los_Angeles
+fi
+
+# Update /boot/config.txt
 ./installer/scripts/edit-boot-config \
     disable_overscan=1 \
     framebuffer_width=1280 \
