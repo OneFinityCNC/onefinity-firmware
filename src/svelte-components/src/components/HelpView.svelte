@@ -13,10 +13,9 @@
 <h2>Discussion Forum</h2>
 <p>
     Check out our support and discussion forum at
-    <a href="https://forum.onefinitycnc.com" target="_blank">
-        forum.onefinitycnc.com
-    </a>. Register on the site and post a message. We can't wait to hear from
-    you.
+    <a href="https://forum.onefinitycnc.com" target="_blank"
+        >forum.onefinitycnc.com</a
+    >. Register on the site and post a message. We can't wait to hear from you.
 </p>
 
 <p>
@@ -43,8 +42,7 @@
 <h4 style="margin-bottom: 0;">Buildbotics</h4>
 <p style="margin-top: 0;">
     This controller is based on the
-    <a href="http://buildbotics.com" target="_blank">
-        Buildbotics CNC Controller
-    </a>
-    .
+    <a href="http://buildbotics.com" target="_blank"
+        >Buildbotics CNC Controller</a
+    >.
 </p>
