@@ -4,6 +4,7 @@ const inquirer = require("inquirer");
 const { runCommand, logErrorAndExit, initSignalHandlers, assertInstalled, info } = require("./util");
 
 const PACKAGES_TO_PURGE = [
+    "aptitude",
     "dphys-swapfile",
     "gdb",
     "geoip-database",
@@ -47,6 +48,7 @@ async function main() {
         });
 
         ssh("apt-get update");
+        ssh("apt-get install usbutils");
         ssh(`apt-get purge -y ${PACKAGES_TO_PURGE.join(" ")}`);
         ssh("apt-get autoremove -y");
         ssh("touch /root/.prep-controller-completed");

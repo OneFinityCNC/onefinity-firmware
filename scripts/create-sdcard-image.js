@@ -38,5 +38,5 @@ async function main() {
     runCommand(`dd if=${device} of=${IMAGE_FILENAME} status=progress`, {
         stdio: "inherit"
     });
-    runCommand(`chown ${uid} 1f.img`);
+    runCommand(`chown ${uid} ${IMAGE_FILENAME}`);
 }
