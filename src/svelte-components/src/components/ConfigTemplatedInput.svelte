@@ -69,6 +69,11 @@
         return value;
     }
 
+    function onKeyup(event) {
+        value = event.target.value;
+        onChange();
+    }
+
     function onChange() {
         Config.update((config) => {
             let target = config;
@@ -108,6 +113,7 @@
                 step={template.step || "any"}
                 bind:value
                 on:input={onChange}
+                on:keyup={onKeyup}
             />
         {:else if template.type === "int"}
             <input
@@ -117,11 +123,23 @@
                 max={template.max}
                 bind:value
                 on:input={onChange}
+                on:keyup={onKeyup}
             />
         {:else if template.type === "string"}
-            <input {name} type="text" bind:value on:input={onChange} />
+            <input
+                {name}
+                type="text"
+                bind:value
+                on:input={onChange}
+                on:keyup={onKeyup}
+            />
         {:else if template.type == "text"}
-            <textarea {name} bind:value on:input={onChange} />
+            <textarea
+                {name}
+                bind:value
+                on:input={onChange}
+                on:keyup={onKeyup}
+            />
         {/if}
 
         <label for="" class="units">{units || ""}</label>
