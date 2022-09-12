@@ -10,6 +10,7 @@ import threading
 import time
 import traceback
 import uuid
+import glob
 
 
 def call_get_output(cmd):
@@ -122,18 +123,16 @@ class State(object):
             self.set('offset_' + axis, 0)
 
     def load_files(self):
-        files = []
-
         upload = self.ctrl.get_upload()
 
         if not os.path.exists(upload):
             os.mkdir(upload)
 
-        for path in os.listdir(upload):
-            if os.path.isfile(upload + '/' + path):
-                files.append(path)
+        files = filter(os.path.isfile, glob.glob(upload + '/*'))
+        # Sort list of files based on last modification time in ascending order
+        files = sorted(files, key=os.path.getmtime, reverse=True)
+        files = list(map(lambda f: f.replace("./upload/", ""), files))
 
-        files.sort()
         self.set('files', files)
 
         if len(files):

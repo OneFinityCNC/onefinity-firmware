@@ -62,7 +62,7 @@ class FileHandler(bbctrl.APIHandler):
         del (self.uploadFile)
 
         self.get_ctrl().preplanner.invalidate(self.uploadFilename)
-        self.get_ctrl().state.add_file(self.uploadFilename)
+        self.get_ctrl().state.load_files()
         self.get_log('FileHandler').info('GCode received: ' +
                                          self.uploadFilename)
 
