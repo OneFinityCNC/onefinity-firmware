@@ -1,5 +1,11 @@
 <script lang="ts">
+    import RemoteDiagnosticsDialog from "$dialogs/RemoteDiagnosticsDialog.svelte";
+    import Button, { Label } from "@smui/button";
+
+    let showRemoteDiagnosticsDialog = false;
 </script>
+
+<RemoteDiagnosticsDialog bind:open={showRemoteDiagnosticsDialog} />
 
 <h2>Support & Contact Info</h2>
 <p>
@@ -9,6 +15,14 @@
     </a>
     for a variety of support resources, and to find our contact information.
 </p>
+
+<Button
+    touch
+    variant="raised"
+    on:click={() => (showRemoteDiagnosticsDialog = true)}
+>
+    <Label>Remote Diagnostics</Label>
+</Button>
 
 <h2>Discussion Forum</h2>
 <p>
