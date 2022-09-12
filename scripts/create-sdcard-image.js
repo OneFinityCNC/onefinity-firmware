@@ -14,8 +14,9 @@ async function main() {
 
     const { uid } = statSync(".");
 
-    const devices = runCommand("df -T msdos")
+    const devices = runCommand("df -H -T msdos")
         .split("\n")
+        .filter(line => !line.includes("Filesystem"))
         .map(line => {
             const [ disk ] = line.split(/\s+/);
             return {
