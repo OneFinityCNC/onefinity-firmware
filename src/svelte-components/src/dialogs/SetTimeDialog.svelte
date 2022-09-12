@@ -115,8 +115,12 @@
         const YY = year.toString().padStart(2, "0");
         const MM = month.toString().padStart(2, "0");
         const DD = day.toString().padStart(2, "0");
-        const hh = hour.toString().padStart(2, "0");
+        let hh = hour.toString().padStart(2, "0");
         const mm = minute.toString().padStart(2, "0");
+
+        if (Number(hour) < 12 && !am) {
+            hh = (hour + 12).toString().padStart(2, "0");
+        }
 
         await api.PUT("time", {
             datetime: `${YY}-${MM}-${DD} ${hh}:${mm}:00`,

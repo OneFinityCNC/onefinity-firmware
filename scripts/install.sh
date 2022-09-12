@@ -91,6 +91,8 @@ if [ $? -ne 0 ]; then
     update-locale en_US.UTF-8
 fi
 
+localectl set-locale LC_TIME=en_US.UTF-8
+
 # Setup USB stick automount
 diff ./installer/config/11-automount.rules /etc/udev/rules.d/11-automount.rules >/dev/null
 if [ $? -ne 0 ]; then
