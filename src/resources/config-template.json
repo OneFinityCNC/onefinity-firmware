@@ -43,6 +43,10 @@
                 {
                     "title": "SMX Bottom-lights mode",
                     "value": "SMX-BOTTOM"
+                },
+                {
+                    "title": "Logitech F310, D-mode",
+                    "value": "LOGITECH-F310-D"
                 }
             ],
             "default": "XBOX"

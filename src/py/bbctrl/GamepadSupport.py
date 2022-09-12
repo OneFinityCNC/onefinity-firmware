@@ -82,6 +82,21 @@ factoryGamepadConfigs = {
         "EV_KEY:312": "lock-y",
         "EV_KEY:313": "lock-x",
     },
+    "LOGITECH-F310-D": {
+        "EV_KEY:291": "speed-4",
+        "EV_KEY:290": "speed-3",
+        "EV_KEY:289": "speed-2",
+        "EV_KEY:288": "speed-1",
+        "EV_ABS:0": "axis-x",
+        "EV_ABS:16": "axis-x",
+        "EV_ABS:1": "axis-y",
+        "EV_ABS:17": "axis-y",
+        "EV_ABS:5": "axis-z",
+        "EV_KEY:292": "lock-y",
+        "EV_KEY:293": "lock-x",
+        "EV_KEY:294": "lock-y",
+        "EV_KEY:295": "lock-x",
+    },
     "045E:02A1": {
         "description": "XBox 360 Controller",
         "type": "XBOX"
@@ -100,11 +115,7 @@ factoryGamepadConfigs = {
     },
     "046D:C216": {
         "description": "Logitech F310, D mode",
-        "type": "PLAYSTATION"
-    },
-    "046D:C216": {
-        "description": "Logitech F510, D mode",
-        "type": "PLAYSTATION"
+        "type": "LOGITECH-F310-D"
     },
     "046D:C219": {
         "description": "Logitech F710, D mode",
@@ -112,10 +123,6 @@ factoryGamepadConfigs = {
     },
     "046D:C21D": {
         "description": "Logitech F310, X mode",
-        "type": "XBOX"
-    },
-    "046D:C21E": {
-        "description": "Logitech F510, X mode",
         "type": "XBOX"
     },
     "046D:C21F": {
