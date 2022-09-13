@@ -327,9 +327,12 @@ module.exports = new Vue({
                     return;
                 }
 
-                if ("log" in e.data) {
-                    if (e.data.log.msg !== "Switch not found") {
-                        this.$broadcast("log", e.data.log);
+                if (e.data.log && e.data.log.msg !== "Switch not found") {
+                    this.$broadcast("log", e.data.log);
+
+                    if (Object.keys(e.data).length === 1) {
+                        // If there's only log data, we're done
+                        return;
                     }
                 }
 

@@ -133,7 +133,7 @@ class Comm(object):
         if level == 'error': self.comm_error()
 
         # Treat machine alarmed warning as an error
-        if level == 'warning' and 'code' in msg and msg['code'] == 11:
+        if level == 'warning' and 'code' in msg and msg['code'] == 12:
             self.comm_error()
 
     def _log_motor_flags(self, update):
