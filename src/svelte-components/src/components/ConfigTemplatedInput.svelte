@@ -4,13 +4,14 @@
     import { ControllerMethods } from "$lib/RegisterControllerMethods";
     import { onMount } from "svelte";
 
+    type ValueType =
+        | string
+        | number
+        | { title: string; value: string | number };
+
     type Template = {
         type?: string;
-        values?: (
-            | string
-            | number
-            | { title: string; value: string | number }
-        )[];
+        values?: Array<ValueType>;
         unit?: "string";
         iunit?: "string";
         min?: number;
@@ -73,24 +74,52 @@
         return value;
     }
 
-    function onKeyup(event) {
-        value = event.target.value;
-        onChange();
-    }
-
-    function onChange() {
+    function onChange(event) {
         Config.update((config) => {
             let target = config;
             for (const part of keyParts.slice(0, -1)) {
                 target = target[part];
             }
 
+            const value = coerceValue(event.target.value);
+            console.log(value);
             target[keyParts[keyParts.length - 1]] = value;
 
             return config;
         });
 
         ControllerMethods.dispatch("config-changed");
+    }
+
+    function coerceValue(value) {
+        switch (template.type) {
+            case "float":
+            case "int":
+                return Number(value);
+
+            default:
+                return value;
+        }
+    }
+
+    function getOptionValue(opt: ValueType) {
+        switch (typeof opt) {
+            case "object":
+                return opt.value || opt;
+
+            default:
+                return opt;
+        }
+    }
+
+    function getOptionTitle(opt: ValueType) {
+        switch (typeof opt) {
+            case "object":
+                return opt.title || opt;
+
+            default:
+                return opt;
+        }
     }
 </script>
 
@@ -102,10 +131,10 @@
             <select {name} bind:value on:change={onChange}>
                 {#each template.values as opt}
                     <option
-                        value={opt?.value ?? opt}
+                        value={getOptionValue(opt)}
                         disabled={opt === "-----"}
                     >
-                        {opt?.title ?? opt}
+                        {getOptionTitle(opt)}
                     </option>
                 {/each}
             </select>
@@ -119,8 +148,7 @@
                 max={template.max}
                 step={template.step || "any"}
                 bind:value
-                on:input={onChange}
-                on:keyup={onKeyup}
+                on:keyup={onChange}
             />
         {:else if template.type === "int"}
             <input
@@ -129,24 +157,12 @@
                 min={template.min}
                 max={template.max}
                 bind:value
-                on:input={onChange}
-                on:keyup={onKeyup}
+                on:keyup={onChange}
             />
         {:else if template.type === "string"}
-            <input
-                {name}
-                type="text"
-                bind:value
-                on:input={onChange}
-                on:keyup={onKeyup}
-            />
+            <input {name} type="text" bind:value on:keyup={onChange} />
         {:else if template.type == "text"}
-            <textarea
-                {name}
-                bind:value
-                on:input={onChange}
-                on:keyup={onKeyup}
-            />
+            <textarea {name} bind:value on:keyup={onChange} />
         {/if}
 
         <label for="" class="units">{units || ""}</label>
