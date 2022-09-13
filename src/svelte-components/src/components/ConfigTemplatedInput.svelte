@@ -82,7 +82,6 @@
             }
 
             const value = coerceValue(event.target.value);
-            console.log(value);
             target[keyParts[keyParts.length - 1]] = value;
 
             return config;
