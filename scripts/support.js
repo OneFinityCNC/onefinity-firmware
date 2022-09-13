@@ -7,42 +7,48 @@ const fetch = require("node-fetch");
 
 let ssm;
 
-const Commands = [
-    "code",
-    "ssh",
-    "web",
-    "disconnect"
-];
-
 initSignalHandlers();
 main();
 
 async function main() {
     await getAWSCredentials();
 
-    const { command } = await inquirer.prompt({
-        type: "list",
-        name: "command",
-        choices: Commands
-    });
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        const { command } = await inquirer.prompt({
+            type: "list",
+            name: "command",
+            choices: [
+                "code",
+                "info",
+                "disconnect"
+            ]
+        });
 
-    switch (command) {
-        case "code":
-            return await commandCode();
+        switch (command) {
+            case "code":
+                await commandCode();
+                break;
 
-        case "ssh":
-            return await commandSsh();
+            case "info":
+                await commandInfo();
+                break;
 
-        case "web":
-            return await commandWeb();
-
-        case "disconnect":
-            return await commandDisconnect();
+            case "disconnect":
+                await commandDisconnect();
+                break;
+        }
     }
 }
 
 async function commandCode() {
-    await closeTunnels();
+    const tunnels = await loadTunnels();
+
+    if (tunnels?.length) {
+        console.log("There are active tunnels.  Disconnect first.");
+        return;
+    }
+
     await updateNgrokAuthToken();
 
     const code = `000000${Math.random() * 999999}`.slice(-6);
@@ -51,7 +57,7 @@ async function commandCode() {
     console.log(`The code is: ${code}`);
 }
 
-async function commandSsh() {
+async function commandInfo() {
     const tunnels = await loadTunnels();
 
     if (!tunnels.length) {
@@ -59,19 +65,13 @@ async function commandSsh() {
         return;
     }
 
+    const webTunnel = tunnels.find(tunnel => tunnel.proto === "https");
     const sshTunnel = tunnels.find(tunnel => tunnel.proto === "tcp");
     const [ , host, port ] = sshTunnel.public_url.match(/tcp:\/\/([^:]+):(\d+)/);
 
-    console.log("Run this:");
-    console.log();
+    console.log("Connection info:");
+    console.log(webTunnel.public_url);
     console.log(`ssh bbmc@${host} -p ${port}`);
-    console.log();
-}
-
-async function commandWeb() {
-    const url = await getWebUrl();
-
-    console.log(`Web interface: ${url}`);
     console.log();
 }
 
@@ -80,7 +80,7 @@ async function commandDisconnect() {
 
     if (!tunnels.length) {
         console.log("There are no tunnels!");
-        process.exit(1);
+        return;
     }
 
     const webTunnel = tunnels.find(tunnel => tunnel.proto === "https");
@@ -211,33 +211,4 @@ async function loadTunnels() {
     const { tunnels } = await response.json();
 
     return tunnels;
-}
-
-async function getWebUrl() {
-    const tunnels = await loadTunnels();
-
-    if (!tunnels.length) {
-        console.log("There are no tunnels!");
-        process.exit(1);
-    }
-
-    const webTunnel = tunnels.find(tunnel => tunnel.proto === "https");
-    const url = new URL(webTunnel.public_url);
-    url.username = "onefinity";
-    url.password = "onefinity";
-    url.protocol = "http";
-
-    return url.toString();
-}
-
-async function closeTunnels() {
-    const tunnels = await loadTunnels();
-
-    if (!tunnels?.length) {
-        return;
-    }
-
-    console.error("There are tunnels open:", JSON.stringify(tunnels, null, 4));
-    console.error("Giving up");
-    process.exit(1);
 }
