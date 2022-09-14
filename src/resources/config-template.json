@@ -24,6 +24,11 @@
             "unit": "mm/min²",
             "default": 200000
         },
+        "probing-prompts": {
+            "help": "Enable or disable safety prompts during and after probing",
+            "type": "bool",
+            "default": true
+        },
         "gamepad-default-type": {
             "help": "When a gamepad is not recognized, treat it as the selected type of gamepad.",
             "type": "enum",

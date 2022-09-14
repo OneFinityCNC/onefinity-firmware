@@ -22,6 +22,21 @@
         scale?: number;
     };
 
+    const namesByKey = {
+        "gamepad-default-type": "Default type",
+        "probing-prompts": "Show safety prompts",
+        "probe-xdim": "Probe block width",
+        "probe-ydim": "Probe block length",
+        "probe-zdim": "Probe block height",
+        "probe-fast-seek": "Fast seek speed",
+        "probe-slow-seek": "Slow seek speed",
+        "program-start": "On program start",
+        "tool-change": "On tool change",
+        "program-end": "On program end",
+        "max-deviation": "Maximum deviation",
+        "junction-accel": "Junction acceleration",
+    };
+
     export let key: string;
     let keyParts: string[];
     let template: Template;
@@ -33,7 +48,7 @@
     onMount(() => {
         keyParts = (key || "").split(".");
         template = getTemplate();
-        name = keyParts[keyParts.length - 1];
+        name = namesByKey[keyParts.at(-1)] || keyParts.at(-1);
         title = getTitle();
         value = getValue();
     });
@@ -81,7 +96,7 @@
                 target = target[part];
             }
 
-            const value = coerceValue(event.target.value);
+            const value = getValueFromElement(event.target);
             target[keyParts[keyParts.length - 1]] = value;
 
             return config;
@@ -90,14 +105,17 @@
         ControllerMethods.dispatch("config-changed");
     }
 
-    function coerceValue(value) {
+    function getValueFromElement(element) {
         switch (template.type) {
             case "float":
             case "int":
-                return Number(value);
+                return Number(element.value);
+
+            case "bool":
+                return element.checked;
 
             default:
-                return value;
+                return element.value;
         }
     }
 
@@ -138,7 +156,12 @@
                 {/each}
             </select>
         {:else if template.type === "bool"}
-            <input {name} type="checkbox" bind:value on:input={onChange} />
+            <input
+                {name}
+                type="checkbox"
+                checked={value}
+                on:change={onChange}
+            />
         {:else if template.type === "float"}
             <input
                 {name}

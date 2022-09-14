@@ -105,10 +105,14 @@
             $probingActive = true;
             assertValidProbeType();
 
+            $probingFailed = false;
+
+            const enableSafety = $Config.settings["probing-prompts"];
+
             steps = [
-                "CheckProbe",
+                enableSafety ? "CheckProbe" : undefined,
                 probeType === "xyz" ? "BitDimensions" : undefined,
-                "PlaceProbeBlock",
+                enableSafety ? "PlaceProbeBlock" : undefined,
                 "Probe",
                 "Done",
             ].filter<Step>(isStep);
@@ -163,6 +167,10 @@
     ) {
         currentStep = nextStep;
 
+        if (!steps.includes(currentStep)) {
+            return;
+        }
+
         clearFlags();
         updateButtons();
 
@@ -184,7 +192,6 @@
         $cancelled = false;
         $probeContacted = false;
         $probingStarted = false;
-        $probingFailed = false;
         $probingComplete = false;
         $userAcknowledged = false;
     }
@@ -310,10 +317,12 @@
                 {/each}
             </ul>
         </div>
-        <p style="width: 100%">
+        <div style="width: 100%">
             {#if currentStep === "CheckProbe"}
-                Attach the probe magnet to the collet, then touch the probe
-                block to the bit.
+                <p>
+                    Attach the probe magnet to the collet, then touch the probe
+                    block to the bit.
+                </p>
 
                 <Icon
                     data={probeType === "xyz" ? CheckXYZ : CheckZ}
@@ -334,13 +343,15 @@
 
                 <Icon data={BitDiameter} size="150px" class="probe-icon-svg" />
             {:else if currentStep === "PlaceProbeBlock"}
-                {#if probeType === "xyz"}
-                    Place the probe block face up, on the lower-left corner of
-                    your workpiece.
-                {:else}
-                    Place the probe block face down, with the bit above the
-                    recess.
-                {/if}
+                <p>
+                    {#if probeType === "xyz"}
+                        Place the probe block face up, on the lower-left corner
+                        of your workpiece.
+                    {:else}
+                        Place the probe block face down, with the bit above the
+                        recess.
+                    {/if}
+                </p>
 
                 <Icon
                     data={probeType === "xyz" ? PlaceXYZ : PlaceZ}
@@ -354,12 +365,14 @@
                     'Next'.
                 </p>
             {:else if currentStep === "Probe"}
-                Probing in progress...
+                <p>Probing in progress...</p>
 
                 <LinearProgress indeterminate />
             {:else if currentStep === "Done"}
                 {#if $probingFailed}
-                    Could not find the probe block during probing!
+                    <h3>Emergency Stop!</h3>
+
+                    <p>Could not find the probe block during probing!</p>
 
                     <p>
                         Make sure the tip of the bit is less than {metric
@@ -368,7 +381,7 @@
                         above the probe block, and try again.
                     </p>
                 {:else}
-                    Don't forget to put away the probe!
+                    <p>Don't forget to put away the probe!</p>
 
                     <Icon
                         data={probeType === "xyz" ? PutAwayXYZ : PutAwayZ}
@@ -384,7 +397,7 @@
                     {/if}
                 {/if}
             {/if}
-        </p>
+        </div>
     </Content>
 
     <Actions>
