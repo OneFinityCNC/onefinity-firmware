@@ -2,7 +2,6 @@ DIR := $(shell dirname $(lastword $(MAKEFILE_LIST)))
 
 NODE_MODS  := $(DIR)/node_modules
 PUG        := $(NODE_MODS)/.bin/pug
-STYLUS     := $(NODE_MODS)/.bin/stylus
 
 TARGET_DIR := build/http
 HTML       := index
@@ -16,8 +15,10 @@ GPLAN_MOD    := rpi-share/camotics/gplan.so
 GPLAN_TARGET := src/py/camotics/gplan.so
 GPLAN_IMG    := gplan-dev.img
 
-VERSION  := $(shell sed -n 's/^.*"version": "\([^"]*\)",.*$$/\1/p' package.json)
-PKG_NAME := bbctrl-$(VERSION)
+VERSION  := $(shell jq -r '.version' package.json)
+PY_VERSION  := $(shell jq -r '.version' package.json | sed -E 's|([0-9]+)\.([0-9]+)\.([0-9]+)(-(b)eta\.(.*))?|\1.\2.\3\5\6|g')
+PKG_NAME := dist/bbctrl-$(PY_VERSION).tar.bz2
+FINAL_PKG_NAME := dist/onefinity-$(VERSION).tar.bz2
 
 SUBPROJECTS := avr boot pwr
 
@@ -34,6 +35,7 @@ all: $(HTML) $(RESOURCES)
 
 pkg: all $(AVR_FIRMWARE) bbserial
 	./setup.py sdist
+	mv $(PKG_NAME) $(FINAL_PKG_NAME)
 
 bbserial:
 	$(MAKE) -C src/bbserial
@@ -57,8 +59,8 @@ $(AVR_FIRMWARE):
 	$(MAKE) -C src/avr
 
 update: pkg
-	http_proxy= curl -i -X PUT -H "Content-Type: multipart/form-data" \
-	  -F "firmware=@dist/$(PKG_NAME).tar.bz2" -F "password=$(PASSWORD)" \
+	curl -i -X PUT -H "Content-Type: multipart/form-data" \
+	  -F "firmware=@$(FINAL_PKG_NAME)" -F "password=$(PASSWORD)" \
 	  http://$(HOST)/api/firmware/update
 	@-tput sgr0 && echo # Fix terminal output
 

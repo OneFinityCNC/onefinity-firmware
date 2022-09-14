@@ -4,6 +4,15 @@ UPDATE_AVR=true
 UPDATE_PY=true
 REBOOT=false
 
+remove_services() {
+    for service in "$@"
+    do
+        systemctl stop "${service}.service"
+        systemctl disable "${service}.service"
+        find /etc/systemd -name "${service}.service" -exec rm -f {} \;
+    done
+}
+
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-avr) UPDATE_AVR=false ;;
@@ -185,9 +194,10 @@ if $UPDATE_PY; then
 fi
 
 # Install the service that turns off the screen during shutdown
-cp ./installer/config/bbctrl-poweroff.service /etc/systemd/system/
+remove_services bbctrl-poweroff onefinity-poweroff
+cp ./installer/config/onefinity-poweroff.service /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable bbctrl-poweroff
+systemctl enable onefinity-poweroff
 
 # Expand the file system if necessary
 chmod +x ./installer/scripts/resize_root_fs.sh
@@ -197,8 +207,9 @@ if [ $? -eq 0 ]; then
 fi
 
 # Install our logrotate config
-cp ./installer/config/bbctrl-logrotate /etc/logrotate.d/bbctrl
-chown root:root /etc/logrotate.d/bbctrl
+rm -f /etc/logrotate.d/{bbctrl,onefinity}
+cp ./installer/config/onefinity-logrotate /etc/logrotate.d/onefinity
+chown root:root /etc/logrotate.d/onefinity
 
 # Ensure logrotate runs on every boot (for systems with no network, thus bad clock)
 if [ ! -e /etc/cron.d/reboot ]; then
