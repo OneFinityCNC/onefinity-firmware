@@ -3,7 +3,7 @@
 const api = require("./api");
 const cookie = require("./cookie")("bbctrl-");
 const Sock = require("./sock");
-const semver = require("semver");
+const semverLt = require("semver/functions/lt");
 
 SvelteComponents.createComponent("DialogHost",
     document.getElementById("svelte-dialog-host")
@@ -296,7 +296,7 @@ module.exports = new Vue({
                 return false;
             }
 
-            return semver.lt(this.config.full_version, this.latestVersion);
+            return semverLt(this.config.full_version, this.latestVersion);
         },
 
         showShutdownDialog: function() {
