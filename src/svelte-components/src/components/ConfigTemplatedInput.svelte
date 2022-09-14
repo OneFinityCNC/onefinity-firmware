@@ -48,7 +48,9 @@
     onMount(() => {
         keyParts = (key || "").split(".");
         template = getTemplate();
-        name = namesByKey[keyParts.at(-1)] || keyParts.at(-1);
+
+        name = keyParts[keyParts.length - 1];
+        name = namesByKey[name] || name;
         title = getTitle();
         value = getValue();
     });
