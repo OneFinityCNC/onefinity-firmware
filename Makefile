@@ -15,8 +15,8 @@ GPLAN_MOD    := rpi-share/camotics/gplan.so
 GPLAN_TARGET := src/py/camotics/gplan.so
 GPLAN_IMG    := gplan-dev.img
 
-VERSION  := $(shell jq -r '.version' package.json)
-PY_VERSION  := $(shell jq -r '.version' package.json | sed -E 's|([0-9]+)\.([0-9]+)\.([0-9]+)(-(b)eta\.(.*))?|\1.\2.\3\5\6|g')
+VERSION := $(shell jq -r '.version' package.json)
+PY_VERSION := $(shell jq -r '.version' package.json | grep -P '^\d+\.\d+\.\d+(-(beta|alpha)\.\d+)?$$' | sed -E 's|-((b)eta\|(a)lpha)\.(.*)|\2\3\4|g')
 PKG_NAME := dist/bbctrl-$(PY_VERSION).tar.bz2
 FINAL_PKG_NAME := dist/onefinity-$(VERSION).tar.bz2
 
@@ -30,8 +30,21 @@ ifndef PASSWORD
 PASSWORD=onefinity
 endif
 
-all: $(HTML) $(RESOURCES)
+all: version $(HTML) $(RESOURCES)
 	@for SUB in $(SUBPROJECTS); do $(MAKE) -C src/$$SUB; done
+
+version:
+ifeq ("$(PY_VERSION)", "")
+	@echo "Bad version string: $(VERSION)"
+	@exit 1
+endif
+
+	@echo "****************************"
+	@echo "*"
+	@echo "*  Building $(PY_VERSION)"
+	@echo "*"
+	@echo "****************************"
+	@echo
 
 pkg: all $(AVR_FIRMWARE) bbserial
 	./setup.py sdist

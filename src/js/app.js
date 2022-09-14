@@ -29,9 +29,19 @@ function fixup_version_number(version) {
     if (v.pre) {
         const [ , prefix, num ] = v.pre.match(/([a-zA-Z])(\d+)/);
 
-        const suffix = prefix === "b"
-            ? `beta.${num}`
-            : v.pre;
+        let suffix;
+        switch (prefix) {
+            case "b":
+                suffix = `beta.${num}`;
+                break;
+
+            case "a":
+                suffix = `alpha.${num}`;
+                break;
+
+            default:
+                suffix = v.pre;
+        }
 
         version = `${version}-${suffix}`;
     }
