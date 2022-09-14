@@ -16,14 +16,10 @@ GPLAN_MOD    := rpi-share/camotics/gplan.so
 GPLAN_TARGET := src/py/camotics/gplan.so
 GPLAN_IMG    := gplan-dev.img
 
-RSYNC_EXCLUDE := \*.pyc __pycache__ \*.egg-info \\\#* \*~ .\\\#\*
-RSYNC_EXCLUDE := $(patsubst %,--exclude %,$(RSYNC_EXCLUDE))
-RSYNC_OPTS    := $(RSYNC_EXCLUDE) -rv --no-g --delete --force
-
 VERSION  := $(shell sed -n 's/^.*"version": "\([^"]*\)",.*$$/\1/p' package.json)
 PKG_NAME := bbctrl-$(VERSION)
 
-SUBPROJECTS := avr boot pwr jig
+SUBPROJECTS := avr boot pwr
 
 ifndef HOST
 HOST=onefinity
