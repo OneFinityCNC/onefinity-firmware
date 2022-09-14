@@ -11,22 +11,17 @@ script#templated-input-template(type="text/x-template")
 
     input(v-if="template.type == 'float'", v-model.number="view", number,
       :min="template.min", :max="template.max", :step="template.step || 'any'",
-      type="number", :name="name", @change="change")
+      type="number", :name="name", @keyup="change")
 
     input(v-if="template.type == 'int' && !template.values", number,
       v-model.number="view", :min="template.min", :max="template.max",
-      type="number", :name="name", @change="change")
+      type="number", :name="name", @keyup="change")
 
     input(v-if="template.type == 'string'", v-model="view", type="text",
-      :name="name", @change="change")
+      :name="name", @keyup="change")
 
     textarea(v-if="template.type == 'text'", v-model="view", :name="name",
-      @change="change")
-
-    span.range(v-if="template.type == 'percent'")
-      input(type="range", v-model="view", :name="name", number, min="0",
-        max="100", step="1", @change="change")
-      | {{view}}
+      @keyup="change")
 
     label.units {{units}}
 

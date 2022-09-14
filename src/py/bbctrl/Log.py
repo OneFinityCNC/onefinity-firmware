@@ -126,7 +126,9 @@ class Log(object):
     def _log(self, msg, level=INFO, prefix='', where=None):
         if not msg: return
 
-        hdr = '%s:%s:' % ('DIMWE'[level], prefix)
+        timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+
+        hdr = '%s:%s:%s:' % ('DIMWE'[level], prefix, timestamp)
         s = hdr + ('\n' + hdr).join(msg.split('\n'))
 
         if self.f is not None:

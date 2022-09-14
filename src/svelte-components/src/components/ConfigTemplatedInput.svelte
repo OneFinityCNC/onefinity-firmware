@@ -4,9 +4,14 @@
     import { ControllerMethods } from "$lib/RegisterControllerMethods";
     import { onMount } from "svelte";
 
+    type ValueType =
+        | string
+        | number
+        | { title: string; value: string | number };
+
     type Template = {
         type?: string;
-        values?: (string | number)[];
+        values?: Array<ValueType>;
         unit?: "string";
         iunit?: "string";
         min?: number;
@@ -15,6 +20,21 @@
         help?: string;
         default?: string | number;
         scale?: number;
+    };
+
+    const namesByKey = {
+        "gamepad-default-type": "Default type",
+        "probing-prompts": "Show safety prompts",
+        "probe-xdim": "Probe block width",
+        "probe-ydim": "Probe block length",
+        "probe-zdim": "Probe block height",
+        "probe-fast-seek": "Fast seek speed",
+        "probe-slow-seek": "Slow seek speed",
+        "program-start": "On program start",
+        "tool-change": "On tool change",
+        "program-end": "On program end",
+        "max-deviation": "Maximum deviation",
+        "junction-accel": "Junction acceleration",
     };
 
     export let key: string;
@@ -28,7 +48,9 @@
     onMount(() => {
         keyParts = (key || "").split(".");
         template = getTemplate();
+
         name = keyParts[keyParts.length - 1];
+        name = namesByKey[name] || name;
         title = getTitle();
         value = getValue();
     });
@@ -69,19 +91,54 @@
         return value;
     }
 
-    function onChange() {
+    function onChange(event) {
         Config.update((config) => {
             let target = config;
             for (const part of keyParts.slice(0, -1)) {
                 target = target[part];
             }
 
+            const value = getValueFromElement(event.target);
             target[keyParts[keyParts.length - 1]] = value;
 
             return config;
         });
 
         ControllerMethods.dispatch("config-changed");
+    }
+
+    function getValueFromElement(element) {
+        switch (template.type) {
+            case "float":
+            case "int":
+                return Number(element.value);
+
+            case "bool":
+                return element.checked;
+
+            default:
+                return element.value;
+        }
+    }
+
+    function getOptionValue(opt: ValueType) {
+        switch (typeof opt) {
+            case "object":
+                return opt.value || opt;
+
+            default:
+                return opt;
+        }
+    }
+
+    function getOptionTitle(opt: ValueType) {
+        switch (typeof opt) {
+            case "object":
+                return opt.title || opt;
+
+            default:
+                return opt;
+        }
     }
 </script>
 
@@ -92,13 +149,21 @@
         {#if template.values}
             <select {name} bind:value on:change={onChange}>
                 {#each template.values as opt}
-                    <option value={opt} disabled={opt === "-----"}>
-                        {opt}
+                    <option
+                        value={getOptionValue(opt)}
+                        disabled={opt === "-----"}
+                    >
+                        {getOptionTitle(opt)}
                     </option>
                 {/each}
             </select>
         {:else if template.type === "bool"}
-            <input {name} type="checkbox" bind:value on:input={onChange} />
+            <input
+                {name}
+                type="checkbox"
+                checked={value}
+                on:change={onChange}
+            />
         {:else if template.type === "float"}
             <input
                 {name}
@@ -107,7 +172,7 @@
                 max={template.max}
                 step={template.step || "any"}
                 bind:value
-                on:input={onChange}
+                on:keyup={onChange}
             />
         {:else if template.type === "int"}
             <input
@@ -116,12 +181,12 @@
                 min={template.min}
                 max={template.max}
                 bind:value
-                on:input={onChange}
+                on:keyup={onChange}
             />
         {:else if template.type === "string"}
-            <input {name} type="text" bind:value on:input={onChange} />
+            <input {name} type="text" bind:value on:keyup={onChange} />
         {:else if template.type == "text"}
-            <textarea {name} bind:value on:input={onChange} />
+            <textarea {name} bind:value on:keyup={onChange} />
         {/if}
 
         <label for="" class="units">{units || ""}</label>

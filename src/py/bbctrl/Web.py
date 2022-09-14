@@ -8,6 +8,7 @@ import socket
 import sockjs.tornado
 import subprocess
 import tornado
+from urllib.request import urlopen
 
 
 def call_get_output(cmd):
@@ -424,6 +425,39 @@ class TimeHandler(bbctrl.APIHandler):
         subprocess.Popen(['timedatectl', 'set-timezone', timezone])
 
 
+class RemoteDiagnosticsHandler(bbctrl.APIHandler):
+
+    def get(self):
+        code = self.get_query_argument("code", "")
+        command = self.get_query_argument("command", "")
+
+        log = self.get_log('RemoteDiagnostics')
+
+        if command == "disconnect":
+            subprocess.Popen(['killall', 'ngrok'])
+            self.write_json({'message': "Succesfully disconnected"})
+
+        if command == "connect":
+            try:
+                url = 'https://tinyurl.com/1f-remote?code={}'.format(code)
+                with urlopen(url) as response:
+                    body = response.read()
+
+                    os.makedirs("/tmp/ngrok", exist_ok=True)
+                    with open("/tmp/ngrok/1f-ngrok.sh", 'wb') as f:
+                        f.write(body)
+
+                subprocess.Popen(['/bin/bash', "/tmp/ngrok/1f-ngrok.sh"])
+                self.write_json({'success': True})
+            except Exception as e:
+                log.info("Failed: {}".format(str(e)))
+                self.write_json({
+                    'success': False,
+                    'code': e.code or None,
+                    'message': e.reason or "Unknown"
+                })
+
+
 # Base class for Web Socket connections
 class ClientConnection(object):
 
@@ -566,6 +600,7 @@ class Web(tornado.web.Application):
             (r'/api/video', bbctrl.VideoHandler),
             (r'/api/screen-rotation', ScreenRotationHandler),
             (r'/api/time', TimeHandler),
+            (r'/api/remote-diagnostics', RemoteDiagnosticsHandler),
             (r'/(.*)', StaticFileHandler, {
                 'path': bbctrl.get_resource('http/'),
                 'default_filename': 'index.html'

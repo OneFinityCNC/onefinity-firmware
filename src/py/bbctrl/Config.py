@@ -29,6 +29,8 @@ class Config(object):
             self.log.exception(
                 'Internal error: Failed to load config template')
 
+        self.reload()
+
     def load(self):
         path = self.ctrl.get_path('config.json')
 

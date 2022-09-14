@@ -3,38 +3,40 @@
 const api = require("./api");
 const cookie = require("./cookie")("bbctrl-");
 const Sock = require("./sock");
+const semverLt = require("semver/functions/lt");
 
 SvelteComponents.createComponent("DialogHost",
     document.getElementById("svelte-dialog-host")
 );
 
-function is_newer_version(current, latest) {
-    const pattern = /(\d+)\.(\d+)\.(\d+)(.*)/;
-    const currentParts = current.match(pattern);
-    const latestParts = latest.match(pattern);
+function parse_version(v) {
+    const pattern = /^(\d+)\.(\d+)\.(\d+)(?:[-.]?(.*))?$/;
+    const [ version, major, minor, patch, pre ] = v.trim().match(pattern) || [];
 
-    if (!currentParts || !latestParts) {
-        return false;
+    return {
+        version,
+        major,
+        minor,
+        patch,
+        pre
+    };
+}
+
+function fixup_version_number(version) {
+    const v = parse_version(version);
+
+    version = `${v.major}.${v.minor}.${v.patch}`;
+    if (v.pre) {
+        const [ , prefix, num ] = v.pre.match(/([a-zA-Z])(\d+)/);
+
+        const suffix = prefix === "b"
+            ? `beta.${num}`
+            : v.pre;
+
+        version = `${version}-${suffix}`;
     }
 
-    // Normal version comparisons
-    const major = latestParts[1] - currentParts[1];
-    const minor = latestParts[2] - currentParts[2];
-    const patch = latestParts[3] - currentParts[3];
-
-    // If current is a pre-release, and latest is a release
-    const betaToRelease = latestParts[4].length === 0 && currentParts[4].length > 0;
-
-    switch (true) {
-        case major > 0:
-        case major === 0 && minor > 0:
-        case major === 0 && minor === 0 && patch > 0:
-        case major === 0 && minor === 0 && patch === 0 && betaToRelease:
-            return true;
-
-        default:
-            return false;
-    }
+    return version;
 }
 
 function is_object(o) {
@@ -133,7 +135,7 @@ module.exports = new Vue({
         "io-view": require("./io-view"),
         "admin-general-view": require("./admin-general-view"),
         "admin-network-view": require("./admin-network-view"),
-        "help-view": { template: "#help-view-template" },
+        "help-view": require("./help-view"),
         "cheat-sheet-view": {
             template: "#cheat-sheet-view-template",
             data: function() {
@@ -294,7 +296,7 @@ module.exports = new Vue({
                 return false;
             }
 
-            return is_newer_version(this.config.version, this.latestVersion);
+            return semverLt(this.config.full_version, this.latestVersion);
         },
 
         showShutdownDialog: function() {
@@ -305,6 +307,7 @@ module.exports = new Vue({
             const config = await api.get("config/load");
 
             update_object(this.config, config, true);
+            this.config.full_version = fixup_version_number(this.config.full_version);
             this.parse_hash();
 
             if (!this.checkedUpgrade) {
@@ -327,9 +330,12 @@ module.exports = new Vue({
                     return;
                 }
 
-                if ("log" in e.data) {
-                    if (e.data.log.msg !== "Switch not found") {
-                        this.$broadcast("log", e.data.log);
+                if (e.data.log && e.data.log.msg !== "Switch not found") {
+                    this.$broadcast("log", e.data.log);
+
+                    if (Object.keys(e.data).length === 1) {
+                        // If there's only log data, we're done
+                        return;
                     }
                 }
 

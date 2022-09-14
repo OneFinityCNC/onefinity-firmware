@@ -14,84 +14,116 @@
 <ScreenRotationDialog bind:open={showScreenRotationDialog} />
 <SetTimeDialog bind:open={showSetTimeDialog} />
 
-<h1>Settings</h1>
+<div class="settings-view">
+    <h1>Settings</h1>
 
-<div class="pure-form pure-form-aligned">
-    <h2>User Interface</h2>
-    <fieldset>
-        <div class="pure-control-group">
-            <label for="screen-rotation" />
-            <Button
-                name="screen-rotation"
-                touch
-                variant="raised"
-                on:click={() => (showScreenRotationDialog = true)}
-            >
-                <Label>Change Screen Rotation</Label>
-            </Button>
-        </div>
+    <div class="pure-form pure-form-aligned">
+        <h2>User Interface</h2>
+        <fieldset>
+            <div class="pure-control-group">
+                <label for="screen-rotation" />
+                <Button
+                    name="screen-rotation"
+                    touch
+                    variant="raised"
+                    on:click={() => (showScreenRotationDialog = true)}
+                >
+                    <Label>Change Screen Rotation</Label>
+                </Button>
+            </div>
 
-        <div class="pure-control-group">
-            <label for="set-time" />
-            <Button
-                name="set-time"
-                touch
-                variant="raised"
-                on:click={() => (showSetTimeDialog = true)}
-            >
-                <Label>Change Time & Timezone</Label>
-            </Button>
-        </div>
-    </fieldset>
+            <div class="pure-control-group">
+                <label for="set-time" />
+                <Button
+                    name="set-time"
+                    touch
+                    variant="raised"
+                    on:click={() => (showSetTimeDialog = true)}
+                >
+                    <Label>Change Time & Timezone</Label>
+                </Button>
+            </div>
+        </fieldset>
 
-    <fieldset>
-        <h2>Probe Dimensions</h2>
-        {#each Object.keys(configTemplate.probe) as key}
-            {#if key !== "probe-diameter"}
-                <ConfigTemplatedInput key={`probe.${key}`} />
-            {/if}
-        {/each}
-    </fieldset>
+        <h2>Gamepads / Joypads</h2>
+        <fieldset>
+            <ConfigTemplatedInput key={`settings.gamepad-default-type`} />
+            <div class="tip">
+                If your gamepad doesn't work as expected, try one of the other
+                types.
+            </div>
+        </fieldset>
 
-    <fieldset>
-        <h2>GCode</h2>
-        {#each Object.keys(configTemplate.gcode) as key}
-            <ConfigTemplatedInput key={`gcode.${key}`} />
-        {/each}
-    </fieldset>
+        <h2>Probing</h2>
+        <fieldset>
+            <ConfigTemplatedInput key={`settings.probing-prompts`} />
+            <div class="tip">
+                Onefinity highly recommends that you keep the safety prompts
+                enabled. If you choose to live dangerously, and disable the
+                safety prompts, Onefinity cannot be held responsible.
+            </div>
 
-    <h2>Path Accuracy</h2>
-    <fieldset>
-        <ConfigTemplatedInput key={`settings.max-deviation`} />
-    </fieldset>
+            <br />
 
-    <p>
-        Lower <tt>max-deviation</tt> to follow the programmed path more precisely
-        but at a slower speed.
-    </p>
+            {#each Object.keys(configTemplate.probe) as key}
+                {#if key !== "probe-diameter"}
+                    <ConfigTemplatedInput key={`probe.${key}`} />
+                {/if}
+            {/each}
+        </fieldset>
 
-    <p>
-        In order to improve traversal speed, the path planner may merge
-        consecutive moves or round off sharp corners if doing so would deviate
-        from the program path by less than <tt>max-deviation</tt>.
-    </p>
+        <fieldset>
+            <h2>GCode</h2>
+            {#each Object.keys(configTemplate.gcode) as key}
+                <ConfigTemplatedInput key={`gcode.${key}`} />
+            {/each}
+        </fieldset>
 
-    <p>
-        GCode commands
-        <a href={`${gcodeURL}#gcode:g61`} target="_blank">G61, G61.1</a>
-        and <a href={`${gcodeURL}#gcode:g64`} target="_blank"> G64</a> also affect
-        path planning accuracy.
-    </p>
+        <h2>Path Accuracy</h2>
+        <fieldset>
+            <ConfigTemplatedInput key={`settings.max-deviation`} />
 
-    <h2>Cornering Speed (Advanced)</h2>
-    <fieldset>
-        <ConfigTemplatedInput key={`settings.junction-accel`} />
-    </fieldset>
+            <div class="tip">
+                Lower the maximum deviation to follow the programmed path more
+                precisely but at a slower speed.
+            </div>
 
-    <p>
-        Junction acceleration limits the cornering speed the planner will allow.
-        Increasing this value will allow for faster traversal of corners but may
-        cause the planner to violate axis jerk limits and stall the motors. Use
-        with caution.
-    </p>
+            <div class="tip">
+                In order to improve traversal speed, the path planner may merge
+                consecutive moves or round off sharp corners if doing so would
+                deviate from the program path by less than the maximum
+                deviation.
+            </div>
+
+            <div class="tip">
+                GCode commands
+                <a href={`${gcodeURL}#gcode:g61`} target="_blank">G61, G61.1</a>
+                and <a href={`${gcodeURL}#gcode:g64`} target="_blank">G64</a> also
+                affect path planning accuracy.
+            </div>
+        </fieldset>
+
+        <h2>Cornering Speed (Advanced)</h2>
+        <fieldset>
+            <ConfigTemplatedInput key={`settings.junction-accel`} />
+            <div class="tip">
+                Junction acceleration limits the cornering speed the planner
+                will allow. Increasing this value will allow for faster
+                traversal of corners but may cause the planner to violate axis
+                jerk limits and stall the motors. Use with caution.
+            </div>
+        </fieldset>
+    </div>
 </div>
+
+<style lang="scss">
+    .settings-view {
+        .tip {
+            margin-left: 210px;
+            margin-bottom: 15px;
+            font-style: italic;
+            font-size: 90%;
+            line-height: 1.5;
+        }
+    }
+</style>

@@ -65,10 +65,7 @@
                 bind:value={password}
                 use={[
                     InitialFocus,
-                    [
-                        virtualKeyboardChange,
-                        (newValue) => (password = newValue),
-                    ],
+                    virtualKeyboardChange((v) => (password = v)),
                 ]}
                 label="Password"
                 spellcheck="false"

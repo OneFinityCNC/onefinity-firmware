@@ -32,7 +32,7 @@ class Ctrl(object):
             self.mach = bbctrl.Mach(self, self.avr)
             self.preplanner = bbctrl.Preplanner(self)
             if not args.demo:
-                self.jog = bbctrl.Jog(self)
+                self.gamepadSupport = bbctrl.GamepadSupport(self)
             self.pwr = bbctrl.Pwr(self)
 
             self.mach.connect()

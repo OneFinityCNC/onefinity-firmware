@@ -24,7 +24,10 @@ class FileHandler(bbctrl.APIHandler):
 
             filename = self.request.path.split('/')[-1]
             self.uploadFilename = url_unescape(filename) \
-                .replace('\\', '/') \
+                .encode("ascii", errors="replace") \
+                .decode() \
+                .replace('\\', '_') \
+                .replace('/', '_') \
                 .replace('#', '-') \
                 .replace('?', '-')
 
@@ -53,7 +56,7 @@ class FileHandler(bbctrl.APIHandler):
         if not os.path.exists(self.get_upload()):
             os.mkdir(self.get_upload())
 
-        filename = self.get_upload(self.uploadFilename).encode('utf8')
+        filename = self.get_upload(self.uploadFilename)
         safe_remove(filename)
         os.link(self.uploadFile.name, filename)
 
@@ -62,7 +65,7 @@ class FileHandler(bbctrl.APIHandler):
         del (self.uploadFile)
 
         self.get_ctrl().preplanner.invalidate(self.uploadFilename)
-        self.get_ctrl().state.add_file(self.uploadFilename)
+        self.get_ctrl().state.load_files()
         self.get_log('FileHandler').info('GCode received: ' +
                                          self.uploadFilename)
 
@@ -72,10 +75,11 @@ class FileHandler(bbctrl.APIHandler):
     def get(self, filename):
         if not filename:
             raise HTTPError(400, 'Missing filename')
-        filename = os.path.basename(filename)
+
+        filename = os.path.basename(url_unescape(filename))
 
         try:
-            with open(self.get_upload(filename).encode('utf8'), 'r') as f:
+            with open(self.get_upload(filename), 'r') as f:
                 self.write(f.read())
         except Exception:
             self.get_ctrl().state.select_file('')

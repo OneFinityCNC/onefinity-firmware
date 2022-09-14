@@ -50,6 +50,7 @@ const REQUIRED_TOOLS = [
 ];
 
 const SYSTEM_FILES = [
+    "/media/*",
     "/tmp/*",
     "/usr/**/__pycache__",
     "/usr/**/*.py[co]",

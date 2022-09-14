@@ -2,8 +2,8 @@
 
 function _msg_equal(a, b) {
     return a.level == b.level
-        && a.source == b.source
-        && a.where == b.where
+    && a.source == b.source
+    && a.where == b.where
         && a.msg == b.msg;
 }
 
@@ -43,6 +43,11 @@ module.exports = {
                     messages.pop();
                 }
             }
+
+            if (messages[0].repeat > 1) {
+                return;
+            }
+
             msg.ts = Date.now();
 
             // Write message to browser console for debugging

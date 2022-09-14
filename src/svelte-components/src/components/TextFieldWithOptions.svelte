@@ -46,7 +46,7 @@
         bind:value
         on:focusin={() => showMenu(true)}
         on:focusout={() => showMenu(false)}
-        use={[[virtualKeyboardChange, (newValue) => (value = newValue)]]}
+        use={[virtualKeyboardChange((v) => (value = v))]}
         {...$$restProps}
     >
         <div slot="trailingIcon">

@@ -37,10 +37,7 @@
             label="Absolute"
             type="number"
             bind:value
-            use={[
-                InitialFocus,
-                [virtualKeyboardChange, (newValue) => (value = newValue)],
-            ]}
+            use={[InitialFocus, virtualKeyboardChange((v) => (value = v))]}
             variant="filled"
             style="width: 100%;"
         />
