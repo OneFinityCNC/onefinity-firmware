@@ -2,7 +2,7 @@
 
 const inquirer = require("inquirer");
 const { statSync } = require("fs");
-const { runCommand, initSignalHandlers, assertEffectiveRoot } = require("./util");
+const { runCommand, initSignalHandlers, assertEffectiveRoot, logErrorAndExit } = require("./util");
 
 const IMAGE_FILENAME = "onefinity-controller.img";
 
@@ -16,7 +16,7 @@ async function main() {
 
     const devices = runCommand("df -H -T msdos")
         .split("\n")
-        .filter(line => !line.includes("Filesystem"))
+        .filter(line => line && !line.includes("Filesystem"))
         .map(line => {
             const [ disk ] = line.split(/\s+/);
             return {
@@ -27,6 +27,14 @@ async function main() {
                 }
             };
         });
+
+    if (!devices.length) {
+        logErrorAndExit(`
+            It doesn't look like any sd-cards are mounted.
+            
+            Try running "diskutil", to see what's going on.
+        `);
+    }
 
     const { disk: { disk, device } } = await inquirer.prompt({
         type: "list",
