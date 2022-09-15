@@ -1,48 +1,15 @@
 "use strict";
 
-function cookie_get(name) {
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const ca = decodedCookie.split(";");
-    name = `${name}=`;
-
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == " ") {
-            c = c.substring(1);
-        }
-
-        if (!c.indexOf(name)) {
-            return c.substring(name.length, c.length);
-        }
-    }
-}
-
-function cookie_set(name, value, days) {
-    const d = new Date();
-    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-    const expires = `expires=${d.toUTCString()}`;
-    document.cookie = `${name}=${value};${expires};path=/`;
-}
-
-const uuid_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_+";
-
-function uuid(length) {
-    if (typeof length == "undefined") {
-        length = 52;
-    }
-
-    let s = "";
-    for (let i = 0; i < length; i++) {
-        s += uuid_chars[Math.floor(Math.random() * uuid_chars.length)];
-    }
-
-    return s;
-}
+const Preferences = require("./preferences");
+const { v4: uuidv4 } = require("uuid");
 
 window.onload = function() {
-    if (typeof cookie_get("client-id") == "undefined") {
-        cookie_set("client-id", uuid(), 10000);
+    let id = Preferences.getString("client-id", "");
+    if (!id) {
+        id = uuidv4();
+        Preferences.setString("client-id", id);
     }
+    document.cookie = `client-id=${id}`;
 
     // Register global components
     Vue.component("templated-input", require("./templated-input"));

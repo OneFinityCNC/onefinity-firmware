@@ -295,18 +295,6 @@ class UnpauseHandler(bbctrl.APIHandler):
         self.get_ctrl().mach.unpause()
 
 
-class OptionalPauseHandler(bbctrl.APIHandler):
-
-    def put_ok(self):
-        self.get_ctrl().mach.optional_pause()
-
-
-class StepHandler(bbctrl.APIHandler):
-
-    def put_ok(self):
-        self.get_ctrl().mach.step()
-
-
 class PositionHandler(bbctrl.APIHandler):
 
     def put_ok(self, axis):
@@ -589,8 +577,6 @@ class Web(tornado.web.Application):
             (r'/api/stop', StopHandler),
             (r'/api/pause', PauseHandler),
             (r'/api/unpause', UnpauseHandler),
-            (r'/api/pause/optional', OptionalPauseHandler),
-            (r'/api/step', StepHandler),
             (r'/api/position/([xyzabcXYZABC])', PositionHandler),
             (r'/api/override/feed/([\d.]+)', OverrideFeedHandler),
             (r'/api/override/speed/([\d.]+)', OverrideSpeedHandler),

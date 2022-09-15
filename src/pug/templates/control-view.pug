@@ -235,15 +235,6 @@ script#control-view-template(type="text/x-template")
           button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-stop
 
-          button.pure-button(title="Pause program at next optional stop (M1).",
-            @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-stop-circle-o
-
-          button.pure-button(title="Execute one program step.", @click="step",
-            :disabled="(!is_ready && !is_holding) || !state.selected",
-            v-if="false", style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-step-forward
-
           button.pure-button(title="Upload a new GCode program.", @click="open",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
             .fa.fa-folder-open

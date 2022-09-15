@@ -1,8 +1,8 @@
 "use strict";
 
 const api = require("./api");
+const Preferences = require("./preferences");
 const utils = require("./utils");
-const cookie = require("./cookie")("bbctrl-");
 
 module.exports = {
     template: "#control-view-template",
@@ -35,9 +35,7 @@ module.exports = {
                     large: 5,
                 }
             },
-            jog_incr: localStorage.getItem("jog_incr") || "small",
-            jog_step: cookie.get_bool("jog-step"),
-            jog_adjust: parseInt(cookie.get("jog-adjust", 2)),
+            jog_incr: Preferences.getString("jog_incr", "small"),
             deleteGCode: false,
             tab: "auto",
             ask_home: true,
@@ -53,7 +51,7 @@ module.exports = {
 
     watch: {
         jog_incr: function(value) {
-            localStorage.setItem("jog_incr", value);
+            Preferences.setString("jog_incr", value);
         },
 
         "state.metric": {
@@ -74,14 +72,6 @@ module.exports = {
         "state.selected_time": function() {
             this.load();
         },
-
-        jog_step: function() {
-            cookie.set_bool("jog-step", this.jog_step);
-        },
-
-        jog_adjust: function() {
-            cookie.set("jog-adjust", this.jog_adjust);
-        }
     },
 
     computed: {
@@ -459,16 +449,8 @@ module.exports = {
             api.put("unpause");
         },
 
-        optional_pause: function() {
-            api.put("pause/optional");
-        },
-
         stop: function() {
             api.put("stop");
-        },
-
-        step: function() {
-            api.put("step");
         },
 
         override_feed: function() {

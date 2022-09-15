@@ -57,15 +57,6 @@ script#indicators-template(type="text/x-template")
         td 22
         th Probe
 
-      tr(v-if="false")
-        td {{state['1ai'] | percent 0}}
-        td 24
-        th Analog 1
-        th.separator
-        td {{state['2ai'] | percent 0}}
-        td 18
-        th Analog 2
-
     table.outputs
       tr
         th.header(colspan=7) Outputs

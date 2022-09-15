@@ -1,7 +1,7 @@
 "use strict";
 
 const api = require("./api");
-const cookie = require("./cookie")("bbctrl-");
+const Preferences = require("./preferences");
 const Sock = require("./sock");
 const semverLt = require("semver/functions/lt");
 
@@ -120,8 +120,8 @@ module.exports = new Vue({
             state: {
                 messages: [],
             },
-            video_size: cookie.get("video-size", "small"),
-            crosshair: cookie.get("crosshair", "false") != "false",
+            video_size: Preferences.getString("video-size", "small"),
+            crosshair: Preferences.getBool("crosshair", false),
             errorTimeout: 30,
             errorTimeoutStart: 0,
             errorShow: false,
@@ -257,13 +257,14 @@ module.exports = new Vue({
             } else if (this.video_size == "large") {
                 this.video_size = "small";
             }
-            cookie.set("video-size", this.video_size);
+
+            Preferences.setString("video-size", this.video_size);
         },
 
         toggle_crosshair: function(e) {
             e.preventDefault();
             this.crosshair = !this.crosshair;
-            cookie.set("crosshair", this.crosshair);
+            Preferences.setBool("crosshair", this.crosshair);
         },
 
         estop: function() {
@@ -350,16 +351,13 @@ module.exports = new Vue({
                 }
 
                 // Check for session ID change on controller
-                if ("sid" in e.data) {
-                    if (typeof this.sid == "undefined") {
-                        this.sid = e.data.sid;
-                    } else if (this.sid != e.data.sid) {
-                        if (this.hostname && location.hostname !== "localhost") {
-                            location.hostname = this.hostname;
-                        }
-
+                if (e.data.sid) {
+                    if (this.sid && this.sid !== e.data.sid) {
+                        Preferences.remove("client-id");
                         location.reload();
                     }
+
+                    this.sid = e.data.sid;
                 }
 
                 update_object(this.state, e.data, false);

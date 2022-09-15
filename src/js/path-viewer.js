@@ -1,7 +1,7 @@
 "use strict";
 
+const Preferences = require("./preferences");
 const orbit = require("./orbit");
-const cookie = require("./cookie")("bbctrl-");
 const font = require("./helvetiker_regular.typeface.json");
 
 module.exports = {
@@ -13,14 +13,14 @@ module.exports = {
             enabled: false,
             loading: false,
             dirty: true,
-            snapView: cookie.get("snap-view", "isometric"),
-            small: cookie.get_bool("small-path-view", true),
+            snapView: Preferences.getString("snap-view", "isometric"),
+            small: Preferences.getBool("small-path-view", true),
             surfaceMode: "cut",
-            showPath: cookie.get_bool("show-path", true),
-            showTool: cookie.get_bool("show-tool", true),
-            showBBox: cookie.get_bool("show-bbox", true),
-            showAxes: cookie.get_bool("show-axes", true),
-            showIntensity: cookie.get_bool("show-intensity", false)
+            showPath: Preferences.getBool("show-path", true),
+            showTool: Preferences.getBool("show-tool", true),
+            showBBox: Preferences.getBool("show-bbox", true),
+            showAxes: Preferences.getBool("show-axes", true),
+            showIntensity: Preferences.getBool("show-intensity", false)
         };
     },
 
@@ -53,32 +53,32 @@ module.exports = {
         },
 
         small: function(enable) {
-            cookie.set_bool("small-path-view", enable);
+            Preferences.setBool("small-path-view", enable);
             Vue.nextTick(this.update_view);
         },
 
         showPath: function(enable) {
-            cookie.set_bool("show-path", enable);
+            Preferences.setBool("show-path", enable);
             this.set_visible(this.pathView, enable);
         },
 
         showTool: function(enable) {
-            cookie.set_bool("show-tool", enable);
+            Preferences.setBool("show-tool", enable);
             this.set_visible(this.toolView, enable);
         },
 
         showAxes: function(enable) {
-            cookie.set_bool("show-axes", enable);
+            Preferences.setBool("show-axes", enable);
             this.set_visible(this.axesView, enable);
         },
 
         showIntensity: function(enable) {
-            cookie.set_bool("show-intensity", enable);
+            Preferences.setBool("show-intensity", enable);
             Vue.nextTick(this.update);
         },
 
         showBBox: function(enable) {
-            cookie.set_bool("show-bbox", enable);
+            Preferences.setBool("show-bbox", enable);
             this.set_visible(this.bboxView, enable);
             this.set_visible(this.envelopeView, enable);
         },
@@ -678,7 +678,7 @@ module.exports = {
 
             if (view != this.snapView) {
                 this.snapView = view;
-                cookie.set("snap-view", view);
+                Preferences.setString("snap-view", view);
             }
 
             const bbox = this.get_model_bounds();

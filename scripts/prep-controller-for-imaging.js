@@ -14,6 +14,7 @@ const PACKAGES_TO_PURGE = [
     "libglib2.0-data",
     "libraspberrypi-doc",
     "mlocate",
+    "sqlite3",
     "triggerhappy",
     "zip",
 ];
