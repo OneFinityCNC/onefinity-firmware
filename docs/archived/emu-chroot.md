@@ -1,14 +1,16 @@
-This document describes how to setup the Buildbotics firmware in a chroot
+# This file is very out of date, and should not be relied upon. It is preserved here, as it contains some useful information.
+
+This document describes how to setup the firmware in a chroot
 environment for the purposes of demonstrating the user interface.
 
-On a Debian system install:
+## On a Debian system, install:
 
     ROOT=/opt/demo
     sudo apt-get install -y binutils debootstrap
     sudo mkdir $ROOT
     sudo debootstrap --arch amd64 stable $ROOT/ http://deb.debian.org/debian
 
-Then chroot:
+## Then chroot:
 
     sudo mount --bind /dev $ROOT/dev/
     sudo mount --bind /sys $ROOT/sys/
@@ -16,7 +18,7 @@ Then chroot:
     sudo mount --bind /dev/pts $ROOT/dev/pts
     sudo chroot $ROOT
 
-Setup the demo system:
+## Setup the demo system:
 
     export LC_ALL=C
     apt-get update
