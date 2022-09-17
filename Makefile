@@ -16,7 +16,7 @@ GPLAN_TARGET := src/py/camotics/gplan.so
 GPLAN_IMG    := gplan-dev.img
 
 VERSION := $(shell jq -r '.version' package.json)
-PY_VERSION := $(shell jq -r '.version' package.json | grep -P '^\d+\.\d+\.\d+(-(beta|alpha)\.\d+)?$$' | sed -E 's|-((b)eta\|(a)lpha)\.(.*)|\2\3\4|g')
+PY_VERSION := $(shell jq -r '.version' package.json | grep -P '^\d+\.\d+\.\d+(-(alpha|beta)\.\d+)?$$' | sed -E 's|-((a)lpha\|(b)eta)\.(.*)|\2\3\4|g')
 PKG_NAME := dist/bbctrl-$(PY_VERSION).tar.bz2
 FINAL_PKG_NAME := dist/onefinity-$(VERSION).tar.bz2
 
