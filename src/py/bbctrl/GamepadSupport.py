@@ -1,6 +1,7 @@
 from bbctrl.Ctrl import Ctrl
 from bbctrl.Log import Logger
 from evdev.ecodes import EV, EV_ABS, EV_KEY
+from pyudev._util import udev_list_iterate
 import errno
 import evdev
 import functools
@@ -8,6 +9,7 @@ import json
 import os
 import pyudev
 import re
+import sys
 import traceback
 import typing
 
@@ -171,11 +173,19 @@ def safe_int(s, base=10, val=None):
         return val
 
 
-def get_udev_prop(device: pyudev.Device, propertyName: str):
-    try:
-        return device.properties[propertyName]
-    except:
-        return None
+def decode(value):
+    if not isinstance(value, str):
+        value = value.decode(sys.getfilesystemencoding(), errors="replace")
+    return value
+
+
+def get_udev_properties(device: pyudev.Device):
+    properties = device._libudev.udev_device_get_properties_list_entry(device)
+
+    return {
+        decode(key): decode(value)
+        for (key, value) in udev_list_iterate(device._libudev, properties)
+    }
 
 
 def sorted_json(value):
@@ -260,8 +270,7 @@ class Gamepad(object):
                 "version": _evdev.info.version,
                 "capabilities": self._capabilities,
             },
-            "udev": {key: _udev.properties[key]
-                     for key in _udev.properties}
+            "udev": get_udev_properties(_udev)
         }
 
         self.id = "{:04X}:{:04X}".format(_evdev.info.vendor,
