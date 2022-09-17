@@ -2,10 +2,15 @@ from pkg_resources import Requirement, resource_filename
 import json
 import os
 import pkg_resources
+import re
 
 
 def get_resource(path):
     return resource_filename(Requirement.parse('bbctrl'), 'bbctrl/' + path)
+
+
+def get_clean_version(version):
+    return re.sub(r'(\d+\.\d+\.\d+).*', r'\1', version)
 
 
 class Config(object):
@@ -128,8 +133,7 @@ class Config(object):
             self.__defaults(conf, name, tmpl)
 
     def _upgrade(self, config):
-        version = config['version']
-        version = version.split('b')[0]  # Strip off any "beta" suffix
+        version = re.sub(r'(\d+\.\d+\.\d+).*', r'\1', config['version'])
         version = tuple(map(
             int, version.split('.')))  # Break it into a tuple of integers
 
@@ -168,7 +172,7 @@ class Config(object):
                 config['selected-tool-settings'] = defaults[
                     'selected-tool-settings']
 
-        config['version'] = self.version.split('b')[0]
+        config['version'] = get_clean_version(self.version)
         config['full_version'] = self.version
 
     def _encode(self, name, index, config, tmpl, with_defaults):

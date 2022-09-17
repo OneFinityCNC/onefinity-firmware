@@ -2,12 +2,15 @@
 
 from setuptools import setup
 import json
+import re
 
 pkg = json.load(open('package.json', 'r'))
+version = re.sub(r'^(\d+\.\d+\.\d+)(?:-(?:(a)lpha|(b)eta)\.(.*))?$',
+                 r'\1\2\3\4', pkg['version'])
 
 setup(
     name='bbctrl',
-    version=pkg['version'],
+    version=version,
     description='Onefinity Controller',
     long_description=open('README.md', 'rt').read(),
     maintainer='support@onefinitycnc.com',
