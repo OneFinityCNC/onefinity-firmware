@@ -52,6 +52,12 @@
                 If your gamepad doesn't work as expected, try one of the other
                 types.
             </div>
+
+            <ConfigTemplatedInput key={`settings.gamepad-deadband`} />
+            <div class="tip">
+                If your machine moves when you're not touching the gamepad, set
+                this value slightly higher.
+            </div>
         </fieldset>
 
         <h2>Probing</h2>

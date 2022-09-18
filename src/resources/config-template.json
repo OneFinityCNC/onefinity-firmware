@@ -25,12 +25,10 @@
             "default": 200000
         },
         "probing-prompts": {
-            "help": "Enable or disable safety prompts during and after probing",
             "type": "bool",
             "default": true
         },
         "gamepad-default-type": {
-            "help": "When a gamepad is not recognized, treat it as the selected type of gamepad.",
             "type": "enum",
             "values": [
                 {
@@ -55,6 +53,12 @@
                 }
             ],
             "default": "XBOX"
+        },
+        "gamepad-deadband": {
+            "type": "float",
+            "min": 0.1,
+            "max": 0.5,
+            "default": 0.15
         }
     },
     "motors": {

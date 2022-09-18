@@ -24,6 +24,7 @@
 
     const namesByKey = {
         "gamepad-default-type": "Default type",
+        "gamepad-deadband": "Sensitivity",
         "probing-prompts": "Show safety prompts",
         "probe-xdim": "Probe block width",
         "probe-ydim": "Probe block length",

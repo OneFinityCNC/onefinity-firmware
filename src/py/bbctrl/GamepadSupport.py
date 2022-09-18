@@ -13,6 +13,8 @@ import sys
 import traceback
 import typing
 
+AbsMinMax = typing.NamedTuple('AbsMinMax', [('min', float), ('max', float)])
+
 userGamepadConfigs = {}
 
 factoryGamepadConfigs = {
@@ -20,7 +22,6 @@ factoryGamepadConfigs = {
         "sign-x": 1,
         "sign-y": -1,
         "sign-z": -1,
-        "deadband": 0.15,
         "debug": False,
         "type": "XBOX",
     },
@@ -192,9 +193,6 @@ def sorted_json(value):
     return json.dumps(value, sort_keys=True)
 
 
-AbsMinMax = typing.NamedTuple('AbsMinMax', [('min', float), ('max', float)])
-
-
 def processCapabilities(capabilities):
     result = {}
 
@@ -209,25 +207,6 @@ def processCapabilities(capabilities):
             }
 
     return result
-
-
-def loadConfig(id):
-    config = {
-        **factoryGamepadConfigs.get("default"),
-        **userGamepadConfigs.get("default", {}),
-        **factoryGamepadConfigs.get(id, {}),
-        **userGamepadConfigs.get(id, {})
-    }
-
-    while "type" in config:
-        type = config.pop("type")
-        config = {
-            **factoryGamepadConfigs.get(type, {}),
-            **userGamepadConfigs.get(type, {}),
-            **config,
-        }
-
-    return config
 
 
 # A forward declaration, so Command can reference it
@@ -254,8 +233,9 @@ class Gamepad(object):
     _logOnceRecord = set()
     _eventValuesByCode = {}
 
-    def __init__(self, log: Logger, _evdev: evdev.InputDevice,
+    def __init__(self, ctrl: Ctrl, log: Logger, _evdev: evdev.InputDevice,
                  _udev: pyudev.Device):
+        self._ctrl = ctrl
         self._log = log
         self._evdev = _evdev
         self._udev = _udev
@@ -275,7 +255,7 @@ class Gamepad(object):
 
         self.id = "{:04X}:{:04X}".format(_evdev.info.vendor,
                                          _evdev.info.product)
-        self.config = loadConfig(self.id)
+        self._loadConfig()
 
         self.log("Configuration Settings: {}".format(self.config))
 
@@ -332,7 +312,8 @@ class Gamepad(object):
         sign = -1 if value < 0 else 1
         value = abs(value)
 
-        deadband = self.config.get("deadband", 0.15)
+        deadband = self._ctrl.config.get("gamepad-deadband", 0.15)
+        deadband = self.config.get("deadband", deadband)
         if value < deadband:
             return 0
 
@@ -355,6 +336,24 @@ class Gamepad(object):
     def logDebug(self, msg):
         if self.config.get("debug"):
             self.log(msg)
+
+    def _loadConfig(self):
+        config = {
+            **factoryGamepadConfigs.get("default"),
+            **userGamepadConfigs.get("default", {}),
+            **factoryGamepadConfigs.get(self.id, {}),
+            **userGamepadConfigs.get(self.id, {})
+        }
+
+        while "type" in config:
+            type = config.pop("type")
+            config = {
+                **factoryGamepadConfigs.get(type, {}),
+                **userGamepadConfigs.get(type, {}),
+                **config,
+            }
+
+        self.config = config
 
     def __str__(self) -> str:
         return sorted_json({
@@ -440,7 +439,7 @@ class GamepadSupport(object):
         self._refreshDefaultGamepadType()
 
         gamepad = Gamepad(
-            self.log, evdev.InputDevice(devicePath),
+            self.ctrl, self.log, evdev.InputDevice(devicePath),
             pyudev.Devices.from_device_file(self.udev_context, devicePath))
 
         self.log.info("Found gamepad: {}".format(gamepad))

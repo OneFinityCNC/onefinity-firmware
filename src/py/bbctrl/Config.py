@@ -69,7 +69,7 @@ class Config(object):
         self._update(config, False)
 
         with open(self.ctrl.get_path('config.json'), 'w') as f:
-            json.dump(config, f, indent=2)
+            json.dump(config, f, indent=4, sort_keys=True)
 
         os.sync()
 
