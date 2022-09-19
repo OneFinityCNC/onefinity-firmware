@@ -422,7 +422,10 @@ class GamepadSupport(object):
                 self._forget(udev.device_node)
 
     def _discoverGamepads(self):
-        with open("/proc/bus/input/devices", "r") as file:
+        with open("/proc/bus/input/devices",
+                  "r",
+                  encoding="ascii",
+                  errors="replace") as file:
             for line in file:
                 # Matches lines from '/proc/bus/input/devices' that look like:
                 # H: Handlers=js1 event0
