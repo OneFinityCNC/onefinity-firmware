@@ -51,7 +51,7 @@ async function commandCode() {
 
     await updateNgrokAuthToken();
 
-    const code = `000000${Math.random() * 999999}`.slice(-6);
+    const code = randomIntFromInterval(100000, 999999).toString();
     await saveParam("code", code);
 
     console.log(`The code is: ${code}`);
@@ -211,4 +211,8 @@ async function loadTunnels() {
     const { tunnels } = await response.json();
 
     return tunnels;
+}
+
+function randomIntFromInterval(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
