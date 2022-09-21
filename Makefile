@@ -72,10 +72,7 @@ $(AVR_FIRMWARE):
 	$(MAKE) -C src/avr
 
 update: pkg
-	curl -i -X PUT -H "Content-Type: multipart/form-data" \
-	  -F "firmware=@$(FINAL_PKG_NAME)" -F "password=$(PASSWORD)" \
-	  http://$(HOST)/api/firmware/update
-	@-tput sgr0 && echo # Fix terminal output
+	./scripts/push-build.js $(FINAL_PKG_NAME)
 
 build/templates.pug: $(TEMPLS)
 	mkdir -p build

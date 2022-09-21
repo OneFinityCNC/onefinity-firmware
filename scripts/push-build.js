@@ -5,26 +5,24 @@
 
 const inquirer = require("inquirer");
 const glob = require("glob");
-const { runCommand, logErrorAndExit, initSignalHandlers, assertInstalled, info } = require("./util");
+const {
+    runCommand,
+    logErrorAndExit,
+    initSignalHandlers,
+    assertInstalled,
+    info
+} = require("./util");
 
-let controller;
+const hostname = "onefinity";
 
 initSignalHandlers();
 main();
 
 async function main() {
     try {
-        controller = process.argv[2] ?? "onefinity";
-
         assertInstalled([ "sshpass", "ssh" ]);
 
-        const { password } = await inquirer.prompt({
-            type: "password",
-            name: "password",
-            message: `What is the password for ${controller}?`
-        });
-
-        process.env.SSHPASS = password;
+        process.env.SSHPASS = "onefinity";
 
         ssh("echo sudo access confirmed", {
             onError: () => {
@@ -36,15 +34,9 @@ async function main() {
             }
         });
 
-        const { build } = await inquirer.prompt({
-            type: "list",
-            name: "build",
-            choices: glob.sync("*.tar.bz2", {
-                cwd: "./dist"
-            })
-        });
+        const build = await getBuildFilePath();
 
-        runCommand(`sshpass -e /usr/bin/scp dist/${build} bbmc@${controller}:~`, {
+        runCommand(`sshpass -e /usr/bin/scp dist/${build} bbmc@${hostname}:~`, {
             stdio: "inherit"
         });
         ssh(`mv /home/bbmc/${build} /var/lib/bbctrl/firmware/update.tar.bz2`);
@@ -54,10 +46,44 @@ async function main() {
     }
 }
 
+async function getBuildFilePath() {
+    const buildFileParam = (process.argv[2] || "").replace("dist/", "");
+
+    const builds = glob.sync("*.tar.bz2", {
+        cwd: "./dist"
+    });
+
+    if (buildFileParam) {
+        if (builds.includes(buildFileParam)) {
+            return buildFileParam;
+        }
+
+        logErrorAndExit(`Cannot find 'dist/${buildFileParam}'`);
+    }
+
+    switch (builds.length) {
+        case 0:
+            logErrorAndExit("There's no build to push!");
+            break;
+
+        case 1:
+            return builds[0];
+
+        default:
+            // eslint-disable-next-line no-case-declarations
+            const { build } = await inquirer.prompt({
+                type: "list",
+                name: "build",
+                choices: builds
+            });
+            return build;
+    }
+}
+
 function ssh(command, options) {
     info(`Running "${command}"`);
 
-    return runCommand(`sshpass -e /usr/bin/ssh ${controller} "sudo ${command}"`, {
+    return runCommand(`sshpass -e /usr/bin/ssh ${hostname} "sudo ${command}"`, {
         ...options,
         stdio: "inherit"
     });

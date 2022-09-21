@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 
-const inquirer = require("inquirer");
-const { runCommand, logErrorAndExit, initSignalHandlers, assertInstalled, info } = require("./util");
+const {
+    runCommand,
+    logErrorAndExit,
+    initSignalHandlers,
+    assertInstalled,
+    info
+} = require("./util");
 
 const PACKAGES_TO_PURGE = [
     "aptitude",
@@ -24,19 +29,13 @@ let controller;
 initSignalHandlers();
 main();
 
-async function main() {
+function main() {
     try {
         controller = process.argv[2] ?? "onefinity";
 
         assertInstalled([ "sshpass", "ssh" ]);
 
-        const { password } = await inquirer.prompt({
-            type: "password",
-            name: "password",
-            message: `What is the password for ${controller}?`
-        });
-
-        process.env.SSHPASS = password;
+        process.env.SSHPASS = "onefinity";
 
         ssh("echo sudo access confirmed", {
             onError: () => {
