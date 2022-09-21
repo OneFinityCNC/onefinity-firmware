@@ -20,11 +20,11 @@ html(lang="en")
   body(v-cloak)
     #svelte-dialog-host
 
-    #overlay(v-if="status != 'connected'")
+    #overlay(v-if="status != 'connected' && !updatingFirmware")
       span {{status}}
-    
+
     #layout
-      a#menuLink.menu-link(href="#menu"): span
+      a#menuLink.menu-link(@click="toggle_menu"): span
 
       #menu
         button.save.pure-button.button-success(:disabled="!modified",
@@ -74,9 +74,9 @@ html(lang="en")
             img(src="/images/onefinity_logo.png")
             .version
               | v{{config.full_version}}
-              a.upgrade-link(v-if="show_upgrade()", href="#admin-general")
-                | Upgrade to v{{latestVersion}}
-              .fa.fa-exclamation-circle.upgrade-attention(v-if="show_upgrade()")
+              a.upgrade-link(v-if="newFirmwareAvailable", href="#admin-general")
+                | Upgrade to v{{newFirmwareVersion}}
+                .fa.fa-exclamation-circle.upgrade-attention
 
           .pi-temp-warning
             .fa.fa-thermometer-full(class="error",
@@ -120,35 +120,6 @@ html(lang="en")
       div(slot="footer")
         button.pure-button.pure-button-primary(@click="errorShow = false") Ok
 
-    message(:show.sync="confirmUpgrade")
-      h3(slot="header") Upgrade Firmware?
-      div(slot="body")
-        p
-          | Are you sure you want to upgrade the firmware to version
-          | {{latestVersion}}?
-
-      div(slot="footer")
-        button.pure-button(@click="confirmUpgrade=false") Cancel
-        button.pure-button.pure-button-primary(@click="upgrade_confirmed")
-          | Upgrade
-
-    message(:show.sync="confirmUpload")
-      h3(slot="header") Upload Firmware?
-      div(slot="body")
-        p Are you sure you want to upload firmware #[em {{firmwareName}}]?
-
-      div(slot="footer")
-        button.pure-button(@click="confirmUpload=false") Cancel
-        button.pure-button.pure-button-primary(@click="upload_confirmed")
-          | Upload
-
-    message(:show.sync="firmwareUpgrading")
-      h3(slot="header") Firmware upgrading
-      div(slot="body")
-        h3 Please wait...
-        p This process should take less than 5 minutes.  If it takes longer than this, please restart the controller and try via USB.
-      div(slot="footer")
-
     message(v-if="popupMessages.length", show=true)
       h3(slot="header") GCode message
 
@@ -170,7 +141,6 @@ html(lang="en")
             .fa.fa-play
 
     #templates: include ../../build/templates.pug
-    iframe#download-target(style="display:none")
 
     script: include ../static/js/vue.js
     script: include ../static/js/sockjs.min.js
@@ -178,4 +148,3 @@ html(lang="en")
     script: include ../static/js/three.min.js
     script: include:browserify ../js/main.js
     script: include ../../build/http/svelte-components/index.js
-    script: include ../static/js/ui.js

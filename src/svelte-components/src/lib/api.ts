@@ -1,22 +1,31 @@
 type HttpMethod = "GET" | "PUT" | "POST" | "DELETE";
 
-async function doFetch(method: HttpMethod, url: string, data: any, config: RequestInit) {
+async function doFetch(method: HttpMethod, url: string, data: any = undefined) {
     try {
+        const headers = {};
+        let body = undefined;
+
+        if (data) {
+            if (data instanceof FormData) {
+                body = data;
+            } else {
+                headers["Content-Type"] = "application/json; charset=utf-8";
+                body = JSON.stringify(data);
+            }
+        }
+
         const response = await fetch(`/api/${url}`, {
-            ...config,
             method,
-            cache: "no-cache",
-            body: (typeof data === "object")
-                ? JSON.stringify(data)
-                : undefined,
-            headers: (typeof data === "object")
-                ? {
-                    "Content-Type": "application/json; charset=utf-8"
-                }
-                : {}
+            headers,
+            body,
+            cache: "no-store",
         });
 
-        return await response.json();
+        if (response.ok) {
+            return await response.json();
+        }
+
+        throw new Error(await response.text());
     } catch (error) {
         console.debug(`API Error: ${url}: ${error}`);
 
@@ -24,18 +33,10 @@ async function doFetch(method: HttpMethod, url: string, data: any, config: Reque
     }
 }
 
-export function GET(url: string, config: RequestInit = {}) {
-    return doFetch("GET", url, undefined, config);
+export function GET(url: string) {
+    return doFetch("GET", url);
 }
 
-export function PUT(url: string, data: any = undefined, config: RequestInit = {}) {
-    return doFetch("PUT", url, data, config);
-}
-
-export function POST(url: string, data: any = undefined, config: RequestInit = {}) {
-    return doFetch("POST", url, data, config);
-}
-
-export function DELETE(url: string, config = {}) {
-    return doFetch("DELETE", url, undefined, config);
+export function PUT(url: string, data: any = undefined, ) {
+    return doFetch("PUT", url, data);
 }

@@ -92,8 +92,12 @@ class Config(object):
         except:
             return False
 
-        if 'values' in template and value not in template['values']:
-            return False
+        if 'values' in template:
+            values = [
+                item.get("value") if isinstance(item, dict) else item
+                for item in template["values"]
+            ]
+            return value in values
 
         return True
 

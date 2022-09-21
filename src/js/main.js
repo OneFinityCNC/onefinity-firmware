@@ -1,12 +1,12 @@
 "use strict";
 
 const Preferences = require("./preferences");
-const { v4: uuidv4 } = require("uuid");
+const uuid = require("uuid");
 
 window.onload = function() {
     let id = Preferences.getString("client-id", "");
     if (!id) {
-        id = uuidv4();
+        id = uuid.v4();
         Preferences.setString("client-id", id);
     }
     document.cookie = `client-id=${id}`;
@@ -29,18 +29,6 @@ window.onload = function() {
 
     Vue.filter("percent", function(value, precision) {
         if (typeof value == "undefined") {
-            return "";
-        }
-
-        if (typeof precision == "undefined") {
-            precision = 2;
-        }
-
-        return `${(value * 100.0).toFixed(precision)}%`;
-    });
-
-    Vue.filter("non_zero_percent", function(value, precision) {
-        if (!value) {
             return "";
         }
 

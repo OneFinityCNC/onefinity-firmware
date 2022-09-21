@@ -9,15 +9,14 @@
     import TextField from "@smui/textfield";
     import Icon from "@smui/textfield/icon";
     import HelperText from "@smui/textfield/helper-text";
-    import MessageDialog from "$dialogs/MessageDialog.svelte";
     import type { WifiNetwork } from "$lib/NetworkInfo";
     import * as api from "$lib/api";
     import { virtualKeyboardChange } from "$lib/CustomActions";
+    import { showDialog } from "./DialogHost.svelte";
 
     export let open = false;
     export let network: WifiNetwork;
 
-    let rebooting = false;
     let password = "";
     let showPassword = false;
 
@@ -32,7 +31,11 @@
     }
 
     async function onConfirm() {
-        rebooting = true;
+        showDialog("Message", {
+            title: "Rebooting",
+            message: "Rebooting to apply Wifi changes...",
+            noaction: true,
+        });
 
         await api.PUT("network", {
             wifi: {
@@ -43,10 +46,6 @@
         });
     }
 </script>
-
-<MessageDialog open={rebooting} title="Rebooting" noaction>
-    Rebooting to apply Wifi changes...
-</MessageDialog>
 
 <Dialog
     bind:open

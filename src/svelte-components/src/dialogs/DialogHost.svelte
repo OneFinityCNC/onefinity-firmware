@@ -10,6 +10,8 @@
     import MoveToZeroDialog from "./MoveToZeroDialog.svelte";
     import ShutdownDialog from "./ShutdownDialog.svelte";
     import MessageDialog from "./MessageDialog.svelte";
+    import ConfirmationDialog from "./ConfirmationDialog.svelte";
+    import FirmwareUpdateDialog from "./FirmwareUpdateDialog.svelte";
 
     const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
     type HomeMachineDialogPropsType = {
@@ -69,7 +71,23 @@
         open: boolean;
         title: string;
         message: string;
-        noaction: boolean;
+        noaction?: boolean;
+    };
+
+    const ConfirmationDialogProps = writable<ConfirmationDialogPropsType>();
+    type ConfirmationDialogPropsType = {
+        open: boolean;
+        title: string;
+        message: string;
+        confirmButtonTitle?: string;
+        onConfirm: () => void;
+    };
+
+    const FirmwareUpdateDialogProps = writable<FirmwareUpdateDialogPropsType>();
+    type FirmwareUpdateDialogPropsType = {
+        open: boolean;
+        action: "updateToLatest" | "updateToFile";
+        file?: File | undefined;
     };
 
     export function showDialog(
@@ -122,6 +140,16 @@
         props: Omit<MessageDialogPropsType, "open">
     );
 
+    export function showDialog(
+        dialog: "Confirmation",
+        props: Omit<ConfirmationDialogPropsType, "open">
+    );
+
+    export function showDialog(
+        dialog: "FirmwareUpdate",
+        props: Omit<FirmwareUpdateDialogPropsType, "open">
+    );
+
     export function showDialog(dialog: string, props: any) {
         switch (dialog) {
             case "HomeMachine":
@@ -162,6 +190,14 @@
 
             case "Message":
                 MessageDialogProps.set({ ...props, open: true });
+                break;
+
+            case "Confirmation":
+                ConfirmationDialogProps.set({ ...props, open: true });
+                break;
+
+            case "FirmwareUpdate":
+                FirmwareUpdateDialogProps.set({ ...props, open: true });
                 break;
 
             default:
@@ -242,3 +278,5 @@
 <MoveToZeroDialog {...$MoveToZeroDialogProps} />
 <ShutdownDialog {...$ShutdownDialogProps} />
 <MessageDialog {...$MessageDialogProps} />
+<ConfirmationDialog {...$ConfirmationDialogProps} />
+<FirmwareUpdateDialog {...$FirmwareUpdateDialogProps} />

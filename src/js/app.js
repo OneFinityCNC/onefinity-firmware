@@ -3,7 +3,6 @@
 const api = require("./api");
 const Preferences = require("./preferences");
 const Sock = require("./sock");
-const semverLt = require("semver/functions/lt");
 
 SvelteComponents.createComponent("DialogHost",
     document.getElementById("svelte-dialog-host")
@@ -107,7 +106,7 @@ module.exports = new Vue({
         return {
             status: "connecting",
             currentView: "loading",
-            display_units: localStorage.getItem("display_units") || "METRIC",
+            display_units: Preferences.getString("display_units", "METRIC"),
             index: -1,
             modified: false,
             template: require("../resources/config-template.json"),
@@ -126,12 +125,8 @@ module.exports = new Vue({
             errorTimeoutStart: 0,
             errorShow: false,
             errorMessage: "",
-            confirmUpgrade: false,
-            confirmUpload: false,
-            firmwareUpgrading: false,
-            checkedUpgrade: false,
-            firmwareName: "",
-            latestVersion: ""
+            newFirmwareVersion: "",
+            newFirmwareAvailable: false
         };
     },
 
@@ -158,12 +153,27 @@ module.exports = new Vue({
 
     watch: {
         display_units: function(value) {
-            localStorage.setItem("display_units", value);
+            Preferences.setString("display_units", value);
             SvelteComponents.setDisplayUnits(value);
         },
     },
 
     events: {
+        "new-firmware-available": function() {
+            this.newFirmwareAvailable = true;
+            this.newFirmwareVersion = SvelteComponents.getLatestFirmwareVersion();
+        },
+
+        "firmware-update": function() {
+            this.updatingFirmware = true;
+        },
+
+        "close-menu": function() {
+            document.getElementById("layout").classList.remove("active");
+            document.getElementById("menu").classList.remove("active");
+            document.getElementById("menuLink").classList.remove("active");
+        },
+
         "config-changed": function() {
             this.modified = true;
         },
@@ -174,34 +184,8 @@ module.exports = new Vue({
             }
         },
 
-        connected: function() {
-            this.update();
-        },
-
         update: function() {
             this.update();
-        },
-
-        check: async function() {
-            try {
-                const response = await fetch("https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/latest.txt", {
-                    cache: "no-cache"
-                });
-
-                this.latestVersion = (await response.text()).trim();
-            } catch (err) {
-                this.latestVersion = "";
-            }
-        },
-
-        upgrade: function() {
-            this.confirmUpgrade = true;
-        },
-
-        upload: function(firmware) {
-            this.firmware = firmware;
-            this.firmwareName = firmware.name;
-            this.confirmUpload = true;
         },
 
         error: function(msg) {
@@ -246,6 +230,14 @@ module.exports = new Vue({
     },
 
     methods: {
+        toggle_menu: function(e) {
+            e.preventDefault();
+
+            document.getElementById("layout").classList.toggle("active");
+            document.getElementById("menu").classList.toggle("active");
+            document.getElementById("menuLink").classList.toggle("active");
+        },
+
         block_error_dialog: function() {
             this.errorTimeoutStart = Date.now();
             this.errorShow = false;
@@ -275,41 +267,6 @@ module.exports = new Vue({
             }
         },
 
-        upgrade_confirmed: async function() {
-            this.confirmUpgrade = false;
-
-            try {
-                await api.put("upgrade");
-                this.firmwareUpgrading = true;
-            } catch (error) {
-                console.error("Error during upgrade:", error);
-                alert("Error during upgrade");
-            }
-        },
-
-        upload_confirmed: async function() {
-            this.confirmUpload = false;
-
-            const form = new FormData();
-            form.append("firmware", this.firmware);
-
-            try {
-                await api.put("firmware/update", form);
-                this.firmwareUpgrading = true;
-            } catch (error) {
-                console.error("Firmware update failed:", error);
-                alert("Firmware update failed");
-            }
-        },
-
-        show_upgrade: function() {
-            if (!this.latestVersion) {
-                return false;
-            }
-
-            return semverLt(this.config.full_version, this.latestVersion);
-        },
-
         showShutdownDialog: function() {
             SvelteComponents.showDialog("Shutdown");
         },
@@ -321,16 +278,8 @@ module.exports = new Vue({
             this.config.full_version = fixup_version_number(this.config.full_version);
             this.parse_hash();
 
-            if (!this.checkedUpgrade) {
-                this.checkedUpgrade = true;
-
-                const check = this.config.admin["auto-check-upgrade"];
-                if (typeof check == "undefined" || check) {
-                    this.$emit("check");
-                }
-            }
-
             SvelteComponents.handleConfigUpdate(this.config);
+            SvelteComponents.checkFirmwareUpgrades();
         },
 
         connect: function() {
@@ -365,20 +314,15 @@ module.exports = new Vue({
                 SvelteComponents.handleControllerStateUpdate(this.state);
 
                 delete this.state.log;
-
-                this.$broadcast("update");
             };
 
             this.sock.onopen = () => {
                 this.status = "connected";
-                this.$emit(this.status);
-                this.$broadcast(this.status);
+                this.update();
             };
 
             this.sock.onclose = () => {
                 this.status = "disconnected";
-                this.$emit(this.status);
-                this.$broadcast(this.status);
             };
         },
 

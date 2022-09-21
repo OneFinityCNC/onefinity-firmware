@@ -8,9 +8,9 @@
     import Button, { Label } from "@smui/button";
     import Radio from "@smui/radio";
     import FormField from "@smui/form-field";
-    import MessageDialog from "$dialogs/MessageDialog.svelte";
     import * as Api from "$lib/api";
     import { onMount } from "svelte";
+    import { showDialog } from "./DialogHost.svelte";
 
     const options = [
         { value: 0, label: "Normal" },
@@ -20,7 +20,6 @@
     export let open;
     let currentValue;
     let value;
-    let rebooting;
 
     onMount(async () => {
         const result = await Api.GET("screen-rotation");
@@ -28,15 +27,15 @@
     });
 
     async function onConfirm() {
-        rebooting = true;
+        showDialog("Message", {
+            title: "Rebooting",
+            message: "Rebooting to apply the new screen rotation...",
+            noaction: true,
+        });
 
         await Api.PUT("screen-rotation", { rotated: value === 1 });
     }
 </script>
-
-<MessageDialog open={rebooting} title="Rebooting" noaction>
-    Rebooting to apply the new screen rotation...
-</MessageDialog>
 
 <Dialog
     bind:open

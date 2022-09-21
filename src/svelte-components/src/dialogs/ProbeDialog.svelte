@@ -1,4 +1,5 @@
 <script type="ts">
+    import Preferences from "$lib/Preferences";
     import Dialog, { Title, Content, Actions } from "@smui/dialog";
     import Button, { Label } from "@smui/button";
     import LinearProgress from "@smui/linear-progress";
@@ -88,7 +89,7 @@
         ?.toMetric();
 
     $: if (open) {
-        cutterDiameterString = localStorage.getItem("cutterDiameter") ?? "";
+        cutterDiameterString = Preferences.getString("cutterDiameter", "");
 
         // Svelte appears not to like it when you invoke
         // an async function from a reactive statement, so we
@@ -121,7 +122,7 @@
 
             if (probeType === "xyz") {
                 await stepCompleted("BitDimensions", userAcknowledged);
-                localStorage.setItem(
+                Preferences.setString(
                     "cutterDiameter",
                     numberWithUnit.normalize(cutterDiameterString)
                 );

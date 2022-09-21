@@ -7,9 +7,9 @@
     } from "@smui/dialog";
     import Button, { Label } from "@smui/button";
     import TextField from "@smui/textfield";
-    import MessageDialog from "$dialogs/MessageDialog.svelte";
     import * as api from "$lib/api";
     import { virtualKeyboardChange } from "$lib/CustomActions";
+    import { showDialog } from "./DialogHost.svelte";
 
     // https://man7.org/linux/man-pages/man7/hostname.7.html
     //
@@ -23,7 +23,6 @@
 
     export let open = false;
 
-    let rebooting = false;
     let redirectTimeout = 45;
     let hostname = "";
 
@@ -36,7 +35,11 @@
     }
 
     async function onConfirm() {
-        rebooting = true;
+        showDialog("Message", {
+            title: "Rebooting",
+            message: "Rebooting to apply the hostname change...",
+            noaction: true,
+        });
         await api.PUT("hostname", { hostname });
         await api.PUT("reboot");
 
@@ -62,10 +65,6 @@
         return hostname;
     }
 </script>
-
-<MessageDialog open={rebooting} title="Rebooting" noaction>
-    Rebooting to apply the hostname change...
-</MessageDialog>
 
 <Dialog
     bind:open

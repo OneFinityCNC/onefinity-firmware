@@ -122,7 +122,7 @@ module.exports = {
             }
 
             async function get(url) {
-                const response = await fetch(`${url}`, { cache: "no-cache" });
+                const response = await fetch(`${url}`, { cache: "no-store" });
                 const arrayBuffer = await response.arrayBuffer();
 
                 return new Float32Array(arrayBuffer);

@@ -22,7 +22,7 @@
 >
     <Title id="message-dialog-title">{title}</Title>
 
-    <Content id="message-dialog-content">
+    <Content id="message-dialog-content" tabindex="0">
         <slot>{message}</slot>
     </Content>
 

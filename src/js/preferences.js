@@ -1,33 +1,21 @@
-module.exports = class Preferences {
-    static getString(name, defaultValue) {
-        const value = localStorage.getItem(name);
+module.exports = {
+    getString(name, defaultValue) {
+        return SvelteComponents.Preferences.getString(name, defaultValue);
+    },
 
-        if (value === null) {
-            return defaultValue;
-        }
+    getBool(name, defaultValue) {
+        return SvelteComponents.Preferences.getBool(name, defaultValue);
+    },
 
-        return value;
-    }
+    setString(name, value) {
+        return SvelteComponents.Preferences.setString(name, value);
+    },
 
-    static getBool(name, defaultValue) {
-        const value = localStorage.getItem(name);
+    setBool(name, value) {
+        return SvelteComponents.Preferences.setBool(name, value);
+    },
 
-        if (value === null) {
-            return defaultValue;
-        }
-
-        return value === "true";
-    }
-
-    static setString(name, value) {
-        localStorage.setItem(name, value);
-    }
-
-    static setBool(name, value) {
-        localStorage.setItem(name, value ? "true" : "false");
-    }
-
-    static remove(name) {
-        localStorage.removeItem(name);
+    remove(name) {
+        return SvelteComponents.Preferences.remove(name);
     }
 };

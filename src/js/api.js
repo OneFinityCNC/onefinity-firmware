@@ -18,7 +18,7 @@ async function callApi(method, url, data) {
             method,
             headers,
             body,
-            cache: "no-cache",
+            cache: "no-store",
         });
 
         if (response.ok) {
