@@ -1,7 +1,16 @@
 import { get, writable } from "svelte/store";
 import { processNetworkInfo } from "./NetworkInfo";
 
+type FirmwareDownloadInfo = {
+    complete?: boolean;
+    failed?: boolean;
+    size?: number;
+    bytes?: number;
+}
+
 export const networkInfo = writable({});
+
+export const firmwareDownload = writable<FirmwareDownloadInfo>({});
 
 export const probingActive = writable(false);
 export const probeContacted = writable(false);
@@ -13,6 +22,11 @@ export function handleControllerStateUpdate(state: Record<string, any>) {
     if (state.networkInfo) {
         processNetworkInfo(state.networkInfo);
         delete state.networkInfo;
+    }
+
+    if (state.firmware_download) {
+        firmwareDownload.set(state.firmware_download);
+        delete state.firmware_download;
     }
 
     if (get(probingActive)) {

@@ -24,7 +24,6 @@ setup(
     entry_points={'console_scripts': ['bbctrl = bbctrl:run']},
     scripts=[
         'installer/scripts/update-bbctrl',
-        'installer/scripts/upgrade-bbctrl',
         'installer/scripts/sethostname',
         'installer/scripts/config-wifi',
         'installer/scripts/edit-config',

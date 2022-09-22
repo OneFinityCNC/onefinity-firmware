@@ -14,6 +14,11 @@ interface ControllerMethods extends RegisterableControllerMethods {
 
 export let ControllerMethods: ControllerMethods;
 
+ControllerMethods = {
+    ...ControllerMethods,
+    dispatch: () => undefined,
+};
+
 export function registerControllerMethods(methods: Partial<RegisterableControllerMethods>) {
     ControllerMethods = {
         ...ControllerMethods,

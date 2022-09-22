@@ -37,10 +37,8 @@ export async function checkFirmwareUpgrades(options: Options = {}) {
 
         if (response.ok) {
             latestVersion = (await response.text()).trim();
-            console.log(`Latest firmware version: v${latestVersion}`);
 
             if (isNewFirmwareAvailable()) {
-                console.log(`New firmware is available: v${getLatestFirmwareVersion()}`);
                 ControllerMethods.dispatch("new-firmware-available");
             }
 

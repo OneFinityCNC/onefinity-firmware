@@ -164,8 +164,8 @@ module.exports = new Vue({
             this.newFirmwareVersion = SvelteComponents.getLatestFirmwareVersion();
         },
 
-        "firmware-update": function() {
-            this.updatingFirmware = true;
+        "firmware-update": function(updating) {
+            this.updatingFirmware = updating;
         },
 
         "close-menu": function() {

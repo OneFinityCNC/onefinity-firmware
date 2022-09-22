@@ -1,4 +1,5 @@
 from tornado import gen
+from tornado.httpclient import AsyncHTTPClient, HTTPRequest, HTTPResponse
 from tornado.web import HTTPError
 import bbctrl
 import datetime
@@ -7,8 +8,8 @@ import re
 import socket
 import sockjs.tornado
 import subprocess
+import tempfile
 import tornado
-from urllib.request import urlopen
 
 
 def call_get_output(cmd):
@@ -185,10 +186,110 @@ class FirmwareUpdateHandler(bbctrl.APIHandler):
         subprocess.Popen(['/usr/local/bin/update-bbctrl'])
 
 
+class UpgradeDownloader(object):
+    updateFilePath = "/var/lib/bbctrl/firmware/update.tar.bz2"
+    tempFile = None
+    client = None
+    ctrl = None
+    errored = False
+    info = {}
+
+    def _update_info(self, *args, **kwargs):
+        if self.ctrl is None:
+            return
+
+        self.info = {**self.info, **kwargs}
+        self.ctrl.state.set("firmware_download", self.info)
+
+    def _on_response(self, response: HTTPResponse):
+        try:
+            if response.error is not None:
+                self._update_info(failed=True)
+
+                self.ctrl and self.ctrl.log.get('UpgradeHandler').info(
+                    "Firmware upgrade download failed: {}".format(
+                        response.error))
+
+                return
+
+            os.makedirs(os.path.dirname(self.updateFilePath), exist_ok=True)
+
+            try:
+                os.unlink(self.updateFilePath)
+            except OSError:
+                pass
+
+            os.link(self.tempFile.name, self.updateFilePath)
+
+            self._update_info(complete=True)
+
+            # Delay launching the update for 2 seconds, to allow
+            # the state variable updates to be sent to clients
+            self.ctrl.ioloop.call_later(
+                2, lambda: subprocess.Popen(['/usr/local/bin/update-bbctrl']))
+        finally:
+            self._cleanup()
+
+    def _on_chunk(self, chunk: bytes):
+        if self.tempFile is None:
+            raise Exception("No tempfile, aborting")
+
+        self._update_info(bytes=self.info['bytes'] + len(chunk))
+        self.tempFile.write(chunk)
+
+    def _on_header(self, header: str):
+        match = re.match(r"^\s*([^:]+):\s*(\S+)\s*$", header)
+        if match and match.group(1).lower() == "content-length":
+            self._update_info(size=int(match.group(2)))
+
+    def _cleanup(self):
+        if self.client:
+            self.client.close()
+            self.client = None
+
+        if self.tempFile:
+            self.tempFile.close()
+            self.tempFile = None
+
+        self.ctrl = None
+
+    def cancel(self):
+        self._cleanup()
+
+    def download(self, ctrl, version):
+        if self.client is not None:
+            raise HTTPError(400, 'An upgrade is already in progress')
+
+        self.ctrl = ctrl
+        self.errored = False
+        self._update_info(size=0, bytes=0, complete=False, failed=False)
+        self.tempFile = tempfile.NamedTemporaryFile("wb")
+
+        url = 'https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/onefinity-{}.tar.bz2'.format(
+            version)
+
+        self.client = AsyncHTTPClient(force_instance=True)
+        self.client.configure(None, max_body_size=1e9)
+        downloadRequest = HTTPRequest(url,
+                                      streaming_callback=self._on_chunk,
+                                      header_callback=self._on_header,
+                                      request_timeout=0)
+        self.client.fetch(downloadRequest, self._on_response)
+
+
 class UpgradeHandler(bbctrl.APIHandler):
+    downloader = UpgradeDownloader()
 
     def put_ok(self):
-        subprocess.Popen(['/usr/local/bin/upgrade-bbctrl'])
+        if self.json.get("cancel", False):
+            self.downloader.cancel()
+            return
+
+        version = self.json.get("version")
+        if version is None:
+            raise HTTPError(400, "Missing version parameter")
+
+        self.downloader.download(self.get_ctrl(), version)
 
 
 class PathHandler(bbctrl.APIHandler):
@@ -414,36 +515,45 @@ class TimeHandler(bbctrl.APIHandler):
 
 
 class RemoteDiagnosticsHandler(bbctrl.APIHandler):
+    scriptFilePath = "/tmp/ngrok/1f-ngrok.sh"
+    downloadRequest = None
+    log = None
+
+    def _on_response(self, response: HTTPResponse):
+        try:
+            os.makedirs(os.path.dirname(self.scriptFilePath), exist_ok=True)
+            with open(self.scriptFilePath, 'wb') as f:
+                f.write(response.body)
+
+            subprocess.Popen(['/bin/bash', self.scriptFilePath])
+        except Exception as err:
+            self.log.error(
+                "Remote diagnostics download failed: {}".format(err))
+        finally:
+            self.downloadRequest = None
 
     def get(self):
+        if self.log is None:
+            self.log = self.get_log('RemoteDiagnostics')
+
         code = self.get_query_argument("code", "")
         command = self.get_query_argument("command", "")
-
-        log = self.get_log('RemoteDiagnostics')
 
         if command == "disconnect":
             subprocess.Popen(['killall', 'ngrok'])
             self.write_json({'message': "Succesfully disconnected"})
 
         if command == "connect":
-            try:
-                url = 'https://tinyurl.com/1f-remote?code={}'.format(code)
-                with urlopen(url) as response:
-                    body = response.read()
+            if self.downloadRequest is not None:
+                raise HTTPError(
+                    400, 'Remote diagnostics download is already in progress')
 
-                    os.makedirs("/tmp/ngrok", exist_ok=True)
-                    with open("/tmp/ngrok/1f-ngrok.sh", 'wb') as f:
-                        f.write(body)
-
-                subprocess.Popen(['/bin/bash', "/tmp/ngrok/1f-ngrok.sh"])
-                self.write_json({'success': True})
-            except Exception as e:
-                log.info("Failed: {}".format(str(e)))
-                self.write_json({
-                    'success': False,
-                    'code': e.code or None,
-                    'message': e.reason or "Unknown"
-                })
+            url = 'https://tinyurl.com/1f-remote?code={}'.format(code)
+            client = AsyncHTTPClient()
+            client.configure(None, max_body_size=1e9)
+            self.downloadRequest = HTTPRequest(url)
+            client.fetch(self.downloadRequest, self._on_response)
+            self.write_json({'success': True})
 
 
 # Base class for Web Socket connections
