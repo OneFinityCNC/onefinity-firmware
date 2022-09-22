@@ -24,18 +24,15 @@ const PACKAGES_TO_PURGE = [
     "zip",
 ];
 
-let controller;
+const controller = process.env.HOST || "onefinity";
+process.env.SSHPASS = process.env.PASSWORD || "onefinity";
 
 initSignalHandlers();
 main();
 
 function main() {
     try {
-        controller = process.argv[2] ?? "onefinity";
-
         assertInstalled([ "sshpass", "ssh" ]);
-
-        process.env.SSHPASS = "onefinity";
 
         ssh("echo sudo access confirmed", {
             onError: () => {

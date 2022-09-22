@@ -13,7 +13,8 @@ const {
     info
 } = require("./util");
 
-const hostname = "onefinity";
+const hostname = process.env.HOST || "onefinity";
+process.env.SSHPASS = process.env.PASSWORD || "onefinity";
 
 initSignalHandlers();
 main();
@@ -21,8 +22,6 @@ main();
 async function main() {
     try {
         assertInstalled([ "sshpass", "ssh" ]);
-
-        process.env.SSHPASS = "onefinity";
 
         ssh("echo sudo access confirmed", {
             onError: () => {

@@ -22,14 +22,6 @@ FINAL_PKG_NAME := dist/onefinity-$(VERSION).tar.bz2
 
 SUBPROJECTS := avr boot pwr
 
-ifndef HOST
-HOST=onefinity
-endif
-
-ifndef PASSWORD
-PASSWORD=onefinity
-endif
-
 all: version $(HTML) $(RESOURCES)
 	@for SUB in $(SUBPROJECTS); do $(MAKE) -C src/$$SUB; done
 
