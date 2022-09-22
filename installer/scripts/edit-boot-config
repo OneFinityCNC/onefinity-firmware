@@ -2,7 +2,14 @@
 
 cp /boot/config.txt /tmp/
 
-edit-config /tmp/config.txt "$@"
+FLAGS=""
+
+if [ "$1" == "--only-if-not-set" ]; then
+    FLAGS="$1"
+    shift
+fi
+
+edit-config $FLAGS /tmp/config.txt "$@"
 
 diff /boot/config.txt /tmp/config.txt >/dev/null
 if [ $? -eq 1 ]; then

@@ -52,9 +52,11 @@ fi
     max_usb_current=1 \
     config_hdmi_boost=8 \
     disable_splash=1 \
-    hdmi_force_hotplug=1 \
-    hdmi_group=2 \
-    hdmi_mode=82
+    hdmi_force_hotplug=1
+
+./installer/scripts/edit-boot-config --only-if-not-set \
+    hdmi_group=1 \
+    hdmi_mode=4
 
 # TODO Enable GPU
 #./installer/scripts/edit-boot-config \

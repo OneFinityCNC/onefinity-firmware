@@ -10,6 +10,7 @@ def option_type(s, pat=re.compile(r'\w+=.*')):
 
 
 parser = argparse.ArgumentParser(description='Edit config file.')
+parser.add_argument('--only-if-not-set', action='store_true')
 parser.add_argument('config', help='The configuration file to edit.')
 parser.add_argument('options',
                     nargs='*',
@@ -65,7 +66,11 @@ first = True
 for opt in args.options:
     name, value = opt.split('=', 1)
 
-    if name in options: options[name].value = value
+    if name in options:
+        if args.only_if_not_set:
+            pass
+        else:
+            options[name].value = value
     else:
         if first and len(lines) and str(lines[:-1]).strip() != '':
             first = False
