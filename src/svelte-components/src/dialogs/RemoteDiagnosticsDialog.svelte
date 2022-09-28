@@ -14,6 +14,10 @@
 
     let code = "";
 
+    $: if (open) {
+        code = "";
+    }
+
     async function onContinue() {
         const url = `remote-diagnostics?command=connect&code=${code}`;
         const result = await api.GET(url);
