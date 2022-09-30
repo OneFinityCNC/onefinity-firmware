@@ -17,6 +17,7 @@ html(lang="en")
     style: include:stylus ../stylus/style.styl
 
   body(v-cloak)
+    #svelte-snackbar-host
     #svelte-dialog-host
 
     #overlay(v-if="status != 'connected' && !updatingFirmware")
@@ -77,10 +78,7 @@ html(lang="en")
                 | Upgrade to v{{newFirmwareVersion}}
                 .fa.fa-exclamation-circle.upgrade-attention
 
-          .pi-temp-warning
-            .fa.fa-thermometer-full(class="error",
-              v-if="80 <= state.rpi_temp",
-              title="Raspberry Pi temperature too high.")
+          #svelte-network-details-host(style="display: flex;")
 
           .whitespace
 

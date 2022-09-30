@@ -8,6 +8,8 @@ import AdminGeneralView from "$components/AdminGeneralView.svelte";
 import SettingsView from "$components/SettingsView.svelte";
 import HelpView from "$components/HelpView.svelte";
 import DialogHost, { showDialog } from "$dialogs/DialogHost.svelte";
+import SnackbarHost, { showSnackbar } from "$components/SnackbarHost.svelte";
+import NetworkDetails from "$components/NetworkDetails.svelte";
 import { handleConfigUpdate, setDisplayUnits } from "$lib/ConfigStore";
 import { handleControllerStateUpdate } from "$lib/ControllerState";
 import { registerControllerMethods } from "$lib/RegisterControllerMethods";
@@ -31,6 +33,12 @@ export function createComponent(component: string, target: HTMLElement, props: R
         case "DialogHost":
             return new DialogHost({ target, props });
 
+        case "SnackbarHost":
+            return new SnackbarHost({ target, props });
+
+        case "NetworkDetails":
+            return new NetworkDetails({ target, props });
+
         default:
             throw new Error("Unknown component");
     }
@@ -45,5 +53,6 @@ export {
     getLatestFirmwareVersion,
     registerControllerMethods,
     setDisplayUnits,
+    showSnackbar,
     Preferences
 };

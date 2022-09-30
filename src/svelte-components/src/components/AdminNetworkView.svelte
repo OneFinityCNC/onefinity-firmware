@@ -4,7 +4,11 @@
     import Button, { Label } from "@smui/button";
     import List, { Item, Graphic, Text, Meta } from "@smui/list";
     import Card from "@smui/card";
-    import { networkInfo, type WifiNetwork } from "$lib/NetworkInfo";
+    import {
+        networkInfo,
+        refreshNetworkInfo,
+        type WifiNetwork,
+    } from "$lib/NetworkInfo";
 
     let changeHostnameDialog = {
         open: false,
@@ -14,6 +18,10 @@
         open: false,
         network: {} as WifiNetwork,
     };
+
+    $: if (open) {
+        refreshNetworkInfo();
+    }
 
     function getWifiStrengthStyle(network: WifiNetwork) {
         const strength = Math.ceil((Number(network.Quality) / 100) * 4);
@@ -88,8 +96,8 @@
     <div class="pure-form pure-form-aligned">
         <div class="pure-control-group">
             <label for="wifi">Wi-Fi</label>
-            <div class="wifi-networks">
-                <Card id="wifi" variant="outlined">
+            <Card id="wifi" class="wifi-networks">
+                <Card variant="outlined">
                     <List>
                         {#if $networkInfo.wifi.networks.length === 0}
                             <Item class="wifi-network">
@@ -132,7 +140,11 @@
                 <em style="display: block;">
                     Click on a Wi-Fi network to connect or disconnect.
                 </em>
-            </div>
+            </Card>
+
+            <Button on:click={refreshNetworkInfo} touch variant="raised">
+                <Label>Refresh</Label>
+            </Button>
         </div>
     </div>
 </div>
@@ -152,8 +164,9 @@
                 font-weight: bold;
             }
 
-            button {
+            button:not(.mdc-dialog__button) {
                 margin: 0;
+                width: 110px;
             }
 
             .mdc-card {
@@ -167,7 +180,8 @@
             }
 
             .wifi-networks {
-                display: inline-block;
+                padding: 0;
+                box-shadow: none;
 
                 .mdc-card {
                     padding: 0;

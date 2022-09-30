@@ -1,16 +1,11 @@
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 import copy
-import iw_parse
-import json
+import glob
 import os
-import socket
 import subprocess
-import threading
-import time
 import traceback
 import uuid
-import glob
 
 
 def call_get_output(cmd):
@@ -33,7 +28,6 @@ class UploadChangeHandler(FileSystemEventHandler):
 class State(object):
 
     def __init__(self, ctrl):
-        self.lock = threading.Lock()
         self.ctrl = ctrl
         self.log = ctrl.log.get('State')
 
@@ -81,36 +75,6 @@ class State(object):
                           self.ctrl.get_upload(),
                           recursive=True)
         observer.start()
-
-        threading.Thread(target=self._updateNetworkInfo, daemon=True).start()
-
-    def _updateNetworkInfo(self):
-        while True:
-            try:
-                ipAddresses = call_get_output(['hostname', '-I']).split()
-            except:
-                ipAddresses = ""
-
-            hostname = socket.gethostname()
-
-            try:
-                wifi = json.loads(call_get_output(['config-wifi', '-j']))
-            except:
-                wifi = {'enabled': False}
-
-            try:
-                lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
-                wifi['networks'] = iw_parse.get_parsed_cells(lines)
-            except:
-                wifi['networks'] = []
-
-            self.set('networkInfo', {
-                'ipAddresses': ipAddresses,
-                'hostname': hostname,
-                'wifi': wifi
-            })
-
-            time.sleep(5)
 
     def reset(self):
         # Unhome all motors
@@ -221,20 +185,15 @@ class State(object):
         self.callbacks[self.resolve(name)] = cb
 
     def set(self, name, value):
-        self.lock.acquire()
-        try:
-            name = self.resolve(name)
+        name = self.resolve(name)
 
-            if not name in self.vars or self.vars[name] != value:
-                self.vars[name] = value
-                self.changes[name] = value
+        if not name in self.vars or self.vars[name] != value:
+            self.vars[name] = value
+            self.changes[name] = value
 
-                # Trigger listener notify
-                if self.timeout is None:
-                    self.timeout = self.ctrl.ioloop.call_later(
-                        0.25, self._notify)
-        finally:
-            self.lock.release()
+            # Trigger listener notify
+            if self.timeout is None:
+                self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
 
     def update(self, update):
         for name, value in update.items():

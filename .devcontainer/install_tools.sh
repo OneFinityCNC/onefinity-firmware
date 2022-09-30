@@ -42,6 +42,11 @@ apt-get install -y nodejs
 
 mkdir -p /root/.ssh
 cat > /root/.ssh/config <<- END
+Host *.tcp.ngrok.io
+        StrictHostKeyChecking no
+        UserKnownHostsFile /dev/null
+        LogLevel QUIET
+
 Host onefinity
         User bbmc
 END

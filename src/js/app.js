@@ -4,8 +4,16 @@ const api = require("./api");
 const Preferences = require("./preferences");
 const Sock = require("./sock");
 
+SvelteComponents.createComponent("SnackbarHost",
+    document.getElementById("svelte-snackbar-host")
+);
+
 SvelteComponents.createComponent("DialogHost",
     document.getElementById("svelte-dialog-host")
+);
+
+SvelteComponents.createComponent("NetworkDetails",
+    document.getElementById("svelte-network-details-host")
 );
 
 function parse_version(v) {
@@ -156,6 +164,21 @@ module.exports = new Vue({
             Preferences.setString("display_units", value);
             SvelteComponents.setDisplayUnits(value);
         },
+
+        "state.rpi_temp": function(value) {
+            if (value >= 80) {
+                SvelteComponents.showSnackbar({
+                    limit: {
+                        key: "rpi_temp",
+                        notMoreThanOnceEvery: "15 minutes"
+                    },
+                    props: {
+                        timeoutMs: -1, // Do not auto-dismiss
+                    },
+                    label: "Raspberry Pi temperature too high."
+                });
+            }
+        }
     },
 
     events: {

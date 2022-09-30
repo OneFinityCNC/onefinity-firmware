@@ -10,7 +10,6 @@ const {
     logErrorAndExit,
     initSignalHandlers,
     assertInstalled,
-    info
 } = require("./util");
 
 const hostname = process.env.HOST || "onefinity";

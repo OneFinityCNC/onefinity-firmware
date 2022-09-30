@@ -1,3 +1,4 @@
+import * as api from "$lib/api";
 import { writable } from "svelte/store";
 
 export type WifiNetwork = {
@@ -35,7 +36,19 @@ const empty: NetworkInfo = {
 
 export const networkInfo = writable<NetworkInfo>(empty);
 
-export function processNetworkInfo(rawNetworkInfo: NetworkInfo) {
+export async function refreshNetworkInfo() {
+    // When refreshing, clear out the wifi network info (but not ips, hostname, etc)
+    networkInfo.update(info => ({
+        ...info,
+        wifi: empty.wifi
+    }));
+
+    const result = await api.GET("network");
+
+    processNetworkInfo(result);
+}
+
+function processNetworkInfo(rawNetworkInfo: NetworkInfo) {
     const now = Date.now();
     const networksByName: Record<string, WifiNetwork> = {};
 

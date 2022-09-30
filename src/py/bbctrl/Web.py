@@ -3,6 +3,8 @@ from tornado.httpclient import AsyncHTTPClient, HTTPRequest, HTTPResponse
 from tornado.web import HTTPError
 import bbctrl
 import datetime
+import iw_parse
+import json
 import os
 import re
 import socket
@@ -107,6 +109,31 @@ class HostnameHandler(bbctrl.APIHandler):
 
 
 class NetworkHandler(bbctrl.APIHandler):
+
+    def get(self):
+        try:
+            ipAddresses = call_get_output(['hostname', '-I']).split()
+        except:
+            ipAddresses = ""
+
+        hostname = socket.gethostname()
+
+        try:
+            wifi = json.loads(call_get_output(['config-wifi', '-j']))
+        except:
+            wifi = {'enabled': False}
+
+        try:
+            lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
+            wifi['networks'] = iw_parse.get_parsed_cells(lines)
+        except:
+            wifi['networks'] = []
+
+        self.write_json({
+            'ipAddresses': ipAddresses,
+            'hostname': hostname,
+            'wifi': wifi
+        })
 
     def put(self):
         if self.get_ctrl().args.demo:
