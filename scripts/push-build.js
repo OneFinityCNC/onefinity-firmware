@@ -14,6 +14,7 @@ const {
 } = require("./util");
 
 const hostname = process.env.HOST || "onefinity";
+const port = process.env.PORT || 22;
 process.env.SSHPASS = process.env.PASSWORD || "onefinity";
 
 initSignalHandlers();
@@ -35,9 +36,7 @@ async function main() {
 
         const build = await getBuildFilePath();
 
-        runCommand(`sshpass -e /usr/bin/scp dist/${build} bbmc@${hostname}:~`, {
-            stdio: "inherit"
-        });
+        scp(`dist/${build}`, `bbmc@${hostname}:~`);
         ssh(`mv /home/bbmc/${build} /var/lib/bbctrl/firmware/update.tar.bz2`);
         ssh("update-bbctrl");
     } catch (error) {
@@ -80,9 +79,14 @@ async function getBuildFilePath() {
 }
 
 function ssh(command, options) {
-    info(`Running "${command}"`);
+    return runCommand(`sshpass -e /usr/bin/ssh bbmc@${hostname} -p ${port} "sudo ${command}"`, {
+        ...options,
+        stdio: "inherit"
+    });
+}
 
-    return runCommand(`sshpass -e /usr/bin/ssh ${hostname} "sudo ${command}"`, {
+function scp(from, to, options) {
+    runCommand(`sshpass -e /usr/bin/scp -P ${port} ${from} ${to}`, {
         ...options,
         stdio: "inherit"
     });
