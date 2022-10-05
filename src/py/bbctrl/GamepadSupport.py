@@ -257,7 +257,7 @@ class Gamepad(object):
                                          _evdev.info.product)
         self._loadConfig()
 
-        self.log("Configuration Settings: {}".format(self.config))
+        self.log("Configuration Settings: {}".format(sorted_json(self.config)))
 
     def read(self):
         return self._evdev.read()
