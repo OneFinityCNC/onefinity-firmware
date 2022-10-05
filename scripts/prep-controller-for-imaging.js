@@ -24,7 +24,7 @@ const PACKAGES_TO_PURGE = [
     "zip",
 ];
 
-const controller = process.env.HOST || "onefinity";
+const controller = process.env.HOST || "onefinity.local";
 process.env.SSHPASS = process.env.PASSWORD || "onefinity";
 
 initSignalHandlers();

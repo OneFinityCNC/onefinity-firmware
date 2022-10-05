@@ -12,7 +12,7 @@ const {
     assertInstalled,
 } = require("./util");
 
-const hostname = process.env.HOST || "onefinity";
+const hostname = process.env.HOST || "onefinity.local";
 const port = process.env.PORT || 22;
 process.env.SSHPASS = process.env.PASSWORD || "onefinity";
 
