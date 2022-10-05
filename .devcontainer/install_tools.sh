@@ -42,7 +42,7 @@ apt-get install -y nodejs
 
 mkdir -p /root/.ssh
 cat > /root/.ssh/config <<- END
-Host *.tcp.ngrok.io
+Host *
         StrictHostKeyChecking no
         UserKnownHostsFile /dev/null
         LogLevel QUIET
