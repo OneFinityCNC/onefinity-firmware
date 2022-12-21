@@ -81,7 +81,7 @@ html(lang="en")
               | WiFi: {{config.wifiName}}
             a.upgrade-link(v-if="show_upgrade()", href="#admin-general")
                 | Upgrade to v{{latestVersion}}
-              .fa.fa-exclamation-circle.upgrade-attention(v-if="show_upgrade()")
+                .fa.fa-exclamation-circle.upgrade-attention(v-if="show_upgrade()")
 
           .pi-temp-warning
             .fa.fa-thermometer-full(class="error",
