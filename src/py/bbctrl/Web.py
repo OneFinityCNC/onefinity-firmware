@@ -1,30 +1,3 @@
-################################################################################
-#                                                                              #
-#                This file is part of the Buildbotics firmware.                #
-#                                                                              #
-#                  Copyright (c) 2015 - 2018, Buildbotics LLC                  #
-#                             All rights reserved.                             #
-#                                                                              #
-#     This file ("the software") is free software: you can redistribute it     #
-#     and/or modify it under the terms of the GNU General Public License,      #
-#      version 2 as published by the Free Software Foundation. You should      #
-#      have received a copy of the GNU General Public License, version 2       #
-#     along with the software. If not, see <http://www.gnu.org/licenses/>.     #
-#                                                                              #
-#     The software is distributed in the hope that it will be useful, but      #
-#          WITHOUT ANY WARRANTY; without even the implied warranty of          #
-#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       #
-#               Lesser General Public License for more details.                #
-#                                                                              #
-#       You should have received a copy of the GNU Lesser General Public       #
-#                License along with the software.  If not, see                 #
-#                       <http://www.gnu.org/licenses/>.                        #
-#                                                                              #
-#                For information regarding this software email:                #
-#                  "Joseph Coffland" <joseph@buildbotics.com>                  #
-#                                                                              #
-################################################################################
-
 import os
 import json
 import tornado
@@ -34,9 +7,9 @@ import subprocess
 import socket
 from tornado.web import HTTPError
 from tornado import gen
-
+import re
 import bbctrl
-
+from urllib.request import urlopen
 
 
 def call_get_output(cmd):
@@ -75,7 +48,7 @@ def check_password(password):
 class RebootHandler(bbctrl.APIHandler):
     def put_ok(self):
         self.get_ctrl().lcd.goodbye('Rebooting...')
-        subprocess.Popen('reboot')
+        subprocess.Popen(['reboot'])
         
 class ShutdownHandler(bbctrl.APIHandler):
     def put_ok(self):
@@ -153,6 +126,30 @@ class HostnameHandler(bbctrl.APIHandler):
         raise HTTPError(400, 'Failed to set hostname')
 
 
+class NetworkData(bbctrl.APIHandler):
+
+    def get(self):
+        try:
+            ipAddresses = subprocess.P(
+                "ip -4 addr | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'", shell=True).decode().split()
+            ipAddresses.remove("127.0.0.1")
+            regex = re.compile(r'/255$/')
+            filtered = [i for i in ipAddresses if not regex.match(i)]
+            ipAddresses = filtered[0]
+        except:
+            ipAddresses = "Not Connected"
+        try:
+            wifi = subprocess.check_output(
+                "sudo iw dev wlan0 info | grep ssid", shell=True).decode().split()
+            wifi.pop(0)
+            wifiName = " ".join(wifi)
+        except:
+            wifi = "not connected"
+        self.write_json({
+            'ipAddresses': ipAddresses,
+            'wifi': wifiName
+        })
+
 class WifiHandler(bbctrl.APIHandler):
     def get(self):
         data = {'ssid': '', 'channel': 0}
@@ -187,6 +184,7 @@ class WifiHandler(bbctrl.APIHandler):
                 return
 
         raise HTTPError(400, 'Failed to configure wifi')
+
 
 
 class UsernameHandler(bbctrl.APIHandler):
@@ -407,6 +405,97 @@ class JogHandler(bbctrl.APIHandler):
         self.get_ctrl().mach.jog(self.json)
 
 
+class ScreenRotationHandler(bbctrl.APIHandler):
+
+    @gen.coroutine
+    def get(self):
+        with open("/boot/config.txt", 'rt') as config:
+            lines = config.readlines()
+            for line in lines:
+                if line.startswith('display_rotate'):
+                    self.write_json({
+                        'rotated':
+                        int(displayRotatePattern.search(line).group(1)) != 0
+                    })
+                    return
+
+        self.write_json({'rotated': False})
+        return
+
+    @gen.coroutine
+    def put_ok(self):
+        rotated = self.json['rotated']
+
+        subprocess.Popen([
+            '/usr/local/bin/edit-boot-config',
+            'display_rotate={}'.format(2 if rotated else 0)
+        ])
+
+        with open("/usr/share/X11/xorg.conf.d/40-libinput.conf",
+                  'rt') as config:
+            text = config.read()
+            text = transformationMatrixPattern.sub(r'\1\2\3\5', text)
+            if rotated:
+                text = matchIsTouchscreenPattern.sub(
+                    r'\1\2\3\2Option "TransformationMatrix" "-1 0 1 0 -1 1 0 0 1"\1\4',
+                    text)
+        with open("/usr/share/X11/xorg.conf.d/40-libinput.conf",
+                  'wt') as config:
+            config.write(text)
+
+        subprocess.run('reboot')
+
+
+class TimeHandler(bbctrl.APIHandler):
+
+    def get(self):
+        timeinfo = call_get_output(['timedatectl'])
+        timezones = call_get_output(
+            ['timedatectl', 'list-timezones', '--no-pager'])
+        self.get_log('TimeHandler').info('Time stuff: {}, {}'.format(
+            timeinfo, timezones))
+
+        self.write_json({'timeinfo': timeinfo, 'timezones': timezones})
+
+    def put_ok(self):
+        datetime = self.json['datetime']
+        timezone = self.json['timezone']
+        subprocess.Popen(['timedatectl', 'set-time', datetime])
+        subprocess.Popen(['timedatectl', 'set-timezone', timezone])
+
+
+class RemoteDiagnosticsHandler(bbctrl.APIHandler):
+
+    def get(self):
+        code = self.get_query_argument("code", "")
+        command = self.get_query_argument("command", "")
+
+        log = self.get_log('RemoteDiagnostics')
+
+        if command == "disconnect":
+            subprocess.Popen(['killall', 'ngrok'])
+            self.write_json({'message': "Succesfully disconnected"})
+
+        if command == "connect":
+            try:
+                url = 'https://tinyurl.com/1f-remote?code={}'.format(code)
+                with urlopen(url) as response:
+                    body = response.read()
+
+                    os.makedirs("/tmp/ngrok", exist_ok=True)
+                    with open("/tmp/ngrok/1f-ngrok.sh", 'wb') as f:
+                        f.write(body)
+
+                subprocess.Popen(['/bin/bash', "/tmp/ngrok/1f-ngrok.sh"])
+                self.write_json({'success': True})
+            except Exception as e:
+                log.info("Failed: {}".format(str(e)))
+                self.write_json({
+                    'success': False,
+                    'code': e.code or None,
+                    'message': e.reason or "Unknown"
+                })
+
 # Base class for Web Socket connections
 class ClientConnection(object):
     def __init__(self, app):
@@ -517,7 +606,8 @@ class Web(tornado.web.Application):
             (r'/api/reboot', RebootHandler),
             (r'/api/shutdown', ShutdownHandler),
             (r'/api/hostname', HostnameHandler),
-            (r'/api/wifi', WifiHandler),
+            (r'/api/wifi', NetworkData),
+            (r'/api/network', WifiHandler),
             (r'/api/remote/username', UsernameHandler),
             (r'/api/remote/password', PasswordHandler),
             (r'/api/config/load', ConfigLoadHandler),
@@ -544,6 +634,9 @@ class Web(tornado.web.Application):
             (r'/api/modbus/write', ModbusWriteHandler),
             (r'/api/jog', JogHandler),
             (r'/api/video', bbctrl.VideoHandler),
+            (r'/api/screen-rotation', ScreenRotationHandler),
+            (r'/api/time', TimeHandler),
+            (r'/api/remote-diagnostics', RemoteDiagnosticsHandler),
             (r'/(.*)', StaticFileHandler,
              {'path': bbctrl.get_resource('http/'),
               'default_filename': 'index.html'}),

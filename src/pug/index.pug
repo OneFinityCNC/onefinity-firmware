@@ -1,30 +1,3 @@
-//-/////////////////////////////////////////////////////////////////////////////
-//-                                                                           //
-//-              This file is part of the Buildbotics firmware.               //
-//-                                                                           //
-//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
-//-                           All rights reserved.                            //
-//-                                                                           //
-//-   This file ("the software") is free software: you can redistribute it    //
-//-   and/or modify it under the terms of the GNU General Public License,     //
-//-    version 2 as published by the Free Software Foundation. You should     //
-//-    have received a copy of the GNU General Public License, version 2      //
-//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
-//-                                                                           //
-//-   The software is distributed in the hope that it will be useful, but     //
-//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
-//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
-//-             Lesser General Public License for more details.               //
-//-                                                                           //
-//-     You should have received a copy of the GNU Lesser General Public      //
-//-              License along with the software.  If not, see                //
-//-                     <http://www.gnu.org/licenses/>.                       //
-//-                                                                           //
-//-              For information regarding this software email:               //
-//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
-//-                                                                           //
-//-/////////////////////////////////////////////////////////////////////////////
-
 doctype html
 html(lang="en")
   head
@@ -39,12 +12,17 @@ html(lang="en")
     style: include ../static/css/font-awesome.min.css
     style: include ../static/css/Audiowide.css
     style: include ../static/css/clusterize.css
+    style: include ../svelte-components/node_modules/svelte-material-ui/bare.css
+    style: include ../../build/http/svelte-components/smui.css
+    style: include ../../build/http/svelte-components/style.css
     style: include:stylus ../stylus/style.styl
 
-
   body(v-cloak)
+    #svelte-dialog-host
+
     #overlay(v-if="status != 'connected'")
       span {{status}}
+    
     #layout
       a#menuLink.menu-link(href="#menu"): span
 
@@ -87,49 +65,43 @@ html(lang="en")
             li.pure-menu-heading
               a.pure-menu-link(href="#help") Help
               
-            button.pure-button.pure-button-primary(@click="confirmShutdown = true", style="width: 100%")
-              .fa.fa-power-off
-            message(:show.sync="confirmShutdown")
-              h3(slot="header") Confirm shutdown?
-              p(slot="body") Please wait for black screen before switching off power.
-              div(slot="footer")
-                button.pure-button(@click="confirmShutdown = false") Cancel
-                button.pure-button.button-success(@click="shutdown") Shutdown
-                button.pure-button.button-success(@click="reboot") Restart
-              
+            button.pure-button.pure-button-primary(@click="showShutdownDialog", style="width: 100%")
+              .fa.fa-power-off              
 
       #main
-        .header
-          .header-content
-            .banner
-              img(src="/images/onefinity_logo.png")
-              .title
-                .fa.fa-thermometer-full(class="error",
-                  v-if="80 <= state.rpi_temp",
-                  title="Raspberry Pi temperature too high.")
-              .subtitle
-                | CNC Controller #[b {{state.demo ? 'Demo ' : ''}}]
-                | v{{config.full_version}}
-                a.upgrade-version(v-if="show_upgrade()", href="#admin-general")
-                  | Upgrade to v{{latestVersion}}
-                .fa.fa-check(v-if="!show_upgrade() && latestVersion",
-                  title="Firmware up to date" style="font-size: inherit")
-              .p {{get_ip_address()}} {{get_ssid()}}
+        .nav-header
+          .brand
+            img(src="/images/onefinity_logo.png")
+            .version
+              div 
+              | Version: v{{config.full_version}} 
+              div
+              | IP Address: {{config.ip}}
+              div 
+              | WiFi: {{config.wifiName}}
+            a.upgrade-link(v-if="show_upgrade()", href="#admin-general")
+                | Upgrade to v{{latestVersion}}
+              .fa.fa-exclamation-circle.upgrade-attention(v-if="show_upgrade()")
 
-            .estop(:class="{active: state.es}")
-              estop(@click="estop")
+          .pi-temp-warning
+            .fa.fa-thermometer-full(class="error",
+              v-if="80 <= state.rpi_temp",
+              title="Raspberry Pi temperature too high.")
 
-            .video(title="Plug camera into USB.\n" +
-              "Left click to toggle video size.\n" +
-              "Right click to toggle crosshair.", @click="toggle_video",
-              @contextmenu="toggle_crosshair", :class="video_size")
-              .crosshair(v-if="crosshair")
-                .vertical
-                .horizontal
-                .box
-              img(src="/api/video")
+          .whitespace
 
-        .clear
+          .video(title="Plug camera into USB.\n" +
+            "Left click to toggle video size.\n" +
+            "Right click to toggle crosshair.", @click="toggle_video",
+            @contextmenu="toggle_crosshair", :class="video_size")
+            .crosshair(v-if="crosshair")
+              .vertical
+              .horizontal
+              .box
+            img(src="/api/video")
+
+          .estop(:class="{active: state.es}")
+            estop(@click="estop")
 
         .content(class="{{currentView}}-view")
           component(:is="currentView + '-view'", :index="index",
@@ -205,10 +177,10 @@ html(lang="en")
     #templates: include ../../build/templates.pug
     iframe#download-target(style="display:none")
 
-    script: include ../static/js/jquery-1.11.3.min.js
     script: include ../static/js/vue.js
     script: include ../static/js/sockjs.min.js
     script: include ../static/js/clusterize.min.js
     script: include ../static/js/three.min.js
     script: include:browserify ../js/main.js
+    script: include ../../build/http/svelte-components/index.js
     script: include ../static/js/ui.js
