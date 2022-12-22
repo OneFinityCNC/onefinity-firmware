@@ -156,6 +156,7 @@ class WifiHandler(bbctrl.APIHandler):
         try:
             data = json.loads(call_get_output(['config-wifi', '-j']))
         except: pass
+        self.get_log("network").info(str(data))
         self.write_json(data)
 
 
