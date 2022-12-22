@@ -70,7 +70,7 @@
     }
 
     function getTitle(): string {
-        const help = template.help ? `${template.help}\n` : "";
+        const help = !!template.help ? `${template.help}\n` : "";
         return `${help}Default: ${template.default} ${template.unit || ""}`;
     }
 
