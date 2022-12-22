@@ -156,7 +156,6 @@ class WifiHandler(bbctrl.APIHandler):
         try:
             data = json.loads(call_get_output(['config-wifi', '-j']))
         except: pass
-        self.get_log("network").info(str(data))
         self.write_json(data)
 
 
@@ -406,6 +405,12 @@ class JogHandler(bbctrl.APIHandler):
         self.get_ctrl().mach.jog(self.json)
 
 
+displayRotatePattern = re.compile(r'display_rotate\s*=\s*(\d)')
+transformationMatrixPattern = re.compile(
+    r'(\n)(\s+)(MatchIsTouchscreen.*?\n)(\s+Option\s+\"TransformationMatrix\".*?\n)(.*?EndSection)',
+    re.DOTALL)
+matchIsTouchscreenPattern = re.compile(
+    r'(\n)(\s+)(MatchIsTouchscreen.*?\n)(.*?EndSection)', re.DOTALL)
 class ScreenRotationHandler(bbctrl.APIHandler):
 
     @gen.coroutine
