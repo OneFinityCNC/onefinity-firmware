@@ -17,7 +17,7 @@
         min?: number;
         max?: number;
         step?: number;
-        help?: string;
+        help?: string | undefined;
         default?: string | number;
         scale?: number;
     };
