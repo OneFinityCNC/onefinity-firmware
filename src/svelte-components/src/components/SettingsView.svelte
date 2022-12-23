@@ -47,7 +47,7 @@
 
         <h2>Gamepads / Joypads</h2>
         <fieldset>
-            <ConfigTemplatedInput key={`settings.gamepad-default-type`} />
+            <ConfigTemplatedInput key={`settings.junction-accel`} />
             <div class="tip">
                 If your gamepad doesn't work as expected, try one of the other
                 types.
