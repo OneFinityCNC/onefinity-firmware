@@ -47,13 +47,13 @@
 
     onMount(() => {
         keyParts = (key || "").split(".");
-        title = getTitle();
-        console.debug(title)
         template = getTemplate();
-        console.debug(template)
+        title = getTitle();
+        console.error(title)
+        console.error(template)
         name = keyParts[keyParts.length - 1];
         name = namesByKey[name] || name;
-        value = getValue();
+        value =  getValue();
     });
 
     $: metric = $DisplayUnits === "METRIC";
