@@ -17,7 +17,7 @@
         min?: number;
         max?: number;
         step?: number;
-        help?: string | undefined;
+        help?: string;
         default?: string | number;
         scale?: number;
     };
@@ -65,13 +65,15 @@
         let template = configTemplate;
         for (const part of keyParts) {
             template = template[part];
+            if(!template.help)
+                template.help="" 
         }
 
         return template as Template;
     }
 
     function getTitle(): string {
-        const help = (!!template.help) ? `${template.help}\n` : "";
+        // const help = (!!template.help) ? `${template.help}\n` : "";
         return `${help}Default: ${template.default} ${template.unit || ""}`;
     }
 
