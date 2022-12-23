@@ -47,11 +47,12 @@
 
     onMount(() => {
         keyParts = (key || "").split(".");
+        title = getTitle();
+        console.debug(title)
         template = getTemplate();
-
+        console.debug(template)
         name = keyParts[keyParts.length - 1];
         name = namesByKey[name] || name;
-        title = getTitle();
         value = getValue();
     });
 
