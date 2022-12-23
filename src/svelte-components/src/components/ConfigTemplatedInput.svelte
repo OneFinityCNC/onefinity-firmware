@@ -65,6 +65,7 @@
             template = template[part];
             if(!template.help)
                 template.help="" 
+            console.log(template.help)
         }
 
         return template as Template;
