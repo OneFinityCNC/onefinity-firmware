@@ -74,7 +74,7 @@
 
     function getTitle(): string {
         // const help = (!!template.help) ? `${template.help}\n` : "";
-        return `${help}Default: ${template.default} ${template.unit || ""}`;
+        return `${template.help}\n Default: ${template.default} ${template.unit || ""}`;
     }
 
     function getValue(): string | number {
