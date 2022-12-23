@@ -17,7 +17,7 @@ export function createComponent(component: string, target: HTMLElement, props: R
             return new AdminNetworkView({ target, props });
 
         case "SettingsView":
-            return new SettingsView({ target});
+            return new SettingsView({ target, props });
 
         case "HelpView":
             return new HelpView({ target, props });
