@@ -36,7 +36,7 @@ endif
 all: $(HTML) $(RESOURCES)
 	@for SUB in $(SUBPROJECTS); do $(MAKE) -C src/$$SUB; done
 
-pkg: all $(AVR_FIRMWARE) bbserial
+pkg: all $(AVR_FIRMWARE) #bbserial
 	./setup.py sdist
 
 bbserial:

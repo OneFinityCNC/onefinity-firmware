@@ -43,7 +43,7 @@ class Config(object):
         self.values = {}
 
         try:
-            self.version = "1.1.3"
+            self.version = "1.2.0"
 
             # Load config template
             with open(get_resource('http/config-template.json'), 'r',
