@@ -63,16 +63,13 @@
         let template = configTemplate;
         for (const part of keyParts) {
             template = template[part];
-            if(!template.help)
-                template.help="" 
-            console.log(template.help)
         }
 
         return template as Template;
     }
 
     function getTitle(): string {
-        // const help = (!!template.help) ? `${template.help}\n` : "";
+        const help = (!!template.help) ? `${template.help}\n` : "";
         return `${template.help}\n Default: ${template.default} ${template.unit || ""}`;
     }
 

@@ -79,13 +79,13 @@
         <div class="pure-control-group">
             <label for="ip-addresses">IP Addresses</label>
             <Card id="ip-addresses" variant="outlined">
-                {#each $networkInfo.ipAddresses as ipAddress}
+                <!-- {#each $networkInfo.ipAddresses as ipAddress} -->
                     <div>
                         <Text id="hostname">
-                            {ipAddress}
+                            {$networkInfo.ipAddresses}
                         </Text>
                     </div>
-                {/each}
+                <!-- {/each} -->
             </Card>
         </div>
     </div>
