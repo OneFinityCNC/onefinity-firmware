@@ -20,6 +20,11 @@
         network: {} as WifiNetwork,
     };
 
+    function refreshWifi(){
+             let networkData  = GET("network")
+        networkData.then(value=>processNetworkInfo(value))
+    }
+
     function getWifiStrengthStyle(network: WifiNetwork) {
         const strength = Math.ceil((Number(network.Quality) / 100) * 4);
 
@@ -59,7 +64,14 @@
 <ChangeHostnameDialog {...changeHostnameDialog} />
 
 <div class="admin-network-view">
-    <h1>Network Info</h1>
+    <div style="display:flex; flex-direction:row; justify-content:space-between" >
+            <h1>Network Info</h1>
+             <div style="text-align: center; padding:20px">
+            <Button on:click={refreshWifi} touch variant="raised">
+                <Label>Refresh WiFi</Label>
+            </Button>
+            </div>
+    </div>
 
     <div class="pure-form pure-form-aligned">
         <div class="pure-control-group">
