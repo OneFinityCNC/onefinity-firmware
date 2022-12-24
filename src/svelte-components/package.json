@@ -26,6 +26,6 @@
     "svelte-tiny-virtual-list": "^2.0.5",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
-    "vite": "^4.0.0"
+    "vite": "^3.0.2"
   }
 }
