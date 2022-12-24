@@ -23,7 +23,7 @@
     };
 
     const namesByKey = {
-        "junction-accel": "Default type",
+        "units":"units",
         "probing-prompts": "Show safety prompts",
         "probe-xdim": "Probe block width",
         "probe-ydim": "Probe block length",

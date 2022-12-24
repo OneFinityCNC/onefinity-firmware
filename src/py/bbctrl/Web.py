@@ -10,6 +10,7 @@ from tornado import gen
 import re
 import bbctrl
 from urllib.request import urlopen
+import iw_parse
 
 
 def call_get_output(cmd):
@@ -150,41 +151,63 @@ class NetworkData(bbctrl.APIHandler):
             'wifi': wifiName
         })
 
-class WifiHandler(bbctrl.APIHandler):
-    def get(self):
-        data = {'ssid': '', 'channel': 0}
-        try:
-            data = json.loads(call_get_output(['config-wifi', '-j']))
-        except: pass
-        self.write_json(data)
+class NetworkHandler(bbctrl.APIHandler):
 
+    def get(self):
+        try:
+            ipAddresses = subprocess.check_output(
+                "ip -4 addr | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'", shell=True).decode().split()
+            ipAddresses.remove("127.0.0.1")
+            regex = re.compile(r'/255$/')
+            filtered = [i for i in ipAddresses if not regex.match(i)]
+            ipAddresses = filtered[0]
+
+        except:
+            ipAddresses = "Not Connected"
+
+        hostname = socket.gethostname()
+
+        try:
+            wifi = json.loads(call_get_output(['config-wifi', '-j']))
+        except:
+            wifi = {'enabled': False}
+
+        try:
+            lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
+            wifi['networks'] = iw_parse.get_parsed_cells(lines)
+        except:
+            wifi['networks'] = []
+
+        self.write_json({
+            'ipAddresses': ipAddresses,
+            'hostname': hostname,
+            'wifi': wifi
+        })
 
     def put(self):
         if self.get_ctrl().args.demo:
             raise HTTPError(400, 'Cannot configure WiFi in demo mode')
 
-        if 'mode' in self.json:
-            cmd = ['config-wifi', '-r']
-            mode = self.json['mode']
+        if not 'wifi' in self.json:
+            raise HTTPError(400, 'Payload is missing wifi config information')
 
-            if mode == 'disabled': cmd += ['-d']
-            elif 'ssid' in self.json:
-                cmd += ['-s', self.json['ssid']]
+        wifi = self.json['wifi']
+        cmd = ['config-wifi', '-r']
 
-                if mode == 'ap':
-                    cmd += ['-a']
-                    if 'channel' in self.json:
-                        cmd += ['-c', self.json['channel']]
+        if not wifi['enabled']:
+            cmd += ['-d']
+        else:
+            if 'ssid' in wifi:
+                cmd += ['-s', wifi['ssid']]
 
-                if 'pass' in self.json:
-                    cmd += ['-p', self.json['pass']]
+            if 'password' in wifi:
+                cmd += ['-p', wifi['password']]
 
-            if subprocess.call(cmd) == 0:
-                self.write_json('ok')
-                return
+        if subprocess.call(cmd) == 0:
+            self.write_json('ok')
+            return
 
         raise HTTPError(400, 'Failed to configure wifi')
-
 
 
 class UsernameHandler(bbctrl.APIHandler):
@@ -613,7 +636,7 @@ class Web(tornado.web.Application):
             (r'/api/shutdown', ShutdownHandler),
             (r'/api/hostname', HostnameHandler),
             (r'/api/wifi', NetworkData),
-            (r'/api/network', WifiHandler),
+            (r'/api/network', NetworkHandler),
             (r'/api/remote/username', UsernameHandler),
             (r'/api/remote/password', PasswordHandler),
             (r'/api/config/load', ConfigLoadHandler),
