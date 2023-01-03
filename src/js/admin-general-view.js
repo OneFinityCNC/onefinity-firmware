@@ -79,7 +79,6 @@ module.exports = {
                         message: "Configuration restored"
                     });
                     this.confirmReset= false
-                    this.z_slider=true
                 } catch (error) {
                     console.error("Restore failed:", error);
                     alert("Restore failed");
@@ -104,6 +103,7 @@ module.exports = {
                         title: "Success",
                         message: "Configuration restored"
                     });
+                    this.z_slider = true;
                 } catch (error) {
                     console.error("Restore failed:", error);
                     alert("Restore failed");
@@ -128,7 +128,7 @@ module.exports = {
                    });
                  } catch (error) {
                    console.error("Z slider failed:", error);
-                   alert("failed to set Z slider configuration ");
+                   alert("failed to set Z slider  ");
                  }    
             },
         check: function() {
