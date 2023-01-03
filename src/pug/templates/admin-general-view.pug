@@ -45,10 +45,10 @@ script#admin-general-view-template(type="text/x-template")
       p(slot="body") Non-network configuration changes will be lost.
       p(slot="body") Select defaults to restore:
       p.reset-variants(slot="body")
-        input#tab1(type="radio", name="z_slider_variant" @click="reset_variant = 'Z-16 Original'")
+        input#tab1(type="radio", name="z_slider_variant" @click="z_slider_variant = 'Z-16 Original'")
         label(for="tab1", title="Z-16 Original") Z-16 Original
 
-        input#tab2(type="radio", name="z_slider_variant" @click="reset_variant = 'Z-20 Heavy Duty'")
+        input#tab2(type="radio", name="z_slider_variant" @click="z_slider_variant = 'Z-20 Heavy Duty'")
         label(for="tab2", title="Z-20 Heavy Duty") Z-20 Heavy Duty
                 
       div(slot="footer")
