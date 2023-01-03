@@ -19,14 +19,13 @@ const z_slider_defaults = {
         "max-accel": 3,
         "max-soft-limit": -133
     },
-    "Z-20 Heavy Duty":{
-    "Z-16 Original":{
+    "Z-20 Heavy Duty":{  
         "travel-per-rev": 10,
         "max-accel": 7,
         "max-soft-limit": -160
     }
 } 
-}
+
 module.exports = {
     template: "#admin-general-view-template",
     props: [ "config", "state" ],
