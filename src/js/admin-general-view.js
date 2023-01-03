@@ -13,15 +13,31 @@ const variant_defaults = {
     journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json")
 };
 
+const z_slider_defaults = {
+    "Z-16 Original":{
+        "travel-per-rev": 4,
+        "max-accel": 3,
+        "max-soft-limit": -133
+    },
+    "Z-20 Heavy Duty":{
+    "Z-16 Original":{
+        "travel-per-rev": 10,
+        "max-accel": 7,
+        "max-soft-limit": -160
+    }
+} 
+}
 module.exports = {
     template: "#admin-general-view-template",
     props: [ "config", "state" ],
 
     data: function() {
         return {
-            confirmReset: false,
-            autoCheckUpgrade: true,
-            reset_variant: ""
+          confirmReset: false,
+          autoCheckUpgrade: true,
+          reset_variant: "",
+          z_slider: "",
+          z_slider_variant:" ",
         };
     },
 
@@ -62,6 +78,8 @@ module.exports = {
                         title: "Success",
                         message: "Configuration restored"
                     });
+                    this.confirmReset= false
+                    this.z_slider=true
                 } catch (error) {
                     console.error("Restore failed:", error);
                     alert("Restore failed");
@@ -70,28 +88,49 @@ module.exports = {
 
             fileReader.readAsText(files[0]);
         },
-
-        reset: async function() {
+        
+        next: async function() {
             const config = merge(
                 {},
                 config_defaults,
                 variant_defaults[this.reset_variant]
-            );
-
-            try {
-                await api.put("config/save", config);
-                this.confirmReset = false;
-                this.$dispatch("update");
-                SvelteComponents.showDialog("Message", {
-                    title: "Success",
-                    message: "Configuration restored"
-                });
-            } catch (error) {
-                console.error("Restore failed:", error);
-                alert("Restore failed");
-            }
-        },
-
+                );
+                
+                try {
+                    await api.put("config/save", config);
+                    this.confirmReset = false;
+                    this.$dispatch("update");
+                    SvelteComponents.showDialog("Message", {
+                        title: "Success",
+                        message: "Configuration restored"
+                    });
+                } catch (error) {
+                    console.error("Restore failed:", error);
+                    alert("Restore failed");
+                }
+            },
+            
+            set_z_slider: async function(){
+                 const z_variant = merge(
+                   {},
+                   config_defaults.motors[3],
+                   z_slider_defaults[this.z_slider_variant],
+                 );
+                 const config = config_defaults;
+                config.motors[3] = z_variant;
+                 try {
+                   await api.put("config/save", config);
+                   this.confirmReset = false;
+                   this.$dispatch("update");
+                   SvelteComponents.showDialog("Message", {
+                     title: "Success",
+                     message: "Configuration restored",
+                   });
+                 } catch (error) {
+                   console.error("Z slider failed:", error);
+                   alert("failed to set Z slider configuration ");
+                 }    
+            },
         check: function() {
             this.$dispatch("check");
         },

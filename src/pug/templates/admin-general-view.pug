@@ -38,7 +38,22 @@ script#admin-general-view-template(type="text/x-template")
         label(for="tab4", title="Journeyman X-50") Journeyman X-50
       div(slot="footer")
         button.pure-button(@click="confirmReset = false") Cancel
-        button.pure-button.pure-button-primary(@click="reset") Reset
+        button.pure-button.pure-button-primary(@click="next") next
+        
+    message(:show.sync="z_slider")
+      h3(slot="header") Pick your Z Slider Type
+      p(slot="body") Non-network configuration changes will be lost.
+      p(slot="body") Select defaults to restore:
+      p.reset-variants(slot="body")
+        input#tab1(type="radio", name="z_slider_variant" @click="reset_variant = 'Z-16 Original'")
+        label(for="tab1", title="Z-16 Original") Z-16 Original
+
+        input#tab2(type="radio", name="z_slider_variant" @click="reset_variant = 'Z-20 Heavy Duty'")
+        label(for="tab2", title="Z-20 Heavy Duty") Z-20 Heavy Duty
+                
+      div(slot="footer")
+        button.pure-button(@click="z_slider = false") Cancel
+        button.pure-button.pure-button-primary(@click="set_z_slider") set z slider
         
     h2 Debugging
     a(href="/api/log", target="_blank")
