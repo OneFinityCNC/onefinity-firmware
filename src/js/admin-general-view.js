@@ -120,12 +120,12 @@ module.exports = {
                 config.motors[3] = z_variant;
                  try {
                    await api.put("config/save", config);
-                   this.confirmReset = false;
                    this.$dispatch("update");
                    SvelteComponents.showDialog("Message", {
-                     title: "Success",
-                     message: "Configuration restored",
-                   });
+                       title: "Success",
+                       message: "Configuration restored",
+                    });
+                    this.z_slider = false;
                  } catch (error) {
                    console.error("Z slider failed:", error);
                    alert("failed to set Z slider  ");
