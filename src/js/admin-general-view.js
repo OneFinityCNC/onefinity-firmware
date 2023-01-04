@@ -117,7 +117,7 @@ module.exports = {
                  
                 this.config.motors[3] = z_variant;
                  try {
-                   await api.put("config/save", config);
+                   await api.put("config/save", this.config);
                    this.$dispatch("update");
                    SvelteComponents.showDialog("Message", {
                        title: "Success",
