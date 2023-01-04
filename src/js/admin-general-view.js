@@ -18,7 +18,7 @@ const z_slider_defaults = {
         "travel-per-rev": 4,
         "max-accel": 3,
         "max-soft-limit": -133,
-        "min-soft-limit":0
+
     },
     "Z-20 Heavy Duty":{  
         "travel-per-rev": 10,
@@ -38,6 +38,7 @@ module.exports = {
           reset_variant: "",
           z_slider: "",
           z_slider_variant:" ",
+          config:""
         };
     },
 
@@ -99,10 +100,7 @@ module.exports = {
                     await api.put("config/save", config);
                     this.confirmReset = false;
                     this.$dispatch("update");
-                    SvelteComponents.showDialog("Message", {
-                        title: "Success",
-                        message: "Configuration restored"
-                    });
+                    this.config= config
                     this.z_slider = true;
                 } catch (error) {
                     console.error("Restore failed:", error);
@@ -113,11 +111,11 @@ module.exports = {
             set_z_slider: async function(){
                  const z_variant = merge(
                    {},
-                   config_defaults.motors[3],
+                   this.config.motors[3],
                    z_slider_defaults[this.z_slider_variant],
                  );
-                 const config = config_defaults;
-                config.motors[3] = z_variant;
+                 
+                this.config.motors[3] = z_variant;
                  try {
                    await api.put("config/save", config);
                    this.$dispatch("update");
