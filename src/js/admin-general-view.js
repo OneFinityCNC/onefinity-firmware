@@ -14,18 +14,15 @@ const variant_defaults = {
 };
 
 const z_slider_defaults = {
-    "Z-16 Original":{
-        "travel-per-rev": 4,
-        "max-accel": 3,
-        // "max-soft-limit": -133,
-
-    },
-    "Z-20 Heavy Duty":{  
-        "travel-per-rev": 10,
-        "max-accel": 7,
-        // "max-soft-limit": -160
-    }
-} 
+  "Z-16 Original": {
+    "travel-per-rev": 4,
+    "min-soft-limit": -133,
+  },
+  "Z-20 Heavy Duty": {
+    "travel-per-rev": 10,
+    "min-soft-limit": -160,
+  },
+}; 
 
 module.exports = {
     template: "#admin-general-view-template",
