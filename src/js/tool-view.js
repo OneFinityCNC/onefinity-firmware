@@ -10,79 +10,83 @@ module.exports = {
 
     data: function() {
         return {
-            address: 0,
-            value: 0,
-            toolList: [
-                {
-                    id: "disabled",
-                    name: "Disabled"
-                },
-                {
-                    id: "router",
-                    type: "PWM Spindle",
-                    name: "Router (Makita, etc)"
-                },
-                {
-                    id: "laser",
-                    type: "PWM Spindle",
-                    name: "Laser (J Tech, etc)"
-                },
-                {
-                    id: "pwm",
-                    name: "PWM Spindle"
-                },
-                {
-                    id: "unsupported-separator",
-                    name: "Unsupported Tools",
-                    disabled: true,
-                    unsupported: true
-                },
-                {
-                    id: "huanyang-vfd",
-                    name: "Huanyang VFD",
-                    unsupported: true
-                },
-                {
-                    id: "custom-modbus-vfd",
-                    name: "Custom Modbus VFD",
-                    unsupported: true
-                },
-                {
-                    id: "ac-tech-vfd",
-                    name: "AC-Tech VFD",
-                    unsupported: true
-                },
-                {
-                    id: "nowforever-vfd",
-                    name: "Nowforever VFD",
-                    unsupported: true
-                },
-                {
-                    id: "delta-vfd",
-                    name: "Delta VFD015M21A (Beta)",
-                    unsupported: true
-                },
-                {
-                    id: "yl600-vfd",
-                    name: "YL600, YL620, YL620-A VFD (Beta)",
-                    unsupported: true
-                },
-                {
-                    id: "fr-d700-vfd",
-                    name: "FR-D700 (Beta)",
-                    unsupported: true
-                },
-                {
-                    id: "sunfar-e300-vfd",
-                    name: "Sunfar E300 (Beta)",
-                    unsupported: true
-                },
-                {
-                    id: "omron-mx2-vfd",
-                    name: "OMRON MX2",
-                    unsupported: true
-                }
-            ]
+          address: 0,
+          value: 0,
+          toolList: [
+            {
+              id: "disabled",
+              name: "Disabled",
+            },
+            {
+              id: "router",
+              type: "PWM Spindle",
+              name: "Router (Makita, etc)",
+            },
+            {
+              id: "laser",
+              type: "PWM Spindle",
+              name: "Laser (J Tech, etc)",
+            },
+            {
+              id: "pwm",
+              name: "PWM Spindle",
+            },
+            {
+              id: "unsupported-separator",
+              name: "Unsupported Tools",
+              disabled: true,
+              unsupported: true,
+            },
+            {
+              id: "huanyang-vfd",
+              name: "Huanyang VFD",
+              unsupported: true,
+            },
+            {
+              id: "custom-modbus-vfd",
+              name: "Custom Modbus VFD",
+              unsupported: true,
+            },
+            {
+              id: "ac-tech-vfd",
+              name: "AC-Tech VFD",
+              unsupported: true,
+            },
+            {
+              id: "nowforever-vfd",
+              name: "Nowforever VFD",
+              unsupported: true,
+            },
+            {
+              id: "delta-vfd",
+              name: "Delta VFD015M21A (Beta)",
+              unsupported: true,
+            },
+            {
+              id: "yl600-vfd",
+              name: "YL600, YL620, YL620-A VFD (Beta)",
+              unsupported: true,
+            },
+            {
+              id: "fr-d700-vfd",
+              name: "FR-D700 (Beta)",
+              unsupported: true,
+            },
+            {
+              id: "sunfar-e300-vfd",
+              name: "Sunfar E300 (Beta)",
+              unsupported: true,
+            },
+            {
+              id: "omron-mx2-vfd",
+              name: "OMRON MX2",
+              unsupported: true,
+            },
+            {
+              id: "EM60",
+              name: "EM60",
+            },
+          ],
         };
     },
 
