@@ -270,7 +270,8 @@
         "YL600, YL620, YL620-A VFD (Beta)",
         "FR-D700 (Beta)",
         "Sunfar E300 (Beta)",
-        "OMRON MX2"
+        "OMRON MX2",
+        "EM60"
       ],
       "default": "Disabled",
       "code": "st"
@@ -364,6 +365,7 @@
             "max-freq-fixed",
             "freq-set",
             "freq-signed-set",
+            "freq-scaled-set",
             "stop-write",
             "forward-write",
             "reverse-write",
