@@ -344,7 +344,7 @@
     {
       "latch-velocity": 0.1,
       "max-accel": 750,
-      "max-velocity": 7,
+      "max-velocity": 3,
       "search-velocity": 0.675,
       "travel-per-rev": 4,
       "idle-current": 1,
