@@ -17,10 +17,12 @@ const z_slider_defaults = {
   "Z-16 Original": {
     "travel-per-rev": 4,
     "min-soft-limit": -133,
+    "max-velocity": 3,
   },
   "Z-20 Heavy Duty": {
     "travel-per-rev": 10,
     "min-soft-limit": -160,
+    "max-velocity": 7,
   },
 }; 
 
