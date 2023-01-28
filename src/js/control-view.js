@@ -349,7 +349,6 @@ module.exports = {
             }
 
             const file = files[0];
-            console.log(file.name);
             const extension = file.name.split(".").pop();
             switch (extension.toLowerCase()) {
                 case "nc":
