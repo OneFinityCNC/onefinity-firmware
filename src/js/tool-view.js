@@ -82,10 +82,10 @@ module.exports = {
                 name: "OMRON MX2",
                 unsupported: true,
               },
-              {
-                id: "EM60",
-                name: "EM60",
-              },
+            //   {
+            //     id: "EM60",
+            //     name: "EM60",
+            //   },
             ],
         };
     },
