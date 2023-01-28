@@ -91,6 +91,8 @@ module.exports = {
         },
 
         reload: function(file) {
+            console.log("type :", this.file)
+            console.log("comparison:",file!=this.file)
             if (file != this.file) {
                 return;
             }
