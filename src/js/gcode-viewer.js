@@ -91,7 +91,7 @@ module.exports = {
         },
 
         reload: function(file) {
-            if (file == this.file) {
+            if (file != this.file) {
                 return;
             }
             console.log("reloaded :",file);
