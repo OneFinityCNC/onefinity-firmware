@@ -5,6 +5,11 @@
     import List, { Item, Graphic, Text, Meta } from "@smui/list";
     import Card from "@smui/card";
     import { networkInfo, type WifiNetwork } from "$lib/NetworkInfo";
+    import {GET} from "$lib/api"
+    import {processNetworkInfo} from "$lib/NetworkInfo"
+        
+    let networkData  = GET("network")
+        networkData.then(value=>processNetworkInfo(value))
 
     let changeHostnameDialog = {
         open: false,
@@ -14,6 +19,11 @@
         open: false,
         network: {} as WifiNetwork,
     };
+
+    function refreshWifi(){
+             let networkData  = GET("network")
+        networkData.then(value=>processNetworkInfo(value))
+    }
 
     function getWifiStrengthStyle(network: WifiNetwork) {
         const strength = Math.ceil((Number(network.Quality) / 100) * 4);
@@ -54,7 +64,14 @@
 <ChangeHostnameDialog {...changeHostnameDialog} />
 
 <div class="admin-network-view">
-    <h1>Network Info</h1>
+    <div style="display:flex; flex-direction:row; justify-content:space-between" >
+            <h1>Network Info</h1>
+             <div style="text-align: center; padding:20px">
+            <Button on:click={refreshWifi} touch variant="raised">
+                <Label>Refresh WiFi</Label>
+            </Button>
+            </div>
+    </div>
 
     <div class="pure-form pure-form-aligned">
         <div class="pure-control-group">
@@ -74,13 +91,13 @@
         <div class="pure-control-group">
             <label for="ip-addresses">IP Addresses</label>
             <Card id="ip-addresses" variant="outlined">
-                {#each $networkInfo.ipAddresses as ipAddress}
+                <!-- {#each $networkInfo.ipAddresses as ipAddress} -->
                     <div>
                         <Text id="hostname">
-                            {ipAddress}
+                            {$networkInfo.ipAddresses}
                         </Text>
                     </div>
-                {/each}
+                <!-- {/each} -->
             </Card>
         </div>
     </div>
@@ -207,4 +224,8 @@
             }
         }
     }
+<<<<<<< HEAD
 </style>
+=======
+</style>
+>>>>>>> 427343bdd5cfcaeb71ac84ac686f32b5acb7d84f

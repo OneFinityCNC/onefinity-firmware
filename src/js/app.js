@@ -5,9 +5,15 @@ const cookie = require("./cookie")("bbctrl-");
 const Sock = require("./sock");
 const semverLt = require("semver/functions/lt");
 
-SvelteComponents.createComponent("DialogHost",
+if (document.getElementById("svelte-dialog-host") != undefined) {
+  SvelteComponents.createComponent(
+    "DialogHost",
     document.getElementById("svelte-dialog-host")
-);
+  );
+}
+if (document.getElementById("adminViewSvelte") != undefined) {
+  SvelteComponents.createComponent("AdminNetworkView");
+}
 
 function parse_version(v) {
     const pattern = /^(\d+)\.(\d+)\.(\d+)(?:[-.]?(.*))?$/;
@@ -95,33 +101,35 @@ module.exports = new Vue({
 
     data: function() {
         return {
-            status: "connecting",
-            currentView: "loading",
-            display_units: localStorage.getItem("display_units") || "METRIC",
-            index: -1,
-            modified: false,
-            template: require("../resources/config-template.json"),
-            config: {
-                settings: { units: "METRIC" },
-                motors: [ {}, {}, {}, {} ],
-                version: "<loading>",
-                full_version: "<loading>",
-            },
-            state: {
-                messages: [],
-            },
-            video_size: cookie.get("video-size", "small"),
-            crosshair: cookie.get("crosshair", "false") != "false",
-            errorTimeout: 30,
-            errorTimeoutStart: 0,
-            errorShow: false,
-            errorMessage: "",
-            confirmUpgrade: false,
-            confirmUpload: false,
-            firmwareUpgrading: false,
-            checkedUpgrade: false,
-            firmwareName: "",
-            latestVersion: ""
+          status: "connecting",
+          currentView: "loading",
+          display_units: localStorage.getItem("display_units") || "METRIC",
+          index: -1,
+          modified: false,
+          template: require("../resources/config-template.json"),
+          config: {
+            settings: { units: "METRIC" },
+            motors: [{}, {}, {}, {}],
+            version: "<loading>",
+            full_version: "<loading>",
+            ip: "<>",
+            wifiName: "not connected",
+          },
+          state: {
+            messages: [],
+          },
+          video_size: cookie.get("video-size", "small"),
+          crosshair: cookie.get("crosshair", "false") != "false",
+          errorTimeout: 30,
+          errorTimeoutStart: 0,
+          errorShow: false,
+          errorMessage: "",
+          confirmUpgrade: false,
+          confirmUpload: false,
+          firmwareUpgrading: false,
+          checkedUpgrade: false,
+          firmwareName: "",
+          latestVersion: "",
         };
     },
 
@@ -305,9 +313,11 @@ module.exports = new Vue({
 
         update: async function() {
             const config = await api.get("config/load");
-
+            const wifi = await api.get("wifi");
             update_object(this.config, config, true);
             this.config.full_version = fixup_version_number(this.config.full_version);
+            this.config.ip = wifi.ipAddresses;
+            this.config.wifiName = wifi.wifi;
             this.parse_hash();
 
             if (!this.checkedUpgrade) {

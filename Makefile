@@ -20,7 +20,10 @@ PY_VERSION  := $(shell jq -r '.version' package.json | sed -E 's|([0-9]+)\.([0-9
 PKG_NAME := dist/bbctrl-$(PY_VERSION).tar.bz2
 FINAL_PKG_NAME := dist/onefinity-$(VERSION).tar.bz2
 
-SUBPROJECTS := avr boot pwr
+VERSION  := $(shell sed -n 's/^.*"version": "\([^"]*\)",.*$$/\1/p' package.json)
+PKG_NAME := bbctrl-$(VERSION)
+
+SUBPROJECTS := avr boot pwr jig
 
 ifndef HOST
 HOST=onefinity
@@ -35,7 +38,6 @@ all: $(HTML) $(RESOURCES)
 
 pkg: all $(AVR_FIRMWARE) bbserial
 	./setup.py sdist
-	mv $(PKG_NAME) $(FINAL_PKG_NAME)
 
 bbserial:
 	$(MAKE) -C src/bbserial

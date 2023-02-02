@@ -17,7 +17,7 @@ class Config(object):
         self.values = {}
 
         try:
-            self.version = pkg_resources.require('bbctrl')[0].version
+            self.version = "1.2.1"
 
             # Load config template
             with open(get_resource('http/config-template.json'),
