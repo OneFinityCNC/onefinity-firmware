@@ -1,14 +1,15 @@
-from tornado import gen
-from tornado.web import HTTPError
-import bbctrl
-import datetime
 import os
 import re
 import socket
 import sockjs.tornado
 import subprocess
-import tornado
+import socket
+from tornado.web import HTTPError
+from tornado import gen
+import re
+import bbctrl
 from urllib.request import urlopen
+import iw_parse
 
 
 def call_get_output(cmd):
@@ -25,6 +26,11 @@ class RebootHandler(bbctrl.APIHandler):
         subprocess.Popen(['reboot'])
 
 
+class RebootHandler(bbctrl.APIHandler):
+    def put_ok(self):
+        self.get_ctrl().lcd.goodbye('Rebooting...')
+        subprocess.Popen(['reboot'])
+        
 class ShutdownHandler(bbctrl.APIHandler):
 
     def put_ok(self):
@@ -105,7 +111,62 @@ class HostnameHandler(bbctrl.APIHandler):
         raise HTTPError(400, 'Failed to set hostname')
 
 
+class NetworkData(bbctrl.APIHandler):
+
+    def get(self):
+        try:
+            ipAddresses = subprocess.check_output(
+                "ip -4 addr | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'", shell=True).decode().split()
+            ipAddresses.remove("127.0.0.1")
+            regex = re.compile(r'/255$/')
+            filtered = [i for i in ipAddresses if not regex.match(i)]
+            ipAddresses = filtered[0]
+        except:
+            ipAddresses = "Not Connected"
+        try:
+            wifi = subprocess.check_output(
+                "sudo iw dev wlan0 info | grep ssid", shell=True).decode().split()
+            wifi.pop(0)
+            wifiName = " ".join(wifi)
+        except:
+            wifiName = "not connected"
+        self.write_json({
+            'ipAddresses': ipAddresses,
+            'wifi': wifiName
+        })
+
 class NetworkHandler(bbctrl.APIHandler):
+
+    def get(self):
+        try:
+            ipAddresses = subprocess.check_output(
+                "ip -4 addr | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'", shell=True).decode().split()
+            ipAddresses.remove("127.0.0.1")
+            regex = re.compile(r'/255$/')
+            filtered = [i for i in ipAddresses if not regex.match(i)]
+            ipAddresses = filtered[0]
+
+        except:
+            ipAddresses = "Not Connected"
+
+        hostname = socket.gethostname()
+
+        try:
+            wifi = json.loads(call_get_output(['config-wifi', '-j']))
+        except:
+            wifi = {'enabled': False}
+
+        try:
+            lines = iw_parse.call_iwlist().decode("utf-8").split("\n")
+            wifi['networks'] = iw_parse.get_parsed_cells(lines)
+        except:
+            wifi['networks'] = []
+
+        self.write_json({
+            'ipAddresses': ipAddresses,
+            'hostname': hostname,
+            'wifi': wifi
+        })
 
     def put(self):
         if self.get_ctrl().args.demo:
@@ -115,7 +176,6 @@ class NetworkHandler(bbctrl.APIHandler):
             raise HTTPError(400, 'Payload is missing wifi config information')
 
         wifi = self.json['wifi']
-
         cmd = ['config-wifi', '-r']
 
         if not wifi['enabled']:
@@ -123,6 +183,40 @@ class NetworkHandler(bbctrl.APIHandler):
         else:
             if 'ssid' in wifi:
                 cmd += ['-s', wifi['ssid']]
+
+            if 'password' in wifi:
+                cmd += ['-p', wifi['password']]
+
+        if subprocess.call(cmd) == 0:
+            self.write_json('ok')
+            return
+
+        raise HTTPError(400, 'Failed to configure wifi')
+
+
+class UsernameHandler(bbctrl.APIHandler):
+    def get(self): self.write_json(get_username())
+
+
+    def put_ok(self):
+        if self.get_ctrl().args.demo:
+            raise HTTPError(400, 'Cannot set username in demo mode')
+
+        if 'username' in self.json: set_username(self.json['username'])
+        else: raise HTTPError(400, 'Missing "username"')
+
+
+class PasswordHandler(bbctrl.APIHandler):
+    def put(self):
+        if self.get_ctrl().args.demo:
+            raise HTTPError(400, 'Cannot set password in demo mode')
+
+        if 'current' in self.json and 'password' in self.json:
+            check_password(self.json['current'])
+
+            # Set password
+            s = '%s:%s' % (get_username(), self.json['password'])
+            s = s.encode('utf-8')
 
             if 'password' in wifi:
                 cmd += ['-p', wifi['password']]
@@ -364,8 +458,6 @@ transformationMatrixPattern = re.compile(
     re.DOTALL)
 matchIsTouchscreenPattern = re.compile(
     r'(\n)(\s+)(MatchIsTouchscreen.*?\n)(.*?EndSection)', re.DOTALL)
-
-
 class ScreenRotationHandler(bbctrl.APIHandler):
 
     @gen.coroutine
@@ -456,7 +548,6 @@ class RemoteDiagnosticsHandler(bbctrl.APIHandler):
                     'code': e.code or None,
                     'message': e.reason or "Unknown"
                 })
-
 
 # Base class for Web Socket connections
 class ClientConnection(object):
@@ -573,7 +664,10 @@ class Web(tornado.web.Application):
             (r'/api/reboot', RebootHandler),
             (r'/api/shutdown', ShutdownHandler),
             (r'/api/hostname', HostnameHandler),
+            (r'/api/wifi', NetworkData),
             (r'/api/network', NetworkHandler),
+            (r'/api/remote/username', UsernameHandler),
+            (r'/api/remote/password', PasswordHandler),
             (r'/api/config/load', ConfigLoadHandler),
             (r'/api/config/download', ConfigDownloadHandler),
             (r'/api/config/save', ConfigSaveHandler),
@@ -601,11 +695,10 @@ class Web(tornado.web.Application):
             (r'/api/screen-rotation', ScreenRotationHandler),
             (r'/api/time', TimeHandler),
             (r'/api/remote-diagnostics', RemoteDiagnosticsHandler),
-            (r'/(.*)', StaticFileHandler, {
-                'path': bbctrl.get_resource('http/'),
-                'default_filename': 'index.html'
-            }),
-        ]
+            (r'/(.*)', StaticFileHandler,
+             {'path': bbctrl.get_resource('http/'),
+              'default_filename': 'index.html'}),
+            ]
 
         router = sockjs.tornado.SockJSRouter(SockJSConnection, '/sockjs')
         router.app = self

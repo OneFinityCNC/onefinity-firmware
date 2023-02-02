@@ -60,7 +60,10 @@ module.exports = {
 
             this.clear();
             this.file = file;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 427343bdd5cfcaeb71ac84ac686f32b5acb7d84f
             if (!file) {
                 return;
             }
@@ -91,10 +94,9 @@ module.exports = {
         },
 
         reload: function(file) {
-            if (file != this.file) {
+            if (file == this.file) {
                 return;
             }
-
             this.clear();
             this.load(file);
         },

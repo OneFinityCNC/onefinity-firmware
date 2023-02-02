@@ -3,22 +3,22 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
-typedef enum {
+typedef enum
+{
   POWER_IGNORE,
   POWER_FORWARD,
   POWER_REVERSE
 } power_state_t;
 
-
-typedef struct {
+typedef struct
+{
   power_state_t state;
   float power;
   uint16_t period; // Used by PWM
 } power_update_t;
 
-
-typedef enum {
+typedef enum
+{
   SPINDLE_TYPE_DISABLED,
   SPINDLE_TYPE_PWM,
   SPINDLE_TYPE_HUANYANG,
@@ -33,9 +33,7 @@ typedef enum {
   SPINDLE_TYPE_V70,
 } spindle_type_t;
 
-
 typedef void (*deinit_cb_t)();
-
 
 spindle_type_t spindle_get_type();
 void spindle_stop();

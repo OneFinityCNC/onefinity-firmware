@@ -1,28 +1,57 @@
 {
-    "settings": {
-        "units": {
-            "type": "enum",
-            "values": [
-                "METRIC",
-                "IMPERIAL"
-            ],
-            "default": "METRIC"
-        },
-        "max-deviation": {
-            "help": "Default allowed deviation from programmed path.  Also see G64 & G61.",
-            "type": "float",
-            "min": 0.05,
-            "max": 100,
-            "unit": "mm",
-            "default": 0.1
-        },
-        "junction-accel": {
-            "help": "Higher values will increasing cornering speed but may cause stalls.",
-            "type": "float",
-            "min": 10000,
-            "max": 100000000,
-            "unit": "mm/min²",
-            "default": 200000
+  "settings": {
+    "units": {
+      "type": "enum",
+      "values": ["METRIC", "IMPERIAL"],
+      "default": "METRIC"
+    },
+    "max-deviation": {
+      "help": "Default allowed deviation from programmed path.  Also see G64 & G61.",
+      "type": "float",
+      "min": 0.05,
+      "max": 100,
+      "unit": "mm",
+      "default": 0.1
+    },
+    "junction-accel": {
+      "help": "Higher values will increasing cornering speed but may cause stalls.",
+      "type": "float",
+      "min": 10000,
+      "max": 100000000,
+      "unit": "mm/min²",
+      "default": 200000
+    },
+    "probing-prompts": {
+      "help": "Enable or disable safety prompts during and after probing",
+      "type": "bool",
+      "default": true
+    }
+  },
+
+  "motors": {
+    "type": "list",
+    "index": "0123",
+    "default": [
+      { "axis": "X" },
+      { "axis": "Y" },
+      { "axis": "Z" },
+      { "axis": "A" }
+    ],
+    "template": {
+      "general": {
+        "axis": {
+          "type": "enum",
+          "values": ["X", "Y", "Z", "A", "B", "C"],
+          "default": "X",
+          "code": "an"
+        }
+      },
+
+      "power": {
+        "enabled": {
+          "type": "bool",
+          "default": true,
+          "code": "me"
         },
         "probing-prompts": {
             "help": "Enable or disable safety prompts during and after probing",
@@ -514,29 +543,38 @@
                 }
             }
         }
-    },
-    "pwm-spindle": {
-        "pwm-inverted": {
-            "help": "Invert the PWM signal output.",
-            "type": "bool",
-            "default": false,
-            "code": "pi"
+      },
+
+      "homing": {
+        "homing-mode": {
+          "type": "enum",
+          "values": [
+            "manual",
+            "switch-min",
+            "switch-max",
+            "stall-min",
+            "stall-max"
+          ],
+          "default": "manual",
+          "code": "ho"
         },
-        "pwm-min-duty": {
-            "type": "float",
-            "unit": "%",
-            "min": 0,
-            "max": 100,
-            "default": 1,
-            "code": "nd"
+        "stall-microstep": {
+          "type": "int",
+          "values": [2, 4, 8, 16, 32, 64, 128, 256],
+          "unit": "per full step",
+          "default": 8,
+          "code": "lm",
+          "hmodes": ["stall-min", "stall-max"]
         },
-        "pwm-max-duty": {
-            "type": "float",
-            "unit": "%",
-            "min": 0,
-            "max": 100,
-            "default": 99.99,
-            "code": "md"
+        "search-velocity": {
+          "type": "float",
+          "min": 0,
+          "unit": "m/min",
+          "iunit": "IPM",
+          "scale": 0.0254,
+          "default": 0.5,
+          "code": "sv",
+          "hmodes": ["switch-min", "switch-max", "stall-min", "stall-max"]
         },
         "pwm-freq": {
             "type": "int",
@@ -551,70 +589,167 @@
             "type": "bool",
             "default": false
         },
-        "dynamic-power": {
-            "help": "Adjust tool power based on velocity and feed rate.  Useful for LASERs.",
-            "type": "bool",
-            "default": false,
-            "code": "dp"
+        "stall-volts": {
+          "type": "float",
+          "min": 0,
+          "unit": "v",
+          "default": 6,
+          "code": "tv",
+          "hmodes": ["stall-min", "stall-max"]
+        },
+        "stall-sample-time": {
+          "type": "int",
+          "values": [50, 100, 200, 300, 400, 600, 800, 1000],
+          "default": 50,
+          "unit": "µsec",
+          "code": "sp",
+          "hmodes": ["stall-min", "stall-max"]
+        },
+        "stall-current": {
+          "type": "float",
+          "min": 0,
+          "unit": "amps",
+          "default": 1.5,
+          "code": "tc",
+          "hmodes": ["stall-min", "stall-max"]
+        },
+        "zero-backoff": {
+          "type": "float",
+          "min": 0,
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 5,
+          "code": "zb",
+          "hmodes": ["switch-min", "switch-max", "stall-min", "stall-max"]
         }
+      }
+    }
+  },
+
+  "tool": {
+    "selected-tool": {
+      "type": "string",
+      "default": "disabled"
     },
-    "switches": {
-        "estop": {
-            "type": "enum",
-            "values": [
-                "disabled",
-                "normally-open",
-                "normally-closed"
-            ],
-            "default": "disabled",
-            "code": "et",
-            "pin": 23
-        },
-        "probe": {
-            "type": "enum",
-            "values": [
-                "disabled",
-                "normally-open",
-                "normally-closed"
-            ],
-            "default": "normally-open",
-            "code": "pt",
-            "pin": 22
-        },
-        "switch-debounce": {
-            "type": "int",
-            "min": 1,
-            "max": 5000,
-            "unit": "ms",
-            "default": 5,
-            "code": "sd",
-            "help": "Minimum time in ms before a switch change is acknowledged."
-        },
-        "switch-lockout": {
-            "type": "int",
-            "min": 0,
-            "max": 60000,
-            "unit": "ms",
-            "default": 250,
-            "code": "sc",
-            "help": "Time in ms to ignore switch changes after an acknowledge change."
-        }
+    "tool-type": {
+      "type": "enum",
+      "values": [
+        "Disabled",
+        "PWM Spindle",
+        "Huanyang VFD",
+        "Custom Modbus VFD",
+        "AC-Tech VFD",
+        "Nowforever VFD",
+        "Delta VFD015M21A (Beta)",
+        "YL600, YL620, YL620-A VFD (Beta)",
+        "FR-D700 (Beta)",
+        "Sunfar E300 (Beta)",
+        "OMRON MX2"
+      ],
+      "default": "Disabled",
+      "code": "st"
     },
-    "outputs": {
-        "load-1": {
-            "type": "enum",
-            "values": [
-                "disabled",
-                "lo-hi",
-                "hi-lo",
-                "tri-lo",
-                "tri-hi",
-                "lo-tri",
-                "hi-tri"
-            ],
-            "default": "lo-hi",
-            "code": "1om",
-            "pin": 2
+    "tool-reversed": {
+      "type": "bool",
+      "default": false,
+      "code": "sr"
+    },
+    "max-spin": {
+      "type": "float",
+      "unit": "RPM",
+      "min": 0,
+      "default": 10000,
+      "code": "sx"
+    },
+    "min-spin": {
+      "type": "float",
+      "unit": "RPM",
+      "min": 0,
+      "default": 0,
+      "code": "sm"
+    },
+    "tool-enable-mode": {
+      "type": "enum",
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
+      "default": "lo-hi",
+      "code": "eom",
+      "pin": 15
+    },
+    "tool-direction-mode": {
+      "type": "enum",
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
+      "default": "lo-hi",
+      "code": "dom",
+      "pin": 16
+    }
+  },
+
+  "modbus-spindle": {
+    "bus-id": {
+      "type": "int",
+      "default": "1",
+      "code": "hi"
+    },
+    "baud": {
+      "type": "enum",
+      "values": ["9600", "19200", "38400", "57600", "115200"],
+      "default": "9600",
+      "code": "mb"
+    },
+    "parity": {
+      "type": "enum",
+      "values": ["None", "Even", "Odd"],
+      "default": "None",
+      "code": "ma"
+    },
+    "multi-write": {
+      "help": "Use Modbus multi register write.  Function 16 vs. 6.",
+      "type": "bool",
+      "default": false,
+      "code": "mw"
+    },
+    "regs": {
+      "type": "list",
+      "index": "0123456789abcdefghijklmnopqrstuv",
+      "default": [],
+      "template": {
+        "reg-type": {
+          "type": "enum",
+          "values": [
+            "disabled",
+            "connect-write",
+            "max-freq-read",
+            "max-freq-fixed",
+            "freq-set",
+            "freq-signed-set",
+            "stop-write",
+            "forward-write",
+            "reverse-write",
+            "freq-read",
+            "freq-signed-read",
+            "freq-actech-read",
+            "status-read",
+            "disconnect-write"
+          ],
+          "default": "disabled",
+          "code": "vt"
         },
         "load-2": {
             "type": "enum",
@@ -646,50 +781,186 @@
             "code": "fom",
             "pin": 21
         }
+      }
+    }
+  },
+
+  "pwm-spindle": {
+    "pwm-inverted": {
+      "help": "Invert the PWM signal output.",
+      "type": "bool",
+      "default": false,
+      "code": "pi"
+    },
+    "pwm-min-duty": {
+      "type": "float",
+      "unit": "%",
+      "min": 0,
+      "max": 100,
+      "default": 1,
+      "code": "nd"
+    },
+    "pwm-max-duty": {
+      "type": "float",
+      "unit": "%",
+      "min": 0,
+      "max": 100,
+      "default": 99.99,
+      "code": "md"
+    },
+    "pwm-freq": {
+      "type": "int",
+      "unit": "Hz",
+      "min": 8,
+      "max": 320000,
+      "default": 1000,
+      "code": "sf"
+    },
+    "rapid-auto-off": {
+      "help": "Turn tool off during rapid moves.  Useful for LASERs.",
+      "type": "bool",
+      "default": false
+    },
+    "dynamic-power": {
+      "help": "Adjust tool power based on velocity and feed rate.  Useful for LASERs.",
+      "type": "bool",
+      "default": false,
+      "code": "dp"
+    }
+  },
+
+  "switches": {
+    "estop": {
+      "type": "enum",
+      "values": ["disabled", "normally-open", "normally-closed"],
+      "default": "disabled",
+      "code": "et",
+      "pin": 23
     },
     "probe": {
-        "probe-diameter": {
-            "type": "float",
-            "min": 0,
-            "max": 25.4,
-            "unit": "mm",
-            "default": 6.35
-        },
-        "probe-xdim": {
-            "type": "float",
-            "unit": "mm",
-            "min": 0,
-            "max": 1000,
-            "default": 53.975
-        },
-        "probe-ydim": {
-            "type": "float",
-            "unit": "mm",
-            "min": 0,
-            "max": 1000,
-            "default": 53.975
-        },
-        "probe-zdim": {
-            "type": "float",
-            "unit": "mm",
-            "min": 0,
-            "max": 1000,
-            "default": 15.4
-        },
-        "probe-fast-seek": {
-            "type": "float",
-            "unit": "mm/min",
-            "min": 0,
-            "max": 1000,
-            "default": 200
-        },
-        "probe-slow-seek": {
-            "type": "float",
-            "unit": "mm/min",
-            "min": 0,
-            "max": 1000,
-            "default": 25
-        }
+      "type": "enum",
+      "values": ["disabled", "normally-open", "normally-closed"],
+      "default": "normally-open",
+      "code": "pt",
+      "pin": 22
+    },
+    "switch-debounce": {
+      "type": "int",
+      "min": 1,
+      "max": 5000,
+      "unit": "ms",
+      "default": 5,
+      "code": "sd",
+      "help": "Minimum time in ms before a switch change is acknowledged."
+    },
+    "switch-lockout": {
+      "type": "int",
+      "min": 0,
+      "max": 60000,
+      "unit": "ms",
+      "default": 250,
+      "code": "sc",
+      "help": "Time in ms to ignore switch changes after an acknowledge change."
+    }
+  },
+
+  "outputs": {
+    "load-1": {
+      "type": "enum",
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
+      "default": "lo-hi",
+      "code": "1om",
+      "pin": 2
+    },
+    "load-2": {
+      "type": "enum",
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
+      "default": "lo-hi",
+      "code": "2om",
+      "pin": 1
+    },
+    "fault": {
+      "type": "enum",
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
+      "default": "lo-hi",
+      "code": "fom",
+      "pin": 21
+    }
+  },
+
+  "probe": {
+    "probe-diameter": {
+      "type": "float",
+      "min": 0,
+      "max": 25.4,
+      "unit": "mm",
+      "default": 6.35
+    },
+    "probe-xdim": {
+      "type": "float",
+      "unit": "mm",
+      "min": 0,
+      "max": 1000,
+      "default": 53.975
+    },
+    "probe-ydim": {
+      "type": "float",
+      "unit": "mm",
+      "min": 0,
+      "max": 1000,
+      "default": 53.975
+    },
+    "probe-zdim": {
+      "type": "float",
+      "unit": "mm",
+      "min": 0,
+      "max": 1000,
+      "default": 15.4
+    },
+    "probe-fast-seek": {
+      "type": "float",
+      "unit": "mm/m",
+      "min": 0,
+      "max": 1000,
+      "default": 200
+    },
+    "probe-slow-seek": {
+      "type": "float",
+      "unit": "mm/m",
+      "min": 0,
+      "max": 1000,
+      "default": 25
+    }
+  },
+
+  "gcode": {
+    "program-start": {
+      "type": "text",
+      "default": "(Runs at program start)\nG90 (Absolute distance mode)\nG17 (Select XY plane)\n"
     },
     "gcode": {
         "program-start": {

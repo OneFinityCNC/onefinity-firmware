@@ -1,11 +1,12 @@
+import os
+import tempfile
+import bbctrl
+import glob
+import tornado
 from tornado import gen
 from tornado.escape import url_unescape
 from tornado.web import HTTPError
-import bbctrl
-import glob
-import os
-import tempfile
-import tornado
+from tornado.escape import url_unescape
 
 
 def safe_remove(path):
@@ -17,17 +18,13 @@ def safe_remove(path):
 
 @tornado.web.stream_request_body
 class FileHandler(bbctrl.APIHandler):
-
     def prepare(self):
         if self.request.method == 'PUT':
-            self.request.connection.set_max_body_size(2**30)
+            self.request.connection.set_max_body_size(2 ** 30)
 
             filename = self.request.path.split('/')[-1]
             self.uploadFilename = url_unescape(filename) \
-                .encode("ascii", errors="replace") \
-                .decode() \
-                .replace('\\', '_') \
-                .replace('/', '_') \
+                .replace('\\', '/') \
                 .replace('#', '-') \
                 .replace('?', '-')
 
@@ -56,7 +53,7 @@ class FileHandler(bbctrl.APIHandler):
         if not os.path.exists(self.get_upload()):
             os.mkdir(self.get_upload())
 
-        filename = self.get_upload(self.uploadFilename)
+        filename = self.get_upload(self.uploadFilename).encode('utf8')
         safe_remove(filename)
         os.link(self.uploadFile.name, filename)
 
@@ -65,9 +62,9 @@ class FileHandler(bbctrl.APIHandler):
         del (self.uploadFile)
 
         self.get_ctrl().preplanner.invalidate(self.uploadFilename)
-        self.get_ctrl().state.load_files()
-        self.get_log('FileHandler').info('GCode received: ' +
-                                         self.uploadFilename)
+        self.get_ctrl().state.add_file(self.uploadFilename)
+        self.get_log('FileHandler').info(
+            'GCode received: ' + self.uploadFilename)
 
         del (self.uploadFilename)
 
@@ -75,8 +72,7 @@ class FileHandler(bbctrl.APIHandler):
     def get(self, filename):
         if not filename:
             raise HTTPError(400, 'Missing filename')
-
-        filename = os.path.basename(url_unescape(filename))
+        filename = os.path.basename(filename)
 
         try:
             with open(self.get_upload(filename), 'r') as f:

@@ -156,10 +156,10 @@ class Plan(object):
         sys.stdout.flush()
 
     def _run(self):
-        start = time.clock()
+        start = time.time()
         line = 0
         maxLine = 0
-        maxLineTime = time.clock()
+        maxLineTime = time.time()
         position = {axis: 0 for axis in 'xyz'}
         rapid = False
 
@@ -212,7 +212,7 @@ class Plan(object):
                         line = cmd['value']
                         if maxLine < line:
                             maxLine = line
-                            maxLineTime = time.clock()
+                            maxLineTime = time.time()
 
                     elif cmd['name'] == 'speed':
                         s = cmd['value']
@@ -220,11 +220,11 @@ class Plan(object):
 
                 elif cmd['type'] == 'dwell': self.time += cmd['seconds']
 
-                if args.max_time < time.clock() - start:
+                if args.max_time < time.time() - start:
                     raise Exception('Max planning time (%d sec) exceeded.' %
                                     args.max_time)
 
-                if args.max_loop < time.clock() - maxLineTime:
+                if args.max_loop < time.time() - maxLineTime:
                     raise Exception('Max loop time (%d sec) exceeded.' %
                                     args.max_loop)
 

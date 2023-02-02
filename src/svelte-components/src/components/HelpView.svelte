@@ -16,13 +16,13 @@
     for a variety of support resources, and to find our contact information.
 </p>
 
-<Button
+<!-- <Button
     touch
     variant="raised"
     on:click={() => (showRemoteDiagnosticsDialog = true)}
 >
     <Label>Remote Diagnostics</Label>
-</Button>
+</Button> -->
 
 <h2>Discussion Forum</h2>
 <p>

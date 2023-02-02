@@ -23,7 +23,7 @@
     };
 
     const namesByKey = {
-        "gamepad-default-type": "Default type",
+        "units":"units",
         "probing-prompts": "Show safety prompts",
         "probe-xdim": "Probe block width",
         "probe-ydim": "Probe block length",
@@ -48,11 +48,10 @@
     onMount(() => {
         keyParts = (key || "").split(".");
         template = getTemplate();
-
+        title = getTitle();
         name = keyParts[keyParts.length - 1];
         name = namesByKey[name] || name;
-        title = getTitle();
-        value = getValue();
+        value =  getValue();
     });
 
     $: metric = $DisplayUnits === "METRIC";
@@ -70,8 +69,8 @@
     }
 
     function getTitle(): string {
-        const help = template.help ? `${template.help}\n` : "";
-        return `${help}Default: ${template.default} ${template.unit || ""}`;
+        const help = (!!template.help) ? `${template.help}\n` : "";
+        return `${template.help}\n Default: ${template.default} ${template.unit || ""}`;
     }
 
     function getValue(): string | number {

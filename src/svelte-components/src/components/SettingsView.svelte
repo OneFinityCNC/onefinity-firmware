@@ -12,7 +12,9 @@
 </script>
 
 <ScreenRotationDialog bind:open={showScreenRotationDialog} />
-<SetTimeDialog bind:open={showSetTimeDialog} />
+
+<!-- <SetTimeDialog bind:open={showSetTimeDialog} /> -->
+
 
 <div class="settings-view">
     <h1>Settings</h1>
@@ -32,7 +34,8 @@
                 </Button>
             </div>
 
-            <div class="pure-control-group">
+
+            <!-- <div class="pure-control-group">
                 <label for="set-time" />
                 <Button
                     name="set-time"
@@ -42,15 +45,15 @@
                 >
                     <Label>Change Time & Timezone</Label>
                 </Button>
-            </div>
+            </div> -->
         </fieldset>
 
-        <h2>Gamepads / Joypads</h2>
+        <h2>Units</h2>
         <fieldset>
-            <ConfigTemplatedInput key={`settings.gamepad-default-type`} />
+            <ConfigTemplatedInput key={`settings.units`} />
             <div class="tip">
-                If your gamepad doesn't work as expected, try one of the other
-                types.
+                Note, units sets both the machine default units and the units used in motor configuration. GCode program-start,
+                set below, may also change the default machine units.
             </div>
         </fieldset>
 
