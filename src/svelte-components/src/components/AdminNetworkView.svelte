@@ -224,8 +224,4 @@
             }
         }
     }
-<<<<<<< HEAD
 </style>
-=======
-</style>
->>>>>>> 427343bdd5cfcaeb71ac84ac686f32b5acb7d84f

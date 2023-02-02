@@ -100,14 +100,13 @@ module.exports = {
     "input-changed": function () {
       this.$dispatch("config-changed");
 
-    ready: function() {
-        this.value = this.state.mr;
+      return false;
     },
+  },
 
-    computed: {
-        regs_tmpl: function() {
-            return this.template["modbus-spindle"].regs;
-        },
+  ready: function () {
+    this.value = this.state.mr;
+  },
 
   computed: {
     regs_tmpl: function () {
@@ -126,9 +125,17 @@ module.exports = {
       return this.selected_tool == "pwm";
     },
 
-        modbus_status: function() {
-            return modbus.status_to_string(this.state.mx);
-        }
+    is_modbus: function () {
+      switch (this.selected_tool) {
+        case "disabled":
+        case "laser":
+        case "router":
+        case "pwm":
+          return false;
+
+        default:
+          return true;
+      }
     },
 
     modbus_status: function () {
@@ -157,32 +164,32 @@ module.exports = {
       );
       this.config.tool["tool-type"] = tool.type || tool.name;
 
-            this.$dispatch("config-changed");
-        },
+      this.$dispatch("config-changed");
+    },
 
-        show_tool_settings: function(key) {
-            switch (true) {
-                case key === "tool-type":
-                case key === "selected-tool":
-                    return false;
+    show_tool_settings: function (key) {
+      switch (true) {
+        case key === "tool-type":
+        case key === "selected-tool":
+          return false;
 
-                case this.selected_tool === "disabled":
-                    return false;
+        case this.selected_tool === "disabled":
+          return false;
 
-                case this.selected_tool === "laser":
-                case this.selected_tool === "router":
-                    switch (key) {
-                        case "tool-enable-mode":
-                            return true;
+        case this.selected_tool === "laser":
+        case this.selected_tool === "router":
+          switch (key) {
+            case "tool-enable-mode":
+              return true;
 
-                        default:
-                            return false;
-                    }
+            default:
+              return false;
+          }
 
-                default:
-                    return true;
-            }
-        },
+        default:
+          return true;
+      }
+    },
 
     get_reg_type: function (reg) {
       return this.regs_tmpl.template["reg-type"].values[this.state[`${reg}vt`]];

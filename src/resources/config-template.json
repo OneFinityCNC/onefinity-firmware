@@ -53,495 +53,113 @@
           "default": true,
           "code": "me"
         },
-        "probing-prompts": {
-            "help": "Enable or disable safety prompts during and after probing",
-            "type": "bool",
-            "default": true
+        "drive-current": {
+          "type": "float",
+          "min": 0,
+          "max": 6,
+          "unit": "amps",
+          "default": 1.5,
+          "code": "dc"
         },
-        "gamepad-default-type": {
-            "help": "When a gamepad is not recognized, treat it as the selected type of gamepad.",
-            "type": "enum",
-            "values": [
-                {
-                    "title": "XBox",
-                    "value": "XBOX"
-                },
-                {
-                    "title": "Playstation",
-                    "value": "PLAYSTATION"
-                },
-                {
-                    "title": "SMX Left-lights mode",
-                    "value": "SMX-LEFT"
-                },
-                {
-                    "title": "SMX Bottom-lights mode",
-                    "value": "SMX-BOTTOM"
-                },
-                {
-                    "title": "Logitech F310, D-mode",
-                    "value": "LOGITECH-F310-D"
-                }
-            ],
-            "default": "XBOX"
+        "idle-current": {
+          "type": "float",
+          "min": 0,
+          "max": 2,
+          "unit": "amps",
+          "default": 0,
+          "code": "ic"
         }
-    },
-    "motors": {
-        "type": "list",
-        "index": "0123",
-        "default": [
-            {
-                "axis": "X"
-            },
-            {
-                "axis": "Y"
-            },
-            {
-                "axis": "Z"
-            },
-            {
-                "axis": "A"
-            }
-        ],
-        "template": {
-            "general": {
-                "axis": {
-                    "type": "enum",
-                    "values": [
-                        "X",
-                        "Y",
-                        "Z",
-                        "A",
-                        "B",
-                        "C"
-                    ],
-                    "default": "X",
-                    "code": "an"
-                }
-            },
-            "power": {
-                "enabled": {
-                    "type": "bool",
-                    "default": true,
-                    "code": "me"
-                },
-                "drive-current": {
-                    "type": "float",
-                    "min": 0,
-                    "max": 6,
-                    "unit": "amps",
-                    "default": 1.5,
-                    "code": "dc"
-                },
-                "idle-current": {
-                    "type": "float",
-                    "min": 0,
-                    "max": 2,
-                    "unit": "amps",
-                    "default": 0,
-                    "code": "ic"
-                }
-            },
-            "motion": {
-                "reverse": {
-                    "type": "bool",
-                    "default": false,
-                    "code": "rv"
-                },
-                "microsteps": {
-                    "type": "int",
-                    "values": [
-                        1,
-                        2,
-                        4,
-                        8,
-                        16,
-                        32,
-                        64,
-                        128,
-                        256
-                    ],
-                    "unit": "per full step",
-                    "default": 32,
-                    "code": "mi"
-                },
-                "max-velocity": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "m/min",
-                    "iunit": "IPM",
-                    "scale": 0.0254,
-                    "default": 5,
-                    "code": "vm"
-                },
-                "max-accel": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "km/min²",
-                    "iunit": "g-force",
-                    "scale": 35.304,
-                    "default": 10,
-                    "code": "am"
-                },
-                "max-jerk": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "km/min³",
-                    "iunit": "g/min",
-                    "scale": 35.304,
-                    "default": 50,
-                    "code": "jm"
-                },
-                "step-angle": {
-                    "type": "float",
-                    "min": 0,
-                    "max": 360,
-                    "step": 0.1,
-                    "unit": "degrees",
-                    "default": 1.8,
-                    "code": "sa"
-                },
-                "travel-per-rev": {
-                    "type": "float",
-                    "unit": "mm",
-                    "iunit": "in",
-                    "scale": 25.4,
-                    "default": 5,
-                    "code": "tr"
-                }
-            },
-            "limits": {
-                "min-soft-limit": {
-                    "type": "float",
-                    "unit": "mm",
-                    "iunit": "in",
-                    "scale": 25.4,
-                    "default": 0,
-                    "code": "tn"
-                },
-                "max-soft-limit": {
-                    "type": "float",
-                    "unit": "mm",
-                    "iunit": "in",
-                    "scale": 25.4,
-                    "default": 0,
-                    "code": "tm"
-                },
-                "min-switch": {
-                    "type": "enum",
-                    "values": [
-                        "disabled",
-                        "normally-open",
-                        "normally-closed"
-                    ],
-                    "default": "disabled",
-                    "code": "ls",
-                    "pins": [
-                        3,
-                        5,
-                        9,
-                        11
-                    ]
-                },
-                "max-switch": {
-                    "type": "enum",
-                    "values": [
-                        "disabled",
-                        "normally-open",
-                        "normally-closed"
-                    ],
-                    "default": "disabled",
-                    "code": "xs",
-                    "pins": [
-                        4,
-                        8,
-                        10,
-                        12
-                    ]
-                }
-            },
-            "homing": {
-                "homing-mode": {
-                    "type": "enum",
-                    "values": [
-                        "manual",
-                        "switch-min",
-                        "switch-max",
-                        "stall-min",
-                        "stall-max"
-                    ],
-                    "default": "manual",
-                    "code": "ho"
-                },
-                "stall-microstep": {
-                    "type": "int",
-                    "values": [
-                        2,
-                        4,
-                        8,
-                        16,
-                        32,
-                        64,
-                        128,
-                        256
-                    ],
-                    "unit": "per full step",
-                    "default": 8,
-                    "code": "lm",
-                    "hmodes": [
-                        "stall-min",
-                        "stall-max"
-                    ]
-                },
-                "search-velocity": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "m/min",
-                    "iunit": "IPM",
-                    "scale": 0.0254,
-                    "default": 0.5,
-                    "code": "sv",
-                    "hmodes": [
-                        "switch-min",
-                        "switch-max",
-                        "stall-min",
-                        "stall-max"
-                    ]
-                },
-                "latch-velocity": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "m/min",
-                    "iunit": "IPM",
-                    "scale": 0.0254,
-                    "default": 0.1,
-                    "code": "lv",
-                    "hmodes": [
-                        "switch-min",
-                        "switch-max"
-                    ]
-                },
-                "latch-backoff": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "mm",
-                    "iunit": "in",
-                    "scale": 25.4,
-                    "default": 100,
-                    "code": "lb",
-                    "hmodes": [
-                        "switch-min",
-                        "switch-max"
-                    ]
-                },
-                "stall-volts": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "v",
-                    "default": 6,
-                    "code": "tv",
-                    "hmodes": [
-                        "stall-min",
-                        "stall-max"
-                    ]
-                },
-                "stall-sample-time": {
-                    "type": "int",
-                    "values": [
-                        50,
-                        100,
-                        200,
-                        300,
-                        400,
-                        600,
-                        800,
-                        1000
-                    ],
-                    "default": 50,
-                    "unit": "µsec",
-                    "code": "sp",
-                    "hmodes": [
-                        "stall-min",
-                        "stall-max"
-                    ]
-                },
-                "stall-current": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "amps",
-                    "default": 1.5,
-                    "code": "tc",
-                    "hmodes": [
-                        "stall-min",
-                        "stall-max"
-                    ]
-                },
-                "zero-backoff": {
-                    "type": "float",
-                    "min": 0,
-                    "unit": "mm",
-                    "iunit": "in",
-                    "scale": 25.4,
-                    "default": 5,
-                    "code": "zb",
-                    "hmodes": [
-                        "switch-min",
-                        "switch-max",
-                        "stall-min",
-                        "stall-max"
-                    ]
-                }
-            }
+      },
+
+      "motion": {
+        "reverse": {
+          "type": "bool",
+          "default": false,
+          "code": "rv"
+        },
+        "microsteps": {
+          "type": "int",
+          "values": [1, 2, 4, 8, 16, 32, 64, 128, 256],
+          "unit": "per full step",
+          "default": 32,
+          "code": "mi"
+        },
+        "max-velocity": {
+          "type": "float",
+          "min": 0,
+          "unit": "m/min",
+          "iunit": "IPM",
+          "scale": 0.0254,
+          "default": 5,
+          "code": "vm"
+        },
+        "max-accel": {
+          "type": "float",
+          "min": 0,
+          "unit": "km/min²",
+          "iunit": "g-force",
+          "scale": 35.304,
+          "default": 10,
+          "code": "am"
+        },
+        "max-jerk": {
+          "type": "float",
+          "min": 0,
+          "unit": "km/min³",
+          "iunit": "g/min",
+          "scale": 35.304,
+          "default": 50,
+          "code": "jm"
+        },
+        "step-angle": {
+          "type": "float",
+          "min": 0,
+          "max": 360,
+          "step": 0.1,
+          "unit": "degrees",
+          "default": 1.8,
+          "code": "sa"
+        },
+        "travel-per-rev": {
+          "type": "float",
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 5,
+          "code": "tr"
         }
-    },
-    "tool": {
-        "selected-tool": {
-            "type": "string",
-            "default": "disabled"
+      },
+
+      "limits": {
+        "min-soft-limit": {
+          "type": "float",
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 0,
+          "code": "tn"
         },
-        "tool-type": {
-            "type": "enum",
-            "values": [
-                "Disabled",
-                "PWM Spindle",
-                "Huanyang VFD",
-                "Custom Modbus VFD",
-                "AC-Tech VFD",
-                "Nowforever VFD",
-                "Delta VFD015M21A (Beta)",
-                "YL600, YL620, YL620-A VFD (Beta)",
-                "FR-D700 (Beta)",
-                "Sunfar E300 (Beta)",
-                "OMRON MX2"
-            ],
-            "default": "Disabled",
-            "code": "st"
+        "max-soft-limit": {
+          "type": "float",
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 0,
+          "code": "tm"
         },
-        "tool-reversed": {
-            "type": "bool",
-            "default": false,
-            "code": "sr"
+        "min-switch": {
+          "type": "enum",
+          "values": ["disabled", "normally-open", "normally-closed"],
+          "default": "disabled",
+          "code": "ls",
+          "pins": [3, 5, 9, 11]
         },
-        "max-spin": {
-            "type": "float",
-            "unit": "RPM",
-            "min": 0,
-            "default": 10000,
-            "code": "sx"
-        },
-        "min-spin": {
-            "type": "float",
-            "unit": "RPM",
-            "min": 0,
-            "default": 0,
-            "code": "sm"
-        },
-        "tool-enable-mode": {
-            "type": "enum",
-            "values": [
-                "disabled",
-                "lo-hi",
-                "hi-lo",
-                "tri-lo",
-                "tri-hi",
-                "lo-tri",
-                "hi-tri"
-            ],
-            "default": "lo-hi",
-            "code": "eom",
-            "pin": 15
-        },
-        "tool-direction-mode": {
-            "type": "enum",
-            "values": [
-                "disabled",
-                "lo-hi",
-                "hi-lo",
-                "tri-lo",
-                "tri-hi",
-                "lo-tri",
-                "hi-tri"
-            ],
-            "default": "lo-hi",
-            "code": "dom",
-            "pin": 16
-        }
-    },
-    "modbus-spindle": {
-        "bus-id": {
-            "type": "int",
-            "default": "1",
-            "code": "hi"
-        },
-        "baud": {
-            "type": "enum",
-            "values": [
-                "9600",
-                "19200",
-                "38400",
-                "57600",
-                "115200"
-            ],
-            "default": "9600",
-            "code": "mb"
-        },
-        "parity": {
-            "type": "enum",
-            "values": [
-                "None",
-                "Even",
-                "Odd"
-            ],
-            "default": "None",
-            "code": "ma"
-        },
-        "multi-write": {
-            "help": "Use Modbus multi register write.  Function 16 vs. 6.",
-            "type": "bool",
-            "default": false,
-            "code": "mw"
-        },
-        "regs": {
-            "type": "list",
-            "index": "0123456789abcdefghijklmnopqrstuv",
-            "default": [],
-            "template": {
-                "reg-type": {
-                    "type": "enum",
-                    "values": [
-                        "disabled",
-                        "connect-write",
-                        "max-freq-read",
-                        "max-freq-fixed",
-                        "freq-set",
-                        "freq-signed-set",
-                        "stop-write",
-                        "forward-write",
-                        "reverse-write",
-                        "freq-read",
-                        "freq-signed-read",
-                        "freq-actech-read",
-                        "status-read",
-                        "disconnect-write"
-                    ],
-                    "default": "disabled",
-                    "code": "vt"
-                },
-                "reg-addr": {
-                    "type": "int",
-                    "min": 0,
-                    "max": 65535,
-                    "default": 0,
-                    "code": "va"
-                },
-                "reg-value": {
-                    "type": "int",
-                    "min": 0,
-                    "max": 65535,
-                    "default": 0,
-                    "code": "vv"
-                }
-            }
+        "max-switch": {
+          "type": "enum",
+          "values": ["disabled", "normally-open", "normally-closed"],
+          "default": "disabled",
+          "code": "xs",
+          "pins": [4, 8, 10, 12]
         }
       },
 
@@ -576,18 +194,25 @@
           "code": "sv",
           "hmodes": ["switch-min", "switch-max", "stall-min", "stall-max"]
         },
-        "pwm-freq": {
-            "type": "int",
-            "unit": "Hz",
-            "min": 8,
-            "max": 320000,
-            "default": 1000,
-            "code": "sf"
+        "latch-velocity": {
+          "type": "float",
+          "min": 0,
+          "unit": "m/min",
+          "iunit": "IPM",
+          "scale": 0.0254,
+          "default": 0.1,
+          "code": "lv",
+          "hmodes": ["switch-min", "switch-max"]
         },
-        "rapid-auto-off": {
-            "help": "Turn tool off during rapid moves.  Useful for LASERs.",
-            "type": "bool",
-            "default": false
+        "latch-backoff": {
+          "type": "float",
+          "min": 0,
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 100,
+          "code": "lb",
+          "hmodes": ["switch-min", "switch-max"]
         },
         "stall-volts": {
           "type": "float",
@@ -751,35 +376,19 @@
           "default": "disabled",
           "code": "vt"
         },
-        "load-2": {
-            "type": "enum",
-            "values": [
-                "disabled",
-                "lo-hi",
-                "hi-lo",
-                "tri-lo",
-                "tri-hi",
-                "lo-tri",
-                "hi-tri"
-            ],
-            "default": "lo-hi",
-            "code": "2om",
-            "pin": 1
+        "reg-addr": {
+          "type": "int",
+          "min": 0,
+          "max": 65535,
+          "default": 0,
+          "code": "va"
         },
-        "fault": {
-            "type": "enum",
-            "values": [
-                "disabled",
-                "lo-hi",
-                "hi-lo",
-                "tri-lo",
-                "tri-hi",
-                "lo-tri",
-                "hi-tri"
-            ],
-            "default": "lo-hi",
-            "code": "fom",
-            "pin": 21
+        "reg-value": {
+          "type": "int",
+          "min": 0,
+          "max": 65535,
+          "default": 0,
+          "code": "vv"
         }
       }
     }
@@ -962,24 +571,20 @@
       "type": "text",
       "default": "(Runs at program start)\nG90 (Absolute distance mode)\nG17 (Select XY plane)\n"
     },
-    "gcode": {
-        "program-start": {
-            "type": "text",
-            "default": "(Runs at program start)\nG90 (Absolute distance mode)\nG17 (Select XY plane)\n"
-        },
-        "tool-change": {
-            "type": "text",
-            "default": "(Runs on M6, tool change)\nM0 M6 (MSG, Change tool)"
-        },
-        "program-end": {
-            "type": "text",
-            "default": "(Runs on M2, program end)\nM2"
-        }
+    "tool-change": {
+      "type": "text",
+      "default": "(Runs on M6, tool change)\nM0 M6 (MSG, Change tool)"
     },
-    "admin": {
-        "auto-check-upgrade": {
-            "type": "bool",
-            "default": true
-        }
+    "program-end": {
+      "type": "text",
+      "default": "(Runs on M2, program end)\nM2"
     }
+  },
+
+  "admin": {
+    "auto-check-upgrade": {
+      "type": "bool",
+      "default": true
+    }
+  }
 }
