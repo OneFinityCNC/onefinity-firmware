@@ -23,7 +23,7 @@ RSYNC_OPTS    := $(RSYNC_EXCLUDE) -rv --no-g --delete --force
 VERSION  := $(shell sed -n 's/^.*"version": "\([^"]*\)",.*$$/\1/p' package.json)
 PKG_NAME := bbctrl-$(VERSION)
 
-SUBPROJECTS := avr boot pwr jig
+SUBPROJECTS := avr boot pwr
 
 ifndef HOST
 HOST=onefinity
