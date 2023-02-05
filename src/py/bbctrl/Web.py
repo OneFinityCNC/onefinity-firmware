@@ -28,7 +28,7 @@ class RebootHandler(bbctrl.APIHandler):
 
 class RebootHandler(bbctrl.APIHandler):
     def put_ok(self):
-        self.get_ctrl().lcd.goodbye('Rebooting...')
+        #self.get_ctrl().lcd.goodbye('Rebooting...')
         subprocess.Popen(['reboot'])
         
 class ShutdownHandler(bbctrl.APIHandler):
