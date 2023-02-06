@@ -3,9 +3,6 @@
 export LC_ALL=C
 cd /mnt/host
 
-# Update the system
-apt-get update
-#apt-get dist-upgrade -y
-
+apt -o "Acquire::https::Verify-Peer=false" update
 # Install packages
-apt-get install -y scons build-essential libssl-dev python3-dev
+apt -o "Acquire::https::Verify-Peer=false" install -y scons build-essential libssl-dev python3-dev
