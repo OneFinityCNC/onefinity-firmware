@@ -58,6 +58,7 @@ typedef enum {
   SPINDLE_TYPE_SUNFAR_E300,
   SPINDLE_TYPE_OMRON_MX2,
   SPINDLE_TYPE_V70,
+  SPINDLE_TYPE_EM60,
 } spindle_type_t;
 
 

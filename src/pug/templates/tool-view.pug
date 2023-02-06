@@ -1,30 +1,3 @@
-//-/////////////////////////////////////////////////////////////////////////////
-//-                                                                           //
-//-              This file is part of the Buildbotics firmware.               //
-//-                                                                           //
-//-                Copyright (c) 2015 - 2018, Buildbotics LLC                 //
-//-                           All rights reserved.                            //
-//-                                                                           //
-//-   This file ("the software") is free software: you can redistribute it    //
-//-   and/or modify it under the terms of the GNU General Public License,     //
-//-    version 2 as published by the Free Software Foundation. You should     //
-//-    have received a copy of the GNU General Public License, version 2      //
-//-   along with the software. If not, see <http://www.gnu.org/licenses/>.    //
-//-                                                                           //
-//-   The software is distributed in the hope that it will be useful, but     //
-//-        WITHOUT ANY WARRANTY; without even the implied warranty of         //
-//-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      //
-//-             Lesser General Public License for more details.               //
-//-                                                                           //
-//-     You should have received a copy of the GNU Lesser General Public      //
-//-              License along with the software.  If not, see                //
-//-                     <http://www.gnu.org/licenses/>.                       //
-//-                                                                           //
-//-              For information regarding this software email:               //
-//-                "Joseph Coffland" <joseph@buildbotics.com>                 //
-//-                                                                           //
-//-/////////////////////////////////////////////////////////////////////////////
-
 script#tool-view-template(type="text/x-template")
   #tool
     h1 Tool Configuration
@@ -70,7 +43,7 @@ script#tool-view-template(type="text/x-template")
           label.units RPM
 
       fieldset.modbus-program(
-        v-if="is_modbus && this.tool_type != 'HUANYANG VFD'")
+        v-if="is_modbus && tool_type != 'HUANYANG VFD' && tool_type != 'EM60'")
         h2 Active Modbus Program
         p(v-if="$root.modified")
           | (Click #[tt(class="save") Save] to activate the selected
@@ -407,3 +380,64 @@ script#tool-view-template(type="text/x-template")
           |
           | and spindle type.  The VFD must be rebooted after changing
           | the above settings.
+
+
+      .notes(v-if="tool_type.startsWith('EM60')")
+        h2 Notes
+        p Set the following using the VFD's front panel.
+        table.modbus-regs.fixed-regs
+          tr
+            th Address
+            th Value
+            th Meaning
+            th Description
+          tr
+            td.reg-addr P0.0.03
+            td.reg-value 2
+            td Modbus
+            td Control mode
+          tr
+            td.reg-addr P0.0.04
+            td.reg-value 9
+            td Modbus
+            td Frequency source A
+          tr
+            td.reg-addr P0.1.00
+            td.reg-value 0
+            td Source A
+            td Frequency source
+          tr
+            td.reg-addr P4.1.00
+            td.reg-value 3
+            td 9600 BAUD
+            td Must match #[tt baud] above
+          tr
+            td.reg-addr P4.1.01
+            td.reg-value 0
+            td 8N2
+            td Data format
+          tr
+            td.reg-addr P4.1.02
+            td.reg-value 1
+            td Bus id
+            td Must match #[tt bus-id] above
+          tr
+            td.reg-addr P4.1.03
+            td.reg-value 2
+            td No delay
+            td Communications response delay
+          tr
+            td.reg-addr P4.1.04
+            td.reg-value 0
+            td No timeout
+            td Communications timeout
+          tr
+            td.reg-addr P4.1.05
+            td.reg-value 1
+            td RTU
+            td Modbus format
+        p
+          | Other settings according to the
+          |
+          a(href="https://buildbotics.com/upload/vfd/em60.pdf",
+            target="_blank") EM60 VFD manual

@@ -33,6 +33,7 @@
 #include "config.h"
 #include "command.h"
 #include "exec.h"
+#include "estop.h"
 #include "util.h"
 #include "state.h"
 
@@ -93,6 +94,8 @@ static void _set_speed(float speed) {
   spindle.speed = speed;
 
   float power = _speed_to_power(speed);
+
+  if (estop_triggered()) power = 0;
 
   switch (spindle.type) {
   case SPINDLE_TYPE_DISABLED: break;

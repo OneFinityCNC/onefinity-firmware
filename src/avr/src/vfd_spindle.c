@@ -49,6 +49,7 @@ typedef enum {
 
   REG_FREQ_SET,
   REG_FREQ_SIGN_SET,
+  REG_FREQ_SCALED_SET,
 
   REG_STOP_WRITE,
   REG_FWD_WRITE,
@@ -179,6 +180,17 @@ const vfd_reg_t v70_regs[] PROGMEM = {
   {REG_DISABLED},
 };
 
+const vfd_reg_t em60_regs[] PROGMEM = {
+  {REG_MAX_FREQ_READ,   0x0007,     0}, // Read max frequency
+  {REG_FREQ_SCALED_SET, 0xa001, 10000}, // Set scaled frequency
+  {REG_FREQ_READ,       0x9000,     0}, // Read frequency
+  {REG_FWD_WRITE,       0xa000,     1}, // Run forward
+  {REG_REV_WRITE,       0xa000,     2}, // Run reverse
+  {REG_STOP_WRITE,      0xa000,     5}, // Stop
+  {REG_STATUS_READ,     0xb000,     0}, // Read status
+  {REG_DISABLED},
+};
+
 
 static vfd_reg_t regs[VFDREG];
 static vfd_reg_t custom_regs[VFDREG];
@@ -213,6 +225,12 @@ static bool _next_state() {
   case REG_MAX_FREQ_FIXED:
     if (!vfd.power) vfd.state = REG_STOP_WRITE;
     else vfd.state = REG_FREQ_SET;
+    break;
+
+  case REG_FREQ_SCALED_SET:
+    if (vfd.power < 0) vfd.state = REG_REV_WRITE;
+    else if (0 < vfd.power) vfd.state = REG_FWD_WRITE;
+    else vfd.state = REG_STOP_WRITE;
     break;
 
   case REG_FREQ_SIGN_SET:
@@ -344,6 +362,11 @@ static bool _exec_command() {
     reg.value = vfd.power * vfd.max_freq;
     break;
 
+  case REG_FREQ_SCALED_SET:
+    write = true;
+    reg.value = fabs(vfd.power) * reg.value;
+    break;
+
   case REG_CONNECT_WRITE:
   case REG_STOP_WRITE:
   case REG_FWD_WRITE:
@@ -399,6 +422,7 @@ void vfd_spindle_init() {
   case SPINDLE_TYPE_SUNFAR_E300:      _load(sunfar_e300_regs);        break;
   case SPINDLE_TYPE_OMRON_MX2:        _load(omron_mx2_regs);          break;
   case SPINDLE_TYPE_V70:              _load(v70_regs);                break;
+  case SPINDLE_TYPE_EM60:             _load(em60_regs);               break;
   default: break;
   }
 

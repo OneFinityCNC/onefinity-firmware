@@ -1,150 +1,156 @@
-/******************************************************************************\
+"use strict";
 
-                 This file is part of the Buildbotics firmware.
-
-                   Copyright (c) 2015 - 2018, Buildbotics LLC
-                              All rights reserved.
-
-      This file ("the software") is free software: you can redistribute it
-      and/or modify it under the terms of the GNU General Public License,
-       version 2 as published by the Free Software Foundation. You should
-       have received a copy of the GNU General Public License, version 2
-      along with the software. If not, see <http://www.gnu.org/licenses/>.
-
-      The software is distributed in the hope that it will be useful, but
-           WITHOUT ANY WARRANTY; without even the implied warranty of
-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-                Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public
-                 License along with the software.  If not, see
-                        <http://www.gnu.org/licenses/>.
-
-                 For information regarding this software email:
-                   "Joseph Coffland" <joseph@buildbotics.com>
-
-\******************************************************************************/
-
-'use strict'
-
+const api = require("./api");
+const utils = require("./utils");
 const merge = require("lodash.merge");
 
 const config_defaults = require("../resources/onefinity_defaults.json");
 
 const variant_defaults = {
-  machinist_x35: require("../resources/onefinity_machinist_x35_defaults.json"),
-  woodworker_x35: require("../resources/onefinity_woodworker_x35_defaults.json"),
-  woodworker_x50: require("../resources/onefinity_woodworker_x50_defaults.json"),
-  journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json")
+    machinist_x35: require("../resources/onefinity_machinist_x35_defaults.json"),
+    woodworker_x35: require("../resources/onefinity_woodworker_x35_defaults.json"),
+    woodworker_x50: require("../resources/onefinity_woodworker_x50_defaults.json"),
+    journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json")
 };
 
-const api = require('./api');
+const z_slider_defaults = {
+  "Z-16 Original": {
+    "travel-per-rev": 4,
+    "min-soft-limit": -133,
+    "max-velocity": 3,
+  },
+  "Z-20 Heavy Duty": {
+    "travel-per-rev": 10,
+    "min-soft-limit": -160,
+    "max-velocity": 7,
+  },
+}; 
 
 module.exports = {
-  template: '#admin-general-view-template',
-  props: ['config', 'state'],
+    template: "#admin-general-view-template",
+    props: [ "config", "state" ],
 
-  data: function () {
-    return {
-      configRestored: false,
-      confirmReset: false,
-      configReset: false,
-      latest: '',
-      autoCheckUpgrade: true,
-      reset_variant: ''
-    }
-  },
-
-  events: {
-    latest_version: function (version) {
-      this.latest = version
-    }
-  },
-
-  ready: function () {
-    this.autoCheckUpgrade = this.config.admin['auto-check-upgrade']
-  },
-
-  methods: {
-    backup: function () {
-      document.getElementById('download-target').src = '/api/config/download';
+    data: function() {
+        return {
+          confirmReset: false,
+          autoCheckUpgrade: true,
+          reset_variant: "",
+          z_slider: "",
+          z_slider_variant:" ",
+          config:""
+        };
     },
 
-    restore_config: function () {
-      // If we don't reset the form the browser may cache file if name is same
-      // even if contents have changed
-      $('.restore-config')[0].reset();
-      $('.restore-config input').click();
+    ready: function() {
+        this.autoCheckUpgrade = this.config.admin["auto-check-upgrade"];
     },
 
-    restore: function (e) {
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
+    methods: {
+        backup: function() {
+            document.getElementById("download-target").src = "/api/config/download";
+        },
 
-      var fr = new FileReader();
-      fr.onload = function (e) {
-        var config;
-        try {
-          config = JSON.parse(e.target.result);
-        } catch (ex) {
-          api.alert("Invalid config file");
-          return;
+        restore_config: function() {
+            utils.clickFileInput("restore-config");
+        },
+
+        restore: function(e) {
+            const files = e.target.files || e.dataTransfer.files;
+            if (!files.length) {
+                return;
+            }
+
+            const fileReader = new FileReader();
+            fileReader.onload = async ({ target }) => {
+                let config;
+                try {
+                    config = JSON.parse(target.result);
+                } catch (error) {
+                    console.error("Invalid config file:", error);
+                    alert("Invalid config file");
+                    return;
+                }
+
+                try {
+                    await api.put("config/save", config);
+                    this.$dispatch("update");
+                    SvelteComponents.showDialog("Message", {
+                        title: "Success",
+                        message: "Configuration restored"
+                    });
+                    this.confirmReset= false
+                } catch (error) {
+                    console.error("Restore failed:", error);
+                    alert("Restore failed");
+                }
+            };
+
+            fileReader.readAsText(files[0]);
+        },
+        
+        next: async function() {
+            const config = merge(
+                {},
+                config_defaults,
+                variant_defaults[this.reset_variant]
+                );
+                
+                try {
+                    await api.put("config/save", config);
+                    this.confirmReset = false;
+                    this.$dispatch("update");
+                    this.config= config
+                    this.z_slider = true;
+                } catch (error) {
+                    console.error("Restore failed:", error);
+                    alert("Restore failed");
+                }
+            },
+            
+            set_z_slider: async function(){
+                 const z_variant = merge(
+                   {},
+                   this.config.motors[3],
+                   z_slider_defaults[this.z_slider_variant],
+                 );
+                 
+                this.config.motors[3] = z_variant;
+                 try {
+                   await api.put("config/save", this.config);
+                   this.$dispatch("update");
+                   SvelteComponents.showDialog("Message", {
+                       title: "Success",
+                       message: "Configuration restored",
+                    });
+                    this.z_slider = false;
+                 } catch (error) {
+                   console.error("Z slider failed:", error);
+                   alert("failed to set Z slider  ");
+                 }    
+            },
+        check: function() {
+            this.$dispatch("check");
+        },
+
+        upgrade: function() {
+            this.$dispatch("upgrade");
+        },
+
+        upload_firmware: function() {
+            utils.clickFileInput("upload-firmware");
+        },
+
+        upload: function(e) {
+            const files = e.target.files || e.dataTransfer.files;
+            if (!files.length) {
+                return;
+            }
+            this.$dispatch("upload", files[0]);
+        },
+
+        change_auto_check_upgrade: function() {
+            this.config.admin["auto-check-upgrade"] = this.autoCheckUpgrade;
+            this.$dispatch("config-changed");
         }
-
-        api.put('config/save', config).done(function (data) {
-          this.$dispatch('update');
-          this.configRestored = true;
-
-        }.bind(this)).fail(function (error) {
-          api.alert('Restore failed', error);
-        })
-      }.bind(this);
-
-      fr.readAsText(files[0]);
-    },
-
-    reset: async function () {
-      const config = merge(
-        {},
-        config_defaults,
-        variant_defaults[this.reset_variant]
-      );
-
-      try {
-        await api.put('config/save', config)
-        this.confirmReset = false;
-        this.$dispatch('update');
-        this.configRestored = true;
-      } catch (err) {
-        api.alert('Restore failed');
-        console.error('Restore failed', err);
-      }
-    },
-
-    check: function () {
-      this.$dispatch('check')
-    },
-
-    upgrade: function () {
-      this.$dispatch('upgrade')
-    },
-
-    upload_firmware: function () {
-      // If we don't reset the form the browser may cache file if name is same
-      // even if contents have changed
-      $('.upload-firmware')[0].reset();
-      $('.upload-firmware input').click();
-    },
-
-    upload: function (e) {
-      var files = e.target.files || e.dataTransfer.files;
-      if (!files.length) return;
-      this.$dispatch('upload', files[0]);
-    },
-
-    change_auto_check_upgrade: function () {
-      this.config.admin['auto-check-upgrade'] = this.autoCheckUpgrade;
-      this.$dispatch('config-changed');
     }
-  }
-}
+};

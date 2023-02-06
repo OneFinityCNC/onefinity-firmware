@@ -6,8 +6,7 @@
       "default": "METRIC"
     },
     "max-deviation": {
-      "help":
-      "Default allowed deviation from programmed path.  Also see G64 & G61.",
+      "help": "Default allowed deviation from programmed path.  Also see G64 & G61.",
       "type": "float",
       "min": 0.05,
       "max": 100,
@@ -15,8 +14,7 @@
       "default": 0.1
     },
     "junction-accel": {
-      "help":
-      "Higher values will increasing cornering speed but may cause stalls.",
+      "help": "Higher values will increasing cornering speed but may cause stalls.",
       "type": "float",
       "min": 10000,
       "max": 100000000,
@@ -34,10 +32,10 @@
     "type": "list",
     "index": "0123",
     "default": [
-      {"axis": "X"},
-      {"axis": "Y"},
-      {"axis": "Z"},
-      {"axis": "A"}
+      { "axis": "X" },
+      { "axis": "Y" },
+      { "axis": "Z" },
+      { "axis": "A" }
     ],
     "template": {
       "general": {
@@ -168,7 +166,13 @@
       "homing": {
         "homing-mode": {
           "type": "enum",
-          "values": ["manual", "switch-min", "switch-max","stall-min","stall-max"],
+          "values": [
+            "manual",
+            "switch-min",
+            "switch-max",
+            "stall-min",
+            "stall-max"
+          ],
           "default": "manual",
           "code": "ho"
         },
@@ -178,7 +182,7 @@
           "unit": "per full step",
           "default": 8,
           "code": "lm",
-          "hmodes": ["stall-min","stall-max"]
+          "hmodes": ["stall-min", "stall-max"]
         },
         "search-velocity": {
           "type": "float",
@@ -188,7 +192,7 @@
           "scale": 0.0254,
           "default": 0.5,
           "code": "sv",
-          "hmodes": ["switch-min", "switch-max", "stall-min","stall-max"]
+          "hmodes": ["switch-min", "switch-max", "stall-min", "stall-max"]
         },
         "latch-velocity": {
           "type": "float",
@@ -216,7 +220,7 @@
           "unit": "v",
           "default": 6,
           "code": "tv",
-          "hmodes": ["stall-min","stall-max"]
+          "hmodes": ["stall-min", "stall-max"]
         },
         "stall-sample-time": {
           "type": "int",
@@ -224,7 +228,7 @@
           "default": 50,
           "unit": "µsec",
           "code": "sp",
-          "hmodes": ["stall-min","stall-max"]
+          "hmodes": ["stall-min", "stall-max"]
         },
         "stall-current": {
           "type": "float",
@@ -232,7 +236,7 @@
           "unit": "amps",
           "default": 1.5,
           "code": "tc",
-          "hmodes": ["stall-min","stall-max"]
+          "hmodes": ["stall-min", "stall-max"]
         },
         "zero-backoff": {
           "type": "float",
@@ -242,7 +246,7 @@
           "scale": 25.4,
           "default": 5,
           "code": "zb",
-          "hmodes": ["switch-min", "switch-max", "stall-min","stall-max"]
+          "hmodes": ["switch-min", "switch-max", "stall-min", "stall-max"]
         }
       }
     }
@@ -266,7 +270,8 @@
         "YL600, YL620, YL620-A VFD (Beta)",
         "FR-D700 (Beta)",
         "Sunfar E300 (Beta)",
-        "OMRON MX2"
+        "OMRON MX2",
+        "EM60"
       ],
       "default": "Disabled",
       "code": "st"
@@ -292,16 +297,30 @@
     },
     "tool-enable-mode": {
       "type": "enum",
-      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
       "default": "lo-hi",
       "code": "eom",
       "pin": 15
     },
     "tool-direction-mode": {
       "type": "enum",
-      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
       "default": "lo-hi",
       "code": "dom",
       "pin": 16
@@ -342,12 +361,20 @@
           "values": [
             "disabled",
             "connect-write",
-            "max-freq-read", "max-freq-fixed",
-            "freq-set", "freq-signed-set",
-            "stop-write", "forward-write", "reverse-write",
-            "freq-read", "freq-signed-read", "freq-actech-read",
+            "max-freq-read",
+            "max-freq-fixed",
+            "freq-set",
+            "freq-signed-set",
+            "freq-scaled-set",
+            "stop-write",
+            "forward-write",
+            "reverse-write",
+            "freq-read",
+            "freq-signed-read",
+            "freq-actech-read",
             "status-read",
-            "disconnect-write"],
+            "disconnect-write"
+          ],
           "default": "disabled",
           "code": "vt"
         },
@@ -406,8 +433,7 @@
       "default": false
     },
     "dynamic-power": {
-      "help":
-      "Adjust tool power based on velocity and feed rate.  Useful for LASERs.",
+      "help": "Adjust tool power based on velocity and feed rate.  Useful for LASERs.",
       "type": "bool",
       "default": false,
       "code": "dp"
@@ -452,24 +478,45 @@
   "outputs": {
     "load-1": {
       "type": "enum",
-      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
       "default": "lo-hi",
       "code": "1om",
       "pin": 2
     },
     "load-2": {
       "type": "enum",
-      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
       "default": "lo-hi",
       "code": "2om",
       "pin": 1
     },
     "fault": {
       "type": "enum",
-      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri",
-                 "hi-tri"],
+      "values": [
+        "disabled",
+        "lo-hi",
+        "hi-lo",
+        "tri-lo",
+        "tri-hi",
+        "lo-tri",
+        "hi-tri"
+      ],
       "default": "lo-hi",
       "code": "fom",
       "pin": 21

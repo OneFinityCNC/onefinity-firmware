@@ -1,104 +1,48 @@
-/******************************************************************************\
+"use strict";
 
-                 This file is part of the Buildbotics firmware.
+async function callApi(method, url, data) {
+    try {
+        const headers = {};
+        let body = undefined;
 
-                   Copyright (c) 2015 - 2018, Buildbotics LLC
-                              All rights reserved.
+        if (data) {
+            if (data instanceof FormData) {
+                body = data;
+            } else {
+                headers["Content-Type"] = "application/json; charset=utf-8";
+                body = JSON.stringify(data);
+            }
+        }
 
-      This file ("the software") is free software: you can redistribute it
-      and/or modify it under the terms of the GNU General Public License,
-       version 2 as published by the Free Software Foundation. You should
-       have received a copy of the GNU General Public License, version 2
-      along with the software. If not, see <http://www.gnu.org/licenses/>.
+        const response = await fetch(`/api/${url}`, {
+            method,
+            headers,
+            body,
+            cache: "no-cache",
+        });
 
-      The software is distributed in the hope that it will be useful, but
-           WITHOUT ANY WARRANTY; without even the implied warranty of
-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-                Lesser General Public License for more details.
+        if (response.ok) {
+            return await response.json();
+        }
 
-        You should have received a copy of the GNU Lesser General Public
-                 License along with the software.  If not, see
-                        <http://www.gnu.org/licenses/>.
+        throw new Error(await response.text());
+    } catch (error) {
+        console.debug(`API Error: ${url}: ${error}`);
 
-                 For information regarding this software email:
-                   "Joseph Coffland" <joseph@buildbotics.com>
-
-\******************************************************************************/
-
-'use strict'
-
-
-function api_cb(method, url, data, config) {
-  config = $.extend({
-    type: method,
-    url: '/api/' + url,
-    dataType: 'json',
-    cache: false
-  }, config);
-
-  if (typeof data == 'object') {
-    config.data = JSON.stringify(data);
-    config.contentType = 'application/json; charset=utf-8';
-  }
-
-  var d = $.Deferred();
-
-  $.ajax(config).success(function (data, status, xhr) {
-    d.resolve(data, status, xhr);
-
-  }).error(function (xhr, status, error) {
-    var text = xhr.responseText;
-    try {text = $.parseJSON(xhr.responseText)} catch(e) {}
-    if (!text) text = error;
-
-    d.reject(text, xhr, status, error);
-    console.debug('API Error: ' + url + ': ' + text);
-  });
-
-  return d.promise();
+        throw error;
+    }
 }
-
 
 module.exports = {
-  get: function (url, config) {
-    return api_cb('GET', url, undefined, config);
-  },
+    get: function(url) {
+        return callApi("GET", url);
+    },
 
+    put: function(url, body = undefined) {
+        return callApi("PUT", url, body);
+    },
 
-  put: function(url, data, config) {
-    return api_cb('PUT', url, data, config);
-  },
-
-
-  post: function(url, data, config) {
-    return api_cb('POST', url, data, config);
-  },
-
-
-  upload: function(url, data, config) {
-    config = $.extend({
-      processData: false,
-      contentType: false,
-      cache: false,
-      data: data
-    }, config);
-
-    return api_cb('PUT', url, undefined, config);
-  },
-
-
-  'delete': function (url, config) {
-    return api_cb('DELETE', url, undefined, config);
-  },
-
-
-  alert: function (msg, error) {
-    if (typeof error != 'undefined') {
-      if (typeof error.message != 'undefined')
-        msg += '\n' + error.message;
-      else msg += '\n' + JSON.stringify(error);
+    delete: function(url) {
+        return callApi("DELETE", url);
     }
-
-    alert(msg);
-  }
-}
+};

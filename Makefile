@@ -22,13 +22,8 @@ RSYNC_OPTS    := $(RSYNC_EXCLUDE) -rv --no-g --delete --force
 
 VERSION  := $(shell sed -n 's/^.*"version": "\([^"]*\)",.*$$/\1/p' package.json)
 PKG_NAME := bbctrl-$(VERSION)
-PUB_PATH := root@buildbotics.com:/var/www/buildbotics.com/bbctrl
-BETA_VERSION := $(VERSION)-rc$(shell ./scripts/next-rc)
-BETA_PKG_NAME := bbctrl-$(BETA_VERSION)
 
 SUBPROJECTS := avr boot pwr jig
-WATCH := src/pug src/pug/templates src/stylus src/js src/resources Makefile
-WATCH += src/static
 
 ifndef HOST
 HOST=onefinity
@@ -38,15 +33,11 @@ ifndef PASSWORD
 PASSWORD=onefinity
 endif
 
-
 all: $(HTML) $(RESOURCES)
 	@for SUB in $(SUBPROJECTS); do $(MAKE) -C src/$$SUB; done
 
 pkg: all $(AVR_FIRMWARE) bbserial
 	./setup.py sdist
-
-beta-pkg: pkg
-	cp dist/$(PKG_NAME).tar.bz2 dist/$(BETA_PKG_NAME).tar.bz2
 
 bbserial:
 	$(MAKE) -C src/bbserial
@@ -58,12 +49,6 @@ $(GPLAN_TARGET): $(GPLAN_MOD)
 
 $(GPLAN_MOD): $(GPLAN_IMG)
 	./scripts/gplan-init-build.sh
-	git -C rpi-share/cbang fetch
-	git -C rpi-share/cbang reset --hard FETCH_HEAD
-	git -C rpi-share/cbang checkout 18f1e963107ef26abe750c023355a5c40dd07853
-	git -C rpi-share/camotics fetch
-	git -C rpi-share/camotics reset --hard FETCH_HEAD
-	git -C rpi-share/camotics checkout ec876c80d20fc19837133087cef0c447df5a939d
 	cp ./scripts/gplan-build.sh rpi-share/
 	chmod +x rpi-share/gplan-build.sh
 	sudo ./scripts/rpi-chroot.sh $(GPLAN_IMG) /mnt/host/gplan-build.sh
@@ -74,15 +59,6 @@ $(GPLAN_IMG):
 .PHONY: $(AVR_FIRMWARE)
 $(AVR_FIRMWARE):
 	$(MAKE) -C src/avr
-
-publish: pkg
-	echo -n $(VERSION) > dist/latest.txt
-	rsync $(RSYNC_OPTS) dist/$(PKG_NAME).tar.bz2 dist/latest.txt $(PUB_PATH)/
-
-publish-beta: beta-pkg
-	echo -n $(BETA_VERSION) > dist/latest-beta.txt
-	rsync $(RSYNC_OPTS) dist/$(BETA_PKG_NAME).tar.bz2 dist/latest-beta.txt \
-	  $(PUB_PATH)/
 
 update: pkg
 	http_proxy= curl -i -X PUT -H "Content-Type: multipart/form-data" \
@@ -100,6 +76,9 @@ node_modules: package.json
 $(TARGET_DIR)/%: src/resources/%
 	install -D $< $@
 
+src/svelte-components/dist/%:
+	cd src/svelte-components && rm -rf dist && npm run build
+
 $(TARGET_DIR)/index.html: build/templates.pug
 $(TARGET_DIR)/index.html: $(wildcard src/static/js/*)
 $(TARGET_DIR)/index.html: $(wildcard src/static/css/*)
@@ -108,39 +87,20 @@ $(TARGET_DIR)/index.html: $(wildcard src/js/*)
 $(TARGET_DIR)/index.html: $(wildcard src/stylus/*)
 $(TARGET_DIR)/index.html: src/resources/config-template.json
 $(TARGET_DIR)/index.html: $(wildcard src/resources/onefinity*defaults.json)
+$(TARGET_DIR)/index.html: $(wildcard src/svelte-components/dist/*)
 
-$(TARGET_DIR)/%.html: src/pug/%.pug node_modules
-	@mkdir -p $(shell dirname $@)
+FORCE:
+
+$(TARGET_DIR)/%.html: src/pug/%.pug node_modules FORCE
+	cd src/svelte-components && rm -rf dist && npm run build
+	@mkdir -p $(TARGET_DIR)/svelte-components
+	cp src/svelte-components/dist/* $(TARGET_DIR)/svelte-components/
+
+	@mkdir -p $(TARGET_DIR)
 	$(PUG) -O pug-opts.js -P $< -o $(TARGET_DIR) || (rm -f $@; exit 1)
 
-pylint:
-	pylint3 -E $(shell find src/py -name \*.py | grep -v flycheck_)
-
-jshint:
-	./node_modules/jshint/bin/jshint --config jshint.json src/js/*.js
-
-lint: pylint jshint
-
-watch:
-	@clear
-	$(MAKE)
-	@while sleep 1; do \
-	  inotifywait -qr -e modify -e create -e delete \
-		--exclude .*~ --exclude \#.* $(WATCH); \
-	  clear; \
-	  $(MAKE); \
-	done
-
-tidy:
-	rm -f $(shell find "$(DIR)" -name \*~)
-
-clean: tidy
-	rm -rf build html dist
-	@for SUB in $(SUBPROJECTS); do \
-	  $(MAKE) -C src/$$SUB clean; \
-	done
-
-dist-clean: clean
-	rm -rf node_modules
+clean:
+	rm -rf rpi-share
+	git clean -fxd
 
 .PHONY: all install clean tidy pkg gplan lint pylint jshint bbserial

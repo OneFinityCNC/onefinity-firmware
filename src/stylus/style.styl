@@ -4,6 +4,9 @@ body
 [v-cloak]
   display none
 
+.menu-link
+  z-index unset
+
 tt
   color #000
   background #eee
@@ -32,22 +35,63 @@ tt
   height 140px
   padding 0
 
-  .header-content
-    max-width 90%
-    margin auto
-    text-align left
+.nav-header
+    padding-left 60px
+    display flex
 
-  .estop
-    float right
-    margin 5px
+  .brand
+    display flex
+    flex-direction row
+    align-self center
+    white-space nowrap
+
+    img
+      width 300px
+      height 15%
+
+    .version
+      font-size 18pt
+      color #777
+      display flex
+      flex-direction column
+      justify-content space-evenly
+      border-left  #777 2px solid;
+      margin-left 15px
+      padding 0px 10px
+      font-weight  bold
+
+      .upgrade-link
+        margin-left 20px
+        font-size 16pt
+        align-self center
+        color blue
+
+      .upgrade-attention
+        color red
+        font-size 18pt
+        align-self center
+        margin-left 5px
+
+  .pi-temp-warning
+    align-self center
+    font-size 30pt
+    font-family Audiowide
+    display inline
+    margin 0 30px
+
+    .left
+      color #444
+    .right
+      color #e5aa3d
+
+  .whitespace
+    flex-grow 1
 
   .video
     position relative
-    float right
     width 174px
     height 130px
-    margin 2px 5px
-    border 2px solid #fff
+    border 2px solid transparent
     border-radius 5px
 
     &:hover
@@ -87,29 +131,9 @@ tt
       width 100%
       height 100%
 
-  .banner
-    float left
-    padding-top 40px
-    white-space nowrap
-
-    img
-      vertical-align top
-
-    .title
-      font-size 30pt
-      font-family Audiowide
-      display inline
-      margin-right 0.5em
-
-      .left
-        color #444
-      .right
-        color #e5aa3d
-
-    .subtitle
-      font-size 18pt
-      font-weight 100
-      color #aaa
+  .estop
+    align-self center
+    margin 0 30px
 
 .error
   background red
@@ -214,8 +238,6 @@ span.unit
     .pure-control-group
       label.units
         width 6em
-
-      label.units
         text-align left
 
       textarea
@@ -230,6 +252,7 @@ span.unit
         padding 0.7em 1em
         border-radius 3px
         display inline-block
+        
 
 @keyframes blink
   50%
@@ -267,6 +290,12 @@ span.unit
     // The jogging buttons, etc.
     .control-buttons button
       font-size 150%
+      width 100px
+      height 100px
+
+    .jog-units
+      font-size initial
+      margin-left 5px
 
     &:first-child
       margin 0.5em 0
@@ -335,6 +364,7 @@ span.unit
     .axis
       .name
         text-transform capitalize
+        vertical-align middle
 
       .name, .position
         font-size 24pt
@@ -421,7 +451,7 @@ span.unit
       min-width 8em
       width 100%
 
-    .mach_units
+    .units
       padding 0
 
       select
@@ -847,18 +877,6 @@ tt.save
   a
     text-decoration none
 
-
-.upgrade-version
-  display inline-block
-  border-radius 4px
-  padding 2px
-  margin-left 0.5em
-  color #555
-  background-color #e5aa3d
-  text-decoration none
-
-  &:hover
-    color #fff
 
 .modal-mask
   position fixed
