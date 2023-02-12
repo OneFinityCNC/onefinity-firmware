@@ -171,14 +171,14 @@ const vfd_reg_t v70_regs[] PROGMEM = {
 
 const vfd_reg_t pwncnc_regs[] PROGMEM = {
   {REG_MAX_FREQ_READ, 0x0007, 0},       // Read max frequency
-    +{REG_FREQ_SCALED_SET, 0xa001, 10000}, // Set scaled frequency
-    +{REG_FREQ_READ, 0x9000, 0},           // Read frequency
-    +{REG_FWD_WRITE, 0xa000, 1},           // Run forward
-    +{REG_REV_WRITE, 0xa000, 2},           // Run reverse
-    +{REG_STOP_WRITE, 0xa000, 5},          // Stop
-    +{REG_DISCONNECT_WRITE, 0xa000, 5},    // Stop
-    +{REG_STATUS_READ, 0xb000, 0},         // Read status
-    {REG_DISABLED},
+  {REG_FREQ_SCALED_SET, 0xa001, 10000}, // Set scaled frequency
+  {REG_FREQ_READ, 0x9000, 0},           // Read frequency
+  {REG_FWD_WRITE, 0xa000, 1},           // Run forward
+  {REG_REV_WRITE, 0xa000, 2},           // Run reverse
+  {REG_STOP_WRITE, 0xa000, 5},          // Stop
+  {REG_DISCONNECT_WRITE, 0xa000, 5},    // Stop
+  {REG_STATUS_READ, 0xb000, 0},         // Read status
+  {REG_DISABLED},
 };
 
 static vfd_reg_t regs[VFDREG];
