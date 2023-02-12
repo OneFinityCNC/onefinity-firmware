@@ -29,7 +29,6 @@
 #include "modbus.h"
 #include "rtc.h"
 #include "config.h"
-#include "estop.h"
 #include "pgmspace.h"
 
 #include <util/atomic.h>
@@ -170,6 +169,18 @@ const vfd_reg_t v70_regs[] PROGMEM = {
     {REG_DISABLED},
 };
 
+const vfd_reg_t pwncnc_regs[] PROGMEM = {
+  {REG_MAX_FREQ_READ, 0x0007, 0},       // Read max frequency
+    +{REG_FREQ_SCALED_SET, 0xa001, 10000}, // Set scaled frequency
+    +{REG_FREQ_READ, 0x9000, 0},           // Read frequency
+    +{REG_FWD_WRITE, 0xa000, 1},           // Run forward
+    +{REG_REV_WRITE, 0xa000, 2},           // Run reverse
+    +{REG_STOP_WRITE, 0xa000, 5},          // Stop
+    +{REG_DISCONNECT_WRITE, 0xa000, 5},    // Stop
+    +{REG_STATUS_READ, 0xb000, 0},         // Read status
+    {REG_DISABLED},
+};
+
 static vfd_reg_t regs[VFDREG];
 static vfd_reg_t custom_regs[VFDREG];
 
@@ -226,7 +237,8 @@ static bool _next_state()
     break;
 
   case REG_STATUS_READ:
-    if (vfd.shutdown || estop_triggered())
+    // if (vfd.shutdown || estop_triggered())  vfd.state = REG_DISCONNECT_WRITE;
+    if (vfd.shutdown)  
       vfd.state = REG_DISCONNECT_WRITE;
 
     else if (vfd.changed)
@@ -289,7 +301,8 @@ static void _modbus_cb(bool ok, uint16_t addr, uint16_t value)
   {
     if (regs[vfd.reg].fails < 255)
       regs[vfd.reg].fails++;
-    if (vfd.shutdown || estop_triggered())
+    // if (vfd.shutdown || estop_triggered())  _disconnected();
+    if (vfd.shutdown)
       _disconnected();
     else
       _connect();
@@ -452,6 +465,10 @@ void vfd_spindle_init()
   case SPINDLE_TYPE_V70:
     _load(v70_regs);
     break;
+  case SPINDLE_TYPE_PWNCNC:
+    _load(pwncnc_regs);
+    break;
+    
   default:
     break;
   }
