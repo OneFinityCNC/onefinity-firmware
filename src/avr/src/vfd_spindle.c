@@ -48,6 +48,7 @@ typedef enum
 
   REG_FREQ_SET,
   REG_FREQ_SIGN_SET,
+  REG_FREQ_SCALED_SET,
 
   REG_STOP_WRITE,
   REG_FWD_WRITE,
@@ -220,6 +221,14 @@ static bool _next_state()
     else
       vfd.state = REG_FREQ_SET;
     break;
+  case REG_FREQ_SCALED_SET:
+    if (vfd.power < 0)
+      vfd.state = REG_REV_WRITE;
+    else if (0 < vfd.power)
+      vfd.state = REG_FWD_WRITE;
+    else
+      vfd.state = REG_STOP_WRITE;
+    break;
 
   case REG_FREQ_SIGN_SET:
     if (vfd.power < 0)
@@ -384,6 +393,11 @@ static bool _exec_command()
   case REG_FREQ_SIGN_SET:
     write = true;
     reg.value = vfd.power * vfd.max_freq;
+    break;
+    
+  case REG_FREQ_SCALED_SET:
+    write = true;
+    reg.value = fabs(vfd.power) * reg.value;
     break;
 
   case REG_CONNECT_WRITE:
