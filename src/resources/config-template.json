@@ -366,6 +366,7 @@
             "max-freq-fixed",
             "freq-set",
             "freq-signed-set",
+            "freq-scaled-set",
             "stop-write",
             "forward-write",
             "reverse-write",
