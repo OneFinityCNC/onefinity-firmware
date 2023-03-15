@@ -230,14 +230,14 @@ static bool _next_state()
       vfd.state = REG_STOP_WRITE;
     break;
 
-  case REG_FREQ_SIGN_SET:
-    if (vfd.power < 0)
-      vfd.state = REG_REV_WRITE;
-    else if (0 < vfd.power)
-      vfd.state = REG_FWD_WRITE;
-    else
-      vfd.state = REG_STOP_WRITE;
-    break;
+  // case REG_FREQ_SIGN_SET:
+  //   if (vfd.power < 0)
+  //     vfd.state = REG_REV_WRITE;
+  //   else if (0 < vfd.power)
+  //     vfd.state = REG_FWD_WRITE;
+  //   else
+  //     vfd.state = REG_STOP_WRITE;
+  //   break;
 
   case REG_STOP_WRITE:
   case REG_FWD_WRITE:
