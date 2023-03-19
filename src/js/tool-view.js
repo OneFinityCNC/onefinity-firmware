@@ -28,6 +28,10 @@ module.exports = {
           name: "Laser (J Tech, etc)",
         },
         {
+                id: "pwncnc-vfd",
+                name: "PwnCNC VFD",
+        },
+        {
           id: "pwm",
           name: "PWM Spindle",
         },
@@ -82,6 +86,11 @@ module.exports = {
           name: "OMRON MX2",
           unsupported: true,
         },
+        {
+          id: "v70-vfd",
+          name: "V70",
+          unsupported: true
+              }
       ],
     };
   },

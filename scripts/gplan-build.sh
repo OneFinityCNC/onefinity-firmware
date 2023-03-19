@@ -3,6 +3,7 @@
 cd /mnt/host
 scons -j 8 -C cbang disable_local="re2 libevent"
 export CBANG_HOME="/mnt/host/cbang"
+export LC_ALL=C
 
 CAMOTICS_ROOT="/mnt/host/camotics"
 CAMOTICS_PLAN="${CAMOTICS_ROOT}/src/gcode/plan"
