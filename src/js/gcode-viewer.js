@@ -54,7 +54,7 @@ module.exports = {
 
     methods: {
         load: async function(file) {
-            if (file == this.file) {
+            if (file != this.file) {
                 return;
             }
 

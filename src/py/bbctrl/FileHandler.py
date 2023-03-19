@@ -23,7 +23,10 @@ class FileHandler(bbctrl.APIHandler):
 
             filename = self.request.path.split('/')[-1]
             self.uploadFilename = url_unescape(filename) \
-                .replace('\\', '/') \
+                .encode("ascii", errors="replace") \
+                .decode() \
+                .replace('\\', '_') \
+                .replace('/', '_') \
                 .replace('#', '-') \
                 .replace('?', '-')
 
@@ -71,7 +74,8 @@ class FileHandler(bbctrl.APIHandler):
     def get(self, filename):
         if not filename:
             raise HTTPError(400, 'Missing filename')
-        filename = os.path.basename(filename)
+
+        filename = os.path.basename(url_unescape(filename))
 
         try:
             with open(self.get_upload(filename).encode('utf8'), 'r') as f:
