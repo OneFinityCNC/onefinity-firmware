@@ -156,6 +156,7 @@ class Config(object):
     def _upgrade(self, config):
         version = config['version']
         version = version.split('b')[0] # Strip off any "beta" suffix
+        version = version.split('-')[0]
         version = tuple(map(int, version.split('.'))) # Break it into a tuple of integers
 
         if version < (1, 0, 7):
