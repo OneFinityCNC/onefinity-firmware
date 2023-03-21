@@ -54,7 +54,7 @@ module.exports = {
 
     methods: {
         load: async function(file) {
-            if (file != this.file) {
+            if (file == this.file) {
                 return;
             }
 
@@ -90,7 +90,7 @@ module.exports = {
         },
 
         reload: function(file) {
-            if (file == this.file) {
+            if (file != this.file) {
                 return;
             }
             this.clear();
