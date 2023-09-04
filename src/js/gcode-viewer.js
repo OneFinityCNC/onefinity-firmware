@@ -90,7 +90,7 @@ module.exports = {
         },
 
         reload: function(file) {
-            if (file == this.file) {
+            if (file != this.file) {
                 return;
             }
             this.clear();

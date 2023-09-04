@@ -139,6 +139,12 @@ class Mach(Comm):
         if log['msg'] == 'Switch not found':
             self.estop()
 
+    def _end_cycle(self):
+        if (self._get_cycle() != 'idle' and self._is_ready()
+                and not self.planner.is_busy() and not super().is_active()):
+            self.planner.position_change()
+            self._set_cycle('idle')
+
 
     def _update(self, update):
         # Detect motor faults

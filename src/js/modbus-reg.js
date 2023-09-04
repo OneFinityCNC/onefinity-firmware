@@ -8,7 +8,7 @@ module.exports = {
   computed: {
     has_user_value: function () {
       var type = this.model["reg-type"];
-      return type.indexOf("write") != -1 || type.indexOf("fixed") != -1;
+      return type.includes("write") || type.includes("fixed") || type.includes("scaled");
     },
   },
 

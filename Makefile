@@ -26,7 +26,7 @@ PKG_NAME := bbctrl-$(VERSION)
 SUBPROJECTS := avr boot pwr jig
 
 ifndef HOST
-HOST=onefinity
+HOST=onefinity.local
 endif
 
 ifndef PASSWORD

@@ -91,7 +91,9 @@ module.exports = {
                 return this.$root.display_units;
             },
             set: function(value) {
+                this.config.settings.units = value;
                 this.$root.display_units = value;
+                this.$dispatch("config-changed");
             }
         },
 

@@ -32,7 +32,7 @@ import os
 import bbctrl
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-
+import glob
 class UploadChangeHandler(FileSystemEventHandler):
     def __init__(self, state):
         self.state = state
@@ -123,14 +123,12 @@ class State(object):
 
         if not os.path.exists(upload):
             os.mkdir(upload)
-            from shutil import copy
-            copy(bbctrl.get_resource('http/buildbotics.nc'), upload)
 
-        for path in os.listdir(upload):
-            if os.path.isfile(upload + '/' + path):
-                files.append(path)
+        files = filter(os.path.isfile, glob.glob(upload + '/*'))
+        # Sort list of files based on last modification time in ascending order
+        files = sorted(files, key=os.path.getmtime, reverse=True)
+        files = list(map(lambda f: f.replace("./upload/", ""), files))
 
-        files.sort()
         self.set('files', files)
 
         if len(files): self.select_file(files[0])

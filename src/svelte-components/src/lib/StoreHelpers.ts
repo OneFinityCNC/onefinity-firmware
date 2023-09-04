@@ -1,18 +1,19 @@
 import { get, type Writable } from "svelte/store";
 
-export function listenForChange<T>(writable: Writable<T>, cb: (value: T) => void) {
-    const priorValue = get(writable);
-
-    const unsubscribe = writable.subscribe((value) => {
-        if (value !== priorValue) {
-            unsubscribe();
-            cb(value);
-        }
-    });
-}
-
 export function waitForChange<T>(writable: Writable<T>): Promise<T> {
-    return new Promise((resolve) => {
-        listenForChange(writable, (value) => resolve(value));
+    let unsubscribe:()=>{};
+  const promise = new Promise(resolve => {
+    let receivedInitial = false;
+    let previousValue : any;
+    unsubscribe = writable.subscribe(value => {
+      if (!receivedInitial) {
+        receivedInitial = true;
+        previousValue = value;
+      } else if (value !== previousValue) {
+        resolve(value);
+      }
     });
+  });
+  promise.then(unsubscribe);
+  return promise;
 }
