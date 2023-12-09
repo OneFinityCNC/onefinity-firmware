@@ -10,7 +10,8 @@ const variant_defaults = {
     machinist_x35: require("../resources/onefinity_machinist_x35_defaults.json"),
     woodworker_x35: require("../resources/onefinity_woodworker_x35_defaults.json"),
     woodworker_x50: require("../resources/onefinity_woodworker_x50_defaults.json"),
-    journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json")
+    journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json"),
+    foreman_pro: require('../resources/onefinity_foreman_pro_defaults.json')
 };
 
 const z_slider_defaults = {

@@ -26,19 +26,22 @@ script#admin-general-view-template(type="text/x-template")
       p(slot="body") Select defaults to restore:
       p.reset-variants(slot="body")
         input#tab1(type="radio", name="reset_variant" @click="reset_variant = 'machinist_x35'")
-        label(for="tab1", title="Machinist X-35") Machinist X-35
+        label(for="tab1", title="Machinist X-35") Machinist X-35 / Original (16x16")
 
         input#tab2(type="radio", name="reset_variant" @click="reset_variant = 'woodworker_x35'")
-        label(for="tab2", title="Woodworker X-35") Woodworker X-35
+        label(for="tab2", title="Woodworker X-35") Woodworker X-35 / Original (32x32")
 
         input#tab3(type="radio", name="reset_variant" @click="reset_variant = 'woodworker_x50'")
-        label(for="tab3", title="Woodworker X-50") Woodworker X-50
+        label(for="tab3", title="Woodworker X-50") Woodworker X-50 / Pro (32x32")
 
         input#tab4(type="radio", name="reset_variant" @click="reset_variant = 'journeyman_x50'")
-        label(for="tab4", title="Journeyman X-50") Journeyman X-50
+        label(for="tab4", title="Journeyman X-50") Journeyman X-50 / Pro (48x32")
+
+        input#tab5(type="radio", name="reset_variant" @click="reset_variant = 'foreman_pro'")
+        label(for="tab5", title="Foreman Pro") Foreman Pro (48x48")
       div(slot="footer")
         button.pure-button(@click="confirmReset = false") Cancel
-        button.pure-button.pure-button-primary(@click="next") next
+        button.pure-button.pure-button-primary(@click="next") Next
         
     message(:show.sync="z_slider")
       h3(slot="header") Pick your Z Slider Type
@@ -53,7 +56,7 @@ script#admin-general-view-template(type="text/x-template")
                 
       div(slot="footer")
         button.pure-button(@click="z_slider = false") Cancel
-        button.pure-button.pure-button-primary(@click="set_z_slider") set z slider
+        button.pure-button.pure-button-primary(@click="set_z_slider") Set Z slider
         
     h2 Debugging
     a(href="/api/log", target="_blank")

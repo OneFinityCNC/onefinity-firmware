@@ -1,0 +1,16 @@
+{
+    "motors": [
+        {
+            "max-soft-limit": 1220,
+            "travel-per-rev": 16
+        },
+        {
+            "max-soft-limit": 1225,
+            "travel-per-rev": 16
+        },
+        {
+            "max-soft-limit": 1225,
+            "travel-per-rev": 16
+        }
+    ]
+}
