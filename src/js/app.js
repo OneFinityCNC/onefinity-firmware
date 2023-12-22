@@ -144,6 +144,7 @@ module.exports = new Vue({
         "admin-general-view": require("./admin-general-view"),
         "admin-network-view": require("./admin-network-view"),
         "help-view": require("./help-view"),
+        "macros": require('./macros'),
         "cheat-sheet-view": {
             template: "#cheat-sheet-view-template",
             data: function() {
