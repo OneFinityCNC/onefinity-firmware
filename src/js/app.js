@@ -143,8 +143,8 @@ module.exports = new Vue({
         "io-view": require("./io-view"),
         "admin-general-view": require("./admin-general-view"),
         "admin-network-view": require("./admin-network-view"),
+        "macros-view": require('./macros'),
         "help-view": require("./help-view"),
-        "macros": require('./macros'),
         "cheat-sheet-view": {
             template: "#cheat-sheet-view-template",
             data: function() {
