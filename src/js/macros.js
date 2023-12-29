@@ -13,12 +13,11 @@ module.exports = {
         }
     },
     components: {
-        "axis-control": require("./axis-control"),
-        "path-viewer": require("./path-viewer"),
         "gcode-viewer": require("./gcode-viewer")
     },
     computed:{
         is_ready: function() {
+            console.log("is_ready: ",this.mach_state);
             return this.mach_state == "READY";
         },
     },
