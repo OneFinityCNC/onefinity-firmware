@@ -2,19 +2,18 @@ script#macros-template(type="text/x-template")
   #macros
     h1 Macros Configuration
     .macros-form
-      .input-field
-        h4 Enter Macros Name
-        input.input-name(type="text",id="macros-name",value="e.g Macros 1 ")
-      .input-field
-        h4 Select Your Macros Color
+        p.title Enter Macros Name
+        input.input-name(type="text",id="macros-name")
+        p.title Select Your Macros Color
         input.input-color(type="color",id="macros-color",value="#ffffff") 
-      .input-field
-      h3 Select/Upload G-Code
-      button.pure-button(title="Upload a new GCode program.", @click="open",
+        p.title Select/Upload G-Code
+        button.pure-button(title="Upload a new GCode program.", @click="open",
                 :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
                 .fa.fa-folder-open
-      select(title="Select previously uploaded GCode programs.",
+        select(title="Select previously uploaded GCode programs.",
                 v-model="state.selected", @change="load", :disabled="!is_ready",
                 style="max-width:100%")
                 option(v-for="file in state.files", :value="file") {{file}}
+        button.submit-macros(title="Save Macros",@click="saveMacros",style="height:100px;width:100px;font-weight:normal")
+
     gcode-viewer

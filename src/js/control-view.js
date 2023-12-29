@@ -201,6 +201,12 @@ module.exports = {
 
             const p = this.plan_time / this.toolpath.time;
             return Math.min(1, p);
+        },
+        isMacrosPresent: function(){
+            if(this.config.macros!=undefined){
+                return this.config.macros.length!=0;
+            }
+            return false;
         }
     },
 
@@ -493,6 +499,24 @@ module.exports = {
 
         showProbeDialog: function(probeType) {
             SvelteComponents.showDialog("Probe", { probeType });
+        },
+        
+        runMacros: function(id){
+            if(id==null || id == undefined ){
+                console.log("id null/undefined");
+                return;
+            }
+            if(this.config.macros!=undefined && this.config.macros.length!=0){
+                this.config.macros.find(el=>{
+                    if(el.id==id){
+                        console.log(el);
+                    }else{
+                        console.log("error in finding macros");
+                    }
+                })
+            }else{
+                console.log("No macros found");
+            }
         }
     },
 

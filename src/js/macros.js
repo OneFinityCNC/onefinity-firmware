@@ -58,5 +58,15 @@ module.exports = {
             this.toolpath_progress = 0;
             this.load_toolpath(file, file_time);
         },
+        saveMacros: function(){
+            var macrosName = document.getElementById("macros-name").value;
+            var macrosColor = document.getElementById("macros-color").value;
+            if(this.config.macros == undefined) return;
+            this.config.macros.push({
+                id:Math.random(),
+                name:macrosName,
+                color:macrosColor
+            })
+        },
     }
 }
