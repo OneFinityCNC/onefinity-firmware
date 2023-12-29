@@ -23,8 +23,8 @@ module.exports = {
     },
     methods:{
         print: function(){
-            var inputValue = document.getElementById('inputField').value;
-            console.log(inputValue);
+            console.log("/nthis.config",this.config);
+            console.log("/nthis.state",this.state);
         },
         open: function() {
             utils.clickFileInput("gcode-file-input");
