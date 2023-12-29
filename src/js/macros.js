@@ -24,7 +24,8 @@ module.exports = {
     },
     methods:{
         print: function(){
-            console.log(this.state);
+            var inputValue = document.getElementById('inputField').value;
+            console.log(inputValue);
         },
         open: function() {
             utils.clickFileInput("gcode-file-input");

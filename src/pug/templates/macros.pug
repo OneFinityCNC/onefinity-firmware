@@ -1,7 +1,8 @@
 script#macros-template(type="text/x-template")
   #macros
   h2 Macros
-  button.printVariable(title="print Varibale", @click='print',
+  input(type="text",id="inputField")
+  button.printVariable(title="print Varibale", @click='print()',
             style="height:100px;width:100px;font-weight:normal")
             .fa.fa-folder-download
   button.pure-button(title="Upload a new GCode program.", @click="open",
@@ -12,9 +13,9 @@ script#macros-template(type="text/x-template")
             style="max-width:100%")
             option(v-for="file in state.files", :value="file") {{file}}
 
-          .progress(v-if="toolpath_progress && toolpath_progress < 1",
-            title="Simulating GCode to check for errors, calculate ETA and " +
-              "generate 3D view.  You can run GCode before the simulation " +
-              "finishes.")
-            div(:style="'width:' + (toolpath_progress || 0) * 100 + '%'")
-              label Simulating {{(toolpath_progress || 0) | percent}}
+  .progress(v-if="toolpath_progress && toolpath_progress < 1",
+    title="Simulating GCode to check for errors, calculate ETA and " +
+      "generate 3D view.  You can run GCode before the simulation " +
+      "finishes.")
+    div(:style="'width:' + (toolpath_progress || 0) * 100 + '%'")
+      label Simulating {{(toolpath_progress || 0) | percent}}
