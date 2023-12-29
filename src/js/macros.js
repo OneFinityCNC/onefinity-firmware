@@ -13,20 +13,20 @@ module.exports = {
         }
     },
     components: {
+        "axis-control": require("./axis-control"),
+        "path-viewer": require("./path-viewer"),
         "gcode-viewer": require("./gcode-viewer")
     },
     computed:{
         is_ready: function() {
-            console.log("is_ready: ",this);
+            console.log("is_ready: ",this.mach_state);
             return this.mach_state == "READY";
         },
     },
     methods:{
-        print: function(){
-            console.log(this.template);
-        },
         open: function() {
             utils.clickFileInput("gcode-file-input");
+            console.log("utils done");
         },
         getMacrosList : function (){
             return no_of_macros;
