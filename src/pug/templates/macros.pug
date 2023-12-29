@@ -1,4 +1,20 @@
 script#macros-template(type="text/x-template")
   #macros
-  h1 Macros
-  p Hello, World
+  h2 Macros
+  button.printVariable(title="print Varibale", @click='print',
+            style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-folder-download
+  button.pure-button(title="Upload a new GCode program.", @click="open",
+            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-folder-open
+  select(title="Select previously uploaded GCode programs.",
+            v-model="state.selected", @change="load", :disabled="!is_ready",
+            style="max-width:100%")
+            option(v-for="file in state.files", :value="file") {{file}}
+
+          .progress(v-if="toolpath_progress && toolpath_progress < 1",
+            title="Simulating GCode to check for errors, calculate ETA and " +
+              "generate 3D view.  You can run GCode before the simulation " +
+              "finishes.")
+            div(:style="'width:' + (toolpath_progress || 0) * 100 + '%'")
+              label Simulating {{(toolpath_progress || 0) | percent}}
