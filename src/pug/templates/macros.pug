@@ -2,13 +2,13 @@ script#macros-template(type="text/x-template")
   #macros
     h1 Macros Configuration
     input(type="text",id="inputField")
-    button.printVariable(title="print Varibale", @click='print()',
+    button.printVariable(title="print Varibale", @click='print',
               style="height:100px;width:100px;font-weight:normal") PrintVariable
-    button.printVariable(title="print Varibale", @click='print()',
-              style="height:100px;width:200px;font-weight:normal") Print No of Macros
+    h3 {{no_of_macros}}
     //- button.pure-button(title="Upload a new GCode program.", @click="open",
     //-           :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
     //-           .fa.fa-folder-open
+
     //- select(title="Select previously uploaded GCode programs.",
     //-           v-model="state.selected", @change="load", :disabled="!is_ready",
     //-           style="max-width:100%")
@@ -20,4 +20,4 @@ script#macros-template(type="text/x-template")
     //-     "finishes.")
     //-   div(:style="'width:' + (toolpath_progress || 0) * 100 + '%'")
     //-     label Simulating {{(toolpath_progress || 0) | percent}}
-    //- gcode-viewer
+    gcode-viewer

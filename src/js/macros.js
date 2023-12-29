@@ -17,14 +17,13 @@ module.exports = {
     },
     computed:{
         is_ready: function() {
-            console.log("is_ready: ",this.mach_state);
+            console.log("is_ready: ",this);
             return this.mach_state == "READY";
         },
     },
     methods:{
         print: function(){
-            console.log("/nthis.config",this.config);
-            console.log("/nthis.state",this.state);
+            console.log(this.template);
         },
         open: function() {
             utils.clickFileInput("gcode-file-input");
@@ -34,7 +33,9 @@ module.exports = {
         },
         load: function() {
             const file_time = this.state.selected_time;
+            console.log('file_time',this.state.selected_time);
             const file = this.state.selected;
+            console.log("file: ",this.state.selected);
             if (this.last_file == file && this.last_file_time == file_time) {
                 return;
             }
