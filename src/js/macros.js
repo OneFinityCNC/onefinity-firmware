@@ -18,6 +18,16 @@ module.exports = {
         "gcode-viewer": require("./gcode-viewer")
     },
     computed:{
+        mach_state: function() {
+            const cycle = this.state.cycle;
+            const state = this.state.xx;
+
+            if (state != "ESTOPPED" && (cycle == "jogging" || cycle == "homing")) {
+                return cycle.toUpperCase();
+            }
+
+            return state || "";
+        },
         is_ready: function() {
             console.log("is_ready: ",this.mach_state);
             return this.mach_state == "READY";
