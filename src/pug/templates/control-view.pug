@@ -208,9 +208,9 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
     .macros-div
-      .macros-buttons(class="present",v-if="config.macros!='undefined'")
+      .macros-buttons(class="present",v-if=" typeof config.macros != 'undefined'")
         p there is a active macro
-      .macros-buttons(class ="absent",v-if="config.macros=='undefined'")
+      .macros-buttons(class ="absent",v-if="typeof config.macros == 'undefined'")
         p there is No macro
 
 
