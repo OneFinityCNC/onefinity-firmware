@@ -8,7 +8,6 @@ module.exports = {
 
     data: function (){
         return {
-            no_of_macros : 0,
             toolpath_progress: 0,
         }
     },
@@ -38,9 +37,6 @@ module.exports = {
             utils.clickFileInput("gcode-file-input");
             console.log("utils done");
         },
-        getMacrosList : function (){
-            return no_of_macros;
-        },
         load: function() {
             const file_time = this.state.selected_time;
             console.log('file_time',this.state.selected_time);
@@ -67,6 +63,8 @@ module.exports = {
                 name:macrosName,
                 color:macrosColor
             })
+            console.log("Successfully saved");
+            console.lof(this.config.macros);
         },
     }
 }

@@ -14,6 +14,6 @@ script#macros-template(type="text/x-template")
                 v-model="state.selected", @change="load", :disabled="!is_ready",
                 style="max-width:100%")
                 option(v-for="file in state.files", :value="file") {{file}}
-        button.submit-macros(title="Save Macros",@click="saveMacros",style="height:100px;width:100px;font-weight:normal")
+        button.submit-macros(title="Save Macros",@click="saveMacros",style="height:100px;width:100px;font-weight:normal") Save Macros
 
     gcode-viewer

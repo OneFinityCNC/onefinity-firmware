@@ -204,6 +204,8 @@ module.exports = {
         },
         isMacrosPresent: function(){
             if(this.config.macros!=undefined){
+                console.log("isMacrosPresent",this.config.macros!=undefined);
+                console.log(this.config.macros.length!=0);
                 return this.config.macros.length!=0;
             }
             return false;

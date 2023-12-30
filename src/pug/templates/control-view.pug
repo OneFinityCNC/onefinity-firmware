@@ -207,8 +207,9 @@ script#control-view-template(type="text/x-template")
                       label {{(progress || 0) | percent}}
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
-    .macros-buttons(v-if="this.config.macros!=undefined")
-      <p>there is a macro
+    .macros-div
+      .macros-buttons(v-if="isMacrosPresent")
+        <p> there is a macro
 
     .tabs
      
