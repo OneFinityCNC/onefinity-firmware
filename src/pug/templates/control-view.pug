@@ -209,11 +209,6 @@ script#control-view-template(type="text/x-template")
 
     .macros-div
       .macros-buttons(v-if="this.config.macros!=undefined")
-          each macros in (this.config.macros!=undefined)? this.config.macros : {id:0,name:"Macrostest",color:'#434242',gcode:"test.ngc"}
-            p macros.id
-            p macros.name
-            p macros.color
-            p macros.gcode
           .submit-macros(v-if="isMacrosPresent()")
             a(href="#macros") Edit Macros
       .macros-buttons(v-if="this.config.macros==undefined")
