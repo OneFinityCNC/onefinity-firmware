@@ -203,7 +203,7 @@ module.exports = {
             return Math.min(1, p);
         },
         isMacrosPresent: function(){
-            return this.config.macros==undefined;
+            return this.config.macros!=undefined;
         },
     },
 

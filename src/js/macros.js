@@ -34,24 +34,23 @@ module.exports = {
     methods:{
         open: function() {
             utils.clickFileInput("gcode-file-input");
-            console.log("utils done");
         },
         load: function() {
             const file_time = this.state.selected_time;
             console.log('file_time',this.state.selected_time);
             const file = this.state.selected;
             console.log("file: ",this.state.selected);
-            if (this.last_file == file && this.last_file_time == file_time) {
-                return;
-            }
+            // if (this.last_file == file && this.last_file_time == file_time) {
+            //     return;
+            // }
 
-            this.last_file = file;
-            this.last_file_time = file_time;
+            // this.last_file = file;
+            // this.last_file_time = file_time;
 
-            this.$broadcast("gcode-load", file);
-            this.$broadcast("gcode-line", this.state.line);
-            this.toolpath_progress = 0;
-            this.load_toolpath(file, file_time);
+            // this.$broadcast("gcode-load", file);
+            // this.$broadcast("gcode-line", this.state.line);
+            // this.toolpath_progress = 0;
+            // this.load_toolpath(file, file_time);
         },
         upload: function(e) {
             const files = e.target.files || e.dataTransfer.files;
