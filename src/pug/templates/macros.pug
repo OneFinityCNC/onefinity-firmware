@@ -11,8 +11,13 @@ script#macros-template(type="text/x-template")
                 v-model="state.selected", @change="load", :disabled="!is_ready",
                 style="max-width:100%;height:40px;border-radius:5px")
                 option(v-for="file in state.files", :value="file") {{file}}
+
         button.pure-button(title="Upload a new GCode program.", @click="open",
-                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px") Upload
+                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+
+        form.gcode-file-input.file-upload
+            input(type="file", @change="upload", :disabled="!is_ready",
+              accept=".nc,.ngc,.gcode,.gc")
         br
         button.submit-macros(title="Save Macros",@click="saveMacros",
                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:15px") Save Macros

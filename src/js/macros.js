@@ -53,6 +53,34 @@ module.exports = {
             this.toolpath_progress = 0;
             this.load_toolpath(file, file_time);
         },
+        upload: function(e) {
+            const files = e.target.files || e.dataTransfer.files;
+            if (!files.length) {
+                return;
+            }
+
+            const file = files[0];
+            const extension = file.name.split(".").pop();
+            switch (extension.toLowerCase()) {
+                case "nc":
+                case "ngc":
+                case "gcode":
+                case "gc":
+                    break;
+
+                default:
+                    alert(`Unsupported file type: ${extension}`);
+                    return;
+            }
+
+            SvelteComponents.showDialog("Upload", {
+                file,
+                onComplete: () => {
+                    this.last_file_time = undefined; // Force reload
+                    this.$broadcast("gcode-reload", file.name);
+                }
+            });
+        },
         saveMacros: function(){
             var macrosName = document.getElementById("macros-name").value;
             var macrosColor = document.getElementById("macros-color").value;
