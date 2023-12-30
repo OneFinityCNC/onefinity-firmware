@@ -57,7 +57,11 @@ module.exports = {
         saveMacros: function(){
             var macrosName = document.getElementById("macros-name").value;
             var macrosColor = document.getElementById("macros-color").value;
-            if(this.config.macros == undefined) return;
+            if(this.config.macros == undefined) {
+                console.log("macros is undefined");
+                this.config.macros=[];
+                return;
+            }
             this.config.macros.push({
                 id:Math.random(),
                 name:macrosName,
