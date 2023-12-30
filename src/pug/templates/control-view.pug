@@ -208,10 +208,10 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
     .macros-div
-      .macros-buttons(v-if="this.config.macros!=undefined!=undefined")
-        if {{this.config.macros!=undefined}}
+      .macros-buttons(v-if="config.macros!=undefined")
+        if {{config.macros!=undefined}}
           p there is a macro
-          each macros in this.config.macros || {id:0,name:"Macrostest",color:'#434242',gcode:"test.ngc"}
+          each macros in config.macros || {id:0,name:"Macrostest",color:'#434242',gcode:"test.ngc"}
             p macros.id
             p macros.name
             p macros.color
