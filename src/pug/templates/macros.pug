@@ -3,8 +3,9 @@ script#macros-template(type="text/x-template")
     h1 Macros Configuration
     .macros-form
         p.title Enter Macros Name
-        input.input-color(type="color",id="macros-color",value="#ffffff") 
-        input.input-name(type="text",id="macros-name")
+        .input-container
+                input.input-color(type="color",id="macros-color",value="#ffffff") 
+                input.input-name(type="text",id="macros-name")
         p.title Select/Upload G-Code
         select(title="Select previously uploaded GCode programs.",
                 v-model="state.selected", @change="load", :disabled="!is_ready",
@@ -16,6 +17,6 @@ script#macros-template(type="text/x-template")
         button.submit-macros(title="Save Macros",@click="saveMacros",
                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad") Save Macros
         button.pure-button(title="Print config.", @click="printConfig",
-                style="height:50px;width:100px;font-weight:normal") print Config
+                style="height:50px;width:120px;font-weight:normal") print Config
 
     gcode-viewer

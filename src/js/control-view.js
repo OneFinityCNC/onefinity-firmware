@@ -203,7 +203,7 @@ module.exports = {
             return Math.min(1, p);
         },
         isMacrosPresent: function(){
-            return (this.config.macros!=undefined)
+            return this.config.macros != undefined;
             // if(this.config.macros!=undefined){
             //     console.log("isMacrosPresent",this.config.macros!=undefined);
             //     console.log(this.config.macros.length!=0);
