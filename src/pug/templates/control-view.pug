@@ -209,15 +209,11 @@ script#control-view-template(type="text/x-template")
 
     .macros-div
       p Macros
-      .test-true(v-if="isMacrosPresent")
-        p true
-      .test-false(v-if="isMacrosAbsent")
-        p false`
-      .macros-buttons(v-if="config.macros!=undefined")
+      .macros-buttons(class="present",v-if="isMacrosPresent")
         p there is a active macro
-      .macros-buttons(v-if="config.macros==undefined")
-        p there is no macro
-      
+      .macros-buttons(class ="absent",v-if="!isMacrosPresent")
+        p there is No macro
+
 
     .tabs
      

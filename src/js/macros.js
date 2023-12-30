@@ -24,7 +24,7 @@ module.exports = {
             if (state != "ESTOPPED" && (cycle == "jogging" || cycle == "homing")) {
                 return cycle.toUpperCase();
             }
-
+            
             return state || "";
         },
         is_ready: function() {
