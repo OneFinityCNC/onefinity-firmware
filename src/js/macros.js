@@ -68,7 +68,7 @@ module.exports = {
                 color:macrosColor
             })
             console.log("Successfully saved");
-            console.lof(this.config.macros);
+            console.log(this.config.macros);
         },
     }
 }
