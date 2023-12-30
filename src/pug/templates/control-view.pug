@@ -209,6 +209,7 @@ script#control-view-template(type="text/x-template")
 
     .macros-div
       .macros-buttons(v-if="this.config.macros!=undefined")
+          p there is a active macro
           .submit-macros(v-if="isMacrosPresent()")
             a(href="#macros") Edit Macros
       .macros-buttons(v-if="this.config.macros==undefined")
