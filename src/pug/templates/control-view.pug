@@ -208,9 +208,7 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
     .macros-buttons(v-if="this.config.macros!=undefined")
-      each macros in this.config.macros
-        button.macros-button(title=`${macros.id}`,@click=`runMacros(${macros.id})`,
-            style="height:30px;width:40px;background-color:#fdffff") macros.name
+      <p>there is a macro
 
     .tabs
      
