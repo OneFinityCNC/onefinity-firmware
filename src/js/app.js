@@ -114,7 +114,7 @@ module.exports = new Vue({
             full_version: "<loading>",
             ip: "<>",
             wifiName: "not connected",
-            macros:[]
+            macros:[{id:0,name:"Macrostest",color:'#434242',gcode:"test.ngc"}]
           },
           state: {
             messages: [],
