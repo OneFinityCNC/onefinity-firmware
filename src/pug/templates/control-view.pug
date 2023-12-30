@@ -210,7 +210,7 @@ script#control-view-template(type="text/x-template")
     .macros-div
       .macros-buttons(v-if="this.config.macros!=undefined!=undefined")
         p there is a macro
-        each macros in this.config.macros
+        each macros in this.config.macros || {id:0,name:"Macrostest",color:'#434242',gcode:"test.ngc"}
           p macros.id
           p macros.name
           p macros.color
