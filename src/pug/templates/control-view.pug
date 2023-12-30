@@ -210,7 +210,7 @@ script#control-view-template(type="text/x-template")
     .macros-buttons(v-if="isMacrosPresent")
       each macros in this.config.macros
         button.macros-button(title="{{macros.id}}",@click="runMacros(macros.id)",
-            style="height:30px;width:40px;background-color:macros.color")macros.name
+            style="height:30px;width:40px;background-color:#fdffff")macros.name
 
     .tabs
      
