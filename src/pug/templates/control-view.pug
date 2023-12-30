@@ -208,8 +208,14 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
     .macros-div
-      .macros-buttons(v-if="isMacrosPresent")
-        .submit-macros
+      .macros-buttons(v-if="this.config.macros!=undefined!=undefined")
+        p there is a macro
+        each macros in this.config.macros
+          p macros.id
+          p macros.name
+          p macros.color
+          p macros.gcode
+        .submit-macros(v-if="isMacrosPresent()")
           a(href="#macros") Edit Macros
 
     .tabs
