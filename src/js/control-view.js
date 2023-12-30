@@ -203,12 +203,13 @@ module.exports = {
             return Math.min(1, p);
         },
         isMacrosPresent: function(){
-            if(this.config.macros!=undefined){
-                console.log("isMacrosPresent",this.config.macros!=undefined);
-                console.log(this.config.macros.length!=0);
-                return this.config.macros.length!=0;
-            }
-            return false;
+            return (this.config.macros!=undefined)
+            // if(this.config.macros!=undefined){
+            //     console.log("isMacrosPresent",this.config.macros!=undefined);
+            //     console.log(this.config.macros.length!=0);
+            //     return this.config.macros.length!=0;
+            // }
+            // return false;
         }
     },
 
