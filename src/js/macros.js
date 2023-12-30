@@ -28,7 +28,6 @@ module.exports = {
             return state || "";
         },
         is_ready: function() {
-            console.log("is_ready: ",this.mach_state);
             return this.mach_state == "READY";
         },
     },
@@ -56,19 +55,23 @@ module.exports = {
         },
         saveMacros: function(){
             var macrosName = document.getElementById("macros-name").value;
-            var macrosColor = document.getElementById("macros-color").value;
+            var macrosColor = document.getElementById("macros-color").value
+            console.log(this.state.selected);
             if(this.config.macros == undefined) {
                 console.log("macros is undefined");
                 this.config.macros=[];
                 return;
             }
             this.config.macros.push({
-                id:Math.random(),
+                id:Math.round(Math.random()*100000),
                 name:macrosName,
                 color:macrosColor
             })
             console.log("Successfully saved");
             console.log(this.config.macros);
         },
+        printConfig: function(){
+            console.log(this.config);
+        }
     }
 }
