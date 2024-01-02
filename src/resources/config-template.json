@@ -588,17 +588,49 @@
     "type":"list",
     "index":"123456",
     "default":[
-      { "name":"Macros 1"},
-      { "name":"Macros 2"},
-      { "name":"Macros 3"},
-      { "name":"Macros 4"},
-      { "name":"Macros 5"},
-      { "name":"Macros 6"}
+      {
+         "name":"Macros 1",
+         "color": "",
+         "gcode": ""
+      },
+      {
+         "name":"Macros 2",
+         "color": "",
+         "gcode": ""
+      },
+      {
+         "name":"Macros 3",
+         "color": "",
+         "gcode": ""
+      },
+      {
+         "name":"Macros 4",
+         "color": "",
+         "gcode": ""
+      },
+      {
+         "name":"Macros 5",
+         "color": "",
+         "gcode": ""
+      },
+      {
+         "name":"Macros 6",
+         "color": "",
+         "gcode": ""
+      }
     ],
     "template": {
       "name": {
         "type": "text",
         "default": "Default Message"
+      },
+      "color": {
+        "type": "text",
+        "default": "Default Color"
+      },
+      "gcode": {
+        "type": "text",
+        "default": "Default G-Code"
       }
     }
   },
