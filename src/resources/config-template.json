@@ -584,6 +584,22 @@
     }
   },
 
+  "macros": {
+    "type":"list",
+    "index":"123",
+    "default":[
+      { "name" : "Macros 1"},
+      { "name" : "Macros 2"},
+      { "name" : "Macros 3"}
+    ],
+    "template": {
+      "name": {
+        "type": "text",
+        "default": "New Macro"
+      }
+    }
+  },
+
   "admin": {
     "auto-check-upgrade": {
       "type": "bool",

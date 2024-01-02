@@ -1,5 +1,6 @@
 "use strict";
 
+const api = require("./api");
 const utils = require("./utils");
 
 module.exports = {
@@ -80,22 +81,29 @@ module.exports = {
                 }
             });
         },
-        saveMacros: function(){
+        saveMacros: async function(){
             var macrosName = document.getElementById("macros-name").value;
             var macrosColor = document.getElementById("macros-color").value;
             if(this.config.macros == undefined) {
                 console.log("macros is undefined");
                 this.config.macros=[];
-                return;
+            }else{
+                this.config.macros.push({
+                    id:Math.round(Math.random()*100000),
+                    name:macrosName,
+                    color:macrosColor,
+                    gcode:this.state.selected,
+                })
             }
-            this.config.macros.push({
-                id:Math.round(Math.random()*100000),
-                name:macrosName,
-                color:macrosColor,
-                gcode:this.state.selected,
-            })
-            console.log("Successfully saved");
             console.log(this.config.macros);
+            try {
+                await api.put("config/save",this.config);
+                console.log("Successfully saved");
+                this.$dispatch("update");
+            } catch (error) {
+                console.error("Restore Failed: ",error);
+                alert("Restore failed");
+            }
         },
         printConfig: function(){
             console.log(this.config);
