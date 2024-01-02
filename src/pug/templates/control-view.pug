@@ -208,17 +208,17 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
     .macros-div(class="present")
-       button.macros-buttons(title="Click to run Macros 1", @click="open",
-            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 1
-       button.macros-buttons(title="Click to run Macros 2", @click="open",
+       button.macros-buttons(title="Click to run Macros 1", @click="runMacros(0)",
+            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0;background-color:{{config.macros[0].color}}") {{config.macros[0].name}}
+       button.macros-buttons(title="Click to run Macros 2", @click="runMacros(1)",
             :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 2
-       button.macros-buttons(title="Click to run Macros 3", @click="open",
+       button.macros-buttons(title="Click to run Macros 3", @click="runMacros(2)",
             :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 3
-       button.macros-buttons(title="Click to run Macros 4", @click="open",
+       button.macros-buttons(title="Click to run Macros 4", @click="runMacros(3)",
             :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 4
-       button.macros-buttons(title="Click to run Macros 5", @click="open",
+       button.macros-buttons(title="Click to run Macros 5", @click="runMacros(4)",
             :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 5
-       button.macros-buttons(title="Click to run Macros 6", @click="open",
+       button.macros-buttons(title="Click to run Macros 6", @click="runMacros(5)",
             :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 6
 
 

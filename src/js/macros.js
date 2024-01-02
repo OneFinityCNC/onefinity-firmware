@@ -89,6 +89,9 @@ module.exports = {
             this.config.macros[id].color=macrosColor;
             this.config.macros[id].gcode=this.state.selected;
             
+            console.log(this.state.selected_time);
+            console.log(typeof(this.state.selected_time));
+
             console.log(this.config.macros);
             try {
                 await api.put("config/save",this.config);
