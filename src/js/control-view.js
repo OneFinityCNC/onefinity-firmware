@@ -203,7 +203,13 @@ module.exports = {
             return Math.min(1, p);
         },
         isMacrosPresent: function(val){
-            return this.config.macros[val].name!="" || this.config.macros[val].gcode!="";
+            try{
+                const res = this.config.macros[val].name!="" || this.config.macros[val].gcode!="";
+                console.log("result: ",val," : res");
+                return res;
+            }catch(err){
+                console.log("Error for macros present: ",err);
+            }
         },
     },
 

@@ -82,25 +82,29 @@ module.exports = {
             });
         },
         saveMacros: async function(id){
-            var macrosName = document.getElementById("macros-name").value;
-            var macrosColor = document.getElementById("macros-color").value;
-            if(this.config.macros == undefined) {
-                console.log("macros is undefined");
-                this.config.macros=[];
-            }else{
-                this.config.macros[id].name=macrosName;
-                this.config.macros[id].color=macrosColor;
-                this.config.macros[id].gcode=this.state.selected;
-            }
-            console.log(this.config.macros);
-            try {
-                await api.put("config/save",this.config);
-                console.log("Successfully saved");
-                this.$dispatch("update");
-            } catch (error) {
-                console.error("Restore Failed: ",error);
-                alert("Restore failed");
-            }
+            console.log(typeof(id)," type");
+            var macrosName = document.getElementById(`macros-name-${id}`).value;
+            var macrosColor = document.getElementById(`macros-color-${id}`).value;
+
+            console.log(macrosName);
+            console.log(macrosColor);
+            // if(this.config.macros == undefined) {
+            //     console.log("macros is undefined");
+            //     this.config.macros=[];
+            // }else{
+            //     this.config.macros[id].name=macrosName;
+            //     this.config.macros[id].color=macrosColor;
+            //     this.config.macros[id].gcode=this.state.selected;
+            // }
+            // console.log(this.config.macros);
+            // try {
+            //     await api.put("config/save",this.config);
+            //     console.log("Successfully saved");
+            //     this.$dispatch("update");
+            // } catch (error) {
+            //     console.error("Restore Failed: ",error);
+            //     alert("Restore failed");
+            // }
         },
         printConfig: function(){
             console.log(this.config);

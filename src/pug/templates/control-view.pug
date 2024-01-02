@@ -208,18 +208,18 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
     .macros-div(class="present")
-       button.macros-buttons(title="Edit Macros 1", @click="open",
-            :disabled="!isMacrosPresent(0)",style="height:100px;width:100px;font-weight:normal") Macros 1
-       button.macros-buttons(title="Edit Macros 1", @click="open",
-            :disabled="!isMacrosPresent(1)",style="height:100px;width:100px;font-weight:normal") Macros 2
-       button.macros-buttons(title="Edit Macros 1", @click="open",
-            :disabled="!isMacrosPresent(2)",style="height:100px;width:100px;font-weight:normal") Macros 3
-       button.macros-buttons(title="Edit Macros 1", @click="open",
-            :disabled="!isMacrosPresent(3)",style="height:100px;width:100px;font-weight:normal") Macros 4
-       button.macros-buttons(title="Edit Macros 1", @click="open",
-            :disabled="!isMacrosPresent(4)",style="height:100px;width:100px;font-weight:normal") Macros 5
-       button.macros-buttons(title="Edit Macros 1", @click="open",
-            :disabled="!isMacrosPresent(5)",style="height:100px;width:100px;font-weight:normal") Macros 6
+       button.macros-buttons(title="Click to run Macros 1", @click="open",
+            :disabled="!isMacrosPresent(0)",style="height:60px;width:100px;font-weight:normal") Macros 1
+       button.macros-buttons(title="Click to run Macros 2", @click="open",
+            :disabled="!isMacrosPresent(1)",style="height:60px;width:100px;font-weight:normal") Macros 2
+       button.macros-buttons(title="Click to run Macros 3", @click="open",
+            :disabled="!isMacrosPresent(2)",style="height:60px;width:100px;font-weight:normal") Macros 3
+       button.macros-buttons(title="Click to run Macros 4", @click="open",
+            :disabled="!isMacrosPresent(3)",style="height:60px;width:100px;font-weight:normal") Macros 4
+       button.macros-buttons(title="Click to run Macros 5", @click="open",
+            :disabled="!isMacrosPresent(4)",style="height:60px;width:100px;font-weight:normal") Macros 5
+       button.macros-buttons(title="Click to run Macros 6", @click="open",
+            :disabled="!isMacrosPresent(5)",style="height:60px;width:100px;font-weight:normal") Macros 6
 
 
     .tabs

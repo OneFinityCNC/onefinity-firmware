@@ -14,12 +14,18 @@ script#macros-template(type="text/x-template")
         input#tab4(type="radio", name="tabs", @click="tab = '4'")
         label(for="tab4",style="height:50px;width:100px") Macros 4
 
+        input#tab4(type="radio", name="tabs", @click="tab = '5'")
+        label(for="tab4",style="height:50px;width:100px") Macros 5
+
+        input#tab4(type="radio", name="tabs", @click="tab = '6'")
+        label(for="tab4",style="height:50px;width:100px") Macros 6
+
         section#content1.tab-content
                 .macros-form
                         p.title Enter Macros 1 Name
                         .input-container
-                                input.input-color(type="color",id="macros-color",value="#ffffff") 
-                                input.input-name(type="text",id="macros-name")
+                                input.input-color(type="color",id="macros-color-0",value="#ffffff") 
+                                input.input-name(type="text",id="macros-name-0")
                         p.title Select/Upload G-Code
                         select(title="Select previously uploaded GCode programs.",
                                 v-model="state.selected", @change="load", :disabled="!is_ready",
@@ -40,8 +46,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Enter Macros 2 Name
                         .input-container
-                                input.input-color(type="color",id="macros-color",value="#ffffff") 
-                                input.input-name(type="text",id="macros-name")
+                                input.input-color(type="color",id="macros-color-1",value="#ffffff") 
+                                input.input-name(type="text",id="macros-name-1")
                         p.title Select/Upload G-Code
                         select(title="Select previously uploaded GCode programs.",
                                 v-model="state.selected", @change="load", :disabled="!is_ready",
@@ -62,8 +68,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Enter Macros 3 Name
                         .input-container
-                                input.input-color(type="color",id="macros-color",value="#ffffff") 
-                                input.input-name(type="text",id="macros-name")
+                                input.input-color(type="color",id="macros-color-2",value="#ffffff") 
+                                input.input-name(type="text",id="macros-name-2")
                         p.title Select/Upload G-Code
                         select(title="Select previously uploaded GCode programs.",
                                 v-model="state.selected", @change="load", :disabled="!is_ready",
@@ -84,8 +90,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Enter Macros 4 Name
                         .input-container
-                                input.input-color(type="color",id="macros-color",value="#ffffff") 
-                                input.input-name(type="text",id="macros-name")
+                                input.input-color(type="color",id="macros-color-3",value="#ffffff") 
+                                input.input-name(type="text",id="macros-name-3")
                         p.title Select/Upload G-Code
                         select(title="Select previously uploaded GCode programs.",
                                 v-model="state.selected", @change="load", :disabled="!is_ready",
@@ -100,6 +106,50 @@ script#macros-template(type="text/x-template")
                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         button.submit-macros(title="Save Macros",@click="saveMacros(3)",
+                                style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
+
+        section#content5.tab-content
+                .macros-form
+                        p.title Enter Macros 5 Name
+                        .input-container
+                                input.input-color(type="color",id="macros-color-4",value="#ffffff") 
+                                input.input-name(type="text",id="macros-name-4")
+                        p.title Select/Upload G-Code
+                        select(title="Select previously uploaded GCode programs.",
+                                v-model="state.selected", @change="load", :disabled="!is_ready",
+                                style="max-width:100%;height:40px;border-radius:5px")
+                                option(v-for="file in state.files", :value="file") {{file}}
+
+                        button.pure-button(title="Upload a new GCode program.", @click="open",
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+
+                        form.gcode-file-input.file-upload
+                        input(type="file", @change="upload", :disabled="!is_ready",
+                        accept=".nc,.ngc,.gcode,.gc")
+                        br
+                        button.submit-macros(title="Save Macros",@click="saveMacros(4)",
+                                style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
+
+        section#content6.tab-content
+                .macros-form
+                        p.title Enter Macros 6 Name
+                        .input-container
+                                input.input-color(type="color",id="macros-color-5",value="#ffffff") 
+                                input.input-name(type="text",id="macros-name-5")
+                        p.title Select/Upload G-Code
+                        select(title="Select previously uploaded GCode programs.",
+                                v-model="state.selected", @change="load", :disabled="!is_ready",
+                                style="max-width:100%;height:40px;border-radius:5px")
+                                option(v-for="file in state.files", :value="file") {{file}}
+
+                        button.pure-button(title="Upload a new GCode program.", @click="open",
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+
+                        form.gcode-file-input.file-upload
+                                input(type="file", @change="upload", :disabled="!is_ready",
+                                accept=".nc,.ngc,.gcode,.gc")
+                        br
+                        button.submit-macros(title="Save Macros",@click="saveMacros(5)",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
         
         button.pure-button(title="Print config.", @click="printConfig",
