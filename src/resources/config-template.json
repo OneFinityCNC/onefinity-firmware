@@ -590,39 +590,39 @@
     "default":[
       { 
         "id" : 1,
-        "name" : null,
-        "color":null,
-        "gcode":null
+        "name" : "",
+        "color":"#d9d9d9",
+        "gcode":""
       },
       { 
         "id" : 2,
-        "name" : null,
-        "color":null,
-        "gcode":null
+        "name" : "",
+        "color":"#d9d9d9",
+        "gcode":""
       },
       { 
         "id" : 3,
-        "name" : null,
-        "color":null,
-        "gcode":null
+        "name" : "",
+        "color":"#d9d9d9",
+        "gcode":""
       },
       { 
         "id" : 4,
-        "name" : null,
-        "color":null,
-        "gcode":null
+        "name" : "",
+        "color":"#d9d9d9",
+        "gcode":""
       },
       { 
         "id" : 5,
-        "name" : null,
-        "color":null,
-        "gcode":null
+        "name" : "",
+        "color":"#d9d9d9",
+        "gcode":""
       },
       { 
         "id" : 6,
-        "name" : null,
-        "color":null,
-        "gcode":null
+        "name" : "",
+        "color":"#d9d9d9",
+        "gcode":""
       }
     ],
     "template": {
@@ -631,15 +631,15 @@
       },
       "name": {
         "type": "text",
-        "default": null
+        "default": ""
       },
       "color": {
         "type": "text",
-        "default":null
+        "default":""
       },
       "gcode": {
         "type": "text",
-        "default":null
+        "default":""
       }
     }
   },
