@@ -586,28 +586,49 @@
 
   "macros": {
     "type":"list",
-    "index":"123",
+    "index":"123456",
     "default":[
       { 
-        "id" : "1",
+        "id" : 1,
         "name" : null,
         "color":null,
         "gcode":null
       },
       { 
-        "id" : "1",
+        "id" : 2,
         "name" : null,
         "color":null,
         "gcode":null
       },
       { 
-        "id" : "1",
+        "id" : 3,
+        "name" : null,
+        "color":null,
+        "gcode":null
+      },
+      { 
+        "id" : 4,
+        "name" : null,
+        "color":null,
+        "gcode":null
+      },
+      { 
+        "id" : 5,
+        "name" : null,
+        "color":null,
+        "gcode":null
+      },
+      { 
+        "id" : 6,
         "name" : null,
         "color":null,
         "gcode":null
       }
     ],
     "template": {
+      "id": {
+        "type": "int"
+      },
       "name": {
         "type": "text",
         "default": null

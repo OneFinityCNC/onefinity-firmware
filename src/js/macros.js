@@ -9,7 +9,7 @@ module.exports = {
 
     data: function (){
         return {
-            toolpath_progress: 0,
+            tab: "1",
         }
     },
     components: {
@@ -81,16 +81,16 @@ module.exports = {
                 }
             });
         },
-        saveMacros: async function(){
+        saveMacros: async function(id){
             var macrosName = document.getElementById("macros-name").value;
             var macrosColor = document.getElementById("macros-color").value;
             if(this.config.macros == undefined) {
                 console.log("macros is undefined");
                 this.config.macros=[];
             }else{
-                this.config.macros[0].name=macrosName;
-                this.config.macros[0].color=macrosColor;
-                this.config.macros[0].gcode=this.state.selected;
+                this.config.macros[id].name=macrosName;
+                this.config.macros[id].color=macrosColor;
+                this.config.macros[id].gcode=this.state.selected;
             }
             console.log(this.config.macros);
             try {

@@ -202,8 +202,8 @@ module.exports = {
             const p = this.plan_time / this.toolpath.time;
             return Math.min(1, p);
         },
-        isMacrosPresent: function(){
-            return this.config.macros!=undefined;
+        isMacrosPresent: function(val){
+            return this.config.macros[val].name=null;
         },
     },
 
