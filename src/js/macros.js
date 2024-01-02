@@ -38,9 +38,9 @@ module.exports = {
         },
         load: function() {
             const file_time = this.state.selected_time;
-            console.log('file_time',this.state.selected_time);
+            console.log('file_time',file_time);
             const file = this.state.selected;
-            console.log("file: ",this.state.selected);
+            console.log("file: ",file);
             // if (this.last_file == file && this.last_file_time == file_time) {
             //     return;
             // }
@@ -88,12 +88,9 @@ module.exports = {
                 console.log("macros is undefined");
                 this.config.macros=[];
             }else{
-                this.config.macros.push({
-                    id:Math.round(Math.random()*100000),
-                    name:macrosName,
-                    color:macrosColor,
-                    gcode:this.state.selected,
-                })
+                this.config.macros[0].name=macrosName;
+                this.config.macros[0].color=macrosColor;
+                this.config.macros[0].gcode=this.state.selected;
             }
             console.log(this.config.macros);
             try {

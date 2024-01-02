@@ -588,14 +588,37 @@
     "type":"list",
     "index":"123",
     "default":[
-      { "name" : "Macros 1"},
-      { "name" : "Macros 2"},
-      { "name" : "Macros 3"}
+      { 
+        "id" : "1",
+        "name" : null,
+        "color":null,
+        "gcode":null
+      },
+      { 
+        "id" : "1",
+        "name" : null,
+        "color":null,
+        "gcode":null
+      },
+      { 
+        "id" : "1",
+        "name" : null,
+        "color":null,
+        "gcode":null
+      }
     ],
     "template": {
       "name": {
         "type": "text",
-        "default": "New Macro"
+        "default": null
+      },
+      "color": {
+        "type": "text",
+        "default":null
+      },
+      "gcode": {
+        "type": "text",
+        "default":null
       }
     }
   },
