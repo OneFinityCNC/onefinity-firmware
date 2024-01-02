@@ -591,32 +591,38 @@
       {
          "name":"Macros 1",
          "color": "",
-         "gcode": ""
+         "gcode_file_name": "",
+         "gcode_file_time": 0
       },
       {
          "name":"Macros 2",
          "color": "",
-         "gcode": ""
+         "gcode_file_name": "",
+         "gcode_file_time": 0
       },
       {
          "name":"Macros 3",
          "color": "",
-         "gcode": ""
+         "gcode_file_name": "",
+         "gcode_file_time": 0
       },
       {
          "name":"Macros 4",
          "color": "",
-         "gcode": ""
+         "gcode_file_name": "",
+         "gcode_file_time": 0
       },
       {
          "name":"Macros 5",
          "color": "",
-         "gcode": ""
+         "gcode_file_name": "",
+         "gcode_file_time": 0
       },
       {
          "name":"Macros 6",
          "color": "",
-         "gcode": ""
+         "gcode_file_name": "",
+         "gcode_file_time": 0
       }
     ],
     "template": {
@@ -626,11 +632,15 @@
       },
       "color": {
         "type": "text",
-        "default": "Default Color"
+        "default": "#efefef"
       },
-      "gcode": {
+      "gcode_file_name": {
         "type": "text",
         "default": "Default G-Code"
+      },
+      "gcode_file_time": {
+        "type": "int",
+        "default": 0
       }
     }
   },

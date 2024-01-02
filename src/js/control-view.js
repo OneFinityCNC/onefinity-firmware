@@ -502,6 +502,19 @@ module.exports = {
 
         showProbeDialog: function(probeType) {
             SvelteComponents.showDialog("Probe", { probeType });
+        },
+        runMacros : function(id){
+            if( this.config.macros[id].gcode_file_name != this.state.selected || this.config.macros[id].gcode_file_time != this.state.selected_time ){
+                this.state.selected=this.config.macros[id].gcode_file_name;
+                this.state.selected_time=this.config.macros[id].gcode_file_time
+            }
+            try{
+                this.load();
+                console.log("Loaded file");
+                // this.start_pause();
+            }catch(error){
+                console.warn("Error running program: ",error);
+            }
         }
     },
 

@@ -209,17 +209,17 @@ script#control-view-template(type="text/x-template")
 
     .macros-div(class="present")
        button.macros-buttons(title="Click to run Macros 1", @click="runMacros(0)",
-            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0;background-color:{{config.macros[0].color}}") {{config.macros[0].name}}
+            :disabled="!true",v-bind:style="background-color:{{config.macros[0].color}};color:#fff") {{config.macros[0].name}}
        button.macros-buttons(title="Click to run Macros 2", @click="runMacros(1)",
-            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 2
+            :disabled="!true",v-bind:style="background-color:{{config.macros[1].color}};color:#fff") {{config.macros[1].name}}
        button.macros-buttons(title="Click to run Macros 3", @click="runMacros(2)",
-            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 3
+            :disabled="!true",v-bind:style="background-color:{{config.macros[2].color}};color:#fff") {{config.macros[2].name}}
        button.macros-buttons(title="Click to run Macros 4", @click="runMacros(3)",
-            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 4
+            :disabled="!true",v-bind:style="background-color:{{config.macros[3].color}};color:#fff") {{config.macros[3].name}}
        button.macros-buttons(title="Click to run Macros 5", @click="runMacros(4)",
-            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 5
+            :disabled="!true",v-bind:style="background-color:{{config.macros[4].color}};color:#fff") {{config.macros[4].name}}
        button.macros-buttons(title="Click to run Macros 6", @click="runMacros(5)",
-            :disabled="!true",style="height:60px;width:100px;font-weight:normal;border-radius:15px;border:0") Macros 6
+            :disabled="!true",v-bind:style="background-color:{{config.macros[5].color}};color:#fff") {{config.macros[5].name}}
 
 
     .tabs

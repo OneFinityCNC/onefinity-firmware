@@ -87,10 +87,8 @@ module.exports = {
 
             this.config.macros[id].name=macrosName;
             this.config.macros[id].color=macrosColor;
-            this.config.macros[id].gcode=this.state.selected;
-            
-            console.log(this.state.selected_time);
-            console.log(typeof(this.state.selected_time));
+            this.config.macros[id].gcode_file_name=this.state.selected;
+            this.config.macros[id].gcode_file_time=this.state.selected_time;
 
             console.log(this.config.macros);
             try {
