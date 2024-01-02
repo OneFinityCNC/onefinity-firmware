@@ -209,17 +209,17 @@ script#control-view-template(type="text/x-template")
 
     .macros-div(class="present")
        button.macros-buttons(title="Click to run Macros 1", @click="runMacros(0)",
-            :disabled="!true",v-bind:style="background-color:{{config.macros[0].color}};color:#fff") {{config.macros[0].name}}
+            :disabled="!true",v-bind:style="{ backgroundColor: config.macros[0].color }") {{config.macros[0].name}}
        button.macros-buttons(title="Click to run Macros 2", @click="runMacros(1)",
-            :disabled="!true",v-bind:style="background-color:{{config.macros[1].color}};color:#fff") {{config.macros[1].name}}
+            :disabled="!true",v-bind:style="{ backgroundColor: config.macros[1].color }") {{config.macros[1].name}}
        button.macros-buttons(title="Click to run Macros 3", @click="runMacros(2)",
-            :disabled="!true",v-bind:style="background-color:{{config.macros[2].color}};color:#fff") {{config.macros[2].name}}
+            :disabled="!true",v-bind:style="{ backgroundColor: config.macros[2].color }") {{config.macros[2].name}}
        button.macros-buttons(title="Click to run Macros 4", @click="runMacros(3)",
-            :disabled="!true",v-bind:style="background-color:{{config.macros[3].color}};color:#fff") {{config.macros[3].name}}
+            :disabled="!true",v-bind:style="{ backgroundColor: config.macros[3].color }") {{config.macros[3].name}}
        button.macros-buttons(title="Click to run Macros 5", @click="runMacros(4)",
-            :disabled="!true",v-bind:style="background-color:{{config.macros[4].color}};color:#fff") {{config.macros[4].name}}
+            :disabled="!true",v-bind:style="{ backgroundColor: config.macros[4].color }") {{config.macros[4].name}}
        button.macros-buttons(title="Click to run Macros 6", @click="runMacros(5)",
-            :disabled="!true",v-bind:style="background-color:{{config.macros[5].color}};color:#fff") {{config.macros[5].name}}
+            :disabled="!true",v-bind:style="{ backgroundColor: config.macros[5].color }") {{config.macros[5].name}}
 
 
     .tabs

@@ -628,7 +628,7 @@
     "template": {
       "name": {
         "type": "text",
-        "default": "Default Message"
+        "default": "Default Name"
       },
       "color": {
         "type": "text",
@@ -636,7 +636,7 @@
       },
       "gcode_file_name": {
         "type": "text",
-        "default": "Default G-Code"
+        "default": ""
       },
       "gcode_file_time": {
         "type": "int",
