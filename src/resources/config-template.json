@@ -590,58 +590,29 @@
     "default":[
       { 
         "id" : 1,
-        "name" : "",
-        "color":"#d9d9d9",
-        "gcode":""
+        "name": "Macros 1"
       },
       { 
         "id" : 2,
-        "name" : "",
-        "color":"#d9d9d9",
-        "gcode":""
+        "name": "Macros 2"
       },
       { 
         "id" : 3,
-        "name" : "",
-        "color":"#d9d9d9",
-        "gcode":""
+        "name": "Macros 3"
       },
       { 
         "id" : 4,
-        "name" : "",
-        "color":"#d9d9d9",
-        "gcode":""
+        "name": "Macros 4"
       },
       { 
         "id" : 5,
-        "name" : "",
-        "color":"#d9d9d9",
-        "gcode":""
+        "name": "Macros 5"
       },
       { 
         "id" : 6,
-        "name" : "",
-        "color":"#d9d9d9",
-        "gcode":""
+        "name": "Macros 6"
       }
-    ],
-    "template": {
-      "id": {
-        "type": "int"
-      },
-      "name": {
-        "type": "text",
-        "default": ""
-      },
-      "color": {
-        "type": "text",
-        "default":""
-      },
-      "gcode": {
-        "type": "text",
-        "default":""
-      }
-    }
+    ]
   },
 
   "admin": {
