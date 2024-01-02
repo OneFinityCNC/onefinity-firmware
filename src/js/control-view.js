@@ -511,7 +511,7 @@ module.exports = {
             try{
                 this.load();
                 console.log("Loaded file");
-                // this.start_pause();
+                this.start_pause();
             }catch(error){
                 console.warn("Error running program: ",error);
             }

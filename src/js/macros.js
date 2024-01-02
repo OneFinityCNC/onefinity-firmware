@@ -100,7 +100,10 @@ module.exports = {
                 alert("Restore failed");
             }
         },
-        printConfig: async function(){
+        printConfig: function(){
+            console.log(this.config);
+        },
+        flushConfig: async function(){
             this.config.macros=[
                 {
                    name:"Macros 1",
@@ -110,25 +113,25 @@ module.exports = {
                 },
                 {
                     name:"Macros 2",
-                    color: "",
+                    color: "#efefef",
                     gcode_file_name: " ",
                     gcode_file_time: 0
                  },
                  {
                     name:"Macros 3",
-                    color: "",
+                    color: "#efefef",
                     gcode_file_name: " ",
                     gcode_file_time: 0
                  },
                  {
                     name:"Macros 4",
-                    color: "",
+                    color: "#efefef",
                     gcode_file_name: " ",
                     gcode_file_time: 0
                  },
                  {
                     name:"Macros 5",
-                    color: "",
+                    color: "#efefef",
                     gcode_file_name: " ",
                     gcode_file_time: 0
                  },
@@ -141,7 +144,7 @@ module.exports = {
             ]
             try {
                 await api.put("config/save",this.config);
-                console.log("Successfully saved");
+                console.log("Successfully flushed");
                 this.$dispatch("update");
             } catch (error) {
                 console.error("Restore Failed: ",error);
