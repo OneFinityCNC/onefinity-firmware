@@ -588,31 +588,19 @@
     "type":"list",
     "index":"123456",
     "default":[
-      { 
-        "id" : 1,
-        "name": "Macros 1"
-      },
-      { 
-        "id" : 2,
-        "name": "Macros 2"
-      },
-      { 
-        "id" : 3,
-        "name": "Macros 3"
-      },
-      { 
-        "id" : 4,
-        "name": "Macros 4"
-      },
-      { 
-        "id" : 5,
-        "name": "Macros 5"
-      },
-      { 
-        "id" : 6,
-        "name": "Macros 6"
+      { "name":"Macros 1"},
+      { "name":"Macros 2"},
+      { "name":"Macros 3"},
+      { "name":"Macros 4"},
+      { "name":"Macros 5"},
+      { "name":"Macros 6"}
+    ],
+    "template": {
+      "name": {
+        "type": "text",
+        "default": "Default Message"
       }
-    ]
+    }
   },
 
   "admin": {
