@@ -15,10 +15,10 @@ script#macros-template(type="text/x-template")
         label(for="tab4",style="height:50px;width:100px") Macros 4
 
         input#tab4(type="radio", name="tabs", @click="tab = '5'")
-        label(for="tab4",style="height:50px;width:100px") Macros 5
+        label(for="tab5",style="height:50px;width:100px") Macros 5
 
         input#tab4(type="radio", name="tabs", @click="tab = '6'")
-        label(for="tab4",style="height:50px;width:100px") Macros 6
+        label(for="tab6",style="height:50px;width:100px") Macros 6
 
         section#content1.tab-content
                 .macros-form
@@ -36,8 +36,8 @@ script#macros-template(type="text/x-template")
                                 :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
 
                         form.gcode-file-input.file-upload
-                        input(type="file", @change="upload", :disabled="!is_ready",
-                        accept=".nc,.ngc,.gcode,.gc")
+                                input(type="file", @change="upload", :disabled="!is_ready",
+                                accept=".nc,.ngc,.gcode,.gc")
                         br
                         button.submit-macros(title="Save Macros",@click="saveMacros(0)",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
@@ -58,8 +58,8 @@ script#macros-template(type="text/x-template")
                                 :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
 
                         form.gcode-file-input.file-upload
-                        input(type="file", @change="upload", :disabled="!is_ready",
-                        accept=".nc,.ngc,.gcode,.gc")
+                                input(type="file", @change="upload", :disabled="!is_ready",
+                                accept=".nc,.ngc,.gcode,.gc")
                         br
                         button.submit-macros(title="Save Macros",@click="saveMacros(1)",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
@@ -80,8 +80,8 @@ script#macros-template(type="text/x-template")
                                 :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
 
                         form.gcode-file-input.file-upload
-                        input(type="file", @change="upload", :disabled="!is_ready",
-                        accept=".nc,.ngc,.gcode,.gc")
+                                input(type="file", @change="upload", :disabled="!is_ready",
+                                accept=".nc,.ngc,.gcode,.gc")
                         br
                         button.submit-macros(title="Save Macros",@click="saveMacros(2)",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
@@ -102,8 +102,8 @@ script#macros-template(type="text/x-template")
                                 :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
 
                         form.gcode-file-input.file-upload
-                        input(type="file", @change="upload", :disabled="!is_ready",
-                        accept=".nc,.ngc,.gcode,.gc")
+                                input(type="file", @change="upload", :disabled="!is_ready",
+                                accept=".nc,.ngc,.gcode,.gc")
                         br
                         button.submit-macros(title="Save Macros",@click="saveMacros(3)",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
@@ -124,8 +124,8 @@ script#macros-template(type="text/x-template")
                                 :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
 
                         form.gcode-file-input.file-upload
-                        input(type="file", @change="upload", :disabled="!is_ready",
-                        accept=".nc,.ngc,.gcode,.gc")
+                                input(type="file", @change="upload", :disabled="!is_ready",
+                                accept=".nc,.ngc,.gcode,.gc")
                         br
                         button.submit-macros(title="Save Macros",@click="saveMacros(4)",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border-color:#add1ad;margin-top:30px") Save Macros
