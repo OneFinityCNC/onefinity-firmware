@@ -10,7 +10,7 @@ module.exports = {
   data: function () {
     return {
       tab: "1",
-      confirmShow: false,
+      confirmReset: false,
     };
   },
   components: {
@@ -92,7 +92,7 @@ module.exports = {
     },
     cancelMacros: function (id) {
       document.getElementById(`macros-name-${id}`).value = "";
-      document.getElementById(`macros-color-${id}`).value = "#fff";
+      document.getElementById(`macros-color-${id}`).value = "#ffffff";
     },
     resetConfig: async function () {
       this.config.macros = [
@@ -137,6 +137,7 @@ module.exports = {
         await api.put("config/save", this.config);
         console.log("Successfully flushed");
         this.$dispatch("update");
+        this.confirmReset = false;
       } catch (error) {
         console.error("Restore Failed: ", error);
         alert("Restore failed");

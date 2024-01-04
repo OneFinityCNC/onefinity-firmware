@@ -1,16 +1,16 @@
 script#macros-template(type="text/x-template")
   #macros
-    message(:show.sync="confirmUpload")
-      h3(slot="header") Upload Firmware?
+    message(:show.sync="confirmReset")
+      h3(slot="header") Reset All Macros?
       div(slot="body")
-        p Are you sure you want to upload firmware #[em {{firmwareName}}]?
+        p Are you sure you want to reset all macros?
 
       div(slot="footer")
-        button.pure-button(@click="confirmUpload=false") Cancel
-        button.pure-button.pure-button-primary(@click="saveMacros(0)")
-          | Upload
+        button.pure-button(@click="confirmReset=false") Cancel
+        button.pure-button.pure-button-primary(@click="resetConfig")
+          | Reset
     h1 Macros Configuration
-    button.pure-button(title="Print config.", @click="resetConfig",
+    button.pure-button(title="Print config.", @click="confirmReset='true'",
         style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros
         .fa.fa-rotate-right
     .warning-box
