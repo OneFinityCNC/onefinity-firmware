@@ -44,10 +44,10 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0")
                         p.title G-Code
                         .select-upload-gcode                      
-                                select#gcodeSelect(title="Select previously uploaded GCode programs.",selected
+                                select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
                                         v-model="state.selected",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
-                                        option(disabled='' selected='' value='default')  -- select an option --
+                                        option(disabled='' selected='' value='default')  Select an option
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
@@ -72,9 +72,10 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-1")
                         p.title G-Code
                         .select-upload-gcode
-                                select(title="Select previously uploaded GCode programs.",
+                                select#gcodeSelect-1(title="Select previously uploaded GCode programs.",
                                         v-model="state.selected", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  Select an option
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
@@ -99,9 +100,10 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-2")
                         p.title G-Code
                         .select-upload-gcode
-                                select(title="Select previously uploaded GCode programs.",
+                                select#gcodeSelect-2(title="Select previously uploaded GCode programs.",
                                         v-model="state.selected", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  Select an option
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
@@ -126,9 +128,10 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-3")
                         p.title G-Code
                         .select-upload-gcode
-                                select(title="Select previously uploaded GCode programs.",
+                                select#gcodeSelect-3(title="Select previously uploaded GCode programs.",
                                         v-model="state.selected", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  Select an option
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
@@ -153,9 +156,10 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-4")
                         p.title G-Code
                         .select-upload-gcode
-                                select(title="Select previously uploaded GCode programs.",
+                                select#gcodeSelect-4(title="Select previously uploaded GCode programs.",
                                         v-model="state.selected", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  Select an option
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
@@ -180,9 +184,10 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-5")
                         p.title G-Code
                         .select-upload-gcode
-                                select(title="Select previously uploaded GCode programs.",
+                                select#gcodeSelect-5(title="Select previously uploaded GCode programs.",
                                         v-model="state.selected", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  Select an option
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",

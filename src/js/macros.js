@@ -93,6 +93,7 @@ module.exports = {
     cancelMacros: function (id) {
       document.getElementById(`macros-name-${id}`).value = "";
       document.getElementById(`macros-color-${id}`).value = "#ffffff";
+      document.getElementById(`gcodeSelect-${id}`).value="default";
       this.$broadcast("gcode-clear");
     },
     resetConfig: async function () {
