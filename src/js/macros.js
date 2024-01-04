@@ -104,7 +104,7 @@ module.exports = {
     },
     cancelMacros: function (id) {
         document.getElementById(`macros-name-${id}`).value = '';
-        document.getElementById(`macros-color-${id}`).value = '';
+        document.getElementById(`macros-color-${id}`).value = '#fff';
     },
     resetConfig: async function () {
       this.config.macros = [
