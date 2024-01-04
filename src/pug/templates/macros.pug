@@ -44,15 +44,16 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0")
                         p.title G-Code
                         .select-upload-gcode                      
-                                select(title="Select previously uploaded GCode programs.",
+                                select#gcodeSelect(title="Select previously uploaded GCode programs.",selected
                                         v-model="state.selected",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  -- select an option --
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
                                         :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
                                         .fa.fa-upload
-                                        
+
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")

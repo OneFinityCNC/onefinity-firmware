@@ -80,7 +80,7 @@ module.exports = {
       this.config.macros[id].gcode_file_name = this.state.selected;
       this.config.macros[id].gcode_file_time = this.state.selected_time;
       console.log(this.config.macros);
-      this.cancelMacros();
+      this.cancelMacros(id);
       try {
         await api.put("config/save", this.config);
         console.log("Successfully saved");
@@ -134,7 +134,7 @@ module.exports = {
           gcode_file_time: 0,
         },
       ];
-      this.confirmReset=false;
+      this.confirmReset = false;
       try {
         await api.put("config/save", this.config);
         console.log("Successfully flushed");
