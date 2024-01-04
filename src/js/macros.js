@@ -4,152 +4,155 @@ const api = require("./api");
 const utils = require("./utils");
 
 module.exports = {
-    template: "#macros-template",
-    props: [ "config", "template", "state" ],
+  template: "#macros-template",
+  props: ["config", "template", "state"],
 
-    data: function (){
-        return {
-            tab: "1",
-        }
+  data: function () {
+    return {
+      tab: "1",
+    };
+  },
+  components: {
+    "axis-control": require("./axis-control"),
+    "path-viewer": require("./path-viewer"),
+    "gcode-viewer": require("./gcode-viewer"),
+  },
+  computed: {
+    mach_state: function () {
+      const cycle = this.state.cycle;
+      const state = this.state.xx;
+
+      if (state != "ESTOPPED" && (cycle == "jogging" || cycle == "homing")) {
+        return cycle.toUpperCase();
+      }
+
+      return state || "";
     },
-    components: {
-        "axis-control": require("./axis-control"),
-        "path-viewer": require("./path-viewer"),
-        "gcode-viewer": require("./gcode-viewer")
+    is_ready: function () {
+      return this.mach_state == "READY";
     },
-    computed:{
-        mach_state: function() {
-            const cycle = this.state.cycle;
-            const state = this.state.xx;
-
-            if (state != "ESTOPPED" && (cycle == "jogging" || cycle == "homing")) {
-                return cycle.toUpperCase();
-            }
-            
-            return state || "";
-        },
-        is_ready: function() {
-            return this.mach_state == "READY";
-        },
+  },
+  methods: {
+    open: function () {
+      utils.clickFileInput("gcode-file-input");
     },
-    methods:{
-        open: function() {
-            utils.clickFileInput("gcode-file-input");
+    load: function () {
+      const file_time = this.state.selected_time;
+      console.log("file_time", file_time);
+      const file = this.state.selected;
+      console.log("file: ", file);
+      console.log("last_file: ",this.last_file);
+      console.log("last_file_time: ",this.last_file_time);
+      // if (this.last_file == file && this.last_file_time == file_time) {
+      //     return;
+      // }
+
+    //   this.last_file = file;
+    //   this.last_file_time = file_time;
+
+      // this.$broadcast("gcode-load", file);
+      // this.$broadcast("gcode-line", this.state.line);
+      // this.toolpath_progress = 0;
+      // this.load_toolpath(file, file_time);
+    },
+    upload: function (e) {
+      const files = e.target.files || e.dataTransfer.files;
+      if (!files.length) {
+        return;
+      }
+
+      const file = files[0];
+      const extension = file.name.split(".").pop();
+      switch (extension.toLowerCase()) {
+        case "nc":
+        case "ngc":
+        case "gcode":
+        case "gc":
+          break;
+
+        default:
+          alert(`Unsupported file type: ${extension}`);
+          return;
+      }
+
+      SvelteComponents.showDialog("Upload", {
+        file,
+        onComplete: () => {
+          this.last_file_time = undefined; // Force reload
+          this.$broadcast("gcode-reload", file.name);
         },
-        load: function() {
-            const file_time = this.state.selected_time;
-            console.log('file_time',file_time);
-            const file = this.state.selected;
-            console.log("file: ",file);
-            // if (this.last_file == file && this.last_file_time == file_time) {
-            //     return;
-            // }
+      });
+    },
+    saveMacros: async function (id) {
+      var macrosName = document.getElementById(`macros-name-${id}`).value;
+      var macrosColor = document.getElementById(`macros-color-${id}`).value;
 
-            // this.last_file = file;
-            // this.last_file_time = file_time;
+      this.config.macros[id].name = macrosName;
+      this.config.macros[id].color = macrosColor;
+      this.config.macros[id].gcode_file_name = this.state.selected;
+      this.config.macros[id].gcode_file_time = this.state.selected_time;
 
-            // this.$broadcast("gcode-load", file);
-            // this.$broadcast("gcode-line", this.state.line);
-            // this.toolpath_progress = 0;
-            // this.load_toolpath(file, file_time);
+      console.log(this.config.macros);
+      try {
+        await api.put("config/save", this.config);
+        console.log("Successfully saved");
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
+    },
+    cancelMacros: function (id) {
+        document.getElementById(`macros-name-${id}`).value = '';
+        document.getElementById(`macros-color-${id}`).value = '';
+    },
+    resetConfig: async function () {
+      this.config.macros = [
+        {
+          name: " ",
+          color: "#efefef",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
         },
-        upload: function(e) {
-            const files = e.target.files || e.dataTransfer.files;
-            if (!files.length) {
-                return;
-            }
-
-            const file = files[0];
-            const extension = file.name.split(".").pop();
-            switch (extension.toLowerCase()) {
-                case "nc":
-                case "ngc":
-                case "gcode":
-                case "gc":
-                    break;
-
-                default:
-                    alert(`Unsupported file type: ${extension}`);
-                    return;
-            }
-
-            SvelteComponents.showDialog("Upload", {
-                file,
-                onComplete: () => {
-                    this.last_file_time = undefined; // Force reload
-                    this.$broadcast("gcode-reload", file.name);
-                }
-            });
+        {
+          name: " ",
+          color: "#efefef",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
         },
-        saveMacros: async function(id){
-            var macrosName = document.getElementById(`macros-name-${id}`).value;
-            var macrosColor = document.getElementById(`macros-color-${id}`).value;
-
-            this.config.macros[id].name=macrosName;
-            this.config.macros[id].color=macrosColor;
-            this.config.macros[id].gcode_file_name=this.state.selected;
-            this.config.macros[id].gcode_file_time=this.state.selected_time;
-
-            console.log(this.config.macros);
-            try {
-                await api.put("config/save",this.config);
-                console.log("Successfully saved");
-                this.$dispatch("update");
-            } catch (error) {
-                console.error("Restore Failed: ",error);
-                alert("Restore failed");
-            }
+        {
+          name: " ",
+          color: "#efefef",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
         },
-        printConfig: function(){
-            console.log(this.config);
+        {
+          name: " ",
+          color: "#efefef",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
         },
-        flushConfig: async function(){
-            this.config.macros=[
-                {
-                   name:"Macros 1",
-                   color: "#efefef",
-                   gcode_file_name: " ",
-                   gcode_file_time: 0
-                },
-                {
-                    name:"Macros 2",
-                    color: "#efefef",
-                    gcode_file_name: " ",
-                    gcode_file_time: 0
-                 },
-                 {
-                    name:"Macros 3",
-                    color: "#efefef",
-                    gcode_file_name: " ",
-                    gcode_file_time: 0
-                 },
-                 {
-                    name:"Macros 4",
-                    color: "#efefef",
-                    gcode_file_name: " ",
-                    gcode_file_time: 0
-                 },
-                 {
-                    name:"Macros 5",
-                    color: "#efefef",
-                    gcode_file_name: " ",
-                    gcode_file_time: 0
-                 },
-                 {
-                    name:"Macros 6",
-                    color: "#efefef",
-                    gcode_file_name: " ",
-                    gcode_file_time: 0
-                 },
-            ]
-            try {
-                await api.put("config/save",this.config);
-                console.log("Successfully flushed");
-                this.$dispatch("update");
-            } catch (error) {
-                console.error("Restore Failed: ",error);
-                alert("Restore failed");
-            }
-        }
-    }
-}
+        {
+          name: " ",
+          color: "#efefef",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
+        },
+        {
+          name: " ",
+          color: "#efefef",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
+        },
+      ];
+      try {
+        await api.put("config/save", this.config);
+        console.log("Successfully flushed");
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
+    },
+  },
+};
