@@ -134,6 +134,7 @@ module.exports = {
           gcode_file_time: 0,
         },
       ];
+      this.confirmReset=false;
       try {
         await api.put("config/save", this.config);
         console.log("Successfully flushed");
