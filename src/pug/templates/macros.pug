@@ -10,7 +10,7 @@ script#macros-template(type="text/x-template")
         button.pure-button.pure-button-primary(@click="resetConfig")
           | Reset
     h1 Macros Configuration
-    button.pure-button(title="Print config.", @click="confirmReset='true'",
+    button.pure-button(title="Reset Macros", @click="confirmReset=true",
         style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros
         .fa.fa-rotate-right
     .warning-box
@@ -49,7 +49,7 @@ script#macros-template(type="text/x-template")
                                 option(v-for="file in state.files", :value="file") {{file}}
 
                         button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
 
                         form.gcode-file-input.file-upload
                                 input(type="file", @change="upload", :disabled="!is_ready",
@@ -74,7 +74,7 @@ script#macros-template(type="text/x-template")
                                 option(v-for="file in state.files", :value="file") {{file}}
 
                         button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
 
                         form.gcode-file-input.file-upload
                                 input(type="file", @change="upload", :disabled="!is_ready",
@@ -99,7 +99,7 @@ script#macros-template(type="text/x-template")
                                 option(v-for="file in state.files", :value="file") {{file}}
 
                         button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
 
                         form.gcode-file-input.file-upload
                                 input(type="file", @change="upload", :disabled="!is_ready",
@@ -124,7 +124,7 @@ script#macros-template(type="text/x-template")
                                 option(v-for="file in state.files", :value="file") {{file}}
 
                         button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
 
                         form.gcode-file-input.file-upload
                                 input(type="file", @change="upload", :disabled="!is_ready",
@@ -149,7 +149,7 @@ script#macros-template(type="text/x-template")
                                 option(v-for="file in state.files", :value="file") {{file}}
 
                         button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
 
                         form.gcode-file-input.file-upload
                                 input(type="file", @change="upload", :disabled="!is_ready",
@@ -174,7 +174,7 @@ script#macros-template(type="text/x-template")
                                 option(v-for="file in state.files", :value="file") {{file}}
 
                         button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px") Upload
+                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
 
                         form.gcode-file-input.file-upload
                                 input(type="file", @change="upload", :disabled="!is_ready",
