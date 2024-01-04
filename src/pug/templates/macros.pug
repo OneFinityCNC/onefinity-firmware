@@ -43,18 +43,19 @@ script#macros-template(type="text/x-template")
                                 input.input-color(type="color",id="macros-color-0",value="#ffffff") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0")
                         p.title G-Code
-                        button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
-                                .fa.fa-upload
+                        .select-upload-gcode                      
+                                select(title="Select previously uploaded GCode programs.",
+                                        v-model="state.selected",@change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(v-for="file in state.files", :value="file") {{file}}
 
-                        form.gcode-file-input.file-upload
-                                input(type="file", @change="upload", :disabled="!is_ready",
-                                accept=".nc,.ngc,.gcode,.gc")
-                        select(title="Select previously uploaded GCode programs.",
-                                v-model="state.selected",@change="load", :disabled="!is_ready",
-                                style="max-width:100%;height:40px;border-radius:5px")
-                                option(v-for="file in state.files", :value="file") {{file}}
-
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
+                                        
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
                         button.submit-macros(title="Save Macros",@click="saveMacros(0)",
@@ -69,18 +70,19 @@ script#macros-template(type="text/x-template")
                                 input.input-color(type="color",id="macros-color-1",value="#ffffff") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-1")
                         p.title G-Code
-                        select(title="Select previously uploaded GCode programs.",
-                                v-model="state.selected", @change="load", :disabled="!is_ready",
-                                style="max-width:100%;height:40px;border-radius:5px")
-                                option(v-for="file in state.files", :value="file") {{file}}
+                        .select-upload-gcode
+                                select(title="Select previously uploaded GCode programs.",
+                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(v-for="file in state.files", :value="file") {{file}}
 
-                        button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
-                                .fa.fa-upload
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
 
-                        form.gcode-file-input.file-upload
-                                input(type="file", @change="upload", :disabled="!is_ready",
-                                accept=".nc,.ngc,.gcode,.gc")
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
                         button.submit-macros(title="Save Macros",@click="saveMacros(1)",
@@ -95,18 +97,19 @@ script#macros-template(type="text/x-template")
                                 input.input-color(type="color",id="macros-color-2",value="#ffffff") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-2")
                         p.title G-Code
-                        select(title="Select previously uploaded GCode programs.",
-                                v-model="state.selected", @change="load", :disabled="!is_ready",
-                                style="max-width:100%;height:40px;border-radius:5px")
-                                option(v-for="file in state.files", :value="file") {{file}}
+                        .select-upload-gcode
+                                select(title="Select previously uploaded GCode programs.",
+                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(v-for="file in state.files", :value="file") {{file}}
 
-                        button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
-                                .fa.fa-upload
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
 
-                        form.gcode-file-input.file-upload
-                                input(type="file", @change="upload", :disabled="!is_ready",
-                                accept=".nc,.ngc,.gcode,.gc")
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
                         button.submit-macros(title="Save Macros",@click="saveMacros(2)",
@@ -121,18 +124,19 @@ script#macros-template(type="text/x-template")
                                 input.input-color(type="color",id="macros-color-3",value="#ffffff") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-3")
                         p.title G-Code
-                        select(title="Select previously uploaded GCode programs.",
-                                v-model="state.selected", @change="load", :disabled="!is_ready",
-                                style="max-width:100%;height:40px;border-radius:5px")
-                                option(v-for="file in state.files", :value="file") {{file}}
+                        .select-upload-gcode
+                                select(title="Select previously uploaded GCode programs.",
+                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(v-for="file in state.files", :value="file") {{file}}
 
-                        button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
-                                .fa.fa-upload
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
 
-                        form.gcode-file-input.file-upload
-                                input(type="file", @change="upload", :disabled="!is_ready",
-                                accept=".nc,.ngc,.gcode,.gc")
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
                         button.submit-macros(title="Save Macros",@click="saveMacros(3)",
@@ -147,18 +151,19 @@ script#macros-template(type="text/x-template")
                                 input.input-color(type="color",id="macros-color-4",value="#ffffff") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-4")
                         p.title G-Code
-                        select(title="Select previously uploaded GCode programs.",
-                                v-model="state.selected", @change="load", :disabled="!is_ready",
-                                style="max-width:100%;height:40px;border-radius:5px")
-                                option(v-for="file in state.files", :value="file") {{file}}
+                        .select-upload-gcode
+                                select(title="Select previously uploaded GCode programs.",
+                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(v-for="file in state.files", :value="file") {{file}}
 
-                        button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
-                                .fa.fa-upload
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
 
-                        form.gcode-file-input.file-upload
-                                input(type="file", @change="upload", :disabled="!is_ready",
-                                accept=".nc,.ngc,.gcode,.gc")
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
                         button.submit-macros(title="Save Macros",@click="saveMacros(4)",
@@ -173,18 +178,19 @@ script#macros-template(type="text/x-template")
                                 input.input-color(type="color",id="macros-color-5",value="#ffffff") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-5")
                         p.title G-Code
-                        select(title="Select previously uploaded GCode programs.",
-                                v-model="state.selected", @change="load", :disabled="!is_ready",
-                                style="max-width:100%;height:40px;border-radius:5px")
-                                option(v-for="file in state.files", :value="file") {{file}}
+                        .select-upload-gcode
+                                select(title="Select previously uploaded GCode programs.",
+                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(v-for="file in state.files", :value="file") {{file}}
 
-                        button.pure-button(title="Upload a new GCode program.", @click="open",
-                                :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
-                                .fa.fa-upload
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
 
-                        form.gcode-file-input.file-upload
-                                input(type="file", @change="upload", :disabled="!is_ready",
-                                accept=".nc,.ngc,.gcode,.gc")
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
                         button.submit-macros(title="Save Macros",@click="saveMacros(5)",
