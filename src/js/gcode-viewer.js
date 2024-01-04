@@ -72,7 +72,7 @@ module.exports = {
             } else {
                 const lines = escapeHTML(text.trimRight())
                     .split(/[\r\n]/)
-                    .map((line, i) => `<li class="ln${i + 1}"><b>${i + 1}</b>${line}</li>`);
+                    .map((line, i) => `<li class="ln${i + 1}" contenteditable="true"><b>${i + 1}</b>${line}</li>`);
 
                 this.clusterize.update(lines);
             }
