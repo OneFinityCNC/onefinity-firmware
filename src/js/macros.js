@@ -138,7 +138,6 @@ module.exports = {
         await api.put("config/save", this.config);
         console.log("Successfully flushed");
         this.$dispatch("update");
-        this.confirmReset = false;
       } catch (error) {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
