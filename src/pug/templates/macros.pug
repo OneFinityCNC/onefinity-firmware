@@ -1,13 +1,22 @@
 script#macros-template(type="text/x-template")
   #macros
+    message(:show.sync="confirmUpload")
+      h3(slot="header") Upload Firmware?
+      div(slot="body")
+        p Are you sure you want to upload firmware #[em {{firmwareName}}]?
+
+      div(slot="footer")
+        button.pure-button(@click="confirmUpload=false") Cancel
+        button.pure-button.pure-button-primary(@click="saveMacros(0)")
+          | Upload
     h1 Macros Configuration
     button.pure-button(title="Print config.", @click="resetConfig",
-        style="height:50px;width:120px;font-weight:normal;color:#fff;background-color:#5a9ad7") Reset Macros
-        fa.fa-rotate-right
+        style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7") Reset Macros
+        .fa.fa-rotate-right
     .warning-box
         p
         u  Note:
-        | Reset the macros to default macros recommended by Onefinity CNC.
+        |  Reset the macros to default macros recommended by Onefinity CNC.
     .tabs
         input#tab1(type="radio", name="tabs",checked="" @click="tab = '1'")
         label(for="tab1",style="height:50px;width:100px") Macros 1

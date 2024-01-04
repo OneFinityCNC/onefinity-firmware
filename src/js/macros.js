@@ -10,6 +10,7 @@ module.exports = {
   data: function () {
     return {
       tab: "1",
+      confirmShow: false,
     };
   },
   components: {
@@ -41,17 +42,17 @@ module.exports = {
       console.log("file_time", file_time);
       const file = this.state.selected;
       console.log("file: ", file);
-      console.log("last_file: ",this.last_file);
-      console.log("last_file_time: ",this.last_file_time);
+    //   console.log("last_file: ", this.last_file);
+    //   console.log("last_file_time: ", this.last_file_time);
       // if (this.last_file == file && this.last_file_time == file_time) {
       //     return;
       // }
 
-    //   this.last_file = file;
-    //   this.last_file_time = file_time;
+      //   this.last_file = file;
+      //   this.last_file_time = file_time;
 
-      // this.$broadcast("gcode-load", file);
-      // this.$broadcast("gcode-line", this.state.line);
+      this.$broadcast("gcode-load", file);
+      this.$broadcast("gcode-line", this.state.line);
       // this.toolpath_progress = 0;
       // this.load_toolpath(file, file_time);
     },
@@ -103,8 +104,8 @@ module.exports = {
       }
     },
     cancelMacros: function (id) {
-        document.getElementById(`macros-name-${id}`).value = '';
-        document.getElementById(`macros-color-${id}`).value = '#fff';
+      document.getElementById(`macros-name-${id}`).value = "";
+      document.getElementById(`macros-color-${id}`).value = "#fff";
     },
     resetConfig: async function () {
       this.config.macros = [
