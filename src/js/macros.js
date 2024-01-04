@@ -80,11 +80,11 @@ module.exports = {
       this.config.macros[id].gcode_file_name = this.state.selected;
       this.config.macros[id].gcode_file_time = this.state.selected_time;
       console.log(this.config.macros);
+      this.cancelMacros();
       try {
         await api.put("config/save", this.config);
         console.log("Successfully saved");
         this.$dispatch("update");
-        this.cancelMacros();
       } catch (error) {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
@@ -93,7 +93,7 @@ module.exports = {
     cancelMacros: function (id) {
       document.getElementById(`macros-name-${id}`).value = "";
       document.getElementById(`macros-color-${id}`).value = "#ffffff";
-    //   this.$broadcast("gcode-clear");
+      this.$broadcast("gcode-clear");
     },
     resetConfig: async function () {
       this.config.macros = [
