@@ -631,35 +631,52 @@ span.unit
     border 0
     color #fff
 
-.macros
-  width 90%
+#macros
+  width 104%
 
-.warning-box
-  display flex
-  background-color #F3FF00
-  border-radius 5px
-  border 0
-  margin-bottom 10px
-  margin-top 10px
-  align-items center
-  justify-content center
+  .gcodeContainer
+    width 25rem
+    height 15rem
+    border-width 1px
+    border-radius 10px
+    border-color #424242
+    border-style solid
+  
+  .new-gcode
+    display flex
 
-.select-upload-gcode 
-  display flex
-  flex-direction row
+  .warning-box
+    display flex
+    background-color #F3FF00
+    border-radius 5px
+    border 0
+    margin-bottom 10px
+    margin-top 10px
+    align-items center
+    justify-content center
 
-.tabs
-  margin-top 5px
-  width 51.8rem
+  .select-upload-gcode 
+    display flex
+    flex-direction row
 
-    .submit-macros
-      height 50px
-      width 140px
-      margin-top 30px
-      font-weight normal
-      background-color #add1ad
-      color #fff
-      border 0
+  .tabs
+    margin-top 5px
+
+  .macros-view
+    padding 30px
+    width 95%
+
+  .macros-form
+    padding-left 30px
+
+  .submit-macros
+    height 50px
+    width 140px
+    margin-top 30px
+    font-weight normal
+    background-color #add1ad
+    color #fff
+    border 0
   
 
 .path-viewer
@@ -1084,14 +1101,6 @@ tt.save
 
 .pure-form-aligned .pure-control-group label.extra
     width 8em
-
-.macros-view
-  padding 30px
-  width 95%
-
-  .macros-form
-    padding 30px
-
   
   input.input-name
     width 300px

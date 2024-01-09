@@ -12,6 +12,7 @@ module.exports = {
       tab: "1",
       confirmReset: false,
       confirmSave: false,
+      newGcode: "",
     };
   },
   components: {
@@ -33,6 +34,11 @@ module.exports = {
     },
   },
   methods: {
+    updateNewGcode(event) {
+      console.log(event)
+      this.newGcode = event.target.value;
+      console.log(this.newGcode);
+    },
     open: function () {
       utils.clickFileInput("gcode-file-input");
     },
@@ -41,15 +47,20 @@ module.exports = {
       const file = this.state.selected;
       this.$broadcast("gcode-load", file);
       this.$broadcast("gcode-line", this.state.line);
+      this.newGCode = "";
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;
+      console.log(e);
+      console.log(files);
       if (!files.length) {
         return;
       }
 
       const file = files[0];
+      console.log(file)
       const extension = file.name.split(".").pop();
+      console.log(extension)
       switch (extension.toLowerCase()) {
         case "nc":
         case "ngc":
@@ -115,7 +126,7 @@ module.exports = {
           gcode_file_time: 0,
         },
         {
-          name: "Park",
+          name: "Perk",
           color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,

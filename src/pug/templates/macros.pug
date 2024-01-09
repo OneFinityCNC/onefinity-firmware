@@ -16,8 +16,8 @@ script#macros-template(type="text/x-template")
             p Are you sure you want to save the current settings?
             
         div(slot="footer")
-          button.pure-button(@click="confirmSave=false") Cancel
-          button.pure-button.pure-button-primary(@click="saveMacros")
+        button.pure-button(@click="confirmSave=false") Cancel
+        button.pure-button.pure-button-primary(@click="saveMacros")
           | Confirm
 
     h1 Macros Configuration
@@ -75,7 +75,9 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                textarea.new-gcode( v-if="state.selected=='default",:value='newGcode' @input="updateNewGcode")
+                                gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -103,7 +105,8 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                gcode-viewer
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -131,7 +134,8 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                gcode-viewer
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -159,7 +163,8 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                gcode-viewer
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -187,7 +192,8 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                gcode-viewer
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -215,7 +221,8 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                gcode-viewer
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -243,7 +250,8 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                gcode-viewer
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -271,7 +279,8 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
-                        gcode-viewer
+                        .gcodeContainer
+                                gcode-viewer
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
