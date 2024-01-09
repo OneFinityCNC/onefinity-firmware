@@ -70,18 +70,21 @@ module.exports = {
         },
       });
     },
-    saveMacros: async function (id) {
-      var macrosName = document.getElementById(`macros-name-${id}`).value;
-      var macrosColor = document.getElementById(`macros-color-${id}`).value;
+    saveMacros: async function () {
+      var macrosName = document.getElementById(`macros-name-${this.tab}`).value;
+      var macrosColor = document.getElementById(
+        `macros-color-${this.tab}`
+      ).value;
 
       console.log(this.tab);
 
-      this.config.macros[id].name = macrosName;
-      this.config.macros[id].color = macrosColor;
-      this.config.macros[id].gcode_file_name = this.state.selected;
-      this.config.macros[id].gcode_file_time = this.state.selected_time;
+      this.config.macros[this.tab].name = macrosName;
+      this.config.macros[this.tab].color = macrosColor;
+      this.config.macros[this.tab].gcode_file_name = this.state.selected;
+      this.config.macros[this.tab].gcode_file_time = this.state.selected_time;
       console.log(this.config.macros);
-      this.cancelMacros(id);
+      this.cancelMacros(this.tab);
+      this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
         console.log("Successfully saved");
@@ -91,10 +94,10 @@ module.exports = {
         alert("Restore failed");
       }
     },
-    cancelMacros: function (id) {
-      document.getElementById(`macros-name-${id}`).value = "";
-      document.getElementById(`macros-color-${id}`).value = "#ffffff";
-      document.getElementById(`gcodeSelect-${id}`).value = "default";
+    cancelMacros: function () {
+      document.getElementById(`macros-name-${this.tab}`).value = "";
+      document.getElementById(`macros-color-${this.tab}`).value = "#ffffff";
+      document.getElementById(`gcodeSelect-${this.tab}`).value = "default";
       this.$broadcast("gcode-clear");
     },
     resetConfig: async function () {

@@ -17,7 +17,7 @@ script#macros-template(type="text/x-template")
             
         div(slot="footer")
           button.pure-button(@click="confirmSave=false") Cancel
-          button.pure-button.pure-button-primary(@click="resetConfig")
+          button.pure-button.pure-button-primary(@click="saveMacros")
           | Confirm
 
     h1 Macros Configuration
@@ -76,9 +76,9 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(0)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(0)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
         section#content2.tab-content
@@ -104,9 +104,9 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(1)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(1)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
         section#content3.tab-content
@@ -132,9 +132,9 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(2)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(2)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
         section#content4.tab-content
@@ -160,9 +160,9 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(3)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(3)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
         section#content5.tab-content
@@ -188,9 +188,9 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(4)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(4)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
         section#content6.tab-content
@@ -216,9 +216,9 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(5)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(5)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
         
         section#content7.tab-content
@@ -244,9 +244,9 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(6)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(6)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
         
         section#content8.tab-content
@@ -272,7 +272,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         gcode-viewer
-                        button.submit-macros(title="Save Macros",@click="saveMacros(7)",
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
-                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(7)",
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
