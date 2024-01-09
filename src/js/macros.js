@@ -35,7 +35,7 @@ module.exports = {
   },
   methods: {
     updateNewGcode(event) {
-      console.log(event)
+      console.log(event);
       this.newGcode = event.target.value;
       console.log(this.newGcode);
     },
@@ -58,9 +58,9 @@ module.exports = {
       }
 
       const file = files[0];
-      console.log(file)
+      console.log(file);
       const extension = file.name.split(".").pop();
-      console.log(extension)
+      console.log(extension);
       switch (extension.toLowerCase()) {
         case "nc":
         case "ngc":
@@ -132,7 +132,7 @@ module.exports = {
           gcode_file_time: 0,
         },
         {
-          name: "Spindle WarmUp",
+          name: "Spindle Warmup",
           color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,

@@ -16,9 +16,8 @@ script#macros-template(type="text/x-template")
             p Are you sure you want to save the current settings?
             
         div(slot="footer")
-        button.pure-button(@click="confirmSave=false") Cancel
-        button.pure-button.pure-button-primary(@click="saveMacros")
-          | Confirm
+          button.pure-button(@click="confirmSave=false") Cancel
+          button.pure-button.pure-button-primary(@click="saveMacros") Confirm
 
     h1 Macros Configuration
     button.pure-button(title="Reset Macros", @click="confirmReset=true",
@@ -64,7 +63,7 @@ script#macros-template(type="text/x-template")
                                 select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
                                         v-model="state.selected",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
-                                        option(disabled='' selected='' value='default')  Select an option
+                                        option(disabled='false' selected='' value='default')  Select an option
                                         option(v-for="file in state.files", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
@@ -76,7 +75,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
