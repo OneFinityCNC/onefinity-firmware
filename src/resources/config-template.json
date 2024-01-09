@@ -585,54 +585,66 @@
   },
 
   "macros": {
-    "type":"list",
-    "index":"123456",
-    "default":[
+    "type": "list",
+    "index": "12345678",
+    "default": [
       {
-         "name":"Macros 1",
-         "color": "",
-         "gcode_file_name": "",
-         "gcode_file_time": 0
+        "name": "FireLaser",
+        "color": "#e6e6e6",
+        "gcode_file_name": "",
+        "gcode_file_time": 0
       },
       {
-         "name":"Macros 2",
-         "color": "",
-         "gcode_file_name": "",
-         "gcode_file_time": 0
+        "name": "Home",
+        "color": "#e6e6e6",
+        "gcode_file_name": "",
+        "gcode_file_time": 0
       },
       {
-         "name":"Macros 3",
-         "color": "",
-         "gcode_file_name": "",
-         "gcode_file_time": 0
+        "name": "Perk",
+        "color": "#e6e6e6",
+        "gcode_file_name": "",
+        "gcode_file_time": 0
       },
       {
-         "name":"Macros 4",
-         "color": "",
-         "gcode_file_name": "",
-         "gcode_file_time": 0
+        "name": "Spindle Warmup",
+        "color": "#e6e6e6",
+        "gcode_file_name": "",
+        "gcode_file_time": 0
       },
       {
-         "name":"Macros 5",
-         "color": "",
-         "gcode_file_name": "",
-         "gcode_file_time": 0
+        "name": "Spindle ON",
+        "color": "#e6e6e6",
+        "gcode_file_name": "",
+        "gcode_file_time": 0
       },
       {
-         "name":"Macros 6",
-         "color": "",
-         "gcode_file_name": "",
-         "gcode_file_time": 0
+        "name": "Spindle OFF",
+        "color": "#e6e6e6",
+        "gcode_file_name": "",
+        "gcode_file_time": 0
+      },
+      {
+        "name": "Vacuum ON",
+        "color": "#e6e6e6",
+        "gcode_file_name": " ",
+        "gcode_file_time": 0
+      },
+      {
+        "name": "Vacuum OFF",
+        "color": "#e6e6e6",
+        "gcode_file_name": " ",
+        "gcode_file_time": 0
       }
     ],
     "template": {
       "name": {
         "type": "text",
-        "default": "Default Name"
+        "default": " "
       },
       "color": {
         "type": "text",
-        "default": "#efefef"
+        "default": "#e6e6e6"
       },
       "gcode_file_name": {
         "type": "text",

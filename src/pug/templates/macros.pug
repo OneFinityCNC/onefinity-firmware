@@ -36,6 +36,12 @@ script#macros-template(type="text/x-template")
         input#tab6(type="radio", name="tabs", @click="tab = '6'")
         label(for="tab6",style="height:50px;width:100px") Macros 6
 
+        input#tab7(type="radio", name="tabs", @click="tab = '7'")
+        label(for="tab7",style="height:50px;width:100px") Macros 7
+
+        input#tab8(type="radio", name="tabs", @click="tab = '8'")
+        label(for="tab8",style="height:50px;width:100px") Macros 8
+
         section#content1.tab-content
                 .macros-form
                         p.title Name
@@ -202,4 +208,60 @@ script#macros-template(type="text/x-template")
                         button.submit-macros(title="Save Macros",@click="saveMacros(5)",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros(5)",
+                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
+        
+        section#content7.tab-content
+                .macros-form
+                        p.title Name
+                        .input-container
+                                input.input-color(type="color",id="macros-color-6",value="#ffffff") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-6")
+                        p.title G-Code
+                        .select-upload-gcode                      
+                                select#gcodeSelect-6(title="Select previously uploaded GCode programs.",selected
+                                        v-model="state.selected",@change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  Select an option
+                                        option(v-for="file in state.files", :value="file") {{file}}
+
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
+
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
+                        br
+                        gcode-viewer
+                        button.submit-macros(title="Save Macros",@click="saveMacros(6)",
+                                style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(6)",
+                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
+        
+        section#content8.tab-content
+                .macros-form
+                        p.title Name
+                        .input-container
+                                input.input-color(type="color",id="macros-color-7",value="#ffffff") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-7")
+                        p.title G-Code
+                        .select-upload-gcode                      
+                                select#gcodeSelect-7(title="Select previously uploaded GCode programs.",selected
+                                        v-model="state.selected",@change="load", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option(disabled='' selected='' value='default')  Select an option
+                                        option(v-for="file in state.files", :value="file") {{file}}
+
+                                button.pure-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                        .fa.fa-upload
+
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="upload", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
+                        br
+                        gcode-viewer
+                        button.submit-macros(title="Save Macros",@click="saveMacros(7)",
+                                style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
+                        button.submit-macros(title="Cancel Macros",@click="cancelMacros(7)",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel

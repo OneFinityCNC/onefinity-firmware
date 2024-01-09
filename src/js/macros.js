@@ -14,8 +14,6 @@ module.exports = {
     };
   },
   components: {
-    "axis-control": require("./axis-control"),
-    "path-viewer": require("./path-viewer"),
     "gcode-viewer": require("./gcode-viewer"),
   },
   computed: {
@@ -93,44 +91,56 @@ module.exports = {
     cancelMacros: function (id) {
       document.getElementById(`macros-name-${id}`).value = "";
       document.getElementById(`macros-color-${id}`).value = "#ffffff";
-      document.getElementById(`gcodeSelect-${id}`).value="default";
+      document.getElementById(`gcodeSelect-${id}`).value = "default";
       this.$broadcast("gcode-clear");
     },
     resetConfig: async function () {
       this.config.macros = [
         {
-          name: " ",
-          color: "#efefef",
+          name: "FireLaser",
+          color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,
         },
         {
-          name: " ",
-          color: "#efefef",
+          name: "Home",
+          color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,
         },
         {
-          name: " ",
-          color: "#efefef",
+          name: "Park",
+          color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,
         },
         {
-          name: " ",
-          color: "#efefef",
+          name: "Spindle WarmUp",
+          color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,
         },
         {
-          name: " ",
-          color: "#efefef",
+          name: "Spindle ON",
+          color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,
         },
         {
-          name: " ",
-          color: "#efefef",
+          name: "Spindle OFF",
+          color: "#e6e6e6",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
+        },
+        {
+          name: "Vacuum ON",
+          color: "#e6e6e6",
+          gcode_file_name: " ",
+          gcode_file_time: 0,
+        },
+        {
+          name: "Vacuum OFF",
+          color: "#e6e6e6",
           gcode_file_name: " ",
           gcode_file_time: 0,
         },

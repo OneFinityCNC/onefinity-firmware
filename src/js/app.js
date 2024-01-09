@@ -109,7 +109,7 @@ module.exports = new Vue({
           template: require("../resources/config-template.json"),
           config: {
             settings: { units: "METRIC" },
-            motors: [{}, {}, {}, {}],
+            motors: [{}, {}, {}, {},{}, {}, {}, {}],
             version: "<loading>",
             full_version: "<loading>",
             ip: "<>",
