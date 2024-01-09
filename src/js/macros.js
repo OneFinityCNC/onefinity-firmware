@@ -12,7 +12,7 @@ module.exports = {
       tab: "1",
       confirmReset: false,
       confirmSave: false,
-      newGcode: "",
+      newGcode: ["", "", "", "", "", "", "", ""],
     };
   },
   components: {
@@ -35,7 +35,7 @@ module.exports = {
   },
   methods: {
     updateNewGcode(event) {
-      this.newGcode = event.target.value;
+      this.newGcode[this.tab - 1] = event.target.value;
     },
     open: function () {
       utils.clickFileInput("gcode-file-input");
@@ -45,7 +45,7 @@ module.exports = {
       const file = this.state.selected;
       this.$broadcast("gcode-load", file);
       this.$broadcast("gcode-line", this.state.line);
-      this.newGCode = "";
+      this.newGCode[this.tab-1] = "";
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -76,19 +76,23 @@ module.exports = {
       });
     },
     saveMacros: async function () {
-      var macrosName = document.getElementById(`macros-name-${this.tab-1}`).value;
+      var macrosName = document.getElementById(
+        `macros-name-${this.tab - 1}`
+      ).value;
       var macrosColor = document.getElementById(
-        `macros-color-${this.tab-1}`
+        `macros-color-${this.tab - 1}`
       ).value;
 
-      console.log(this.tab-1);
+      console.log(this.tab - 1);
+      console.log(macrosColor, macrosName);
 
-      this.config.macros[this.tab-1].name = macrosName;
-      this.config.macros[this.tab-1].color = macrosColor;
-      this.config.macros[this.tab-1].gcode_file_name = this.state.selected;
-      this.config.macros[this.tab-1].gcode_file_time = this.state.selected_time;
+      this.config.macros[this.tab - 1].name = macrosName;
+      this.config.macros[this.tab - 1].color = macrosColor;
+      this.config.macros[this.tab - 1].gcode_file_name = this.state.selected;
+      this.config.macros[this.tab - 1].gcode_file_time =
+        this.state.selected_time;
       console.log(this.config.macros);
-      this.cancelMacros(this.tab-1);
+      this.cancelMacros(this.tab - 1);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
@@ -100,9 +104,9 @@ module.exports = {
       }
     },
     cancelMacros: function () {
-      document.getElementById(`macros-name-${this.tab-1}`).value = "";
-      document.getElementById(`macros-color-${this.tab-1}`).value = "#ffffff";
-      document.getElementById(`gcodeSelect-${this.tab-1}`).value = "default";
+      document.getElementById(`macros-name-${this.tab - 1}`).value = "";
+      document.getElementById(`macros-color-${this.tab - 1}`).value = "#ffffff";
+      document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
       this.$broadcast("gcode-clear");
     },
     resetConfig: async function () {
