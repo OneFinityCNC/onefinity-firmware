@@ -9,6 +9,17 @@ script#macros-template(type="text/x-template")
         button.pure-button(@click="confirmReset=false") Cancel
         button.pure-button.pure-button-primary(@click="resetConfig")
           | Reset
+
+    message(:show.sync="confirmSave")
+        h3(slot="header") Confirm Save?
+        div(slot="body")
+            p Are you sure you want to save the current settings?
+            
+        div(slot="footer")
+          button.pure-button(@click="confirmSave=false") Cancel
+          button.pure-button.pure-button-primary(@click="resetConfig")
+          | Confirm
+
     h1 Macros Configuration
     button.pure-button(title="Reset Macros", @click="confirmReset=true",
         style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros

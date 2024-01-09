@@ -11,6 +11,7 @@ module.exports = {
     return {
       tab: "1",
       confirmReset: false,
+      confirmSave: false,
     };
   },
   components: {
@@ -72,6 +73,8 @@ module.exports = {
     saveMacros: async function (id) {
       var macrosName = document.getElementById(`macros-name-${id}`).value;
       var macrosColor = document.getElementById(`macros-color-${id}`).value;
+
+      console.log(this.tab);
 
       this.config.macros[id].name = macrosName;
       this.config.macros[id].color = macrosColor;
