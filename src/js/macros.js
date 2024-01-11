@@ -119,7 +119,7 @@ module.exports = {
 
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
-      this.config.macros[this.tab - 1].gcode_file_name = file.name;
+      this.config.macros[this.tab - 1].gcode_file_name = this.state.selected == 'default' ? macrosName : this.state.selected;
       this.config.macros[this.tab - 1].gcode_file_time =
         this.state.selected_time;
       this.cancelMacros(this.tab - 1);
@@ -191,6 +191,7 @@ module.exports = {
         },
       ];
       this.confirmReset = false;
+      console.log(this.config);
       try {
         await api.put("config/save", this.config);
         console.log("Successfully flushed");
