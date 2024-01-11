@@ -77,8 +77,16 @@ module.exports = {
       });
     },
     saveMacros: async function () {
+      var macrosName = document.getElementById(
+        `macros-name-${this.tab-1}`
+      ).value;
+      var macrosColor = document.getElementById(
+        `macros-color-${this.tab-1}`
+      ).value;
+
       if(this.state.selected =='default'){
         const file = this.newGcode[this.tab-1];
+        file.name = macrosName;
         SvelteComponents.showDialog("Upload", {
           file,
           onComplete: () => {
@@ -87,20 +95,13 @@ module.exports = {
           },
         });
       }
-      var macrosName = document.getElementById(
-        `macros-name-${this.tab-1}`
-      ).value;
-      var macrosColor = document.getElementById(
-        `macros-color-${this.tab-1}`
-      ).value;
 
       console.log(this.tab-1);
-      console.log(macrosColor, macrosName);
 
       this.config.macros[this.tab-1].name = macrosName;
       console.log(this.config.macros[this.tab-1].name);
       this.config.macros[this.tab-1].color = macrosColor;
-      this.config.macros[this.tab-1].gcode_file_name = this.state.selected;
+      this.config.macros[this.tab-1].gcode_file_name = file.name;
       this.config.macros[this.tab-1].gcode_file_time =
         this.state.selected_time;
       console.log(this.config.macros);

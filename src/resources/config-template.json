@@ -638,11 +638,6 @@
       }
     ],
     "template": {
-      "name": {
-        "type": "enum",
-        "values": ["FireLaser", "Home", "Perk", "Spindle Warmup", "Spindle ON", "Spindle OFF","Vacuum ON","Vacuum OFF"],
-        "default": " "
-      },
       "color": {
         "type": "text",
         "default": "#e6e6e6"
