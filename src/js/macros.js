@@ -86,11 +86,10 @@ module.exports = {
 
       if(this.state.selected =='default'){
         const file = this.newGcode[this.tab-1];
-        file.name = macrosName;
         SvelteComponents.showDialog("Upload", {
           file,
           onComplete: () => {
-            this.last_file_time = undefined; // Force reload
+            this.last_file_time = macrosName;
             this.$broadcast("gcode-reload", file.name);
           },
         });
