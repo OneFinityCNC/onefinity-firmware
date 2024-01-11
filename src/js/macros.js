@@ -51,13 +51,16 @@ module.exports = {
       this.newGCode[this.tab-1] = "";
     },
     upload: function (e) {
+      console.log('54');
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
       }
 
       const file = files[0];
+      console.log(file);
       const extension = file.name.split(".").pop();
+      console.log(extension);
       switch (extension.toLowerCase()) {
         case "nc":
         case "ngc":
