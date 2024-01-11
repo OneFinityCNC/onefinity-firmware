@@ -39,6 +39,8 @@
             }
         };
 
+        console.log(xhr);
+
         xhr.upload.onerror = () => {
             open = false;
             alert("Upload failed.");
