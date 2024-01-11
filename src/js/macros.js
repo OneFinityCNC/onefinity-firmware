@@ -66,7 +66,7 @@ module.exports = {
           alert(`Unsupported file type: ${extension}`);
           return;
       }
-
+      console.log("file: ",file);
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
@@ -87,6 +87,7 @@ module.exports = {
       console.log(macrosColor, macrosName);
 
       this.config.macros[this.tab - 1].name = macrosName;
+      console.log(this.config.macros[this.tab-1]);
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].gcode_file_name = this.state.selected;
       this.config.macros[this.tab - 1].gcode_file_time =

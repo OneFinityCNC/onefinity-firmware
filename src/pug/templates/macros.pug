@@ -75,7 +75,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
@@ -135,7 +135,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
@@ -165,7 +165,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
@@ -195,7 +195,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
@@ -225,7 +225,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
@@ -255,7 +255,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
@@ -285,7 +285,7 @@ script#macros-template(type="text/x-template")
                                         accept=".nc,.ngc,.gcode,.gc")
                         br
                         .gcodeContainer
-                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode' @input="updateNewGcode")
+                                textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
