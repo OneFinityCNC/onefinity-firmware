@@ -37,17 +37,16 @@ module.exports = {
   },
   methods: {
     updateNewGcode(event) {
-      this.newGcode[this.tab-1] = event.target.value;
+      this.newGcode[this.tab - 1] = event.target.value;
     },
     open: function () {
       utils.clickFileInput("gcode-file-input");
     },
     load: function () {
-      const file_time = this.state.selected_time;
       const file = this.state.selected;
       this.$broadcast("gcode-load", file);
       this.$broadcast("gcode-line", this.state.line);
-      this.newGcode[this.tab-1] = "";
+      this.newGcode[this.tab - 1] = "";
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -77,37 +76,53 @@ module.exports = {
         },
       });
     },
+    uploadGCode: function (filename,file) {
+      const xhr = new XMLHttpRequest();
+
+      console.log(xhr);
+
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          console.log("File uploaded successfully");
+        } else {
+          console.error("File upload failed:", xhr.statusText);
+        }
+      };
+
+      xhr.onerror = function () {
+        console.error("Network error during file upload");
+      };
+
+      xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          console.log("Upload progress:", progress);
+        }
+      };
+
+      xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
+      xhr.send(file);
+
+    },
     saveMacros: async function () {
       var macrosName = document.getElementById(
-        `macros-name-${this.tab-1}`
+        `macros-name-${this.tab - 1}`
       ).value;
       var macrosColor = document.getElementById(
-        `macros-color-${this.tab-1}`
+        `macros-color-${this.tab - 1}`
       ).value;
 
-      console.log(this.newGcode[this.tab-1]);
-
-      if(this.state.selected =='default'){
-        const file = this.newGcode[this.tab-1];
-        SvelteComponents.showDialog("Upload", {
-          file,
-          onComplete: () => {
-            this.last_file_time = macrosName;
-            // this.$broadcast("gcode-reload", file.name);
-          },
-        });
+      if (this.state.selected == "default") {
+        var file = this.newGcode[this.tab - 1];
+        this.uploadGCode(macrosName,file);
       }
 
-      console.log(this.tab-1);
-
-      this.config.macros[this.tab-1].name = macrosName;
-      console.log(this.config.macros[this.tab-1].name);
-      this.config.macros[this.tab-1].color = macrosColor;
-      this.config.macros[this.tab-1].gcode_file_name = file.name;
-      this.config.macros[this.tab-1].gcode_file_time =
+      this.config.macros[this.tab - 1].name = macrosName;
+      this.config.macros[this.tab - 1].color = macrosColor;
+      this.config.macros[this.tab - 1].gcode_file_name = file.name;
+      this.config.macros[this.tab - 1].gcode_file_time =
         this.state.selected_time;
-      console.log(this.config.macros);
-      this.cancelMacros(this.tab-1);
+      this.cancelMacros(this.tab - 1);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
@@ -119,9 +134,9 @@ module.exports = {
       }
     },
     cancelMacros: function () {
-      document.getElementById(`macros-name-${this.tab-1}`).value = "";
-      document.getElementById(`macros-color-${this.tab-1}`).value = "#ffffff";
-      document.getElementById(`gcodeSelect-${this.tab-1}`).value = "default";
+      document.getElementById(`macros-name-${this.tab - 1}`).value = "";
+      document.getElementById(`macros-color-${this.tab - 1}`).value = "#ffffff";
+      document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
       this.$broadcast("gcode-clear");
     },
     resetConfig: async function () {

@@ -39,8 +39,6 @@
             }
         };
 
-        console.log(xhr);
-
         xhr.upload.onerror = () => {
             open = false;
             alert("Upload failed.");
@@ -53,9 +51,6 @@
         xhr.upload.onprogress = (event) => {
             progress = event.loaded / event.total;
         };
-
-        console.log(file);
-        console.log(file.name);
 
         xhr.open("PUT", `/api/file/${encodeURIComponent(file.name)}`);
         xhr.send(file);
