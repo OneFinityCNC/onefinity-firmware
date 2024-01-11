@@ -12,10 +12,13 @@ module.exports = {
       tab: "1",
       confirmReset: false,
       confirmSave: false,
+      currentTab:undefined,
       newGcode: ["", "", "", "", "", "", "", ""],
     };
   },
   components: {
+    "axis-control": require("./axis-control"),
+    "path-viewer": require("./path-viewer"),
     "gcode-viewer": require("./gcode-viewer"),
   },
   computed: {
@@ -35,7 +38,7 @@ module.exports = {
   },
   methods: {
     updateNewGcode(event) {
-      this.newGcode[this.tab - 1] = event.target.value;
+      this.newGcode[this.currentTab] = event.target.value;
     },
     open: function () {
       utils.clickFileInput("gcode-file-input");
@@ -77,23 +80,23 @@ module.exports = {
     },
     saveMacros: async function () {
       var macrosName = document.getElementById(
-        `macros-name-${this.tab - 1}`
+        `macros-name-${this.currentTab}`
       ).value;
       var macrosColor = document.getElementById(
-        `macros-color-${this.tab - 1}`
+        `macros-color-${this.currentTab}`
       ).value;
 
-      console.log(this.tab - 1);
+      console.log(this.currentTab);
       console.log(macrosColor, macrosName);
 
-      this.config.macros[this.tab - 1].name = macrosName;
+      this.config.macros[this.currentTab].name = macrosName;
       console.log(this.config.macros[this.tab-1]);
-      this.config.macros[this.tab - 1].color = macrosColor;
-      this.config.macros[this.tab - 1].gcode_file_name = this.state.selected;
-      this.config.macros[this.tab - 1].gcode_file_time =
+      this.config.macros[this.currentTab].color = macrosColor;
+      this.config.macros[this.currentTab].gcode_file_name = this.state.selected;
+      this.config.macros[this.currentTab].gcode_file_time =
         this.state.selected_time;
       console.log(this.config.macros);
-      this.cancelMacros(this.tab - 1);
+      this.cancelMacros(this.currentTab);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
@@ -105,9 +108,9 @@ module.exports = {
       }
     },
     cancelMacros: function () {
-      document.getElementById(`macros-name-${this.tab - 1}`).value = "";
-      document.getElementById(`macros-color-${this.tab - 1}`).value = "#ffffff";
-      document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
+      document.getElementById(`macros-name-${this.currentTab}`).value = "";
+      document.getElementById(`macros-color-${this.currentTab}`).value = "#ffffff";
+      document.getElementById(`gcodeSelect-${this.currentTab}`).value = "default";
       this.$broadcast("gcode-clear");
     },
     resetConfig: async function () {

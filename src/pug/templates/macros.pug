@@ -77,7 +77,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=0;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
@@ -107,7 +107,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=1;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
@@ -137,7 +137,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=2;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
@@ -167,7 +167,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=3;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
@@ -197,7 +197,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=4;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
@@ -227,7 +227,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=5;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
@@ -257,7 +257,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=6;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
@@ -287,7 +287,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( v-if="state.selected=='default'",:value='newGcode[tab-1]' @input="updateNewGcode")
                                 gcode-viewer(v-if="state.selected !== 'default'")
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
+                        button.submit-macros(title="Save Macros",@click="currentTab=7;confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
