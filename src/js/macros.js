@@ -152,7 +152,7 @@ module.exports = {
           gcode_file_time: 1705008321.710827,
         },
         {
-          name: "Perk",
+          name: "Park",
           color: "#dedede",
           gcode_file_name: "ParkRearRightWW.ngc",
           gcode_file_time: 1705008360.977644,
