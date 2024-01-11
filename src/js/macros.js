@@ -48,19 +48,16 @@ module.exports = {
       const file = this.state.selected;
       this.$broadcast("gcode-load", file);
       this.$broadcast("gcode-line", this.state.line);
-      this.newGCode[this.tab-1] = "";
+      this.newGCode[this.currentTab] = "";
     },
     upload: function (e) {
-      console.log('54');
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
       }
 
       const file = files[0];
-      console.log(file);
       const extension = file.name.split(".").pop();
-      console.log(extension);
       switch (extension.toLowerCase()) {
         case "nc":
         case "ngc":
@@ -72,7 +69,6 @@ module.exports = {
           alert(`Unsupported file type: ${extension}`);
           return;
       }
-      console.log("file: ",file);
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
