@@ -132,6 +132,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
+      console.log(this.config);
     },
     cancelMacros: function () {
       document.getElementById(`macros-name-${this.tab - 1}`).value = "";
@@ -191,7 +192,6 @@ module.exports = {
         },
       ];
       this.confirmReset = false;
-      console.log(this.config);
       try {
         await api.put("config/save", this.config);
         console.log("Successfully flushed");
