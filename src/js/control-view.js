@@ -504,13 +504,11 @@ module.exports = {
             SvelteComponents.showDialog("Probe", { probeType });
         },
         runMacros : function(id){
-            console.log(id);
             if( this.config.macros[id].gcode_file_name != this.state.selected || this.config.macros[id].gcode_file_time != this.state.selected_time ){
                 this.state.selected=this.config.macros[id].gcode_file_name;
                 this.state.selected_time=this.config.macros[id].gcode_file_time
             }
             try{
-                console.log(this.state.selected, this.state.selected_time);
                 this.load();
                 this.start_pause();
             }catch(error){

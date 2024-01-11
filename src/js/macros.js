@@ -122,7 +122,6 @@ module.exports = {
         this.state.selected_time;
       this.cancelMacros(this.tab - 1);
       this.confirmSave = false;
-      console.log(this.config.macros);
       try {
         await api.put("config/save", this.config);
         console.log("Successfully saved");
@@ -192,7 +191,6 @@ module.exports = {
       this.confirmReset = false;
       try {
         await api.put("config/save", this.config);
-        console.log("Successfully flushed");
         this.$dispatch("update");
       } catch (error) {
         console.error("Restore Failed: ", error);
