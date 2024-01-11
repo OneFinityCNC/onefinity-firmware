@@ -67,7 +67,7 @@ module.exports = {
           alert(`Unsupported file type: ${extension}`);
           return;
       }
-      console.log(file);
+
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
@@ -78,8 +78,6 @@ module.exports = {
     },
     uploadGCode: function (filename,file) {
       const xhr = new XMLHttpRequest();
-
-      console.log(xhr);
 
       xhr.onload = function () {
         if (xhr.status >= 200 && xhr.status < 300) {
@@ -132,7 +130,6 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
-      console.log(this.config);
     },
     cancelMacros: function () {
       document.getElementById(`macros-name-${this.tab - 1}`).value = "";
@@ -144,51 +141,51 @@ module.exports = {
       this.config.macros = [
         {
           name: "FireLaser",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "FireLaser.ngc",
+          gcode_file_time: 1705008250.2333415,
         },
         {
           name: "Home",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "GoHomeXYZ.ngc",
+          gcode_file_time: 1705008321.710827,
         },
         {
           name: "Perk",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "ParkRearRightWW.ngc",
+          gcode_file_time: 1705008360.977644,
         },
         {
           name: "Spindle Warmup",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "SpindleWarmUp1Minute.ngc",
+          gcode_file_time: 1705008372.967075,
         },
         {
           name: "Spindle ON",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "TurnOnSpindle.ngc",
+          gcode_file_time: 1705008405.5059154,
         },
         {
           name: "Spindle OFF",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "TurnOffSpindleAndLaser.ngc",
+          gcode_file_time: 1705008384.6566093,
         },
         {
           name: "Vacuum ON",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "VacOn.ngc",
+          gcode_file_time: 1705008413.7756715,
         },
         {
           name: "Vacuum OFF",
-          color: "#e6e6e6",
-          gcode_file_name: " ",
-          gcode_file_time: 0,
+          color: "#dedede",
+          gcode_file_name: "TurnOffVac.ngc",
+          gcode_file_time: 1705008395.476232,
         },
       ];
       this.confirmReset = false;
