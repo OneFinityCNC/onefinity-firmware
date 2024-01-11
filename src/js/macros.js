@@ -68,6 +68,7 @@ module.exports = {
           alert(`Unsupported file type: ${extension}`);
           return;
       }
+      console.log(file);
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
@@ -84,13 +85,15 @@ module.exports = {
         `macros-color-${this.tab-1}`
       ).value;
 
+      console.log(this.newGcode[this.tab-1]);
+
       if(this.state.selected =='default'){
         const file = this.newGcode[this.tab-1];
         SvelteComponents.showDialog("Upload", {
           file,
           onComplete: () => {
             this.last_file_time = macrosName;
-            this.$broadcast("gcode-reload", file.name);
+            // this.$broadcast("gcode-reload", file.name);
           },
         });
       }

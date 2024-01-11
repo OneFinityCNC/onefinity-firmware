@@ -52,6 +52,9 @@
             progress = event.loaded / event.total;
         };
 
+        console.log(file);
+        console.log(file.name);
+
         xhr.open("PUT", `/api/file/${encodeURIComponent(file.name)}`);
         xhr.send(file);
     }
