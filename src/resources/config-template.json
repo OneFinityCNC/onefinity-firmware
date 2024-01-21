@@ -645,6 +645,20 @@
     }
   },
 
+  "macrosList": {
+    "type": "list",
+    "default": [
+      "FireLaser.ngc",
+      "GoHomeXYZ.ngc",
+      "ParkRearRightWW.ngc",
+      "SpindleWarmUp1Minute.ngc",
+      "TurnOnSpindle.ngc",
+      "TurnOffSpindleAndLaser.ngc",
+      "VacOn.ngc",
+      "TurnOffVac.ngc"
+    ]
+  },
+
   "admin": {
     "auto-check-upgrade": {
       "type": "bool",

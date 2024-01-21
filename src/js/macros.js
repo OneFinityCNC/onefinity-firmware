@@ -23,7 +23,7 @@ module.exports = {
         "default",
       ],
       newGcode: ["", "", "", "", "", "", "", ""],
-      macrosList: this.config.macros.map((item) => item.name),
+      macrosList: this.config.macros.map((item) => item.gcode_file_name),
     };
   },
   computed: {
