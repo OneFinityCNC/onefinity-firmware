@@ -647,6 +647,7 @@
 
   "macrosList": {
     "type":"list",
+    "index": "12345678",
     "default":[
       "FireLaser.ngc",
       "GoHomeXYZ.ngc",
