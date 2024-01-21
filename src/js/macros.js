@@ -39,12 +39,17 @@ module.exports = {
     },
     load: async function () {
       const file = this.state.selected;
-      const response = await fetch(`/api/file/${file}`, { cache: "no-cache" });
-      const text = await response.text();
-      if (text.length > 20e6) {
-        this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
-      } else {
-        this.newGcode[this.tab - 1] = text;
+      if(this.state.selected!='default'){
+        const response = await fetch(`/api/file/${file}`, { cache: "no-cache" });
+        const text = await response.text();
+        console.log(text);
+        if (text.length > 20e6) {
+          this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
+        } else {
+          this.newGcode[this.tab - 1] = text;
+        }
+      }else{
+        this.newGcode='';
       }
     },
     upload: function (e) {
@@ -197,4 +202,7 @@ module.exports = {
       }
     },
   },
+  printState: function (){
+    console.log(this.state);
+  }
 };
