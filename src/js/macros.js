@@ -226,5 +226,8 @@ module.exports = {
     printState: function () {
       console.log(this.state);
     },
+    printConfig: function () {
+      console.log(this.config);
+    },
   },
 };
