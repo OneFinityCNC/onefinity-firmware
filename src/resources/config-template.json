@@ -645,7 +645,9 @@
     }
   },
 
-  "macrosList": [
+  "macrosList": {
+    "type":"list",
+    "default":[
       "FireLaser.ngc",
       "GoHomeXYZ.ngc",
       "ParkRearRightWW.ngc",
@@ -654,7 +656,8 @@
       "TurnOffSpindleAndLaser.ngc",
       "VacOn.ngc",
       "TurnOffVac.ngc"
-    ],
+    ]
+  },
 
   "admin": {
     "auto-check-upgrade": {
