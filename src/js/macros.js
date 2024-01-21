@@ -55,17 +55,18 @@ module.exports = {
         });
         const text = (await response.text()).split(" ").join("\n");
         console.log(text);
-        if (text.length > 20e6) {
-          this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
-        } else {
-          this.newGcode[this.tab - 1] = text;
-        }
+        Vue.nextTick(() => {
+          if (text.length > 20e6) {
+            this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
+          } else {
+            this.newGcode[this.tab - 1] = text;
+          }
+        });
       } else {
-        this.newGcode = "";
+        Vue.nextTick(() => {
+          this.newGcode[this.tab - 1] = "";
+        });
       }
-      Vue.nextTick(() => {
-        console.log("updated");
-      });
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -157,6 +158,13 @@ module.exports = {
       document.getElementById(`macros-color-${this.tab - 1}`).value = "#ffffff";
       document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
       this.newGcode[this.tab - 1] = "";
+    },
+    macrosList: function () {
+      const macros = this.state.files.filter(
+        (name) => !this.config.macros.some((obj) => obj.name === name)
+      );
+      console.log("Only Macros: ", macros);
+      return macros;
     },
     resetConfig: async function () {
       this.config.macros = [

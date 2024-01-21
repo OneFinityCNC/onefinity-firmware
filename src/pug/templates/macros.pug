@@ -64,7 +64,7 @@ script#macros-template(type="text/x-template")
                                         v-model="selectedValues[tab - 1]",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
-                                        option(v-for="file in state.files", :value="file") {{file}}
+                                        option(v-for="file in macrosList", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
                                         :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
@@ -94,7 +94,7 @@ script#macros-template(type="text/x-template")
                                         v-model="selectedValues[tab - 1]", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in state.files", :value="file") {{file}}
+                                        option(v-for="file in macrosList", :value="file") {{file}}
 
                                 button.pure-button(title="Upload a new GCode program.", @click="open",
                                         :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
