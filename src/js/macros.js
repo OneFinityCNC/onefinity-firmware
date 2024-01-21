@@ -12,6 +12,16 @@ module.exports = {
       tab: "1",
       confirmReset: false,
       confirmSave: false,
+      selectedValues: [
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+      ],
       newGcode: ["", "", "", "", "", "", "", ""],
     };
   },
@@ -38,19 +48,24 @@ module.exports = {
       utils.clickFileInput("gcode-file-input");
     },
     load: async function () {
-      const file = this.state.selected;
-      if(this.state.selected!='default'){
-        const response = await fetch(`/api/file/${file}`, { cache: "no-cache" });
-        const text = await response.text();
+      const file = this.selectedValues[this.tab - 1];
+      if (this.selectedValues[this.tab - 1] != "default") {
+        const response = await fetch(`/api/file/${file}`, {
+          cache: "no-cache",
+        });
+        const text = (await response.text()).split(" ").join("\n");
         console.log(text);
         if (text.length > 20e6) {
           this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
         } else {
           this.newGcode[this.tab - 1] = text;
         }
-      }else{
-        this.newGcode='';
+      } else {
+        this.newGcode = "";
       }
+      Vue.nextTick(() => {
+        console.log("updated");
+      });
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -103,7 +118,6 @@ module.exports = {
 
       xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
       xhr.send(file);
-
     },
     saveMacros: async function () {
       var macrosName = document.getElementById(
@@ -113,33 +127,36 @@ module.exports = {
         `macros-color-${this.tab - 1}`
       ).value;
 
-      if (this.state.selected == "default") {
-        var file = this.newGcode[this.tab - 1];
-        this.uploadGCode(macrosName, file);
-      }
+      console.log(this.state.selected, this.state.selected_time);
+      console.log(this.selectedValues[this.tab - 1]);
 
-      this.config.macros[this.tab - 1].name = macrosName;
-      this.config.macros[this.tab - 1].color = macrosColor;
-      this.config.macros[this.tab - 1].gcode_file_name =
-        this.state.selected == "default" ? macrosName : this.state.selected;
-      this.config.macros[this.tab - 1].gcode_file_time =
-        this.state.selected_time;
-      this.cancelMacros(this.tab - 1);
-      this.confirmSave = false;
-      try {
-        await api.put("config/save", this.config);
-        console.log("Successfully saved");
-        this.$dispatch("update");
-      } catch (error) {
-        console.error("Restore Failed: ", error);
-        alert("Restore failed");
-      }
+      // if (this.state.selected == "default") {
+      //   var file = this.newGcode[this.tab - 1];
+      //   this.uploadGCode(macrosName, file);
+      // }
+
+      // this.config.macros[this.tab - 1].name = macrosName;
+      // this.config.macros[this.tab - 1].color = macrosColor;
+      // this.config.macros[this.tab - 1].gcode_file_name =
+      //   this.state.selected == "default" ? macrosName : this.state.selected;
+      // this.config.macros[this.tab - 1].gcode_file_time =
+      //   this.state.selected_time;
+      // this.cancelMacros(this.tab - 1);
+      // this.confirmSave = false;
+      // try {
+      //   await api.put("config/save", this.config);
+      //   console.log("Successfully saved");
+      //   this.$dispatch("update");
+      // } catch (error) {
+      //   console.error("Restore Failed: ", error);
+      //   alert("Restore failed");
+      // }
     },
     cancelMacros: function () {
       document.getElementById(`macros-name-${this.tab - 1}`).value = "";
       document.getElementById(`macros-color-${this.tab - 1}`).value = "#ffffff";
       document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
-      this.newGcode[this.tab-1] = '';
+      this.newGcode[this.tab - 1] = "";
     },
     resetConfig: async function () {
       this.config.macros = [
@@ -202,7 +219,7 @@ module.exports = {
       }
     },
   },
-  printState: function (){
+  printState: function () {
     console.log(this.state);
-  }
+  },
 };

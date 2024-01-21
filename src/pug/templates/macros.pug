@@ -61,7 +61,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
-                                        v-model="state.selected",@change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
@@ -91,7 +91,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-1(title="Select previously uploaded GCode programs.",
-                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
@@ -121,7 +121,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-2(title="Select previously uploaded GCode programs.",
-                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
@@ -151,7 +151,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-3(title="Select previously uploaded GCode programs.",
-                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
@@ -181,7 +181,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-4(title="Select previously uploaded GCode programs.",
-                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
@@ -211,7 +211,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-5(title="Select previously uploaded GCode programs.",
-                                        v-model="state.selected", @change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]", @change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
@@ -241,7 +241,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-6(title="Select previously uploaded GCode programs.",selected
-                                        v-model="state.selected",@change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
@@ -271,7 +271,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-7(title="Select previously uploaded GCode programs.",selected
-                                        v-model="state.selected",@change="load", :disabled="!is_ready",
+                                        v-model="selectedValues[tab - 1]",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in state.files", :value="file") {{file}}
