@@ -23,6 +23,7 @@ module.exports = {
         "default",
       ],
       newGcode: ["", "", "", "", "", "", "", ""],
+      macrosList: this.config.macros.map((item) => item.name),
     };
   },
   computed: {
@@ -54,19 +55,15 @@ module.exports = {
           cache: "no-cache",
         });
         const text = (await response.text()).split(" ").join("\n");
-        console.log(text);
-        Vue.nextTick(() => {
-          if (text.length > 20e6) {
-            this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
-          } else {
-            this.newGcode[this.tab - 1] = text;
-          }
-        });
+        if (text.length > 20e6) {
+          this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
+        } else {
+          this.newGcode[this.tab - 1] = text;
+        }
       } else {
-        Vue.nextTick(() => {
-          this.newGcode[this.tab - 1] = "";
-        });
+        this.newGcode[this.tab - 1] = "";
       }
+      console.log(this.newGcode[this.tab-1]);
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -131,27 +128,27 @@ module.exports = {
       console.log(this.state.selected, this.state.selected_time);
       console.log(this.selectedValues[this.tab - 1]);
 
-      // if (this.state.selected == "default") {
-      //   var file = this.newGcode[this.tab - 1];
-      //   this.uploadGCode(macrosName, file);
-      // }
+      if (this.state.selected == "default") {
+        var file = this.newGcode[this.tab - 1];
+        this.uploadGCode(macrosName, file);
+      }
 
-      // this.config.macros[this.tab - 1].name = macrosName;
-      // this.config.macros[this.tab - 1].color = macrosColor;
-      // this.config.macros[this.tab - 1].gcode_file_name =
-      //   this.state.selected == "default" ? macrosName : this.state.selected;
-      // this.config.macros[this.tab - 1].gcode_file_time =
-      //   this.state.selected_time;
-      // this.cancelMacros(this.tab - 1);
-      // this.confirmSave = false;
-      // try {
-      //   await api.put("config/save", this.config);
-      //   console.log("Successfully saved");
-      //   this.$dispatch("update");
-      // } catch (error) {
-      //   console.error("Restore Failed: ", error);
-      //   alert("Restore failed");
-      // }
+      this.config.macros[this.tab - 1].name = macrosName;
+      this.config.macros[this.tab - 1].color = macrosColor;
+      this.config.macros[this.tab - 1].gcode_file_name =
+        this.state.selected == "default" ? macrosName : this.state.selected;
+      this.config.macros[this.tab - 1].gcode_file_time =
+        this.state.selected_time;
+      this.cancelMacros(this.tab - 1);
+      this.confirmSave = false;
+      try {
+        await api.put("config/save", this.config);
+        console.log("Successfully saved");
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
     },
     cancelMacros: function () {
       document.getElementById(`macros-name-${this.tab - 1}`).value = "";
@@ -159,13 +156,13 @@ module.exports = {
       document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
       this.newGcode[this.tab - 1] = "";
     },
-    macrosList: function () {
-      const macros = this.state.files.filter(
-        (name) => !this.config.macros.some((obj) => obj.name === name)
-      );
-      console.log("Only Macros: ", macros);
-      return macros;
-    },
+    // macrosList: function () {
+    //   const macros = this.state.files.filter(
+    //     (name) => !this.config.macros.some((obj) => obj.name === name)
+    //   );
+    //   console.log("Only Macros: ", macros);
+    //   return macros;
+    // },
     resetConfig: async function () {
       this.config.macros = [
         {
@@ -226,8 +223,8 @@ module.exports = {
         alert("Restore failed");
       }
     },
-  },
-  printState: function () {
-    console.log(this.state);
+    printState: function () {
+      console.log(this.state);
+    },
   },
 };
