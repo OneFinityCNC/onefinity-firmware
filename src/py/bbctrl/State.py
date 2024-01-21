@@ -146,6 +146,10 @@ class State(object):
             files.append(filename)
             files.sort()
             self.set('files', files)
+            self.log.info('===================')
+            for i in files:
+                self.log.info(i)
+            self.log.info('===================')
 
         self.select_file(filename)
 

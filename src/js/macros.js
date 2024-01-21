@@ -15,11 +15,6 @@ module.exports = {
       newGcode: ["", "", "", "", "", "", "", ""],
     };
   },
-  components: {
-    "axis-control": require("./axis-control"),
-    "path-viewer": require("./path-viewer"),
-    "gcode-viewer": require("./gcode-viewer"),
-  },
   computed: {
     mach_state: function () {
       const cycle = this.state.cycle;
@@ -42,11 +37,15 @@ module.exports = {
     open: function () {
       utils.clickFileInput("gcode-file-input");
     },
-    load: function () {
+    load: async function () {
       const file = this.state.selected;
-      this.$broadcast("gcode-load", file);
-      this.$broadcast("gcode-line", this.state.line);
-      this.newGcode[this.tab - 1] = "";
+      const response = await fetch(`/api/file/${file}`, { cache: "no-cache" });
+      const text = await response.text();
+      if (text.length > 20e6) {
+        this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
+      } else {
+        this.newGcode[this.tab - 1] = text;
+      }
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -72,11 +71,10 @@ module.exports = {
         file,
         onComplete: () => {
           this.last_file_time = undefined; // Force reload
-          this.$broadcast("gcode-reload", file.name);
         },
       });
     },
-    uploadGCode: function (filename,file) {
+    uploadGCode: function (filename, file) {
       const xhr = new XMLHttpRequest();
 
       xhr.onload = function () {
@@ -112,12 +110,13 @@ module.exports = {
 
       if (this.state.selected == "default") {
         var file = this.newGcode[this.tab - 1];
-        this.uploadGCode(macrosName,file);
+        this.uploadGCode(macrosName, file);
       }
 
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
-      this.config.macros[this.tab - 1].gcode_file_name = this.state.selected == 'default' ? macrosName : this.state.selected;
+      this.config.macros[this.tab - 1].gcode_file_name =
+        this.state.selected == "default" ? macrosName : this.state.selected;
       this.config.macros[this.tab - 1].gcode_file_time =
         this.state.selected_time;
       this.cancelMacros(this.tab - 1);
@@ -135,7 +134,7 @@ module.exports = {
       document.getElementById(`macros-name-${this.tab - 1}`).value = "";
       document.getElementById(`macros-color-${this.tab - 1}`).value = "#ffffff";
       document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
-      this.$broadcast("gcode-clear");
+      this.newGcode[this.tab-1] = '';
     },
     resetConfig: async function () {
       this.config.macros = [
