@@ -59,10 +59,10 @@ module.exports = {
         const text = (await response.text()).split(" ").join("\n");
         console.log(text);
         // this.newGcode[this.tab - 1]=text;
-        Vue.set(this.newGcode,this.tab-1,text);
+        this.$set(this.newGcode,this.tab-1,text);
       } else {
         // this.newGcode[this.tab - 1]="";
-        Vue.set(this.newGcode,this.tab-1,"");
+        this.$set(this.newGcode,this.tab-1,"");
       }
       console.log("newGcode: ",this.newGcode[this.tab - 1]);
     },
