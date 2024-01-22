@@ -690,18 +690,6 @@
     }
   },
 
-  "GCodeList": {
-    "type": "list",
-    "index": "numeric",
-    "default": [],
-    "template": {
-      "gcode_file_time": {
-        "type": "int",
-        "default": 1705008395
-      }
-    }
-  },
-
   "admin": {
     "auto-check-upgrade": {
       "type": "bool",
