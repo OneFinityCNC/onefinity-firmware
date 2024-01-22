@@ -53,7 +53,7 @@ module.exports = {
     loadMacrosGcode: async function () {
       const file = this.selectedValues[this.tab - 1];
       if (this.selectedValues[this.tab - 1] != "default") {
-        const response = await fetch(`/api/file/%7B%MACROS%7D${file}`, {
+        const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
         const text = (await response.text()).split(" ").join("\n");

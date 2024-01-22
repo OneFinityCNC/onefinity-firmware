@@ -80,8 +80,8 @@ class FileHandler(bbctrl.APIHandler):
             'FileName: ' + filename)
         if not filename:
             raise HTTPError(400, 'Missing filename')
-        if filename.startswith('/%7B%MACROS%7D'):
-            filebasename = os.path.basename(url_unescape(filename.replace("%7B%MACROS%7D", "")))
+        if filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
+            filebasename = os.path.basename(url_unescape(filename.replace("EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE", "")))
         else:
             filebasename = os.path.basename(url_unescape(filename))
         
@@ -94,5 +94,5 @@ class FileHandler(bbctrl.APIHandler):
             self.get_ctrl().state.select_file('')
             raise HTTPError(
                 400, "Unable to read file - doesn't appear to be GCode.")
-        if not filename.startswith('/%7B%MACROS%7D'):
+        if not filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
             self.get_ctrl().state.select_file(filebasename)
