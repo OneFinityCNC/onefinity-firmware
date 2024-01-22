@@ -42,8 +42,7 @@ module.exports = {
             tab: "auto",
             ask_home: true,
             showGcodeMessage: false,
-            gcode_files:this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name === item.gcode_file_name))
-            .map(item => item.gcode_file_name)
+            gcode_files:this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name === item))
         };
     },
 

@@ -85,14 +85,16 @@ module.exports = {
           return;
       }
 
+      
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
           this.last_file_time = undefined; // Force reload
+
         },
       });
     },
-    uploadGCode: function (filename, file) {
+    uploadGCode: async function (filename, file) {
       const xhr = new XMLHttpRequest();
 
       xhr.onload = function () {
@@ -116,6 +118,15 @@ module.exports = {
 
       xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
       xhr.send(file);
+
+      // this.config.macrosList.push()
+      // try {
+      //   await api.put("config/save", this.config);
+      //   this.$dispatch("update");
+      // } catch (error) {
+      //   console.error("Restore Failed: ", error);
+      //   alert("Restore failed");
+      // }
     },
     saveMacros: async function () {
       var macrosName = document.getElementById(
@@ -130,7 +141,7 @@ module.exports = {
 
       if (this.state.selected == "default") {
         var file = this.newGcode[this.tab - 1];
-        this.uploadGCode(macrosName, file);
+        this.uploadGCode(macrosName, file,);
       }
 
       this.config.macros[this.tab - 1].name = macrosName;
