@@ -40,8 +40,8 @@ class FileHandler(bbctrl.APIHandler):
         allFiles = self.get_ctrl().state.return_files()
 
         if filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
-            macrosList=filename.replace('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
-            self.get_log('FileHandler').info('macrosList ' + macrosList).split(',')
+            macrosList=filename.replace('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','').split(',')
+            self.get_log('FileHandler').info('macrosList ' + macrosList)
 
             for filename in [item for item in allFiles if item not in macrosList]:
                 filename = os.path.basename(filename)
