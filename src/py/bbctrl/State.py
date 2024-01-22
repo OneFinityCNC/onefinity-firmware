@@ -87,6 +87,7 @@ class State(object):
 
         self.reset()
         self.load_files()
+        self.load_gcodes()
 
         observer = Observer()
         observer.schedule(UploadChangeHandler(self), self.ctrl.get_upload(), recursive=True)
@@ -132,8 +133,13 @@ class State(object):
         self.set('files', files)
 
         if len(files): self.select_file(files[0])
-        else: self.select_file('')
+        else: self.select_file('') 
 
+    def load_gcodes(self):
+        GCodeList = []
+        files = copy.deepcopy(self.get('files'))
+        GCodeList=files
+        self.set('GCodeList', GCodeList)
 
     def clear_files(self):
         self.select_file('')
@@ -164,10 +170,6 @@ class State(object):
         self.set('selected', filename)
         time = os.path.getmtime(self.ctrl.get_upload(filename))
         self.set('selected_time', time)
-    
-    def return_files(self):
-        files = copy.deepcopy(self.get('files'))
-        return files
 
 
     def set_bounds(self, bounds):
