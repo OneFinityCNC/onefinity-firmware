@@ -37,9 +37,6 @@ class FileHandler(bbctrl.APIHandler):
             self.uploadFile.write(data)
 
     def delete_ok(self, filename):
-        self.get_log('FileHandler').info('filename ' + filename)
-        if(filename.split('$MACROS$')[0] == 'macros'):
-            macrosList = filename.split('$MACROS$')[1]
         allFiles = self.get_ctrl().state.return_files()
         
         if not filename:
