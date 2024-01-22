@@ -37,9 +37,10 @@ class FileHandler(bbctrl.APIHandler):
             self.uploadFile.write(data)
 
     def delete_ok(self, filename):
+        self.get_log('FileHandler').info('filename ' + filename)
+        if(filename.split('$MACROS$')[0] == 'macros'):
+            macrosList = filename.split('$MACROS$')[1]
         allFiles = self.get_ctrl().state.return_files()
-        for file in allFiles:
-            self.get_log('FileHandler').info('filename ' + file)
         
         if not filename:
             # Delete everything
@@ -78,17 +79,21 @@ class FileHandler(bbctrl.APIHandler):
 
     @gen.coroutine
     def get(self, filename):
+        self.get_log('FileHandler').info(
+            'FileName: ' + filename)
         if not filename:
             raise HTTPError(400, 'Missing filename')
-
-        filename = os.path.basename(url_unescape(filename))
+        if filename.startswith('{%MACROS%}'):
+            filebasename = os.path.basename(url_unescape(filename.replace("{%MACROS%}", "")))
+        else:
+            filebasename = os.path.basename(url_unescape(filename))
 
         try:
-            with open(self.get_upload(filename).encode('utf8'), 'r') as f:
+            with open(self.get_upload(filebasename).encode('utf8'), 'r') as f:
                 self.write(f.read())
         except Exception:
             self.get_ctrl().state.select_file('')
             raise HTTPError(
                 400, "Unable to read file - doesn't appear to be GCode.")
-
-        self.get_ctrl().state.select_file(filename)
+        if not filename.startswith('{%MACROS%}'):
+            self.get_ctrl().state.select_file(filebasename)
