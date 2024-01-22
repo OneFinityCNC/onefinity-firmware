@@ -373,7 +373,8 @@ module.exports = {
                     return;
             }
 
-            if(!this.config.gcodeList.some(item=> item == file.name)){
+            const isAlreadyPresent = this.config.gcodeList.find((element) => element == file.name);
+            if(isAlreadyPresent == undefined){
                 console.log('new gcode file');
                 this.config.gcodeList.push(file.name);
                 try {

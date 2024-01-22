@@ -246,8 +246,3 @@ class Config(object):
         for name, tmpl in self.template.items():
             conf = config.get(name, None)
             self._encode(name, '', conf, tmpl, with_defaults)
-    
-    def set_gcodeList(self, filename):
-        self.set('selected', filename)
-        time = os.path.getmtime(self.ctrl.get_upload(filename))
-        self.set('selected_time', time)

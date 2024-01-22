@@ -42,9 +42,6 @@ module.exports = {
     updateNewGcode: function (event) {
       this.newGcode[this.tab - 1] = event.target.value;
     },
-    loadGcode: function (data) {
-      this.newGcode[this.tab - 1] = data;
-    },
     macrosList: function () {
       return this.config.macrosList.map((el) => el.gcode_file_name);
     },
@@ -61,12 +58,12 @@ module.exports = {
         });
         const text = (await response.text()).split(" ").join("\n");
         if (text.length > 20e6) {
-          this.loadGcode("File is large - gcode view disabled");
+          this.newGcode[this.tab - 1]="File is large - gcode view disabled";
         } else {
-          this.loadGcode(text);
+          this.newGcode[this.tab - 1]=text;
         }
       } else {
-        this.loadGcode("");
+        this.newGcode[this.tab - 1]="";
       }
       console.log(this.newGcode[this.tab - 1]);
     },
