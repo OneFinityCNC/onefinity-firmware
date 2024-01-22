@@ -120,10 +120,7 @@ class State(object):
     def load_files(self):
         files = []
 
-        upload = self.ctrl.get_upload()
-        self.log.info('upload: '+upload)
-        GCode = self.ctrl.get_GCode()
-        self.log.info('GCode: '+GCode)
+        upload = self.ctrl.get_upload()        
 
         if not os.path.exists(upload):
             os.mkdir(upload)
@@ -140,8 +137,14 @@ class State(object):
 
     def load_gcodes(self):
         GCodeList = []
-        # files = copy.deepcopy(self.get('files'))
+        files = copy.deepcopy(self.get('files'))
         # GCodeList=files
+        for i in files:
+            self.log.info('files: ',i)
+        macrosList = self.ctrl.config.get('macrosList', [])
+        for i in macrosList:
+            self.log.info('macrosList: ',i)
+
         self.set('GCodeList', GCodeList)
 
     def clear_files(self):
