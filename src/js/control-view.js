@@ -205,8 +205,8 @@ module.exports = {
         gcodeFiles: function () {
             const filesWithNoMacros=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
             console.log('filesWithNoMacros: ',filesWithNoMacros);
-            console.log("this.config.GCodeList",this.config.GCodeList)
-            const unionSet = new Set([...filesWithNoMacros, ...this.config.GCodeList]);
+            console.log("this.config.GCodeList",this.state.GCodeList)
+            const unionSet = new Set([...filesWithNoMacros, ...this.state.GCodeList]);
             const files = [...unionSet];
             console.log("files: ",files);
             return files;
@@ -375,10 +375,10 @@ module.exports = {
                     return;
             }
 
-            const isAlreadyPresent = this.config.GCodeList.find((element) => element == file.name);
+            const isAlreadyPresent = this.state.GCodeList.find((element) => element == file.name);
             if(isAlreadyPresent == undefined){
                 console.log('new gcode file');
-                this.config.GCodeList.push(file.name);
+                this.state.GCodeList.push(file.name);
                 try {
                   await api.put("config/save", this.config);
                   this.$dispatch("update");

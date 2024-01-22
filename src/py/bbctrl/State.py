@@ -137,8 +137,8 @@ class State(object):
 
     def load_gcodes(self):
         GCodeList = []
-        files = copy.deepcopy(self.get('files'))
-        GCodeList=files
+        # files = copy.deepcopy(self.get('files'))
+        # GCodeList=files
         self.set('GCodeList', GCodeList)
 
     def clear_files(self):
