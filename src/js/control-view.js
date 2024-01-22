@@ -72,7 +72,7 @@ module.exports = {
         },
 
         "state.selected_time": function() {
-            this.load();
+            this.loadGCode();
         },
 
         jog_step: function() {
@@ -235,7 +235,7 @@ module.exports = {
     },
 
     ready: function() {
-        this.load();
+        this.loadGCode();
 
         setInterval(() => {
             this.current_time = new Date().toLocaleTimeString();
@@ -531,7 +531,7 @@ module.exports = {
                 this.state.selected_time=this.config.macros[id].gcode_file_time
             }
             try{
-                this.load();
+                this.loadGCode();
                 this.start_pause();
             }catch(error){
                 console.warn("Error running program: ",error);
