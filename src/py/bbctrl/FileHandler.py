@@ -51,6 +51,7 @@ class FileHandler(bbctrl.APIHandler):
             # Delete a single file
             filename = os.path.basename(filename)
             self.get_log('FileHandler').info('filename ' + filename)
+            self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
             safe_remove(self.get_upload(filename))
             self.get_ctrl().preplanner.delete_plans(filename)
             self.get_ctrl().state.remove_file(filename)
@@ -85,8 +86,6 @@ class FileHandler(bbctrl.APIHandler):
         else:
             filebasename = os.path.basename(url_unescape(filename))
         
-        self.get_log('FileHandler').info(
-            'FileBaseName: ' + filebasename)
         try:
             with open(self.get_upload(filebasename).encode('utf8'), 'r') as f:
                 self.write(f.read())

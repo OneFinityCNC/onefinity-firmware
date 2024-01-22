@@ -164,15 +164,14 @@ module.exports = {
       console.log(" this.state.selected && time: ",this.state.selected, this.state.selected_time);
       console.log("selectedValues: ",this.selectedValues[this.tab - 1]);
 
-      if (this.selectedValues[this.tab - 1] == "default") {
-        var file = this.newGcode[this.tab - 1];
-        this.uploadGCode(macrosName+'.ngc', file);
-      }
+      var file_name=this.selectedValues[this.tab - 1] == "default"?macrosName+'.ngc':this.selectedValues[this.tab - 1];
+      var file = this.newGcode[this.tab - 1];
+
+      this.uploadGCode(file_name, file);
 
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
-      this.config.macros[this.tab - 1].gcode_file_name =
-        this.selectedValues[this.tab - 1]  == "default" ? macrosName+'.ngc' : this.selectedValues[this.tab - 1] ;
+      this.config.macros[this.tab - 1].gcode_file_name = file_name ;
       this.config.macros[this.tab - 1].gcode_file_time =
         this.state.selected_time;
       console.log("config.macros[this.tab - 1].gcode_file_name",this.config.macros[this.tab - 1].gcode_file_name);

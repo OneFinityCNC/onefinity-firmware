@@ -134,6 +134,11 @@ class State(object):
 
         if len(files): self.select_file(files[0])
         else: self.select_file('') 
+    
+    def return_files(self):
+        files = copy.deepcopy(self.get('files'))
+        return files
+    
 
     def load_gcodes(self):
         GCodeList = []
