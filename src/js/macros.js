@@ -40,7 +40,7 @@ module.exports = {
       return this.mach_state == "READY";
     },
     updateNewGcode: function (event) {
-      return this.newGcode[this.tab - 1] = event.target.value;
+      this.newGcode[this.tab - 1] = event.target.value;
     },
     macrosList: function () {
       return this.config.macrosList.map((el) => el.gcode_file_name);
@@ -60,7 +60,8 @@ module.exports = {
         if (text.length > 20e6) {
           this.newGcode[this.tab - 1]="File is large - gcode view disabled";
         } else {
-          this.newGcode[this.tab - 1]=text;
+          // this.newGcode[this.tab - 1]=text;
+          Vue.set(this.newGcode,this.tab,text);
         }
       } else {
         this.newGcode[this.tab - 1]="";
