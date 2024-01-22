@@ -39,9 +39,6 @@ module.exports = {
     is_ready: function () {
       return this.mach_state == "READY";
     },
-    updateNewGcode: function (event) {
-      this.newGcode[this.tab - 1] = event.target.value;
-    },
     macrosList: function () {
       return this.config.macrosList.map((el) => el.gcode_file_name);
     },
@@ -49,6 +46,9 @@ module.exports = {
   methods: {
     open: function () {
       utils.clickFileInput("gcode-file-input");
+    },
+    updateNewGcode: function (event) {
+      this.newGcode[this.tab - 1] = event.target.value;
     },
     loadMacrosGcode: async function () {
       const file = this.selectedValues[this.tab - 1];
@@ -61,7 +61,8 @@ module.exports = {
         // this.newGcode[this.tab - 1]=text;
         Vue.set(this.newGcode,this.tab-1,text);
       } else {
-        this.newGcode[this.tab - 1]="";
+        // this.newGcode[this.tab - 1]="";
+        Vue.set(this.newGcode,this.tab-1,"");
       }
       console.log("newGcode: ",this.newGcode[this.tab - 1]);
     },
