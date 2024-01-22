@@ -57,12 +57,9 @@ module.exports = {
           cache: "no-cache",
         });
         const text = (await response.text()).split(" ").join("\n");
-        if (text.length > 20e6) {
-          this.newGcode[this.tab - 1]="File is large - gcode view disabled";
-        } else {
-          // this.newGcode[this.tab - 1]=text;
-          Vue.set(this.newGcode,this.tab,text);
-        }
+        console.log(text);
+        // this.newGcode[this.tab - 1]=text;
+        Vue.set(this.newGcode,this.tab-1,text);
       } else {
         this.newGcode[this.tab - 1]="";
       }
