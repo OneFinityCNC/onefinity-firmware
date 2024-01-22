@@ -693,9 +693,12 @@
   "GCodeList": {
     "type": "list",
     "index": "numeric",
-    "default": [  ],
+    "default": [],
     "template": {
-        "type": "text"
+      "gcode_file_time": {
+        "type": "int",
+        "default": 1705008395
+      }
     }
   },
 
