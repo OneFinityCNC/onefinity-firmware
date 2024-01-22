@@ -202,7 +202,7 @@ module.exports = {
             const p = this.plan_time / this.toolpath.time;
             return Math.min(1, p);
         },
-        macrosList: function () {
+        gcodeFiles: function () {
             console.log(this.state.files);
             console.log(this.config.macrosList);
             const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
