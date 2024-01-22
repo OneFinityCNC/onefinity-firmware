@@ -40,7 +40,7 @@ module.exports = {
       return this.mach_state == "READY";
     },
     updateNewGcode: function (event) {
-      this.newGcode[this.tab - 1] = event.target.value;
+      return this.newGcode[this.tab - 1] = event.target.value;
     },
     macrosList: function () {
       return this.config.macrosList.map((el) => el.gcode_file_name);
@@ -50,7 +50,7 @@ module.exports = {
     open: function () {
       utils.clickFileInput("gcode-file-input");
     },
-    load: async function () {
+    loadMacrosGcode: async function () {
       const file = this.selectedValues[this.tab - 1];
       if (this.selectedValues[this.tab - 1] != "default") {
         const response = await fetch(`/api/file/${file}`, {
@@ -67,7 +67,7 @@ module.exports = {
       }
       console.log("newGcode: ",this.newGcode[this.tab - 1]);
     },
-    upload:async function (e) {
+    uploadMacrosGcode:async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -162,7 +162,7 @@ module.exports = {
       console.log(" this.state.selected && time: ",this.state.selected, this.state.selected_time);
       console.log("selectedValues: ",this.selectedValues[this.tab - 1]);
 
-      if (this.state.selected == "default") {
+      if (this.selectedValues[this.tab - 1] == "default") {
         var file = this.newGcode[this.tab - 1];
         this.uploadGCode(macrosName, file);
       }
@@ -170,7 +170,7 @@ module.exports = {
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].gcode_file_name =
-        this.state.selected == "default" ? macrosName+'.ngc' : this.state.selected;
+        this.selectedValues[this.tab - 1]  == "default" ? macrosName+'.ngc' : this.selectedValues[this.tab - 1] ;
       this.config.macros[this.tab - 1].gcode_file_time =
         this.state.selected_time;
       console.log("config.macros[this.tab - 1].gcode_file_name",this.config.macros[this.tab - 1].gcode_file_name);
