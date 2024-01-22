@@ -297,7 +297,7 @@ script#control-view-template(type="text/x-template")
           select(title="Select previously uploaded GCode programs.",
             v-model="state.selected", @change="load", :disabled="!is_ready",
             style="max-width:100%")
-            option(v-for="file in gcode_files", :value="file") {{file}}
+            option(v-for="file in gcodeFiles", :value="file") {{file}}
 
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
             title="Simulating GCode to check for errors, calculate ETA and " +
