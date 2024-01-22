@@ -690,6 +690,15 @@
     }
   },
 
+  "GCodeList": {
+    "type": "list",
+    "index": "numeric",
+    "default": [  ],
+    "template": {
+        "type": "text"
+    }
+  },
+
   "admin": {
     "auto-check-upgrade": {
       "type": "bool",

@@ -164,7 +164,7 @@ module.exports = {
 
       if (this.selectedValues[this.tab - 1] == "default") {
         var file = this.newGcode[this.tab - 1];
-        this.uploadGCode(macrosName, file);
+        this.uploadGCode(macrosName+'.ngc', file);
       }
 
       this.config.macros[this.tab - 1].name = macrosName;

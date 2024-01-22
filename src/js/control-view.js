@@ -205,8 +205,8 @@ module.exports = {
         gcodeFiles: function () {
             const filesWithNoMacros=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
             console.log('filesWithNoMacros: ',filesWithNoMacros);
-            console.log("this.config.gcodeList",this.config.gcodeList)
-            const unionSet = new Set([...filesWithNoMacros, ...this.config.gcodeList]);
+            console.log("this.config.GCodeList",this.config.GCodeList)
+            const unionSet = new Set([...filesWithNoMacros, ...this.config.GCodeList]);
             const files = [...unionSet];
             console.log("files: ",files);
             return files;
@@ -278,7 +278,7 @@ module.exports = {
             this.$dispatch("send", msg);
         },
 
-        load: function() {
+        loadGCode: function() {
             const file_time = this.state.selected_time;
             const file = this.state.selected;
             if (this.last_file == file && this.last_file_time == file_time) {
@@ -355,7 +355,7 @@ module.exports = {
             utils.clickFileInput("gcode-file-input");
         },
 
-        upload: async function(e) {
+        uploadGCode: async function(e) {
             const files = e.target.files || e.dataTransfer.files;
             if (!files.length) {
                 return;
@@ -375,10 +375,10 @@ module.exports = {
                     return;
             }
 
-            const isAlreadyPresent = this.config.gcodeList.find((element) => element == file.name);
+            const isAlreadyPresent = this.config.GCodeList.find((element) => element == file.name);
             if(isAlreadyPresent == undefined){
                 console.log('new gcode file');
-                this.config.gcodeList.push(file.name);
+                this.config.GCodeList.push(file.name);
                 try {
                   await api.put("config/save", this.config);
                   this.$dispatch("update");
@@ -392,7 +392,7 @@ module.exports = {
 
             if(this.config.macrosList.some(obj => obj.gcode_file_name == file.name)){
                 console.log("It is a macros, remove it from macrosList")
-                // this.config.gcodeList.push(file.name);
+                // this.config.GCodeList.push(file.name);
             }
 
             SvelteComponents.showDialog("Upload", {

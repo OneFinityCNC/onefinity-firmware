@@ -268,7 +268,7 @@ script#control-view-template(type="text/x-template")
             .fa.fa-folder-open
 
           form.gcode-file-input.file-upload
-            input(type="file", @change="upload", :disabled="!is_ready",
+            input(type="file", @change="uploadGCode", :disabled="!is_ready",
               accept=".nc,.ngc,.gcode,.gc")
 
           a(:disabled="!state.selected", download,
@@ -295,7 +295,7 @@ script#control-view-template(type="text/x-template")
                 | &nbsp;Selected
 
           select(title="Select previously uploaded GCode programs.",
-            v-model="state.selected", @change="load", :disabled="!is_ready",
+            v-model="state.selected", @change="loadGCode", :disabled="!is_ready",
             style="max-width:100%")
             option(v-for="file in gcodeFiles", :value="file") {{file}}
 
