@@ -38,8 +38,19 @@ class FileHandler(bbctrl.APIHandler):
 
     def delete_ok(self, filename):
         allFiles = self.get_ctrl().state.return_files()
+
+        if filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
+            macrosList=filename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
+            self.get_log('FileHandler').info('macrosList ' + macrosList)
+
+            # filename = os.path.basename(filename)
+            # self.get_log('FileHandler').info('filenamed ' + filename)
+            # self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
+            # safe_remove(self.get_upload(filename))
+            # self.get_ctrl().preplanner.delete_plans(filename)
+            # self.get_ctrl().state.remove_file(filename)
         
-        if not filename:
+        elif not filename:
             # Delete everything
             for path in glob.glob(self.get_upload('*')):
                 self.get_log('FileHandler').info('path ' + path)
@@ -50,7 +61,7 @@ class FileHandler(bbctrl.APIHandler):
         else:
             # Delete a single file
             filename = os.path.basename(filename)
-            self.get_log('FileHandler').info('filename ' + filename)
+            self.get_log('FileHandler').info('filenamed ' + filename)
             self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
             safe_remove(self.get_upload(filename))
             self.get_ctrl().preplanner.delete_plans(filename)
