@@ -205,15 +205,15 @@ module.exports = {
         gcode_files: async function (){
             const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
             console.log(files);
-            this.config.gcodeList=files;
-            try {
-                await api.put("config/save", this.config);
-                console.log("Successfully saved");
-                this.$dispatch("update");
-              } catch (error) {
-                console.error("Restore Failed: ", error);
-                alert("Restore failed");
-              }
+            // this.config.gcodeList=files;
+            // try {
+            //     await api.put("config/save", this.config);
+            //     console.log("Successfully saved");
+            //     this.$dispatch("update");
+            //   } catch (error) {
+            //     console.error("Restore Failed: ", error);
+            //     alert("Restore failed");
+            //   }
             return files;
         }
     },
