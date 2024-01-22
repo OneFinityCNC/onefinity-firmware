@@ -27,6 +27,7 @@
 
 import os
 import json
+import bbctrl.RequestHandler
 import pkg_resources
 from pkg_resources import Requirement, resource_filename
 
@@ -54,7 +55,7 @@ class Config(object):
         except Exception: self.log.exception('Internal error: Failed to load config template')
 
     def update_gcode_list(self):
-        self.values['gcodeList'] = self.get_ctrl().state.return_files()
+        self.values['gcodeList'] = bbctrl.RequestHandler.get_ctrl().state.return_files()
 
 
     def load(self):
