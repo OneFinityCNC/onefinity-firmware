@@ -293,6 +293,9 @@ script#control-view-template(type="text/x-template")
               button.pure-button.button-success(@click="delete_current")
                 .fa.fa-trash
                 | &nbsp;Selected
+              button.pure-button.button-success(@click="delete_all_except_macros")
+                .fa.fa-trash
+                | &nbsp;Not Macros
 
           select(title="Select previously uploaded GCode programs.",
             v-model="state.selected", @change="loadGCode", :disabled="!is_ready",

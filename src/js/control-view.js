@@ -405,8 +405,10 @@ module.exports = {
         },
 
         delete_current: function() {
-            if (this.state.selected) {
-                api.delete(`file/${this.state.selected}`);
+            if(this.config.macrosList.find(item=>item.gcode_file_name==this.state.selected)==undefined){
+                if (this.state.selected) {
+                    api.delete(`file/${this.state.selected}`);
+                }
             }
 
             this.deleteGCode = false;
@@ -414,6 +416,12 @@ module.exports = {
 
         delete_all: function() {
             api.delete("file");
+            this.deleteGCode = false;
+        },
+
+        delete_all_except_macros: function() {
+            macrosList=this.config.macros.map(item=>item.gcode_file_name).toString();
+            api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
             this.deleteGCode = false;
         },
 

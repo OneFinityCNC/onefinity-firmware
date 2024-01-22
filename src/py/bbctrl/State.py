@@ -137,8 +137,9 @@ class State(object):
 
     def load_gcodes(self):
         GCodeList = []
-        files = copy.deepcopy(self.get('files'))
-        macrosList = self.ctrl.config.get('macrosList', [])
+        # GCodeList = copy.deepcopy(self.get('files'))
+
+        # macrosList = self.ctrl.config.get('macrosList', [])
 
         # macro_names = [macro["gcode_file_name"] for macro in macrosList]
         # GCodeList = [file for file in files if file not in macro_names]
