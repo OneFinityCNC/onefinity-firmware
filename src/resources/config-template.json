@@ -646,18 +646,48 @@
   },
 
   "macrosList": {
-    "type":"list",
+    "type": "list",
     "index": "12345678",
-    "default":[
-      "FireLaser.ngc",
-      "GoHomeXYZ.ngc",
-      "ParkRearRightWW.ngc",
-      "SpindleWarmUp1Minute.ngc",
-      "TurnOnSpindle.ngc",
-      "TurnOffSpindleAndLaser.ngc",
-      "VacOn.ngc",
-      "TurnOffVac.ngc"
-    ]
+    "default": [
+      {
+        "gcode_file_name": "FireLaser.ngc",
+        "gcode_file_time": 1705008250.2333415
+      },
+      {
+        "gcode_file_name": "GoHomeXYZ.ngc",
+        "gcode_file_time": 1705008321.710827
+      },
+      {
+        "gcode_file_name": "ParkRearRightWW.ngc",
+        "gcode_file_time": 1705008360.977644
+      },
+      {
+        "gcode_file_name": "SpindleWarmUp1Minute.ngc",
+        "gcode_file_time": 1705008372.967075
+      },
+      {
+        "gcode_file_name": "TurnOnSpindle.ngc",
+        "gcode_file_time": 1705008405.5059154
+      },
+      {
+        "gcode_file_name": "TurnOffSpindleAndLaser.ngc",
+        "gcode_file_time": 1705008384.6566093
+      },
+      {
+        "gcode_file_name": "VacOn.ngc",
+        "gcode_file_time": 1705008413.7756715
+      },
+      {
+        "gcode_file_name": "TurnOffVac.ngc",
+        "gcode_file_time": 1705008395.476232
+      }
+    ],
+    "template": {
+      "gcode_file_time": {
+        "type": "int",
+        "default": 1705008395
+      }
+    }
   },
 
   "admin": {
