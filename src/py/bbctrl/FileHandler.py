@@ -37,9 +37,11 @@ class FileHandler(bbctrl.APIHandler):
             self.uploadFile.write(data)
 
     def delete_ok(self, filename):
+        self.get_log('FileHandler').info('filename ' + filename)
         if not filename:
             # Delete everything
             for path in glob.glob(self.get_upload('*')):
+                self.get_log('FileHandler').info('path ' + path)
                 safe_remove(path)
             self.get_ctrl().preplanner.delete_all_plans()
             self.get_ctrl().state.clear_files()
@@ -47,6 +49,7 @@ class FileHandler(bbctrl.APIHandler):
         else:
             # Delete a single file
             filename = os.path.basename(filename)
+            self.get_log('FileHandler').info('filename ' + filename)
             safe_remove(self.get_upload(filename))
             self.get_ctrl().preplanner.delete_plans(filename)
             self.get_ctrl().state.remove_file(filename)
