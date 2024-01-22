@@ -289,10 +289,10 @@ script#control-view-template(type="text/x-template")
               button.pure-button(@click="deleteGCode = false") Cancel
               button.pure-button.button-error(@click="delete_all")
                 .fa.fa-trash
-                | &nbsp;all
+                | &nbsp;All
               button.pure-button.button-success(@click="delete_current")
                 .fa.fa-trash
-                | &nbsp;selected
+                | &nbsp;Selected
 
           select(title="Select previously uploaded GCode programs.",
             v-model="state.selected", @change="load", :disabled="!is_ready",

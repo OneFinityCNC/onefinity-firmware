@@ -65,7 +65,7 @@ module.exports = {
       } else {
         this.newGcode[this.tab - 1]="";
       }
-      console.log(this.newGcode[this.tab - 1]);
+      console.log("newGcode: ",this.newGcode[this.tab - 1]);
     },
     upload:async function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -159,8 +159,8 @@ module.exports = {
         `macros-color-${this.tab - 1}`
       ).value;
 
-      console.log(this.state.selected, this.state.selected_time);
-      console.log(this.selectedValues[this.tab - 1]);
+      console.log(" this.state.selected && time: ",this.state.selected, this.state.selected_time);
+      console.log("selectedValues: ",this.selectedValues[this.tab - 1]);
 
       if (this.state.selected == "default") {
         var file = this.newGcode[this.tab - 1];
@@ -173,7 +173,7 @@ module.exports = {
         this.state.selected == "default" ? macrosName+'.ngc' : this.state.selected;
       this.config.macros[this.tab - 1].gcode_file_time =
         this.state.selected_time;
-      console.log(this.config.macros[this.tab - 1].gcode_file_name);
+      console.log("config.macros[this.tab - 1].gcode_file_name",this.config.macros[this.tab - 1].gcode_file_name);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);

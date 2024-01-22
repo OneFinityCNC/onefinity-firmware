@@ -204,9 +204,10 @@ module.exports = {
         },
         gcodeFiles: function () {
             const filesWithNoMacros=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
+            console.log('filesWithNoMacros: ',filesWithNoMacros);
             const unionSet = new Set([...filesWithNoMacros, ...this.config.gcodeList]);
             const files = [...unionSet];
-            console.log(files);
+            console.log("files: ",files);
             return files;
         }
     },
@@ -283,7 +284,7 @@ module.exports = {
                 return;
             }
 
-            console.log(file,file_time);
+            console.log("file: ",file," time: ",file_time);
 
             this.last_file = file;
             this.last_file_time = file_time;

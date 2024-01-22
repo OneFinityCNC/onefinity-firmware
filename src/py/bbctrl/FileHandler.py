@@ -38,7 +38,7 @@ class FileHandler(bbctrl.APIHandler):
 
     def delete_ok(self, filename):
         self.get_log('FileHandler').info('filename ' + filename)
-        allFiles = self.get_ctrl().state.return_files(filename)
+        allFiles = self.get_ctrl().state.return_files()
         for file in allFiles:
             self.get_log('FileHandler').info('filename ' + file)
         
