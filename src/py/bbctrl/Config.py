@@ -55,8 +55,8 @@ class Config(object):
         except Exception: self.log.exception('Internal error: Failed to load config template')
 
     def update_gcode_list(self):
-        reqHand=bbctrl.RequestHandler()
-        self.values['gcodeList'] = reqHand.get_ctrl().state.return_files()
+        RequestHandler_Instance=bbctrl.RequestHandler(app=None, request=None)
+        self.values['gcodeList'] = RequestHandler_Instance.get_ctrl().state.return_files()
 
 
     def load(self):
