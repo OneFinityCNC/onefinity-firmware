@@ -121,6 +121,9 @@ class State(object):
         files = []
 
         upload = self.ctrl.get_upload()
+        self.log.info('upload: '+upload)
+        GCode = self.ctrl.get_GCode()
+        self.log.info('GCode: '+GCode)
 
         if not os.path.exists(upload):
             os.mkdir(upload)
