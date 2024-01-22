@@ -42,7 +42,6 @@ module.exports = {
             tab: "auto",
             ask_home: true,
             showGcodeMessage: false,
-            gcode_files:this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name === item))
         };
     },
 
@@ -376,6 +375,11 @@ module.exports = {
                     return;
             }
 
+            console.log(file.name);
+            if(this.state.macrosList.some(obj => obj.gcode_file_name == files.name)){
+                console.log("It is a macros, remove it from macrosList")
+            }
+
             SvelteComponents.showDialog("Upload", {
                 file,
                 onComplete: () => {
@@ -517,7 +521,10 @@ module.exports = {
             }catch(error){
                 console.warn("Error running program: ",error);
             }
-        }
+        },
+        gcode_files: function (){
+            return this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name === item))
+        }  
     },
 
     mixins: [ require("./axis-vars") ]

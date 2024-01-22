@@ -41,6 +41,7 @@ class Config(object):
         self.log = ctrl.log.get('Config')
 
         self.values = {}
+        self.values['gcodeList'] = []
 
         try:
             self.version = "1.4.0"
@@ -51,6 +52,9 @@ class Config(object):
                 self.template = json.load(f)
 
         except Exception: self.log.exception('Internal error: Failed to load config template')
+
+    def update_gcode_list(self, state):
+        self.values['gcodeList'] = state.files
 
 
     def load(self):
@@ -63,6 +67,8 @@ class Config(object):
 
             try:
                 self._upgrade(config)
+                config['gcodeList'] = self.get('gcodeList', [])
+                self.update_gcode_list(["Team Onefinity.ngc","4th.ngc"])
             except Exception: self.log.exception('Internal error: Failed to upgrade config')
 
         except Exception as e:
@@ -84,6 +90,8 @@ class Config(object):
     def save(self, config):
         self._upgrade(config)
         self._update(config, False)
+
+        config['gcodeList'] = self.get('gcodeList')
 
         with open(self.ctrl.get_path('config.json'), 'w') as f:
             json.dump(config, f, indent=2)
