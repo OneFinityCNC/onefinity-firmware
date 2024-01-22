@@ -141,9 +141,9 @@ class State(object):
         # GCodeList=files
         for i in files:
             self.log.info('files: ',i)
-        macrosList = self.ctrl.config.get('macrosList', [])
-        for i in macrosList:
-            self.log.info('macrosList: ',i)
+        # macrosList = self.ctrl.config.get('macrosList', [])
+        # for i in macrosList:
+        #     self.log.info('macrosList: ',i)
 
         self.set('GCodeList', GCodeList)
 
