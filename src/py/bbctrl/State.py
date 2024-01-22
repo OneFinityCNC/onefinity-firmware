@@ -164,6 +164,10 @@ class State(object):
         self.set('selected', filename)
         time = os.path.getmtime(self.ctrl.get_upload(filename))
         self.set('selected_time', time)
+    
+    def return_files(self):
+        files = copy.deepcopy(self.get('files'))
+        return files
 
 
     def set_bounds(self, bounds):

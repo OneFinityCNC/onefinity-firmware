@@ -53,8 +53,8 @@ class Config(object):
 
         except Exception: self.log.exception('Internal error: Failed to load config template')
 
-    def update_gcode_list(self, state):
-        self.values['gcodeList'] = state.files
+    def update_gcode_list(self):
+        self.values['gcodeList'] = self.get_ctrl().state.return_files()
 
 
     def load(self):
@@ -67,8 +67,8 @@ class Config(object):
 
             try:
                 self._upgrade(config)
+                self.update_gcode_list()
                 config['gcodeList'] = self.get('gcodeList', [])
-                self.update_gcode_list(["Team Onefinity.ngc","4th.ngc"])
             except Exception: self.log.exception('Internal error: Failed to upgrade config')
 
         except Exception as e:
@@ -251,3 +251,8 @@ class Config(object):
         for name, tmpl in self.template.items():
             conf = config.get(name, None)
             self._encode(name, '', conf, tmpl, with_defaults)
+    
+    def set_gcodeList(self, filename):
+        self.set('selected', filename)
+        time = os.path.getmtime(self.ctrl.get_upload(filename))
+        self.set('selected_time', time)
