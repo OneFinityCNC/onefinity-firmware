@@ -40,15 +40,16 @@ class FileHandler(bbctrl.APIHandler):
         allFiles = self.get_ctrl().state.return_files()
 
         if filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
-            macrosList=filename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
-            self.get_log('FileHandler').info('macrosList ' + macrosList)
+            macrosList=filename.replace('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
+            self.get_log('FileHandler').info('macrosList ' + macrosList).split(',')
 
-            # filename = os.path.basename(filename)
-            # self.get_log('FileHandler').info('filenamed ' + filename)
-            # self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
-            # safe_remove(self.get_upload(filename))
-            # self.get_ctrl().preplanner.delete_plans(filename)
-            # self.get_ctrl().state.remove_file(filename)
+            for filename in [item for item in allFiles if item not in macrosList]:
+                filename = os.path.basename(filename)
+                self.get_log('FileHandler').info('filenamed ' + filename)
+                self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
+                safe_remove(self.get_upload(filename))
+                self.get_ctrl().preplanner.delete_plans(filename)
+                self.get_ctrl().state.remove_file(filename)
         
         elif not filename:
             # Delete everything

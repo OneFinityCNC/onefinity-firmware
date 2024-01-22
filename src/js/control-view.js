@@ -420,7 +420,7 @@ module.exports = {
         },
 
         delete_all_except_macros: function() {
-            const macrosList=this.config.macros.map(item=>item.gcode_file_name).toString();
+            const macrosList=this.config.macrosList.map(item=>item.gcode_file_name).toString();
             api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
             this.deleteGCode = false;
         },
