@@ -27,7 +27,7 @@
 
 import os
 import json
-import bbctrl.RequestHandler
+import bbctrl
 import pkg_resources
 from pkg_resources import Requirement, resource_filename
 
@@ -55,9 +55,10 @@ class Config(object):
         except Exception: self.log.exception('Internal error: Failed to load config template')
 
     def update_gcode_list(self):
-        RequestHandler_Instance=bbctrl.RequestHandler(app=None, request=None)
-        self.values['gcodeList'] = RequestHandler_Instance.get_ctrl().state.return_files()
-
+        ctrl_Instance = bbctrl.Ctrl()
+        state_Instance=bbctrl.State(ctrl_Instance)
+        files = state_Instance.get('files', ["non_came.ngc"])
+        self.values['gcodeList'] = files
 
     def load(self):
         path = self.ctrl.get_path('config.json')
@@ -70,7 +71,7 @@ class Config(object):
             try:
                 self._upgrade(config)
                 self.update_gcode_list()
-                config['gcodeList'] = self.get('gcodeList', [])
+                config['gcodeList'] = self.get('gcodeList', ["Test.ngc"])
             except Exception: self.log.exception('Internal error: Failed to upgrade config')
 
         except Exception as e:
