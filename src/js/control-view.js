@@ -203,9 +203,9 @@ module.exports = {
             return Math.min(1, p);
         },
         gcodeFiles: function () {
-            console.log(this.state.files);
-            console.log(this.config.macrosList);
-            const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
+            const filesWithNoMacros=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
+            const unionSet = new Set([...filesWithNoMacros, ...this.config.gcodeList]);
+            const files = [...unionSet];
             console.log(files);
             return files;
         }
@@ -353,7 +353,7 @@ module.exports = {
             utils.clickFileInput("gcode-file-input");
         },
 
-        upload: function(e) {
+        upload: async function(e) {
             const files = e.target.files || e.dataTransfer.files;
             if (!files.length) {
                 return;
@@ -373,7 +373,21 @@ module.exports = {
                     return;
             }
 
-            if(this.config.macrosList.some(obj => obj.gcode_file_name == files.name)){
+            if(!this.config.gcodeList.some(item=> item == file.name)){
+                console.log('new gcode file');
+                this.config.gcodeList.push(file.name);
+                try {
+                  await api.put("config/save", this.config);
+                  this.$dispatch("update");
+                } catch (error) {
+                  console.error("Restore Failed: ", error);
+                  alert("Restore failed");
+                }
+              }else{
+                console.log('Already exists');
+              }
+
+            if(this.config.macrosList.some(obj => obj.gcode_file_name == file.name)){
                 console.log("It is a macros, remove it from macrosList")
                 // this.config.gcodeList.push(file.name);
             }
