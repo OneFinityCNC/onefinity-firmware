@@ -202,15 +202,12 @@ module.exports = {
             const p = this.plan_time / this.toolpath.time;
             return Math.min(1, p);
         },
-        isMacrosPresent: function(val){
-            try{
-                const res = this.config.macros[val].name!="" || this.config.macros[val].gcode!="";
-                console.log("result: ",val," : res");
-                return res;
-            }catch(err){
-                console.log("Error for macros present: ",err);
-            }
-        },
+        gcode_files: function (){
+            const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
+            console.log(files);
+            console.log(this.config.gcodeList);
+            return files;
+        }
     },
 
     events: {
@@ -376,8 +373,9 @@ module.exports = {
             }
 
             console.log(file.name);
-            if(this.state.macrosList.some(obj => obj.gcode_file_name == files.name)){
+            if(this.config.macrosList.some(obj => obj.gcode_file_name == files.name)){
                 console.log("It is a macros, remove it from macrosList")
+                this.config.gcodeList.push(file.name);
             }
 
             SvelteComponents.showDialog("Upload", {
@@ -522,11 +520,6 @@ module.exports = {
                 console.warn("Error running program: ",error);
             }
         },
-        gcode_files: function (){
-            console.log(this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item)));
-            console.log(this.state.gcodeList);
-            return this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item))
-        }  
     },
 
     mixins: [ require("./axis-vars") ]
