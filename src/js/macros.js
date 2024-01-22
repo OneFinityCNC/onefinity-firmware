@@ -104,6 +104,9 @@ module.exports = {
         console.log('Already exists');
       }
 
+      this.$set('selectedValues[this.tab - 1]',file.name);
+      this.loadMacrosGcode();
+
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
