@@ -523,7 +523,7 @@ module.exports = {
             }
         },
         gcode_files: function (){
-            return this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name === item))
+            return this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item))
         }  
     },
 
