@@ -23,7 +23,6 @@ module.exports = {
         "default",
       ],
       newGcode: ["", "", "", "", "", "", "", ""],
-      macrosList: this.config.macrosList.map((el) => el.gcode_file_name),
     };
   },
   computed: {
@@ -40,11 +39,17 @@ module.exports = {
     is_ready: function () {
       return this.mach_state == "READY";
     },
-  },
-  methods: {
-    updateNewGcode(event) {
+    updateNewGcode: function (event) {
       this.newGcode[this.tab - 1] = event.target.value;
     },
+    loadGcode: function (data){
+      this.newGcode[this.tab - 1] = data;
+    },
+    macrosList: function (){
+      return this.config.macrosList.map((el) => el.gcode_file_name);
+    }
+  },
+  methods: {
     open: function () {
       utils.clickFileInput("gcode-file-input");
     },
@@ -56,12 +61,12 @@ module.exports = {
         });
         const text = (await response.text()).split(" ").join("\n");
         if (text.length > 20e6) {
-          this.newGcode[this.tab - 1] = "File is large - gcode view disabled";
+          this.loadGcode("File is large - gcode view disabled");
         } else {
-          this.newGcode[this.tab - 1] = text;
+          this.loadGcode(text);
         }
       } else {
-        this.newGcode[this.tab - 1] = "";
+        this.loadGcode("");
       }
       console.log(this.newGcode[this.tab - 1]);
     },

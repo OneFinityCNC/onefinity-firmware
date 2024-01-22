@@ -202,10 +202,18 @@ module.exports = {
             const p = this.plan_time / this.toolpath.time;
             return Math.min(1, p);
         },
-        gcode_files: function (){
+        gcode_files: async function (){
             const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
             console.log(files);
-            console.log(this.config.gcodeList);
+            this.config.gcodeList=files;
+            try {
+                await api.put("config/save", this.config);
+                console.log("Successfully saved");
+                this.$dispatch("update");
+              } catch (error) {
+                console.error("Restore Failed: ", error);
+                alert("Restore failed");
+              }
             return files;
         }
     },
@@ -372,10 +380,9 @@ module.exports = {
                     return;
             }
 
-            console.log(file.name);
             if(this.config.macrosList.some(obj => obj.gcode_file_name == files.name)){
                 console.log("It is a macros, remove it from macrosList")
-                this.config.gcodeList.push(file.name);
+                // this.config.gcodeList.push(file.name);
             }
 
             SvelteComponents.showDialog("Upload", {
