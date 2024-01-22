@@ -23,7 +23,7 @@ module.exports = {
         "default",
       ],
       newGcode: ["", "", "", "", "", "", "", ""],
-      macrosList: this.config.macros.map((item) => item.gcode_file_name),
+      macrosList: this.config.macrosList.map((el) => el.gcode_file_name),
     };
   },
   computed: {
@@ -63,7 +63,7 @@ module.exports = {
       } else {
         this.newGcode[this.tab - 1] = "";
       }
-      console.log(this.newGcode[this.tab-1]);
+      console.log(this.newGcode[this.tab - 1]);
     },
     upload: function (e) {
       const files = e.target.files || e.dataTransfer.files;

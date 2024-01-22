@@ -41,7 +41,9 @@ module.exports = {
             deleteGCode: false,
             tab: "auto",
             ask_home: true,
-            showGcodeMessage: false
+            showGcodeMessage: false,
+            gcode_files:this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name === item.gcode_file_name))
+            .map(item => item.gcode_file_name)
         };
     },
 
@@ -284,6 +286,8 @@ module.exports = {
             if (this.last_file == file && this.last_file_time == file_time) {
                 return;
             }
+
+            console.log(file,file_time);
 
             this.last_file = file;
             this.last_file_time = file_time;
