@@ -201,6 +201,11 @@ module.exports = {
 
             const p = this.plan_time / this.toolpath.time;
             return Math.min(1, p);
+        },
+        gcode_files: async function (){
+            const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
+            console.log(files);
+            return files;
         }
     },
 
@@ -513,9 +518,9 @@ module.exports = {
                 console.warn("Error running program: ",error);
             }
         },
-        gcode_files: async function (){
-            const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
-            console.log(files);
+        // gcode_files: async function (){
+        //     const files=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
+        //     console.log(files);
             // this.config.gcodeList=files;
             // try {
             //     await api.put("config/save", this.config);
@@ -525,8 +530,8 @@ module.exports = {
             //     console.error("Restore Failed: ", error);
             //     alert("Restore failed");
             //   }
-            return files;
-        }
+        //     return files;
+        // }
     },
 
     mixins: [ require("./axis-vars") ]

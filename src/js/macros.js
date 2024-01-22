@@ -42,12 +42,12 @@ module.exports = {
     updateNewGcode: function (event) {
       this.newGcode[this.tab - 1] = event.target.value;
     },
-    loadGcode: function (data){
+    loadGcode: function (data) {
       this.newGcode[this.tab - 1] = data;
     },
-    macrosList: function (){
+    macrosList: function () {
       return this.config.macrosList.map((el) => el.gcode_file_name);
-    }
+    },
   },
   methods: {
     open: function () {
@@ -70,7 +70,7 @@ module.exports = {
       }
       console.log(this.newGcode[this.tab - 1]);
     },
-    upload: function (e) {
+    upload:async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -90,12 +90,28 @@ module.exports = {
           return;
       }
 
-      
+      const gcodeData = {
+        gcode_file_name: file.name,
+        gcode_file_time: this.state.selected_time,
+      };
+      if(!this.config.macrosList.some(item=> item['gcode_file_name'] == file.name)){
+        console.log('new gcode file');
+        this.config.macrosList.push(gcodeData);
+        try {
+          await api.put("config/save", this.config);
+          this.$dispatch("update");
+        } catch (error) {
+          console.error("Restore Failed: ", error);
+          alert("Restore failed");
+        }
+      }else{
+        console.log('Already exists');
+      }
+
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
           this.last_file_time = undefined; // Force reload
-
         },
       });
     },
@@ -124,14 +140,19 @@ module.exports = {
       xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
       xhr.send(file);
 
-      // this.config.macrosList.push()
-      // try {
-      //   await api.put("config/save", this.config);
-      //   this.$dispatch("update");
-      // } catch (error) {
-      //   console.error("Restore Failed: ", error);
-      //   alert("Restore failed");
-      // }
+      const gcodeData = {
+        gcode_file_name: filename,
+        gcode_file_time: this.state.selected_time,
+      };
+
+      this.config.macrosList.push(gcodeData);
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
     },
     saveMacros: async function () {
       var macrosName = document.getElementById(
@@ -146,16 +167,16 @@ module.exports = {
 
       if (this.state.selected == "default") {
         var file = this.newGcode[this.tab - 1];
-        this.uploadGCode(macrosName, file,);
+        this.uploadGCode(macrosName, file);
       }
 
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].gcode_file_name =
-        this.state.selected == "default" ? macrosName : this.state.selected;
+        this.state.selected == "default" ? macrosName+'.ngc' : this.state.selected;
       this.config.macros[this.tab - 1].gcode_file_time =
         this.state.selected_time;
-      this.cancelMacros(this.tab - 1);
+      console.log(this.config.macros[this.tab - 1].gcode_file_name);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
