@@ -18,8 +18,9 @@ script#macros-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="confirmSave=false") Cancel
           button.pure-button.pure-button-primary(@click="saveMacros") Confirm
+
     message(:show.sync="deleteGCode")
-        h3(slot="header") Delete GCode?
+        h3(slot="header") Delete?
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="deleteGCode = false") Cancel
@@ -67,8 +68,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-0",v-model="getMacrosData('color')") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" v-model="getMacrosData('name')")
+                                input.input-color(type="color",id="macros-color-0",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
@@ -85,7 +86,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
@@ -118,7 +119,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
@@ -151,7 +152,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
@@ -184,7 +185,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
@@ -217,7 +218,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
@@ -250,7 +251,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
@@ -283,7 +284,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
@@ -316,7 +317,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
