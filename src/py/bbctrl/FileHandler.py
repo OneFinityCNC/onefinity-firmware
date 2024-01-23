@@ -90,7 +90,7 @@ class FileHandler(bbctrl.APIHandler):
         self.get_log('FileHandler').info('uploadFilename ' + self.uploadFilename)
         if self.uploadFilename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
             self.get_log('FileHandler').info('it is from macros')
-            self.uploadFilename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
+            self.uploadFilename=self.uploadFilename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
             filename = self.get_upload(self.uploadFilename).encode('utf8')
             safe_remove(filename)
             self.get_log('FileHandler').info('uploadFile.name ' + self.uploadFile.name)
