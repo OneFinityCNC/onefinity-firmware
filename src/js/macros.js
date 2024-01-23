@@ -100,12 +100,12 @@ module.exports = {
       }
 
       this.$set("selectedValues[this.tab - 1]", file.name);
-      this.loadMacrosGcode();
 
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
           this.last_file_time = undefined; // Force reload
+          this.loadMacrosGcode();
         },
       });
     },

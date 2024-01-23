@@ -31,12 +31,13 @@ script#macros-template(type="text/x-template")
             | &nbsp;Selected
 
     h1 Macros Configuration
-    button.pure-button(title="Reset Macros", @click="confirmReset=true",
-        style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros
-        .fa.fa-rotate-right
-    button.pure-button(title="Delete Macros GCodes",@click="deleteMacros = true",
-        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around:margin-left: 0.1rem") Delete GCode
-        .fa.fa-trash
+    .select-upload-gcode
+        button.pure-button(title="Reset Macros", @click="confirmReset=true",
+                style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros
+                .fa.fa-rotate-right
+        button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around:margin-left:") Delete GCode
+                .fa.fa-trash
     .warning-box
         p
                 u  Note:
@@ -70,8 +71,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-0",value="getMacrosData('color')") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" value="getMacrosData('name')")
+                                input.input-color(type="color",id="macros-color-0",v-model="getMacrosData('color')") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" v-model="getMacrosData('name')")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
