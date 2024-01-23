@@ -681,7 +681,13 @@
         "gcode_file_name": "TurnOffVac.ngc",
         "gcode_file_time": 1705008395.476232
       }
-    ]
+    ],
+    "template": {
+      "gcode_file_time": {
+        "type": "int",
+        "default": 1705008395
+      }
+    }
   },
 
   "admin": {
