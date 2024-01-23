@@ -88,19 +88,36 @@ class FileHandler(bbctrl.APIHandler):
             os.mkdir(self.get_upload())
 
         self.get_log('FileHandler').info('uploadFilename ' + self.uploadFilename)
-        filename = self.get_upload(self.uploadFilename).encode('utf8')
-        safe_remove(filename)
-        self.get_log('FileHandler').info('uploadFile.name ' + self.uploadFile.name)
-        os.link(self.uploadFile.name, filename)
+        if self.uploadFilename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
+            self.get_log('FileHandler').info('it is from macros')
+            self.uploadFilename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
+            filename = self.get_upload(self.uploadFilename).encode('utf8')
+            safe_remove(filename)
+            self.get_log('FileHandler').info('uploadFile.name ' + self.uploadFile.name)
+            os.link(self.uploadFile.name, filename)
 
-        self.uploadFile.close()
+            self.uploadFile.close()
 
-        del (self.uploadFile)
+            del (self.uploadFile)
 
-        self.get_ctrl().preplanner.invalidate(self.uploadFilename)
-        self.get_ctrl().state.add_file(self.uploadFilename)
-        self.get_log('FileHandler').info(
-            'GCode received: ' + self.uploadFilename)
+            self.get_ctrl().preplanner.invalidate(self.uploadFilename)
+            self.get_ctrl().state.add_file('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'+self.uploadFilename)
+            self.get_log('FileHandler').info(
+                'GCode received: ' + self.uploadFilename)
+        else:
+            filename = self.get_upload(self.uploadFilename).encode('utf8')
+            safe_remove(filename)
+            self.get_log('FileHandler').info('uploadFile.name ' + self.uploadFile.name)
+            os.link(self.uploadFile.name, filename)
+
+            self.uploadFile.close()
+
+            del (self.uploadFile)
+
+            self.get_ctrl().preplanner.invalidate(self.uploadFilename)
+            self.get_ctrl().state.add_file(self.uploadFilename)
+            self.get_log('FileHandler').info(
+                'GCode received: ' + self.uploadFilename)
 
         del (self.uploadFilename)
 

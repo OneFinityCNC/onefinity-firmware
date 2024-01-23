@@ -171,7 +171,7 @@ module.exports = {
         }
       };
 
-      xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
+      xhr.open("PUT", `/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${encodeURIComponent(filename)}`, true);
       xhr.send(file);
 
       const gcodeData = {

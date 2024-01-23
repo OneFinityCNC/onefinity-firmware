@@ -157,14 +157,22 @@ class State(object):
 
 
     def add_file(self, filename):
-        self.log.info('filename %s' % filename)
-        files = copy.deepcopy(self.get('files'))
-        if not filename in files:
-            files.append(filename)
-            files.sort()
-            self.set('files', files)
-        self.select_file(filename)
-
+        if filename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
+            self.uploadFilename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
+            self.log.info('filename %s' % filename)
+            files = copy.deepcopy(self.get('files'))
+            if not filename in files:
+                files.append(filename)
+                files.sort()
+                self.set('files', files)
+        else:
+            self.log.info('filename %s' % filename)
+            files = copy.deepcopy(self.get('files'))
+            if not filename in files:
+                files.append(filename)
+                files.sort()
+                self.set('files', files)
+            self.select_file(filename)
 
     def remove_file(self, filename):
         files = copy.deepcopy(self.get('files'))
