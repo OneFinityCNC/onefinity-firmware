@@ -145,9 +145,9 @@ module.exports = {
         file,
         onComplete: () => {
           this.last_file_time = undefined; // Force reload
-          this.loadMacrosGcode();
         },
       });
+      this.loadMacrosGcode();
     },
     uploadGCode: async function (filename, file) {
       const xhr = new XMLHttpRequest();
