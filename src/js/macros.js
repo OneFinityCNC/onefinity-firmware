@@ -178,7 +178,7 @@ module.exports = {
         gcode_file_name: filename,
         gcode_file_time: this.state.selected_time,
       };
-      if (this.config.macrosList.some(item => item.gcode_file_name !== filename)) {
+      if (!this.config.macrosList.some(item => item.gcode_file_name == filename)) {
         console.log("new item");
         this.config.macrosList.push(gcodeData);
         
