@@ -69,7 +69,7 @@ script#macros-template(type="text/x-template")
                         p.title Name
                         .input-container
                                 input.input-color(type="color",id="macros-color-0",v-model="getMacrosColor") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" v-model="getMacrosName")
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" ,v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
@@ -101,8 +101,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-1",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-1")
+                                input.input-color(type="color",id="macros-color-1",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-1",v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-1(title="Select previously uploaded GCode programs.",
@@ -134,8 +134,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-2",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-2")
+                                input.input-color(type="color",id="macros-color-2",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-2",v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-2(title="Select previously uploaded GCode programs.",
@@ -167,8 +167,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-3",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-3")
+                                input.input-color(type="color",id="macros-color-3",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-3",v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-3(title="Select previously uploaded GCode programs.",
@@ -200,8 +200,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-4",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-4")
+                                input.input-color(type="color",id="macros-color-4",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-4",v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-4(title="Select previously uploaded GCode programs.",
@@ -233,8 +233,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-5",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-5")
+                                input.input-color(type="color",id="macros-color-5",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-5",v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode
                                 select#gcodeSelect-5(title="Select previously uploaded GCode programs.",
@@ -266,8 +266,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-6",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-6")
+                                input.input-color(type="color",id="macros-color-6",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-6",v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-6(title="Select previously uploaded GCode programs.",selected
@@ -299,8 +299,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-7",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-7")
+                                input.input-color(type="color",id="macros-color-7",v-model="getMacrosColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-7",v-model="getMacrosName")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-7(title="Select previously uploaded GCode programs.",selected
@@ -328,9 +328,9 @@ script#macros-template(type="text/x-template")
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
-        button.submit-macros(title="Cancel Macros",@click="printState",
-                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print State
-        button.submit-macros(title="Cancel Macros",@click="printConfig",
-                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print Config
-        button.submit-macros(title="Cancel Macros",@click="resetMacrosList",
-                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Reset Macros List
+        //- button.submit-macros(title="Cancel Macros",@click="printState",
+        //-                         style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print State
+        //- button.submit-macros(title="Cancel Macros",@click="printConfig",
+        //-                         style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print Config
+        //- button.submit-macros(title="Cancel Macros",@click="resetMacrosList",
+        //-                         style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Reset Macros List

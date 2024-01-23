@@ -248,7 +248,7 @@ module.exports = {
       const itemsToDelete = this.config.macrosList.filter(el => !this.isPresent(el));
       const macrosList = itemsToDelete.map(item => item.gcode_file_name).toString();
       api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macrosList}`);
-      this.config.macrosList = defaultMacrosList;
+      this.config.macrosList = this.defaultMacrosList;
       this.deleteGCode = false;
       try {
         await api.put("config/save", this.config);
