@@ -83,7 +83,7 @@ module.exports = {
       this.newGcode[this.tab - 1] = event.target.value;
     },
     isPresent: function (obj) {
-      this.defaultMacrosList.find(item => item.gcode_file_name == obj.gcode_file_name);
+      return this.defaultMacrosList.find(item => item.gcode_file_name == obj.gcode_file_name);
     },
     loadMacrosGcode: async function () {
       const file = this.selectedValues[this.tab - 1];
@@ -178,7 +178,7 @@ module.exports = {
         gcode_file_name: filename,
         gcode_file_time: this.state.selected_time,
       };
-      if (this.config.macrosList.some(item => item[gcode_file_name] !== filename)) {
+      if (this.config.macrosList.some(item => item.gcode_file_name !== filename)) {
         console.log('new item');
         this.config.macrosList.push(gcodeData);
       }
