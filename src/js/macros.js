@@ -138,8 +138,10 @@ module.exports = {
         gcode_file_name: filename,
         gcode_file_time: this.state.selected_time,
       };
+      if(this.config.macrosList.some(item => item[gcode_file_name] !== filename)){
+        this.config.macrosList.push(gcodeData);
+      }
 
-      this.config.macrosList.push(gcodeData);
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
@@ -176,14 +178,21 @@ module.exports = {
         alert("Restore failed");
       }
     },
-    delete_current: function () {
+    delete_current: async function () {
       console.log("delete a gcode");
-      // if(this.config.macrosList.find(item=>item.gcode_file_name==this.state.selected)==undefined){
-      //     if (this.state.selected) {
-      //         api.delete(`file/${this.state.selected}`);
-      //     }
-      // }
-
+      if(this.selectedValues[this.tab - 1] == "default"){
+        this.$set("newGcode[this.tab-1]", "");
+      }else{
+        api.delete(`file/${this.selectedValues[this.tab - 1]}`);
+        this.config.macrosList = this.config.macrosList.filter(item=> item.gcode_file_name !== this.selectedValues[this.tab - 1])
+        try {
+          await api.put("config/save", this.config);
+          this.$dispatch("update");
+        } catch (error) {
+          console.error("Restore Failed: ", error);
+          alert("Restore failed");
+        }
+      }
       this.deleteGCode = false;
     },
     delete_all_macros: async function () {

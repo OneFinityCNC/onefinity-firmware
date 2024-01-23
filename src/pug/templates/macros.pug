@@ -31,13 +31,9 @@ script#macros-template(type="text/x-template")
             | &nbsp;Selected
 
     h1 Macros Configuration
-    .select-upload-gcode
-        button.pure-button(title="Reset Macros", @click="confirmReset=true",
-                style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros
-                .fa.fa-rotate-right
-        button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around:margin-left:") Delete GCode
-                .fa.fa-trash
+    button.pure-button(title="Reset Macros", @click="confirmReset=true",
+            style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros
+            .fa.fa-rotate-right
     .warning-box
         p
                 u  Note:
@@ -88,6 +84,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
@@ -118,6 +117,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
@@ -148,6 +150,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
@@ -178,6 +183,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
@@ -208,6 +216,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
@@ -238,6 +249,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
@@ -268,6 +282,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
@@ -298,6 +315,9 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
+                                        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete GCode
+                                        .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
