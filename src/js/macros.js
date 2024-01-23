@@ -125,7 +125,7 @@ module.exports = {
         gcode_file_name: file.name,
         gcode_file_time: this.state.selected_time,
       };
-      if (!this.config.macrosList.some(item => item["gcode_file_name"] == file.name)) {
+      if (!this.config.macrosList.some(item => item.gcode_file_name == file.name)) {
         console.log("new gcode file");
         this.config.macrosList.push(gcodeData);
         try {
@@ -329,6 +329,49 @@ module.exports = {
     },
     printConfig: function () {
       console.log(this.config);
+    },
+    resetMacrosList: async function (){
+      this.config.macrosList=[
+        {
+          "gcode_file_name": "FireLaser.ngc",
+          "gcode_file_time": 1705008250.2333415
+        },
+        {
+          "gcode_file_name": "GoHomeXYZ.ngc",
+          "gcode_file_time": 1705008321.710827
+        },
+        {
+          "gcode_file_name": "ParkRearRightWW.ngc",
+          "gcode_file_time": 1705008360.977644
+        },
+        {
+          "gcode_file_name": "SpindleWarmUp1Minute.ngc",
+          "gcode_file_time": 1705008372.967075
+        },
+        {
+          "gcode_file_name": "TurnOnSpindle.ngc",
+          "gcode_file_time": 1705008405.5059154
+        },
+        {
+          "gcode_file_name": "TurnOffSpindleAndLaser.ngc",
+          "gcode_file_time": 1705008384.6566093
+        },
+        {
+          "gcode_file_name": "VacOn.ngc",
+          "gcode_file_time": 1705008413.7756715
+        },
+        {
+          "gcode_file_name": "TurnOffVac.ngc",
+          "gcode_file_time": 1705008395.476232
+        }
+      ]
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
     },
   },
 };
