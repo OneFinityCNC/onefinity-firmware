@@ -40,18 +40,32 @@ class FileHandler(bbctrl.APIHandler):
         allFiles = self.get_ctrl().state.return_files()
 
         if filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
-            macrosList=filename.replace('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','').split(',')
-            for i in macrosList:
+            exceptionList=filename.replace('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','').split(',')
+            for i in exceptionList:
                 self.get_log('FileHandler').info('macrosListItem ' + i)
 
-            for filename in [item for item in allFiles if item not in macrosList]:
+            for filename in [item for item in allFiles if item not in exceptionList]:
                 filename = os.path.basename(filename)
-                self.get_log('FileHandler').info('filenamed ' + filename)
-                self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
+                # self.get_log('FileHandler').info('filenamed ' + filename)
+                # self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
                 safe_remove(self.get_upload(filename))
                 self.get_ctrl().preplanner.delete_plans(filename)
                 self.get_ctrl().state.remove_file(filename)
         
+        elif filename.startswith('/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH'):
+            deletionList=filename.replace('/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH','').split(',')
+            for i in deletionList:
+                self.get_log('FileHandler').info('macrosListItem ' + i)
+            
+            for filename in [item for item in allFiles if item in deletionList]:
+                filename = os.path.basename(filename)
+                self.get_log('FileHandler').info('filename deleted as Macros ' + filename)
+                self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
+                safe_remove(self.get_upload(filename))
+                self.get_ctrl().preplanner.delete_plans(filename)
+                self.get_ctrl().state.remove_file(filename)
+
+
         elif not filename:
             # Delete everything
             for path in glob.glob(self.get_upload('*')):
@@ -63,8 +77,8 @@ class FileHandler(bbctrl.APIHandler):
         else:
             # Delete a single file
             filename = os.path.basename(filename)
-            self.get_log('FileHandler').info('filenamed ' + filename)
-            self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
+            # self.get_log('FileHandler').info('filenamed ' + filename)
+            # self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
             safe_remove(self.get_upload(filename))
             self.get_ctrl().preplanner.delete_plans(filename)
             self.get_ctrl().state.remove_file(filename)

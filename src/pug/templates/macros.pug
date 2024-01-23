@@ -18,11 +18,25 @@ script#macros-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="confirmSave=false") Cancel
           button.pure-button.pure-button-primary(@click="saveMacros") Confirm
+    message(:show.sync="deleteGCode")
+        h3(slot="header") Delete GCode?
+        p(slot="body")
+        div(slot="footer")
+          button.pure-button(@click="deleteGCode = false") Cancel
+          button.pure-button.button-error(@click="delete_all_macros")
+            .fa.fa-trash
+            | &nbsp;All Macross
+          button.pure-button.button-success(@click="delete_current")
+            .fa.fa-trash
+            | &nbsp;Selected
 
     h1 Macros Configuration
     button.pure-button(title="Reset Macros", @click="confirmReset=true",
         style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Reset Macros
         .fa.fa-rotate-right
+    button.pure-button(title="Delete Macros GCodes",@click="deleteMacros = true",
+        :disabled="!state.selected",style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around:margin-left: 0.1rem") Delete GCode
+        .fa.fa-trash
     .warning-box
         p
                 u  Note:
@@ -56,8 +70,8 @@ script#macros-template(type="text/x-template")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-0",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0")
+                                input.input-color(type="color",id="macros-color-0",value="getMacrosData('color')") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" value="getMacrosData('name')")
                         p.title G-Code
                         .select-upload-gcode                      
                                 select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected

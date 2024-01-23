@@ -205,7 +205,7 @@ module.exports = {
         gcodeFiles: function () {
             const filesWithNoMacros=this.state.files.filter(item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item));
             console.log('filesWithNoMacros: ',filesWithNoMacros);
-            console.log("this.config.GCodeList",this.state.GCodeList)
+            console.log("this.state.GCodeList",this.state.GCodeList)
             const unionSet = new Set([...filesWithNoMacros, ...this.state.GCodeList]);
             const files = [...unionSet];
             console.log("files: ",files);
@@ -409,6 +409,8 @@ module.exports = {
                 if (this.state.selected) {
                     api.delete(`file/${this.state.selected}`);
                 }
+            }else{
+                this.state.GCodeList.filter(item=>item!=this.state.selected);
             }
 
             this.deleteGCode = false;
@@ -422,6 +424,7 @@ module.exports = {
         delete_all_except_macros: function() {
             const macrosList=this.config.macrosList.map(item=>item.gcode_file_name).toString();
             api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
+            this.state.GCodeList=[];
             this.deleteGCode = false;
         },
 
