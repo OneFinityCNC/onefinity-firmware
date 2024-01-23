@@ -158,7 +158,7 @@ class State(object):
 
     def add_file(self, filename):
         if filename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
-            self.uploadFilename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
+            filename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
             self.log.info('filename %s' % filename)
             files = copy.deepcopy(self.get('files'))
             if not filename in files:
