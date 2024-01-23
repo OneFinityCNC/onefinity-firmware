@@ -89,7 +89,6 @@ class FileHandler(bbctrl.APIHandler):
 
         self.get_log('FileHandler').info('uploadFilename ' + self.uploadFilename)
         filename = self.get_upload(self.uploadFilename).encode('utf8')
-        self.get_log('FileHandler').info('uploadFilename ' + filename)
         safe_remove(filename)
         self.get_log('FileHandler').info('uploadFile.name ' + self.uploadFile.name)
         os.link(self.uploadFile.name, filename)
