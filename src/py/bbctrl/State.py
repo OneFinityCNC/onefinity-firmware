@@ -157,6 +157,7 @@ class State(object):
 
 
     def add_file(self, filename):
+        self.log.info('filename %s' % filename)
         files = copy.deepcopy(self.get('files'))
         if not filename in files:
             files.append(filename)
