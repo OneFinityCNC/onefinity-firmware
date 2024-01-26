@@ -31,12 +31,7 @@
   "motors": {
     "type": "list",
     "index": "0123",
-    "default": [
-      { "axis": "X" },
-      { "axis": "Y" },
-      { "axis": "Z" },
-      { "axis": "A" }
-    ],
+    "default": [{ "axis": "X" }, { "axis": "Y" }, { "axis": "Z" }, { "axis": "A" }],
     "template": {
       "general": {
         "axis": {
@@ -166,13 +161,7 @@
       "homing": {
         "homing-mode": {
           "type": "enum",
-          "values": [
-            "manual",
-            "switch-min",
-            "switch-max",
-            "stall-min",
-            "stall-max"
-          ],
+          "values": ["manual", "switch-min", "switch-max", "stall-min", "stall-max"],
           "default": "manual",
           "code": "ho"
         },
@@ -298,30 +287,14 @@
     },
     "tool-enable-mode": {
       "type": "enum",
-      "values": [
-        "disabled",
-        "lo-hi",
-        "hi-lo",
-        "tri-lo",
-        "tri-hi",
-        "lo-tri",
-        "hi-tri"
-      ],
+      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri", "hi-tri"],
       "default": "lo-hi",
       "code": "eom",
       "pin": 15
     },
     "tool-direction-mode": {
       "type": "enum",
-      "values": [
-        "disabled",
-        "lo-hi",
-        "hi-lo",
-        "tri-lo",
-        "tri-hi",
-        "lo-tri",
-        "hi-tri"
-      ],
+      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri", "hi-tri"],
       "default": "lo-hi",
       "code": "dom",
       "pin": 16
@@ -479,45 +452,21 @@
   "outputs": {
     "load-1": {
       "type": "enum",
-      "values": [
-        "disabled",
-        "lo-hi",
-        "hi-lo",
-        "tri-lo",
-        "tri-hi",
-        "lo-tri",
-        "hi-tri"
-      ],
+      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri", "hi-tri"],
       "default": "lo-hi",
       "code": "1om",
       "pin": 2
     },
     "load-2": {
       "type": "enum",
-      "values": [
-        "disabled",
-        "lo-hi",
-        "hi-lo",
-        "tri-lo",
-        "tri-hi",
-        "lo-tri",
-        "hi-tri"
-      ],
+      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri", "hi-tri"],
       "default": "lo-hi",
       "code": "2om",
       "pin": 1
     },
     "fault": {
       "type": "enum",
-      "values": [
-        "disabled",
-        "lo-hi",
-        "hi-lo",
-        "tri-lo",
-        "tri-hi",
-        "lo-tri",
-        "hi-tri"
-      ],
+      "values": ["disabled", "lo-hi", "hi-lo", "tri-lo", "tri-hi", "lo-tri", "hi-tri"],
       "default": "lo-hi",
       "code": "fom",
       "pin": 21
@@ -586,62 +535,12 @@
 
   "macros": {
     "type": "list",
-    "index": "12345678",
-    "default": [
-      {
-        "name": "FireLaser",
-        "color": "#dedede",
-        "gcode_file_name": "FireLaser.ngc",
-        "gcode_file_time": 1705008250.2333415
-      },
-      {
-        "name": "Home",
-        "color": "#dedede",
-        "gcode_file_name": "GoHomeXYZ.ngc",
-        "gcode_file_time": 1705008321.710827
-      },
-      {
-        "name": "Park",
-        "color": "#dedede",
-        "gcode_file_name": "ParkRearRightWW.ngc",
-        "gcode_file_time": 1705008360.977644
-      },
-      {
-        "name": "Spindle Warmup",
-        "color": "#dedede",
-        "gcode_file_name": "SpindleWarmUp1Minute.ngc",
-        "gcode_file_time": 1705008372.967075
-      },
-      {
-        "name": "Spindle ON",
-        "color": "#dedede",
-        "gcode_file_name": "TurnOnSpindle.ngc",
-        "gcode_file_time": 1705008405.5059154
-      },
-      {
-        "name": "Spindle OFF",
-        "color": "#dedede",
-        "gcode_file_name": "TurnOffSpindleAndLaser.ngc",
-        "gcode_file_time": 1705008384.6566093
-      },
-      {
-        "name": "Vacuum ON",
-        "color": "#dedede",
-        "gcode_file_name": "VacOn.ngc",
-        "gcode_file_time": 1705008413.7756715
-      },
-      {
-        "name": "Vacuum OFF",
-        "color": "#dedede",
-        "gcode_file_name": "TurnOffVac.ngc",
-        "gcode_file_time": 1705008395.476232
-      }
-    ],
+    "default": [],
     "template": {
-      "color": {
-        "type": "text",
-        "default": "#dedede"
-      }
+      "name": { "type": "string", "default": "" },
+      "color": { "type": "string", "default": "#e6e6e6" },
+      "gcode_file_name": { "type": "string", "default": "" },
+      "gcode_file_time": { "type": "int", "default": 1705008395 }
     }
   },
 
