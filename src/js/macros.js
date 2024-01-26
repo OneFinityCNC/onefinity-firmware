@@ -225,7 +225,7 @@ module.exports = {
         this.$set("newGcode[this.tab-1]", "");
       } else {
         if (!this.isPresent({ gcode_file_name: this.selectedValues[this.tab - 1] })) {
-          console.log("this is not default  macros");
+          console.log("this is not default macros");
           api.delete(`file/${this.selectedValues[this.tab - 1]}`);
           this.$set("newGcode[this.tab-1]", "");
           this.config.macrosList = this.config.macrosList.filter(
@@ -259,8 +259,9 @@ module.exports = {
       }
     },
     cancelMacros: function () {
-      document.getElementById(`macros-name-${this.tab - 1}`).value = "";
-      document.getElementById(`macros-color-${this.tab - 1}`).value = "#ffffff";
+      const defaultValue = this.config.macros[this.tab-1];
+      document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
+      document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
       document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
       this.newGcode[this.tab - 1] = "";
     },

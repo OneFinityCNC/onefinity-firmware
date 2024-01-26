@@ -205,11 +205,11 @@ module.exports = {
         item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item),
       );
       console.log("filesWithNoMacros: ", filesWithNoMacros);
-      console.log("this.config.gcodeList", config.gcodeList);
+      console.log("this.config.gcodeList", this.config.gcodeList);
       const gcodelist = this.config.gcodeList.map(item => item.gcode_file_name);
       const unionSet = new Set([...filesWithNoMacros, ...gcodelist]);
       const files = [...unionSet];
-      console.log("files: ", files);
+      console.log("final files: ", files);
       return files;
     },
   },
@@ -392,7 +392,7 @@ module.exports = {
       }
 
       if (this.config.macrosList.some(obj => obj.gcode_file_name == file.name)) {
-        console.log("It is a macros, remove it from macrosList");
+        console.log("It is also a macros");
         // this.config.gcodeList.push(file.name);
       }
 
