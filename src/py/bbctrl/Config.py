@@ -41,7 +41,6 @@ class Config(object):
         self.log = ctrl.log.get('Config')
 
         self.values = {}
-        self.values['GCodeList'] = []
 
         try:
             self.version = "1.4.0"
@@ -63,7 +62,6 @@ class Config(object):
 
             try:
                 self._upgrade(config)
-                config['GCodeList'] = self.get('GCodeList', ["Test.ngc"])
             except Exception: self.log.exception('Internal error: Failed to upgrade config')
 
         except Exception as e:

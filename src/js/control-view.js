@@ -205,8 +205,9 @@ module.exports = {
         item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item),
       );
       console.log("filesWithNoMacros: ", filesWithNoMacros);
-      console.log("this.state.GCodeList", this.state.GCodeList);
-      const unionSet = new Set([...filesWithNoMacros, ...this.state.GCodeList]);
+      console.log("this.config.gcodeList", config.gcodeList);
+      const gcodelist = this.config.gcodeList.map(item => item.gcode_file_name);
+      const unionSet = new Set([...filesWithNoMacros, ...gcodelist]);
       const files = [...unionSet];
       console.log("files: ", files);
       return files;
@@ -375,10 +376,10 @@ module.exports = {
           return;
       }
 
-      const isAlreadyPresent = this.state.GCodeList.find(element => element == file.name);
+      const isAlreadyPresent = this.config.gcodeList.find(element => element.gcode_file_name == file.name);
       if (isAlreadyPresent == undefined) {
         console.log("new gcode file");
-        this.state.GCodeList.push(file.name);
+        this.config.gcodeList.push({ gcode_file_name: file.name });
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");
@@ -392,7 +393,7 @@ module.exports = {
 
       if (this.config.macrosList.some(obj => obj.gcode_file_name == file.name)) {
         console.log("It is a macros, remove it from macrosList");
-        // this.config.GCodeList.push(file.name);
+        // this.config.gcodeList.push(file.name);
       }
 
       SvelteComponents.showDialog("Upload", {
@@ -410,7 +411,7 @@ module.exports = {
           api.delete(`file/${this.state.selected}`);
         }
       } else {
-        this.state.GCodeList = this.state.GCodeList.filter(item => item != this.state.selected);
+        this.config.gcodeList = this.config.gcodeList.filter(item => item.gcode_file_name != this.state.selected);
       }
 
       this.deleteGCode = false;
@@ -421,10 +422,17 @@ module.exports = {
       this.deleteGCode = false;
     },
 
-    delete_all_except_macros: function () {
+    delete_all_except_macros: async function () {
       const macrosList = this.config.macrosList.map(item => item.gcode_file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
-      this.state.GCodeList = [];
+      this.config.gcodeList = [];
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
       this.deleteGCode = false;
     },
 

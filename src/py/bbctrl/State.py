@@ -87,7 +87,6 @@ class State(object):
 
         self.reset()
         self.load_files()
-        self.load_gcodes()
 
         observer = Observer()
         observer.schedule(UploadChangeHandler(self), self.ctrl.get_upload(), recursive=True)
@@ -139,17 +138,6 @@ class State(object):
         files = copy.deepcopy(self.get('files'))
         return files
     
-
-    def load_gcodes(self):
-        GCodeList = []
-        # GCodeList = copy.deepcopy(self.get('files'))
-
-        # macrosList = self.ctrl.config.get('macrosList', [])
-
-        # macro_names = [macro["gcode_file_name"] for macro in macrosList]
-        # GCodeList = [file for file in files if file not in macro_names]
-
-        self.set('GCodeList', GCodeList)
 
     def clear_files(self):
         self.select_file('')
