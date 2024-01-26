@@ -78,22 +78,20 @@ script#macros-template(type="text/x-template")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'") 
-                        button.submit-macros(title="Save Macros",@click="confirmSave=true",
-                                style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
+                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                        button.submit-macros(title="Save Macros",@click="confirmSave=true") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
@@ -111,20 +109,19 @@ script#macros-template(type="text/x-template")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -144,20 +141,19 @@ script#macros-template(type="text/x-template")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -177,20 +173,19 @@ script#macros-template(type="text/x-template")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -210,20 +205,19 @@ script#macros-template(type="text/x-template")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -243,20 +237,19 @@ script#macros-template(type="text/x-template")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -276,20 +269,19 @@ script#macros-template(type="text/x-template")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
@@ -309,28 +301,27 @@ script#macros-template(type="text/x-template")
                                         option(selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
 
-                                button.pure-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready",style="height:40px;width:130px;font-weight:normal;border-radius:5px;margin-left:4px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around") Upload
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.pure-button(title="Delete Macros GCodes",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'",style="height:40px;width:130px;font-weight:normal;border-radius:5px;background-color:#5a9ad7;color:#fff;display:flex;align-items:center;justify-content:space-around;margin-left:1rem") Delete
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!selectedValues[tab-1]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")
-                                //- gcode-viewer(v-if="state.selected !== 'default'")
                         button.submit-macros(title="Save Macros",@click="confirmSave=true",
                                 style="height:50px;width:140px;font-weight:normal;background-color:#add1ad;color:#fff;border:0;margin-top:30px") Save 
                         button.submit-macros(title="Cancel Macros",@click="cancelMacros",
                                 style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Cancel
 
-        //- button.submit-macros(title="Cancel Macros",@click="printState",
-        //-                         style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print State
-        //- button.submit-macros(title="Cancel Macros",@click="printConfig",
-        //-                         style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print Config
-        //- button.submit-macros(title="Cancel Macros",@click="resetMacrosList",
-        //-                         style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Reset Macros List
+        button.submit-macros(title="Cancel Macros",@click="printState",
+                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print State
+        button.submit-macros(title="Cancel Macros",@click="printConfig",
+                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Print Config
+        button.submit-macros(title="Cancel Macros",@click="resetMacrosList",
+                                style="height:50px;width:140px;font-weight:normal;margin-left:5px;background-color:#f6f6f6;color:#000;border:0;margin-top:30px") Reset Macros List
