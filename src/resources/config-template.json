@@ -535,6 +535,7 @@
 
   "macros": {
     "type": "list",
+    "index": "12345678",
     "default": [
       {
         "name": "Macros 1",
@@ -595,6 +596,7 @@
 
   "macrosList": {
     "type": "list",
+    "index": "0123456",
     "default": [],
     "template": {
       "file_name": {
@@ -606,6 +608,7 @@
 
   "gcodeList": {
     "type": "list",
+    "index": "012345",
     "default": [],
     "template": {
       "file_name": {

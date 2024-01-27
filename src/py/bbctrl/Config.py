@@ -130,14 +130,14 @@ class Config(object):
                 config[name] = template['min']
 
             if template['type'] == 'list':
-                if 'index' in template:
-                    config = config[name]
+                # if 'index' in template:
+                config = config[name]
 
-                    for i in range(len(template['index'])):
-                        if len(config) <= i: config.append({})
+                for i in range(len(template['index'])):
+                    if len(config) <= i: config.append({})
 
-                        for name, tmpl in template['template'].items():
-                            self.__defaults(config[i], name, tmpl)
+                    for name, tmpl in template['template'].items():
+                        self.__defaults(config[i], name, tmpl)
 
         else:
             for name, tmpl in template.items():
@@ -213,14 +213,14 @@ class Config(object):
 
         # Handle list
         if tmpl['type'] == 'list':
-            if 'index' in tmpl:
-                for i in range(len(tmpl['index'])):
-                    if config is not None and i < len(config): conf = config[i]
-                    else: conf = None
-                    self._encode(name, index + tmpl['index'][i], conf,
-                                tmpl['template'], with_defaults)
-            else:
-                self.values[name]=value;
+            # if 'index' in tmpl:
+            for i in range(len(tmpl['index'])):
+                if config is not None and i < len(config): conf = config[i]
+                else: conf = None
+                self._encode(name, index + tmpl['index'][i], conf,
+                            tmpl['template'], with_defaults)
+            # else:
+            #     self.values[name]=value;
             return
 
         # Update config values
