@@ -1,14 +1,14 @@
 script#macros-template(type="text/x-template")
   #macros
     message(:show.sync="confirmReset")
-      h3(slot="header") Reset All Macros?
+      h3(slot="header") Delete All Macros?
       div(slot="body")
-        p Are you sure you want to reset all macros?
+        p Are you sure you want to Delete all macros?
 
       div(slot="footer")
         button.pure-button(@click="confirmReset=false") Cancel
-        button.pure-button.pure-button-primary(@click="resetConfig")
-          | Reset
+        button.pure-button.pure-button-primary(@click="deleteAllMacros")
+          | Delete All
 
     message(:show.sync="confirmSave")
         h3(slot="header") Confirm Save?
@@ -24,9 +24,6 @@ script#macros-template(type="text/x-template")
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="deleteGCode = false") Cancel
-          button.pure-button.button-error(@click="delete_all_macros")
-            .fa.fa-trash
-            | &nbsp;All Macros
           button.pure-button.button-success(@click="delete_current")
             .fa.fa-trash
             | &nbsp;Selected

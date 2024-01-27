@@ -42,6 +42,7 @@ module.exports = {
       tab: "auto",
       ask_home: true,
       showGcodeMessage: false,
+      showNoGcodeMessage: false,
     };
   },
 
@@ -202,11 +203,11 @@ module.exports = {
     },
     gcodeFiles: function () {
       const filesWithNoMacros = this.state.files.filter(
-        item => !this.config.macrosList.some(compareItem => compareItem.gcode_file_name == item),
+        item => !this.config.macrosList.some(compareItem => compareItem.file_name == item),
       );
       console.log("filesWithNoMacros: ", filesWithNoMacros);
       console.log("this.config.gcodeList", this.config.gcodeList);
-      const gcodelist = this.config.gcodeList.map(item => item.gcode_file_name);
+      const gcodelist = this.config.gcodeList.map(item => item.file_name);
       const unionSet = new Set([...filesWithNoMacros, ...gcodelist]);
       const files = [...unionSet];
       console.log("final files: ", files);
@@ -376,10 +377,10 @@ module.exports = {
           return;
       }
 
-      const isAlreadyPresent = this.config.gcodeList.find(element => element.gcode_file_name == file.name);
+      const isAlreadyPresent = this.config.gcodeList.find(element => element.file_name == file.name);
       if (isAlreadyPresent == undefined) {
         console.log("new gcode file");
-        this.config.gcodeList.push({ gcode_file_name: file.name });
+        this.config.gcodeList.push({ file_name: file.name });
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");
@@ -391,7 +392,7 @@ module.exports = {
         console.log("Already exists");
       }
 
-      if (this.config.macrosList.some(obj => obj.gcode_file_name == file.name)) {
+      if (this.config.macrosList.some(obj => obj.file_name == file.name)) {
         console.log("It is also a macros");
         // this.config.gcodeList.push(file.name);
       }
@@ -406,12 +407,12 @@ module.exports = {
     },
 
     delete_current: function () {
-      if (this.config.macrosList.find(item => item.gcode_file_name == this.state.selected) == undefined) {
+      if (this.config.macrosList.find(item => item.file_name == this.state.selected) == undefined) {
         if (this.state.selected) {
           api.delete(`file/${this.state.selected}`);
         }
       } else {
-        this.config.gcodeList = this.config.gcodeList.filter(item => item.gcode_file_name != this.state.selected);
+        this.config.gcodeList = this.config.gcodeList.filter(item => item.file_name != this.state.selected);
       }
 
       this.deleteGCode = false;
@@ -423,7 +424,7 @@ module.exports = {
     },
 
     delete_all_except_macros: async function () {
-      const macrosList = this.config.macrosList.map(item => item.gcode_file_name).toString();
+      const macrosList = this.config.macrosList.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.gcodeList = [];
       try {
@@ -545,18 +546,18 @@ module.exports = {
       SvelteComponents.showDialog("Probe", { probeType });
     },
     runMacros: function (id) {
-      if (
-        this.config.macros[id].gcode_file_name != this.state.selected ||
-        this.config.macros[id].gcode_file_time != this.state.selected_time
-      ) {
-        this.state.selected = this.config.macros[id].gcode_file_name;
-        this.state.selected_time = this.config.macros[id].gcode_file_time;
-      }
-      try {
-        this.loadGCode();
-        this.start_pause();
-      } catch (error) {
-        console.warn("Error running program: ", error);
+      if (this.config.macros[id].file_name == "") {
+        this.showNoGcodeMessage = true;
+      } else {
+        if (this.config.macros[id].file_name != this.state.selected) {
+          this.state.selected = this.config.macros[id].file_name; //TODO :get file
+        }
+        try {
+          this.loadGCode();
+          this.start_pause();
+        } catch (error) {
+          console.warn("Error running program: ", error);
+        }
       }
     },
   },

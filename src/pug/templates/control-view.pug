@@ -9,6 +9,14 @@ script#control-view-template(type="text/x-template")
         
       div(slot="footer")
         label Simulating {{(toolpath_progress || 0) | percent}}
+    
+    message(:show.sync="showNoGcodeMessage")
+        h3(slot="header") GCode Not Set
+        div(slot="body")
+            p Configure the GCode for the selected macros to use it
+            
+        div(slot="footer")
+          button.pure-button(@click="showNoGcodeMessage=false") OK
 
     table(style="table-layout: fixed; width: 100%;")
       tr(style="height: fit-content;")

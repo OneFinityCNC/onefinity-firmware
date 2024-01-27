@@ -17,36 +17,28 @@ module.exports = {
       newGcode: ["", "", "", "", "", "", "", ""],
       defaultMacrosList: [
         {
-          gcode_file_name: "FireLaser.ngc",
-          gcode_file_time: 1705008250.2333415,
+          file_name: "",
         },
         {
-          gcode_file_name: "GoHomeXYZ.ngc",
-          gcode_file_time: 1705008321.710827,
+          file_name: "",
         },
         {
-          gcode_file_name: "ParkRearRightWW.ngc",
-          gcode_file_time: 1705008360.977644,
+          file_name: "",
         },
         {
-          gcode_file_name: "SpindleWarmUp1Minute.ngc",
-          gcode_file_time: 1705008372.967075,
+          file_name: "",
         },
         {
-          gcode_file_name: "TurnOnSpindle.ngc",
-          gcode_file_time: 1705008405.5059154,
+          file_name: "",
         },
         {
-          gcode_file_name: "TurnOffSpindleAndLaser.ngc",
-          gcode_file_time: 1705008384.6566093,
+          file_name: "",
         },
         {
-          gcode_file_name: "VacOn.ngc",
-          gcode_file_time: 1705008413.7756715,
+          file_name: "",
         },
         {
-          gcode_file_name: "TurnOffVac.ngc",
-          gcode_file_time: 1705008395.476232,
+          file_name: "",
         },
       ],
     };
@@ -66,7 +58,7 @@ module.exports = {
       return this.mach_state == "READY";
     },
     macrosList: function () {
-      return this.config.macrosList.map(el => el.gcode_file_name);
+      return this.config.macrosList.map(el => el.file_name);
     },
     getMacrosColor: function () {
       return this.config.macros[this.tab - 1]["color"];
@@ -82,9 +74,6 @@ module.exports = {
     updateNewGcode: function (event) {
       this.newGcode[this.tab - 1] = event.target.value;
     },
-    isPresent: function (obj) {
-      return this.defaultMacrosList.find(item => item.gcode_file_name == obj.gcode_file_name);
-    },
     loadMacrosGcode: async function () {
       const file = this.selectedValues[this.tab - 1];
       if (this.selectedValues[this.tab - 1] != "default") {
@@ -92,11 +81,8 @@ module.exports = {
           cache: "no-cache",
         });
         const text = (await response.text()).split(" ").join("\n");
-        console.log(text);
-        // this.newGcode[this.tab - 1]=text;
         this.$set("newGcode[this.tab-1]", text);
       } else {
-        // this.newGcode[this.tab - 1]="";
         this.$set("newGcode[this.tab-1]", "");
       }
       console.log("newGcode: ", this.newGcode[this.tab - 1]);
@@ -122,10 +108,9 @@ module.exports = {
       }
 
       const gcodeData = {
-        gcode_file_name: file.name,
-        gcode_file_time: this.state.selected_time,
+        file_name: file.name,
       };
-      if (!this.config.macrosList.some(item => item.gcode_file_name == file.name)) {
+      if (!this.config.macrosList.some(item => item.file_name == file.name)) {
         console.log("new gcode file");
         this.config.macrosList.push(gcodeData);
         try {
@@ -175,13 +160,12 @@ module.exports = {
       xhr.send(file);
 
       const gcodeData = {
-        gcode_file_name: filename,
-        gcode_file_time: this.state.selected_time,
+        file_name: filename,
       };
-      if (!this.config.macrosList.some(item => item.gcode_file_name == filename)) {
+      if (!this.config.macrosList.some(item => item.file_name == filename)) {
         console.log("new item");
         this.config.macrosList.push(gcodeData);
-        
+
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");
@@ -206,9 +190,8 @@ module.exports = {
 
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
-      this.config.macros[this.tab - 1].gcode_file_name = file_name;
-      this.config.macros[this.tab - 1].gcode_file_time = this.state.selected_time;
-      console.log("config.macros[this.tab - 1].gcode_file_name", this.config.macros[this.tab - 1].gcode_file_name);
+      this.config.macros[this.tab - 1].file_name = file_name;
+      console.log("config.macros[this.tab - 1].file_name", this.config.macros[this.tab - 1].file_name);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
@@ -224,32 +207,26 @@ module.exports = {
       if (this.selectedValues[this.tab - 1] == "default") {
         this.$set("newGcode[this.tab-1]", "");
       } else {
-        if (!this.isPresent({ gcode_file_name: this.selectedValues[this.tab - 1] })) {
-          console.log("this is not default macros");
-          api.delete(`file/${this.selectedValues[this.tab - 1]}`);
-          this.$set("newGcode[this.tab-1]", "");
-          this.config.macrosList = this.config.macrosList.filter(
-            item => item.gcode_file_name !== this.selectedValues[this.tab - 1],
-          );
-          try {
-            await api.put("config/save", this.config);
-            this.$dispatch("update");
-          } catch (error) {
-            console.error("Restore Failed: ", error);
-            alert("Restore failed");
-          }
-        } else {
-          alert("You cannot delete GCode of Default Macros");
+        api.delete(`file/${this.selectedValues[this.tab - 1]}`);
+        this.$set("newGcode[this.tab-1]", "");
+        this.config.macrosList = this.config.macrosList.filter(
+          item => item.file_name !== this.selectedValues[this.tab - 1],
+        );
+        this.$set("this.selectedValues[this.tab - 1]", "default");
+        try {
+          await api.put("config/save", this.config);
+          this.$dispatch("update");
+        } catch (error) {
+          console.error("Restore Failed: ", error);
+          alert("Restore failed");
         }
       }
       this.deleteGCode = false;
     },
     delete_all_macros: async function () {
-      const itemsToDelete = this.config.macrosList.filter(el => !this.isPresent(el));
-      const macrosList = itemsToDelete.map(item => item.gcode_file_name).toString();
+      const macrosList = this.config.macrosList.map(item => item.file_name).toString();
       api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macrosList}`);
       this.config.macrosList = this.defaultMacrosList;
-      this.deleteGCode = false;
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
@@ -259,63 +236,56 @@ module.exports = {
       }
     },
     cancelMacros: function () {
-      const defaultValue = this.config.macros[this.tab-1];
+      const defaultValue = this.config.macros[this.tab - 1];
       document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
       document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
       document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
-      this.newGcode[this.tab - 1] = "";
+      this.$set("newGcode[this.tab-1]", "");
     },
-    resetConfig: async function () {
+    deleteAllMacros: async function () {
       this.config.macros = [
         {
-          name: "FireLaser",
+          name: "Macros 1",
           color: "#dedede",
-          gcode_file_name: "FireLaser.ngc",
-          gcode_file_time: 1705008250.2333415,
+          file_name: "",
         },
         {
-          name: "Home",
+          name: "Macros 2",
           color: "#dedede",
-          gcode_file_name: "GoHomeXYZ.ngc",
-          gcode_file_time: 1705008321.710827,
+          file_name: "",
         },
         {
-          name: "Park",
+          name: "Macros 3",
           color: "#dedede",
-          gcode_file_name: "ParkRearRightWW.ngc",
-          gcode_file_time: 1705008360.977644,
+          file_name: "",
         },
         {
-          name: "Spindle Warmup",
+          name: "Macros 4",
           color: "#dedede",
-          gcode_file_name: "SpindleWarmUp1Minute.ngc",
-          gcode_file_time: 1705008372.967075,
+          file_name: "",
         },
         {
-          name: "Spindle ON",
+          name: "Macros 5",
           color: "#dedede",
-          gcode_file_name: "TurnOnSpindle.ngc",
-          gcode_file_time: 1705008405.5059154,
+          file_name: "",
         },
         {
-          name: "Spindle OFF",
+          name: "Macros 6",
           color: "#dedede",
-          gcode_file_name: "TurnOffSpindleAndLaser.ngc",
-          gcode_file_time: 1705008384.6566093,
+          file_name: "",
         },
         {
-          name: "Vacuum ON",
+          name: "Macros 7",
           color: "#dedede",
-          gcode_file_name: "VacOn.ngc",
-          gcode_file_time: 1705008413.7756715,
+          file_name: "",
         },
         {
-          name: "Vacuum OFF",
+          name: "Macros 8",
           color: "#dedede",
-          gcode_file_name: "TurnOffVac.ngc",
-          gcode_file_time: 1705008395.476232,
+          file_name: "",
         },
       ];
+      this.delete_all_macros();
       this.confirmReset = false;
       try {
         await api.put("config/save", this.config);
@@ -332,40 +302,7 @@ module.exports = {
       console.log(this.config);
     },
     resetMacrosList: async function () {
-      this.config.macrosList = [
-        {
-          gcode_file_name: "FireLaser.ngc",
-          gcode_file_time: 1705008250.2333415,
-        },
-        {
-          gcode_file_name: "GoHomeXYZ.ngc",
-          gcode_file_time: 1705008321.710827,
-        },
-        {
-          gcode_file_name: "ParkRearRightWW.ngc",
-          gcode_file_time: 1705008360.977644,
-        },
-        {
-          gcode_file_name: "SpindleWarmUp1Minute.ngc",
-          gcode_file_time: 1705008372.967075,
-        },
-        {
-          gcode_file_name: "TurnOnSpindle.ngc",
-          gcode_file_time: 1705008405.5059154,
-        },
-        {
-          gcode_file_name: "TurnOffSpindleAndLaser.ngc",
-          gcode_file_time: 1705008384.6566093,
-        },
-        {
-          gcode_file_name: "VacOn.ngc",
-          gcode_file_time: 1705008413.7756715,
-        },
-        {
-          gcode_file_name: "TurnOffVac.ngc",
-          gcode_file_time: 1705008395.476232,
-        },
-      ];
+      this.config.macrosList = this.defaultMacrosList;
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
