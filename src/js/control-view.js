@@ -71,7 +71,7 @@ module.exports = {
     },
 
     "state.selected_time": function () {
-      this.loadGCode();
+      this.load();
     },
 
     jog_step: function () {
@@ -237,7 +237,7 @@ module.exports = {
   },
 
   ready: function () {
-    this.loadGCode();
+    this.load();
 
     setInterval(() => {
       this.current_time = new Date().toLocaleTimeString();
@@ -280,7 +280,7 @@ module.exports = {
       this.$dispatch("send", msg);
     },
 
-    loadGCode: function () {
+    load: function () {
       const file_time = this.state.selected_time;
       const file = this.state.selected;
       if (this.last_file == file && this.last_file_time == file_time) {
@@ -357,7 +357,7 @@ module.exports = {
       utils.clickFileInput("gcode-file-input");
     },
 
-    uploadGCode: async function (e) {
+    upload: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -394,7 +394,6 @@ module.exports = {
 
       if (this.config.macrosList.some(obj => obj.file_name == file.name)) {
         console.log("It is also a macros");
-        // this.config.gcodeList.push(file.name);
       }
 
       SvelteComponents.showDialog("Upload", {
@@ -553,7 +552,7 @@ module.exports = {
           this.state.selected = this.config.macros[id].file_name; //TODO :get file
         }
         try {
-          this.loadGCode();
+          this.load();
           this.start_pause();
         } catch (error) {
           console.warn("Error running program: ", error);

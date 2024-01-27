@@ -29,8 +29,7 @@ script#macros-template(type="text/x-template")
             | &nbsp;Selected
 
     h1 Macros Configuration
-    button.pure-button(title="Reset Macros", @click="confirmReset=true",
-            style="height:50px;width:170px;font-weight:normal;color:#fff;background-color:#5a9ad7;display:flex;align-items:center;justify-content:space-around") Delete All Macros
+    button.delete-all-button(title="Reset Macros", @click="confirmReset=true") Delete All Macros
             .fa.fa-rotate-right
 
     .tabs

@@ -15,32 +15,6 @@ module.exports = {
       deleteGCode: false,
       selectedValues: ["default", "default", "default", "default", "default", "default", "default", "default"],
       newGcode: ["", "", "", "", "", "", "", ""],
-      defaultMacrosList: [
-        {
-          file_name: "",
-        },
-        {
-          file_name: "",
-        },
-        {
-          file_name: "",
-        },
-        {
-          file_name: "",
-        },
-        {
-          file_name: "",
-        },
-        {
-          file_name: "",
-        },
-        {
-          file_name: "",
-        },
-        {
-          file_name: "",
-        },
-      ],
     };
   },
   computed: {
@@ -85,7 +59,7 @@ module.exports = {
       } else {
         this.$set("newGcode[this.tab-1]", "");
       }
-      console.log("newGcode: ", this.newGcode[this.tab - 1]);
+      console.log("loaded GCode: ", this.newGcode[this.tab - 1]);
     },
     uploadMacrosGcode: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -111,7 +85,7 @@ module.exports = {
         file_name: file.name,
       };
       if (!this.config.macrosList.some(item => item.file_name == file.name)) {
-        console.log("new gcode file");
+        console.log("new gcode file for macros");
         this.config.macrosList.push(gcodeData);
         try {
           await api.put("config/save", this.config);
@@ -163,7 +137,7 @@ module.exports = {
         file_name: filename,
       };
       if (!this.config.macrosList.some(item => item.file_name == filename)) {
-        console.log("new item");
+        console.log("new gcode uploaded for macros");
         this.config.macrosList.push(gcodeData);
 
         try {
@@ -209,10 +183,10 @@ module.exports = {
       } else {
         api.delete(`file/${this.selectedValues[this.tab - 1]}`);
         this.$set("newGcode[this.tab-1]", "");
+        this.$set("this.selectedValues[this.tab - 1]", "default");
         this.config.macrosList = this.config.macrosList.filter(
           item => item.file_name !== this.selectedValues[this.tab - 1],
         );
-        this.$set("this.selectedValues[this.tab - 1]", "default");
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");
@@ -226,7 +200,7 @@ module.exports = {
     delete_all_macros: async function () {
       const macrosList = this.config.macrosList.map(item => item.file_name).toString();
       api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macrosList}`);
-      this.config.macrosList = this.defaultMacrosList;
+      this.config.macrosList = [];
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
@@ -286,6 +260,7 @@ module.exports = {
         },
       ];
       this.delete_all_macros();
+      this.cancelMacros();
       this.confirmReset = false;
       try {
         await api.put("config/save", this.config);
@@ -302,7 +277,7 @@ module.exports = {
       console.log(this.config);
     },
     resetMacrosList: async function () {
-      this.config.macrosList = this.defaultMacrosList;
+      this.config.macrosList = [];
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
