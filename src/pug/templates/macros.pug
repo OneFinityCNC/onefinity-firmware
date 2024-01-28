@@ -38,9 +38,9 @@ script#macros-template(type="text/x-template")
     .tabs
         input(type="radio",v-for="(index,macros) in config.macros",:id="'tab'+index",
                 :name="'tab'+index", @click="tab=index")
-        label(v-for="(index,macros) in config.macros",:for="'tab'+index",style="height:50px;width:100px",:key="index") Macros {{index+1}}
+        label(v-for="(index,macros) in config.macros",:for="'tab'+index",style="height:50px;width:100px") Macros {{index+1}}
 
-        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index" ,:checked="index==0")
+        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index" ,v-show="tab === index")
                 .macros-form
                         p.title Name
                         .input-container

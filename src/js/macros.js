@@ -61,7 +61,9 @@ module.exports = {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
+        console.log('response: ',response);
         const text = (await response.text()).split(" ").join("\n");
+        console.log('text: ',text);
         this.$set("newGcode[this.tab]", text);
       } else {
         this.$set("newGcode[this.tab]", "");
