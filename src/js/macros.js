@@ -55,8 +55,8 @@ module.exports = {
       this.$dispatch("macros-edited");
     },
     loadMacrosGcode: async function () {
-      const file = this.config[this.tab - 1].file_name;
-      if (this.config[this.tab - 1].file_name != "default") {
+      const file = this.config.macros[this.tab - 1].file_name;
+      if (this.config.macros[this.tab - 1].file_name != "default") {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
@@ -164,10 +164,10 @@ module.exports = {
       var macrosColor = document.getElementById(`macros-color-${this.tab}`).value;
 
       console.log(" this.state.selected && time: ", this.state.selected, this.state.selected_time);
-      console.log("selectedValues: ", this.config[this.tab - 1].file_name);
+      console.log("selectedValues: ", this.config.macros[this.tab - 1].file_name);
 
       var file_name =
-        this.config[this.tab - 1].file_name == "default" ? macrosName + ".ngc" : this.config[this.tab - 1].file_name;
+        this.config.macros[this.tab - 1].file_name == "default" ? macrosName + ".ngc" : this.config.macros[this.tab - 1].file_name;
       var file = this.newGcode[this.tab - 1];
 
       this.uploadGCode(file_name, file);
