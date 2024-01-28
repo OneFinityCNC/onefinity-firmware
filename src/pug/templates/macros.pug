@@ -36,9 +36,8 @@ script#macros-template(type="text/x-template")
                 .fa.fa-plus
 
     .tabs
-        each macros, index in {{config.macros}}
-                input(type="radio",:id="'tab'+index",
-                        :name="'tab'+index", @click="tab=index.toString()")
+        input(type="radio",:id="'tab'+index",v-for="(index.macros) in config.macros",
+                :name="'tab'+index", @click="tab=index.toString()")
                 label(:for="'tab'+index",style="height:50px;width:100px") Macros {{index+1}}
 
         section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index" ,v-show="tab === index")
