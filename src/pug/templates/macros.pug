@@ -36,20 +36,20 @@ script#macros-template(type="text/x-template")
                 .fa.fa-plus
 
     .tabs
-        input(type="radio",v-for="(index,macros) in config.macros",:id="tab{{index}}",
-                :name="tabs",:checked="index == 0", @click="tab=index",:key="index")
-        label(:for="tab{{index}}",style="height:50px;width:100px",:key="index") Macros {{index+1}}
+        input(type="radio",v-for="(index,macros) in config.macros",:id="'tab'+index",
+                :name="tabs",:checked="index == 0", @click="tab=index")
+        label(:for="'tab'+index",style="height:50px;width:100px",:key="index") Macros {{index}}
 
-        section.tab-content(v-for="(index,macros) in config.macros",id="content{index}}",:key="index")
+        section.tab-content(v-for="(index,macros) in config.macros",id="'content'+index",:key="index")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",:id="macros-color-{{index}}",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',:id="macros-name-{{index}}" ,v-model="getMacrosName")
+                                input.input-color(type="color",:id="'macros-color-'+index",value="#ffffff") 
+                                input.input-name(type="text",minlength='1',maxlength='15',:id="'macros-name-'+index" ,v-model="getMacrosName")
                         p.title G-Code
                         .flex-row-container                      
-                                select(:id="gcodeSelect-{{index}}",title="Select previously uploaded GCode programs.",selected
-                                        v-model="selectedValues[{{index}}]",@change="loadMacrosGcode", :disabled="!is_ready",
+                                select(:id="'gcodeSelect-'+index",title="Select previously uploaded GCode programs.",selected
+                                        v-model="selectedValues[index]",@change="loadMacrosGcode", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
@@ -62,11 +62,11 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[{{index}}]=='default'") Delete
+                                        :disabled="!selectedValues[index]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value="newGcode[{{index}}]" @input="updateNewGcode")
+                                textarea.new-gcode(id="gcode-field", :value="newGcode[index]" @input="updateNewGcode")
 
         button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px;background-color:#fafafa;") Cancel
