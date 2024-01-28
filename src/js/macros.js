@@ -314,7 +314,7 @@ module.exports = {
     },
     addNewMacros: async function () {
       const length = this.config.macros.length;
-      if (length >= 30) {
+      if (length >= 20) {
         this.maxLimitReached = true;
         return;
       }
