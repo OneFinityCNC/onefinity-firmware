@@ -29,46 +29,27 @@ script#macros-template(type="text/x-template")
             | &nbsp;Selected
 
     h1 Macros Configuration
-    button.config-button(title="Reset Macros", @click="confirmReset=true") Delete All Macros
-            .fa.fa-rotate-right
-    button.config-button(title="Add a Macros", @click="addNewMacros") Add a Macros
-            .fa.fa-plus
+    .flex-row-container
+        button.config-button(title="Reset Macros", @click="confirmReset=true") Delete All Macros
+                .fa.fa-rotate-right
+        button.config-button(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") Add a Macros
+                .fa.fa-plus
 
     .tabs
-        input#tab1(type="radio", name="tabs",checked="" @click="tab = '1'")
-        label(for="tab1",style="height:50px;width:100px") Macros 1
+        input(type="radio",v-for="(macros,index) in config.macros",:id="tab{{index}}",:key="index",
+                :name="tabs",:checked="index == 0", @click="tab=index",:key="index")
+        label(:for="tab{{index}}",style="height:50px;width:100px",:key="index") Macros {{index+1}}
 
-        input#tab2(type="radio", name="tabs", @click="tab = '2'")
-        label(for="tab2",style="height:50px;width:100px") Macros 2
-
-        input#tab3(type="radio", name="tabs", @click="tab = '3'")
-        label(for="tab3",style="height:50px;width:100px") Macros 3
-
-        input#tab4(type="radio", name="tabs", @click="tab = '4'")
-        label(for="tab4",style="height:50px;width:100px") Macros 4
-
-        input#tab5(type="radio", name="tabs", @click="tab = '5'")
-        label(for="tab5",style="height:50px;width:100px") Macros 5
-
-        input#tab6(type="radio", name="tabs", @click="tab = '6'")
-        label(for="tab6",style="height:50px;width:100px") Macros 6
-
-        input#tab7(type="radio", name="tabs", @click="tab = '7'")
-        label(for="tab7",style="height:50px;width:100px") Macros 7
-
-        input#tab8(type="radio", name="tabs", @click="tab = '8'")
-        label(for="tab8",style="height:50px;width:100px") Macros 8
-
-        section#content1.tab-content
+        section.tab-content(v-for="(macros,index) in config.macros",id="content{index}}",:key="index")
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",id="macros-color-0",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" ,v-model="getMacrosName")
+                                input.input-color(type="color",:id="macros-color-{{index}}",value="#ffffff") 
+                                input.input-name(type="text",minlength='1',maxlength='15',:id="macros-name-{{index}}" ,v-model="getMacrosName")
                         p.title G-Code
-                        .select-upload-gcode                      
-                                select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
-                                        v-model="selectedValues[tab - 1]",@change="loadMacrosGcode", :disabled="!is_ready",
+                        .flex-row-container                      
+                                select(:id="gcodeSelect-{{index}},title="Select previously uploaded GCode programs.",selected
+                                        v-model="selectedValues[{{index}}]",@change="loadMacrosGcode", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
@@ -81,207 +62,11 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
+                                        :disabled="!selectedValues[{{index}}]=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode")  
-
-        section#content2.tab-content
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",id="macros-color-1",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-1",v-model="getMacrosName")
-                        p.title G-Code
-                        .select-upload-gcode
-                                select#gcodeSelect-1(title="Select previously uploaded GCode programs.",
-                                        v-model="selectedValues[tab - 1]", @change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
-
-        section#content3.tab-content
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",id="macros-color-2",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-2",v-model="getMacrosName")
-                        p.title G-Code
-                        .select-upload-gcode
-                                select#gcodeSelect-2(title="Select previously uploaded GCode programs.",
-                                        v-model="selectedValues[tab - 1]", @change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
-
-        section#content4.tab-content
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",id="macros-color-3",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-3",v-model="getMacrosName")
-                        p.title G-Code
-                        .select-upload-gcode
-                                select#gcodeSelect-3(title="Select previously uploaded GCode programs.",
-                                        v-model="selectedValues[tab - 1]", @change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
-
-        section#content5.tab-content
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",id="macros-color-4",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-4",v-model="getMacrosName")
-                        p.title G-Code
-                        .select-upload-gcode
-                                select#gcodeSelect-4(title="Select previously uploaded GCode programs.",
-                                        v-model="selectedValues[tab - 1]", @change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
-
-        section#content6.tab-content
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",id="macros-color-5",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-5",v-model="getMacrosName")
-                        p.title G-Code
-                        .select-upload-gcode
-                                select#gcodeSelect-5(title="Select previously uploaded GCode programs.",
-                                        v-model="selectedValues[tab - 1]", @change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
-        
-        section#content7.tab-content
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",id="macros-color-6",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-6",v-model="getMacrosName")
-                        p.title G-Code
-                        .select-upload-gcode                      
-                                select#gcodeSelect-6(title="Select previously uploaded GCode programs.",selected
-                                        v-model="selectedValues[tab - 1]",@change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
-        
-        section#content8.tab-content
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",id="macros-color-7",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-7",v-model="getMacrosName")
-                        p.title G-Code
-                        .select-upload-gcode                      
-                                select#gcodeSelect-7(title="Select previously uploaded GCode programs.",selected
-                                        v-model="selectedValues[tab - 1]",@change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option(selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[tab-1]=='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode( id="gcode-field",:value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode(id="gcode-field", :value="newGcode[{{index}}]" @input="updateNewGcode")
 
         button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px;background-color:#fafafa;") Cancel

@@ -9,7 +9,7 @@ module.exports = {
 
   data: function () {
     return {
-      tab: "1",
+      tab: "0",
       confirmReset: false,
       confirmSave: false,
       deleteGCode: false,
@@ -41,10 +41,10 @@ module.exports = {
       return this.config.macrosList.map(el => el.file_name);
     },
     getMacrosColor: function () {
-      return this.config.macros[this.tab - 1]["color"];
+      return this.config.macros[this.tab]["color"];
     },
     getMacrosName: function () {
-      return this.config.macros[this.tab - 1]["name"];
+      return this.config.macros[this.tab]["name"];
     },
   },
   methods: {
@@ -52,22 +52,22 @@ module.exports = {
       utils.clickFileInput("gcode-file-input");
     },
     updateNewGcode: function (event) {
-      this.newGcode[this.tab - 1] = event.target.value;
+      this.newGcode[this.tab] = event.target.value;
       this.$dispatch("macros-edited");
     },
     loadMacrosGcode: async function () {
-      const file = this.selectedValues[this.tab - 1];
-      if (this.selectedValues[this.tab - 1] != "default") {
+      const file = this.selectedValues[this.tab];
+      if (this.selectedValues[this.tab] != "default") {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
         const text = (await response.text()).split(" ").join("\n");
-        this.$set("newGcode[this.tab-1]", text);
+        this.$set("newGcode[this.tab]", text);
       } else {
-        this.$set("newGcode[this.tab-1]", "");
+        this.$set("newGcode[this.tab]", "");
       }
       this.$dispatch("macros-edited");
-      console.log("loaded GCode: ", this.newGcode[this.tab - 1]);
+      console.log("loaded GCode: ", this.newGcode[this.tab]);
     },
     uploadMacrosGcode: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -106,7 +106,7 @@ module.exports = {
         console.log("Already exists");
       }
 
-      this.$set("selectedValues[this.tab - 1]", file.name);
+      this.$set("selectedValues[this.tab]", file.name);
       this.$dispatch("macros-edited");
       console.log("file.name", file.name);
       console.log("file.name type: ", typeof file.name);
@@ -160,22 +160,22 @@ module.exports = {
       }
     },
     saveMacros: async function () {
-      var macrosName = document.getElementById(`macros-name-${this.tab - 1}`).value;
-      var macrosColor = document.getElementById(`macros-color-${this.tab - 1}`).value;
+      var macrosName = document.getElementById(`macros-name-${this.tab}`).value;
+      var macrosColor = document.getElementById(`macros-color-${this.tab}`).value;
 
       console.log(" this.state.selected && time: ", this.state.selected, this.state.selected_time);
-      console.log("selectedValues: ", this.selectedValues[this.tab - 1]);
+      console.log("selectedValues: ", this.selectedValues[this.tab]);
 
       var file_name =
-        this.selectedValues[this.tab - 1] == "default" ? macrosName + ".ngc" : this.selectedValues[this.tab - 1];
-      var file = this.newGcode[this.tab - 1];
+        this.selectedValues[this.tab] == "default" ? macrosName + ".ngc" : this.selectedValues[this.tab];
+      var file = this.newGcode[this.tab];
 
       this.uploadGCode(file_name, file);
 
-      this.config.macros[this.tab - 1].name = macrosName;
-      this.config.macros[this.tab - 1].color = macrosColor;
-      this.config.macros[this.tab - 1].file_name = file_name;
-      console.log("config.macros[this.tab - 1].file_name", this.config.macros[this.tab - 1].file_name);
+      this.config.macros[this.tab].name = macrosName;
+      this.config.macros[this.tab].color = macrosColor;
+      this.config.macros[this.tab].file_name = file_name;
+      console.log("config.macros[this.tab - 1].file_name", this.config.macros[this.tab].file_name);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
@@ -188,15 +188,15 @@ module.exports = {
       }
     },
     delete_current: async function () {
-      const filename = this.selectedValues[this.tab - 1];
+      const filename = this.selectedValues[this.tab];
       console.log("delete a gcode");
       if (filename == "default") {
-        this.$set("newGcode[this.tab - 1]", "");
-        this.$set("selectedValues[this.tab - 1]", "default");
+        this.$set("newGcode[this.tab]", "");
+        this.$set("selectedValues[this.tab]", "default");
       } else {
         api.delete(`file/${filename}`);
-        this.$set("newGcode[this.tab - 1]", "");
-        this.$set("selectedValues[this.tab - 1]", "default");
+        this.$set("newGcode[this.tab]", "");
+        this.$set("selectedValues[this.tab]", "default");
         this.config.macrosList = this.config.macrosList.filter(item => item.file_name !== filename);
         try {
           await api.put("config/save", this.config);
@@ -221,12 +221,12 @@ module.exports = {
       }
     },
     cancelMacros: function () {
-      const defaultValue = this.config.macros[this.tab - 1];
-      document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
-      document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
+      const defaultValue = this.config.macros[this.tab];
+      document.getElementById(`macros-name-${this.tab}`).value = defaultValue.name;
+      document.getElementById(`macros-color-${this.tab}`).value = defaultValue.color;
       document.getElementById("gcode-field").value = "";
-      this.$set("newGcode[this.tab - 1]", "");
-      this.$set("selectedValues[this.tab - 1]", "default");
+      this.$set("newGcode[this.tab]", "");
+      this.$set("selectedValues[this.tab]", "default");
     },
     deleteAllMacros: async function () {
       this.config.macros = [
