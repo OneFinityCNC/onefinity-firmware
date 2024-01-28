@@ -47,7 +47,7 @@ script#macros-template(type="text/x-template")
                         p.title G-Code
                         .flex-row-container                      
                                 select(:id="'gcodeSelect-'+index",title="Select previously uploaded GCode programs.",selected
-                                        v-model="selectedValues[index]",@change="loadMacrosGcode", :disabled="!is_ready",
+                                        v-model="config.macros[index].file_name",@change="loadMacrosGcode", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
@@ -60,7 +60,7 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!selectedValues[index]=='default'") Delete
+                                        :disabled="!config.macros[index].file_name =='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer

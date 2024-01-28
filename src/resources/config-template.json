@@ -539,42 +539,42 @@
       {
         "name": "Macros 1",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       },
       {
         "name": "Macros 2",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       },
       {
         "name": "Macros 3",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       },
       {
         "name": "Macros 4",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       },
       {
         "name": "Macros 5",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       },
       {
         "name": "Macros 6",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       },
       {
         "name": "Macros 7",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       },
       {
         "name": "Macros 8",
         "color": "#dedede",
-        "file_name": ""
+        "file_name": "default"
       }
     ],
     "template": {
@@ -588,7 +588,7 @@
       },
       "file_name": {
         "type": "string",
-        "default": ""
+        "default": "default"
       }
     }
   },
