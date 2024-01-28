@@ -41,7 +41,7 @@ script#macros-template(type="text/x-template")
     .flex-row-container
         button.blue-button(title="Reset Macros", @click="confirmReset=true") Delete All
         button.blue-button(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") New Macros
-        button.blue-button(title="Add a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
+        // button.blue-button(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
 
     .tabs
         input#tab1(type="radio", name="tabs",checked="" @click="tab = '1'")
@@ -51,7 +51,7 @@ script#macros-template(type="text/x-template")
                 input(type="radio",:id="'tab'+(index+2)", name="tabs",@click="tab = (index+2).toString()")
                 label(:for="'tab'+(index+2)",style="height:50px;width:100px") Macros {{index+2}}
 
-        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+(index+1)")
+        section.macros-tab-content(v-for="(index,macros) in config.macros",:id="'content'+(index+1)")
                 .macros-form
                         p.title Name
                         .input-container

@@ -205,7 +205,7 @@ module.exports = {
         this.config.macros[this.tab - 1].file_name = "default";
       } else {
         api.delete(`file/${filename}`);
-        this.$set("newGcode[this.tab]", "");
+        this.$set("newGcode[this.tab-1]", "");
         this.config.macros[this.tab - 1].file_name = "default";
         this.config.macrosList = this.config.macrosList.filter(item => item.file_name !== filename);
       }
@@ -216,6 +216,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
+      this.tab = "1";
       this.deleteGCode = false;
     },
     delete_all_macros: async function () {
@@ -279,6 +280,7 @@ module.exports = {
       ];
       this.delete_all_macros();
       this.cancelMacros();
+      this.tab = "1";
       this.confirmReset = false;
       try {
         await api.put("config/save", this.config);
