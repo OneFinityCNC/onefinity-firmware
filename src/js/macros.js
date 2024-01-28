@@ -12,7 +12,7 @@ module.exports = {
       tab: "1",
       confirmReset: false,
       confirmSave: false,
-      deleteSelected:false,
+      deleteSelected: false,
       deleteGCode: false,
       edited: false,
       newGcode: ["", "", "", "", "", "", "", ""],
@@ -36,6 +36,9 @@ module.exports = {
     },
     is_ready: function () {
       return this.mach_state == "READY";
+    },
+    macrosLength: function () {
+      return this.config.macros.length > 0;
     },
     macrosList: function () {
       return this.config.macrosList.map(el => el.file_name);
@@ -168,7 +171,9 @@ module.exports = {
       console.log("selectedValues: ", this.config.macros[this.tab - 1].file_name);
 
       var file_name =
-        this.config.macros[this.tab - 1].file_name == "default" ? macrosName + ".ngc" : this.config.macros[this.tab - 1].file_name;
+        this.config.macros[this.tab - 1].file_name == "default"
+          ? macrosName + ".ngc"
+          : this.config.macros[this.tab - 1].file_name;
       var file = this.newGcode[this.tab - 1];
 
       this.uploadGCode(file_name, file);
@@ -216,9 +221,9 @@ module.exports = {
     },
     cancelMacros: async function () {
       console.log("this.tab", this.tab);
-      const defaultValue = this.config.macros[this.tab];
-      document.getElementById(`macros-name-${this.tab}`).value = defaultValue.name;
-      document.getElementById(`macros-color-${this.tab}`).value = defaultValue.color;
+      const defaultValue = this.config.macros[this.tab - 1];
+      document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
+      document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
       document.getElementById("gcode-field").value = "";
       this.$set("newGcode[this.tab]", "");
       this.config.macros[this.tab - 1].file_name = "default";
@@ -310,16 +315,15 @@ module.exports = {
         alert("Restore failed");
       }
     },
-    deleteSelectedMacros: async function(){
-      console.log("this.tab: ",this.tab);
-      //this.config.macros.splice(this.tab, 1);
-      // try {
-      //   await api.put("config/save", this.config);
-      //   this.$dispatch("update");
-      // } catch (error) {
-      //   console.error("Restore Failed: ", error);
-      //   alert("Restore failed");
-      // }
-    }
+    deleteSelectedMacros: async function () {
+      this.config.macros.splice(this.tab - 1, 1);
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
+    },
   },
 };
