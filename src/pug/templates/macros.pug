@@ -36,10 +36,29 @@ script#macros-template(type="text/x-template")
                 .fa.fa-plus
 
     .tabs
-        section.tab-cards(v-for="(index,macros) in config.macros")
-                input(type="radio",:id="'tab'+index",
-                        :name="'tab'+index", @click="tab=index.toString()")
-                label(:for="'tab'+index",style="height:50px;width:100px") Macros {{index+1}}
+        input#tab1(type="radio", name="tabs",checked="" @click="tab = '1'")
+        label(for="tab1",style="height:50px;width:100px") Macros 1
+
+        input#tab2(type="radio", name="tabs", @click="tab = '2'")
+        label(for="tab2",style="height:50px;width:100px") Macros 2
+
+        input#tab3(type="radio", name="tabs", @click="tab = '3'")
+        label(for="tab3",style="height:50px;width:100px") Macros 3
+
+        input#tab4(type="radio", name="tabs", @click="tab = '4'")
+        label(for="tab4",style="height:50px;width:100px") Macros 4
+
+        input#tab5(type="radio", name="tabs", @click="tab = '5'")
+        label(for="tab5",style="height:50px;width:100px") Macros 5
+
+        input#tab6(type="radio", name="tabs", @click="tab = '6'")
+        label(for="tab6",style="height:50px;width:100px") Macros 6
+
+        input#tab7(type="radio", name="tabs", @click="tab = '7'")
+        label(for="tab7",style="height:50px;width:100px") Macros 7
+
+        input#tab8(type="radio", name="tabs", @click="tab = '8'")
+        label(for="tab8",style="height:50px;width:100px") Macros 8
 
         section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index" ,v-show="tab == index")
                 .macros-form
