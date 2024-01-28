@@ -298,5 +298,21 @@ module.exports = {
         alert("Restore failed");
       }
     },
+    addNewMacros: async function () {
+      const length = this.config.macros.length;
+      const newMacros = {
+        name: `Macros ${length + 1}`,
+        color: "#dedede",
+        file_name: "",
+      };
+      this.config.macros.push(newMacros);
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
+    },
   },
 };

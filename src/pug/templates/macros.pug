@@ -29,8 +29,10 @@ script#macros-template(type="text/x-template")
             | &nbsp;Selected
 
     h1 Macros Configuration
-    button.delete-all-button(title="Reset Macros", @click="confirmReset=true") Delete All Macros
+    button.config-button(title="Reset Macros", @click="confirmReset=true") Delete All Macros
             .fa.fa-rotate-right
+    button.config-button(title="Add a Macros", @click="addNewMacros") Add a Macros
+            .fa.fa-plus
 
     .tabs
         input#tab1(type="radio", name="tabs",checked="" @click="tab = '1'")
@@ -281,8 +283,8 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( id="gcode-field",:value='newGcode[tab-1]' @input="updateNewGcode") 
 
-        button.submit-macros.button-secondary(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
-        button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px") Cancel
+        button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
+        button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px;background-color:#fafafa;") Cancel
 
         button.submit-macros(title="Cancel Macros",@click="printState",style="margin-left:5px") Print State
         button.submit-macros(title="Cancel Macros",@click="printConfig",style="margin-left:5px") Print Config

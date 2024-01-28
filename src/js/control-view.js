@@ -209,7 +209,7 @@ module.exports = {
       console.log("this.config.gcodeList", this.config.gcodeList);
       const gcodelist = this.config.gcodeList.map(item => item.file_name);
       const unionSet = new Set([...filesWithNoMacros, ...gcodelist]);
-      const files = [...unionSet];
+      const files = [...unionSet].sort();
       console.log("final files: ", files);
       return files;
     },
