@@ -36,7 +36,7 @@ script#macros-template(type="text/x-template")
                 .fa.fa-plus
 
     .tabs
-        input(type="radio",v-for="(macros,index) in config.macros",:id="tab{{index}}",:key="index",
+        input(type="radio",v-for="(macros,index) in config.macros",:id="tab{{index}}",
                 :name="tabs",:checked="index == 0", @click="tab=index",:key="index")
         label(:for="tab{{index}}",style="height:50px;width:100px",:key="index") Macros {{index+1}}
 
