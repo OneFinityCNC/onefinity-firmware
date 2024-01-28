@@ -538,8 +538,6 @@ span.unit
           white-space nowrap
 
   .tabs
-    //  padding-top 10px
-
     section
       min-height 500px
       overflow-x hidden
@@ -626,11 +624,12 @@ span.unit
     justify-content flex-start
     margin 10px
     margin-left 50px
+    margin-right 50px
     margin-bottom 30px
 
   .macros-button
     height 60px
-    width 90px
+    width 115px
     font-weight normal
     border-radius 10px
     margin-left 1rem
@@ -666,6 +665,42 @@ span.unit
   .tabs
     margin-top 5px
     width 850px
+    clear both
+
+    > input
+      display none
+
+    > label
+      display block
+      float left
+      width 6em
+      font-weight bold
+      cursor pointer
+      text-decoration none
+      text-align center
+      background #f6f6f6
+      border-top-left-radius 5px
+      border-top-right-radius 5px
+      border-top 2px solid #f6f6f6
+      border-left 1px solid #f6f6f6
+      border-right 1px solid #f6f6f6
+      margin-right 2px
+
+    > section
+      display none
+      clear both
+
+    > input:checked ~ section
+      display block
+
+    [id^="tab"]:checked + label
+      background #fff
+      border-top 2px solid #ddd
+      border-left 1px solid #ddd
+      border-right 1px solid #ddd
+      border-bottom 1px solid #fff
+      margin-bottom -1px
+
 
 
   .macros-view

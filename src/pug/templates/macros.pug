@@ -43,8 +43,8 @@ script#macros-template(type="text/x-template")
         button.blue-button(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") New Macros
         // button.blue-button(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
 
-    .tabs
-        input#tab1(type="radio", name="tabs",checked="" @click="tab = '1'")
+    .macros-tabs
+        input#tab1(type="radio", name="tabs",checked="", @click="tab = '1'")
         label(for="tab1",style="height:50px;width:100px") Macros 1
 
         template(v-for="(index,macros) in config.macros.slice(1)",:key="index+2")

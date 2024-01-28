@@ -38,7 +38,7 @@ module.exports = {
       return this.mach_state == "READY";
     },
     macrosLength: function () {
-      return this.config.macros.length > 1;
+      return this.config.macros.length > 8;
     },
     macrosList: function () {
       return this.config.macrosList.map(el => el.file_name);
@@ -196,6 +196,8 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
+      console.log("tab in saveMacros:",this.tab);
+      this.$set("tab", "1");
     },
     delete_current: async function () {
       const filename = this.config.macros[this.tab - 1].file_name;
@@ -216,7 +218,8 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
-      this.tab = "1";
+      console.log("tab in delete_current:",this.tab);
+      this.$set("tab", "1");
       this.deleteGCode = false;
     },
     delete_all_macros: async function () {
@@ -280,7 +283,8 @@ module.exports = {
       ];
       this.delete_all_macros();
       this.cancelMacros();
-      this.tab = "1";
+      console.log("tab in delete all:",this.tab);
+      this.$set("tab", "1");
       this.confirmReset = false;
       try {
         await api.put("config/save", this.config);
