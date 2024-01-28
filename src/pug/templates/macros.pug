@@ -48,7 +48,7 @@ script#macros-template(type="text/x-template")
                                 input.input-name(type="text",minlength='1',maxlength='15',:id="macros-name-{{index}}" ,v-model="getMacrosName")
                         p.title G-Code
                         .flex-row-container                      
-                                select(:id="gcodeSelect-{{index}},title="Select previously uploaded GCode programs.",selected
+                                select(:id="gcodeSelect-{{index}}",title="Select previously uploaded GCode programs.",selected
                                         v-model="selectedValues[{{index}}]",@change="loadMacrosGcode", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
