@@ -545,7 +545,7 @@ module.exports = {
       SvelteComponents.showDialog("Probe", { probeType });
     },
     runMacros: function (id) {
-      console.lof("runMAcros",id);
+      console.log("index",id);
       if (this.config.macros[id].file_name == "") {
         this.showNoGcodeMessage = true;
       } else {
