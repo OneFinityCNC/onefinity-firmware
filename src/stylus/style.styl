@@ -664,7 +664,7 @@ span.unit
 
   .macros-tabs
     margin-top 5px
-    width 850px
+    width 860px
     clear both
 
     > input
@@ -689,7 +689,10 @@ span.unit
       display none
       clear both
 
-    > input:checked ~ section:nth-child(n)
+    > input:checked ~ section
+      display none
+    
+    > input:checked ~ label + label ~ section
       display block
 
     [id^="tab"]:checked + label
