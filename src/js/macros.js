@@ -12,6 +12,7 @@ module.exports = {
       tab: "1",
       confirmReset: false,
       confirmSave: false,
+      deleteSelected:false,
       deleteGCode: false,
       edited: false,
       newGcode: ["", "", "", "", "", "", "", ""],
@@ -214,7 +215,7 @@ module.exports = {
       this.config.macrosList = [];
     },
     cancelMacros: async function () {
-      console.log("this.tab", tab);
+      console.log("this.tab", this.tab);
       const defaultValue = this.config.macros[this.tab];
       document.getElementById(`macros-name-${this.tab}`).value = defaultValue.name;
       document.getElementById(`macros-color-${this.tab}`).value = defaultValue.color;
@@ -309,5 +310,16 @@ module.exports = {
         alert("Restore failed");
       }
     },
+    deleteSelectedMacros: async function(){
+      console.log("this.tab: ",this.tab);
+      //this.config.macros.splice(this.tab, 1);
+      // try {
+      //   await api.put("config/save", this.config);
+      //   this.$dispatch("update");
+      // } catch (error) {
+      //   console.error("Restore Failed: ", error);
+      //   alert("Restore failed");
+      // }
+    }
   },
 };

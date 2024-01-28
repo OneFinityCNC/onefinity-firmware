@@ -28,10 +28,20 @@ script#macros-template(type="text/x-template")
             .fa.fa-trash
             | &nbsp;Selected
 
+    message(:show.sync="deleteSelected")
+        h3(slot="header") Delete Selected Macros?
+        p(slot="body")
+        div(slot="footer")
+          button.pure-button(@click="deleteSelected = false") Cancel
+          button.pure-button.button-success(@click="deleteSelectedMacros")
+            .fa.fa-trash
+            | &nbsp;Yes
+
     h1 Macros Configuration
     .flex-row-container
         button.config-button(title="Reset Macros", @click="confirmReset=true") Delete All
         button.config-button(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") New Macros
+        button.config-button(title="Add a Macros", @click="deleteSelected=true", style="margin-left:5px") Delete Selected
 
     .tabs
         template(v-for="(index,macros) in config.macros",:key="index+1")
