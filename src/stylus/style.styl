@@ -671,8 +671,7 @@ span.unit
       display none
 
     > label
-      display block
-      float left
+      display inline-block
       width 6em
       font-weight bold
       cursor pointer
@@ -690,7 +689,7 @@ span.unit
       display none
       clear both
 
-    > input:checked ~ section
+    > input:checked ~ section:nth-child(n)
       display block
 
     [id^="tab"]:checked + label
