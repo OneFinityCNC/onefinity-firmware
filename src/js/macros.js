@@ -40,6 +40,9 @@ module.exports = {
     macrosList: function () {
       return this.config.macrosList.map(el => el.file_name);
     },
+    getMacros: function(){
+      return this.config.macros;
+    },
     getMacrosColor: function () {
       return this.config.macros[this.tab]["color"];
     },
