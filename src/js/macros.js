@@ -9,7 +9,7 @@ module.exports = {
 
   data: function () {
     return {
-      tab: "0",
+      tab: "1",
       confirmReset: false,
       confirmSave: false,
       deleteGCode: false,
@@ -40,9 +40,6 @@ module.exports = {
     macrosList: function () {
       return this.config.macrosList.map(el => el.file_name);
     },
-    getMacros: function(){
-      return this.config.macros;
-    },
     getMacrosColor: function () {
       return this.config.macros[this.tab]["color"];
     },
@@ -64,9 +61,9 @@ module.exports = {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
-        console.log('response: ',response);
+        console.log("response status: ", response.status);
         const text = (await response.text()).split(" ").join("\n");
-        console.log('text: ',text);
+        console.log("text: ", text);
         this.$set("newGcode[this.tab]", text);
       } else {
         this.$set("newGcode[this.tab]", "");
@@ -171,8 +168,7 @@ module.exports = {
       console.log(" this.state.selected && time: ", this.state.selected, this.state.selected_time);
       console.log("selectedValues: ", this.selectedValues[this.tab]);
 
-      var file_name =
-        this.selectedValues[this.tab] == "default" ? macrosName + ".ngc" : this.selectedValues[this.tab];
+      var file_name = this.selectedValues[this.tab] == "default" ? macrosName + ".ngc" : this.selectedValues[this.tab];
       var file = this.newGcode[this.tab];
 
       this.uploadGCode(file_name, file);
@@ -310,6 +306,8 @@ module.exports = {
         color: "#dedede",
         file_name: "",
       };
+      this.newGcode.push("");
+      this.selectedValues.push("default");
       this.config.macros.push(newMacros);
       try {
         await api.put("config/save", this.config);

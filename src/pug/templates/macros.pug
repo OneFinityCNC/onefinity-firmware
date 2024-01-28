@@ -30,17 +30,15 @@ script#macros-template(type="text/x-template")
 
     h1 Macros Configuration
     .flex-row-container
-        button.config-button(title="Reset Macros", @click="confirmReset=true") Delete All Macros
-                .fa.fa-rotate-right
-        button.config-button(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") Add a Macros
-                .fa.fa-plus
+        button.config-button(title="Reset Macros", @click="confirmReset=true") Delete All
+        button.config-button(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") New Macros
 
     .tabs
-        template(v-for="(index,macros) in getMacros",:key="index")
-                input(type="radio",:id="'tab'+index", name="tabs",@click="tab = index.toString()")
-                label(:for="'tab'+index",style="height:50px;width:100px") Macros {{index+1}}
+        template(v-for="(index,macros) in config.macros",:key="index+1")
+                input(type="radio",:id="'tab'+(index+1)", name="tabs",@click="tab = (index+1).toString()")
+                label(:for="'tab'+(index+1)",style="height:50px;width:100px") Macros {{index+1}}
 
-        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index")
+        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+(index+1)")
                 .macros-form
                         p.title Name
                         .input-container

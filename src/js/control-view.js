@@ -280,10 +280,6 @@ module.exports = {
       this.$dispatch("send", msg);
     },
 
-    getMacros: function(){
-      return this.config.macros;
-    },
-
     load: function () {
       const file_time = this.state.selected_time;
       const file = this.state.selected;
