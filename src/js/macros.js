@@ -13,9 +13,15 @@ module.exports = {
       confirmReset: false,
       confirmSave: false,
       deleteGCode: false,
+      edited: false,
       selectedValues: ["default", "default", "default", "default", "default", "default", "default", "default"],
       newGcode: ["", "", "", "", "", "", "", ""],
     };
+  },
+  events: {
+    "macros-edited": function () {
+      this.edited = true;
+    },
   },
   computed: {
     mach_state: function () {
@@ -47,6 +53,7 @@ module.exports = {
     },
     updateNewGcode: function (event) {
       this.newGcode[this.tab - 1] = event.target.value;
+      this.$dispatch("macros-edited");
     },
     loadMacrosGcode: async function () {
       const file = this.selectedValues[this.tab - 1];
@@ -59,6 +66,7 @@ module.exports = {
       } else {
         this.$set("newGcode[this.tab-1]", "");
       }
+      this.$dispatch("macros-edited");
       console.log("loaded GCode: ", this.newGcode[this.tab - 1]);
     },
     uploadMacrosGcode: async function (e) {
@@ -99,6 +107,7 @@ module.exports = {
       }
 
       this.$set("selectedValues[this.tab - 1]", file.name);
+      this.$dispatch("macros-edited");
 
       SvelteComponents.showDialog("Upload", {
         file,
@@ -169,6 +178,7 @@ module.exports = {
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
+        this.edited = false;
         console.log("Successfully saved");
         this.$dispatch("update");
       } catch (error) {
@@ -213,7 +223,7 @@ module.exports = {
       const defaultValue = this.config.macros[this.tab - 1];
       document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
       document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
-      document.getElementById(`gcodeSelect-${this.tab - 1}`).value = "default";
+      this.$set("selectedValues[this.tab-1]", "default");
       this.$set("newGcode[this.tab-1]", "");
     },
     deleteAllMacros: async function () {
