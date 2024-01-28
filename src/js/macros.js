@@ -15,6 +15,7 @@ module.exports = {
       deleteSelected: false,
       deleteGCode: false,
       edited: false,
+      maxLimitReached:false,
       newGcode: new Array(this.config.macros.length).fill(""),
     };
   },
@@ -196,7 +197,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
-      console.log("tab in saveMacros:",this.tab);
+      console.log("tab in saveMacros:", this.tab);
       this.$set("tab", "1");
     },
     delete_current: async function () {
@@ -218,7 +219,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
-      console.log("tab in delete_current:",this.tab);
+      console.log("tab in delete_current:", this.tab);
       this.$set("tab", "1");
       this.deleteGCode = false;
     },
@@ -283,7 +284,7 @@ module.exports = {
       ];
       this.delete_all_macros();
       this.cancelMacros();
-      console.log("tab in delete all:",this.tab);
+      console.log("tab in delete all:", this.tab);
       this.$set("tab", "1");
       this.confirmReset = false;
       try {
@@ -313,6 +314,10 @@ module.exports = {
     },
     addNewMacros: async function () {
       const length = this.config.macros.length;
+      if (length >= 30) {
+        this.maxLimitReached = true;
+        return;
+      }
       const newMacros = {
         name: `Macros ${length + 1}`,
         color: "#dedede",

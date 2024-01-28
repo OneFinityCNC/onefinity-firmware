@@ -37,6 +37,12 @@ script#macros-template(type="text/x-template")
             .fa.fa-trash
             | &nbsp;Yes
 
+    message(:show.sync="maxLimitReached")
+        h3(slot="header") Delete Selected Macros?
+        p(slot="body")
+        div(slot="footer")
+          button.pure-button.button-secondary(@click="maxLimitReached = false") OK
+
     h1 Macros Configuration
     .flex-row-container
         button.blue-button(title="Reset Macros", @click="confirmReset=true") Delete All
