@@ -15,7 +15,7 @@ module.exports = {
       deleteSelected: false,
       deleteGCode: false,
       edited: false,
-      newGcode: ["", "", "", "", "", "", "", ""],
+      newGcode: new Array(this.config.macros.length).fill(""),
     };
   },
   events: {
@@ -38,7 +38,7 @@ module.exports = {
       return this.mach_state == "READY";
     },
     macrosLength: function () {
-      return this.config.macros.length > 0;
+      return this.config.macros.length > 1;
     },
     macrosList: function () {
       return this.config.macrosList.map(el => el.file_name);
@@ -168,8 +168,8 @@ module.exports = {
       }
     },
     saveMacros: async function () {
-      var macrosName = document.getElementById(`macros-name-${this.tab}`).value;
-      var macrosColor = document.getElementById(`macros-color-${this.tab}`).value;
+      var macrosName = document.getElementById(`macros-name-${this.tab - 1}`).value;
+      var macrosColor = document.getElementById(`macros-color-${this.tab - 1}`).value;
 
       console.log(" this.state.selected && time: ", this.state.selected, this.state.selected_time);
       console.log("selectedValues: ", this.config.macros[this.tab - 1].file_name);
@@ -293,6 +293,7 @@ module.exports = {
     },
     printConfig: function () {
       console.log(this.config);
+      console.log(this.newGcode);
     },
     resetMacrosList: async function () {
       this.config.macrosList = [];
@@ -330,6 +331,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
+      this.deleteSelected = false;
     },
   },
 };
