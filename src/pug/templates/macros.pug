@@ -36,7 +36,7 @@ script#macros-template(type="text/x-template")
                 .fa.fa-plus
 
     .tabs
-        each (index, macros) in config.macros
+        each index, macros in config.macros
                 input(type="radio",:id="'tab'+index",
                         :name="'tab'+index", @click="tab=index.toString()")
                 label(:for="'tab'+index",style="height:50px;width:100px") Macros {{index+1}}
