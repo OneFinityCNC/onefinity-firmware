@@ -108,7 +108,8 @@ module.exports = {
 
       this.$set("selectedValues[this.tab - 1]", file.name);
       this.$dispatch("macros-edited");
-
+      console.log("file.name", file.name);
+      console.log("file.name type: ", typeof file.name);
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
@@ -189,11 +190,13 @@ module.exports = {
     delete_current: async function () {
       console.log("delete a gcode");
       if (this.selectedValues[this.tab - 1] == "default") {
-        this.$set("newGcode[this.tab-1]", "");
+        this.$set("newGcode[this.tab - 1]", "");
       } else {
         api.delete(`file/${this.selectedValues[this.tab - 1]}`);
-        this.$set("newGcode[this.tab-1]", "");
-        this.$set("this.selectedValues[this.tab - 1]", "default");
+        // this.$set("newGcode[this.tab-1]", "");
+        // this.$set("this.selectedValues[this.tab - 1]", "default");
+        this.$set("newGcode[this.tab - 1]", "");
+        this.$set("selectedValues[this.tab - 1]", "default");
         this.config.macrosList = this.config.macrosList.filter(
           item => item.file_name !== this.selectedValues[this.tab - 1],
         );
@@ -223,8 +226,8 @@ module.exports = {
       const defaultValue = this.config.macros[this.tab - 1];
       document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
       document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
-      this.$set("selectedValues[this.tab-1]", "default");
-      this.$set("newGcode[this.tab-1]", "");
+      this.$set("newGcode[this.tab - 1]", "");
+      this.$set("selectedValues[this.tab - 1]", "default");
     },
     deleteAllMacros: async function () {
       this.config.macros = [

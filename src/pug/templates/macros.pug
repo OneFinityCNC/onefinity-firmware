@@ -281,7 +281,7 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
 
-        button.submit-macros(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
+        button.submit-macros.button-success(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px") Cancel
 
         button.submit-macros(title="Cancel Macros",@click="printState",style="margin-left:5px") Print State
