@@ -57,7 +57,7 @@ script#macros-template(type="text/x-template")
                 input(type="radio",:id="'tab'+(index+2)", name="tabs",@click="tab = (index+2).toString()")
                 label(:for="'tab'+(index+2)",style="height:50px;width:100px") Macros {{index+2}}
 
-        section.macros-tab-content(v-for="(index,macros) in config.macros",:id="'content'+(index+1)")
+        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+(index+1)")
                 .macros-form
                         p.title Name
                         .input-container
