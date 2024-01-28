@@ -40,7 +40,7 @@ script#macros-template(type="text/x-template")
                 :name="tabs",:checked="index == 0", @click="tab=index")
         label(:for="'tab'+index",style="height:50px;width:100px",:key="index") Macros {{index}}
 
-        section.tab-content(v-for="(index,macros) in config.macros",id="'content'+index",:key="index")
+        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index",:key="index")
                 .macros-form
                         p.title Name
                         .input-container
