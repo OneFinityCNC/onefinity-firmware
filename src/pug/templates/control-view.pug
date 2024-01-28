@@ -217,25 +217,7 @@ script#control-view-template(type="text/x-template")
 
     .macros-div(class="present")
        button.macros-button(title="Click to run Macros",v-for="(macros, index) in config.macros",
-             @click="runMacros(index)",:key="index",:disabled="!is_ready",v-bind:style="{ backgroundColor: macros.color }") {{macros.name}}
-       
-      //-  button.macros-buttons(title="Click to run Macros 1", @click="runMacros(0)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[0].color }") {{config.macros[0].name}}
-      //-  button.macros-buttons(title="Click to run Macros 2", @click="runMacros(1)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[1].color }") {{config.macros[1].name}}
-      //-  button.macros-buttons(title="Click to run Macros 3", @click="runMacros(2)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[2].color }") {{config.macros[2].name}}
-      //-  button.macros-buttons(title="Click to run Macros 4", @click="runMacros(3)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[3].color }") {{config.macros[3].name}}
-      //-  button.macros-buttons(title="Click to run Macros 5", @click="runMacros(4)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[4].color }") {{config.macros[4].name}}
-      //-  button.macros-buttons(title="Click to run Macros 6", @click="runMacros(5)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[5].color }") {{config.macros[5].name}}
-      //-  button.macros-buttons(title="Click to run Macros 7", @click="runMacros(6)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[6].color }") {{config.macros[6].name}}
-      //-  button.macros-buttons(title="Click to run Macros 8", @click="runMacros(7)",
-      //-       :disabled="!is_ready",v-bind:style="{ backgroundColor: config.macros[7].color }") {{config.macros[7].name}}
-
+          @click="runMacros(index)",:key="index",:disabled="!is_ready",v-bind:style="{ backgroundColor: macros.color }") {{macros.name}}
 
     .tabs
      
