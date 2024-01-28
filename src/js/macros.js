@@ -188,18 +188,16 @@ module.exports = {
       }
     },
     delete_current: async function () {
+      const filename = this.selectedValues[this.tab - 1];
       console.log("delete a gcode");
-      if (this.selectedValues[this.tab - 1] == "default") {
-        this.$set("newGcode[this.tab - 1]", "");
-      } else {
-        api.delete(`file/${this.selectedValues[this.tab - 1]}`);
-        // this.$set("newGcode[this.tab-1]", "");
-        // this.$set("this.selectedValues[this.tab - 1]", "default");
+      if (filename == "default") {
         this.$set("newGcode[this.tab - 1]", "");
         this.$set("selectedValues[this.tab - 1]", "default");
-        this.config.macrosList = this.config.macrosList.filter(
-          item => item.file_name !== this.selectedValues[this.tab - 1],
-        );
+      } else {
+        api.delete(`file/${filename}`);
+        this.$set("newGcode[this.tab - 1]", "");
+        this.$set("selectedValues[this.tab - 1]", "default");
+        this.config.macrosList = this.config.macrosList.filter(item => item.file_name !== filename);
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");
@@ -226,6 +224,7 @@ module.exports = {
       const defaultValue = this.config.macros[this.tab - 1];
       document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
       document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
+      document.getElementsByClassName("new-gcode").value = "";
       this.$set("newGcode[this.tab - 1]", "");
       this.$set("selectedValues[this.tab - 1]", "default");
     },
