@@ -65,9 +65,13 @@ module.exports = {
           cache: "no-cache",
         });
         console.log("response status: ", response.status);
-        const text = (await response.text()).split(" ").join("\n");
-        console.log("text: ", text);
-        this.$set("newGcode[this.tab-1]", text);
+        if (response.status == 200) {
+          const text = (await response.text()).split(" ").join("\n");
+          console.log("text: ", text);
+          this.$set("newGcode[this.tab-1]", text);
+        } else {
+          console.log("error loading");
+        }
       } else {
         this.$set("newGcode[this.tab-1]", "");
       }
@@ -220,12 +224,14 @@ module.exports = {
       this.config.macrosList = [];
     },
     cancelMacros: async function () {
-      console.log("this.tab", this.tab);
+      console.log("this.tab", this.tab - 1);
+      console.log(document.getElementById(`macros-name-${this.tab - 1}`).value);
       const defaultValue = this.config.macros[this.tab - 1];
+      console.log(defaultValue);
       document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
       document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
       document.getElementById("gcode-field").value = "";
-      this.$set("newGcode[this.tab]", "");
+      this.$set("newGcode[this.tab-1]", "");
       this.config.macros[this.tab - 1].file_name = "default";
     },
     deleteAllMacros: async function () {

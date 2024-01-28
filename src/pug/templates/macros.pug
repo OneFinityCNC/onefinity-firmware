@@ -7,7 +7,7 @@ script#macros-template(type="text/x-template")
 
       div(slot="footer")
         button.pure-button(@click="confirmReset=false") Cancel
-        button.pure-button.pure-button-primary(@click="deleteAllMacros")
+        button.pure-button.button-error(@click="deleteAllMacros")
           | Delete All
 
     message(:show.sync="confirmSave")
@@ -24,7 +24,7 @@ script#macros-template(type="text/x-template")
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="deleteGCode = false") Cancel
-          button.pure-button.button-success(@click="delete_current")
+          button.pure-button.button-error(@click="delete_current")
             .fa.fa-trash
             | &nbsp;Selected
 
@@ -33,7 +33,7 @@ script#macros-template(type="text/x-template")
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="deleteSelected = false") Cancel
-          button.pure-button.button-success(@click="deleteSelectedMacros")
+          button.pure-button.button-error(@click="deleteSelectedMacros")
             .fa.fa-trash
             | &nbsp;Yes
 
