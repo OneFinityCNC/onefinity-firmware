@@ -83,7 +83,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode")  
+                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode")  
 
         section#content2.tab-content
                 .macros-form
@@ -111,7 +111,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
 
         section#content3.tab-content
                 .macros-form
@@ -139,7 +139,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
 
         section#content4.tab-content
                 .macros-form
@@ -167,7 +167,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
 
         section#content5.tab-content
                 .macros-form
@@ -195,7 +195,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
 
         section#content6.tab-content
                 .macros-form
@@ -223,7 +223,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
         
         section#content7.tab-content
                 .macros-form
@@ -251,7 +251,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode(id="gcode-field", :value='newGcode[tab-1]' @input="updateNewGcode") 
         
         section#content8.tab-content
                 .macros-form
@@ -279,9 +279,9 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode( :value='newGcode[tab-1]' @input="updateNewGcode") 
+                                textarea.new-gcode( id="gcode-field",:value='newGcode[tab-1]' @input="updateNewGcode") 
 
-        button.submit-macros.button-success(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
+        button.submit-macros.button-secondary(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px") Cancel
 
         button.submit-macros(title="Cancel Macros",@click="printState",style="margin-left:5px") Print State

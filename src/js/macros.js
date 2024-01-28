@@ -224,7 +224,7 @@ module.exports = {
       const defaultValue = this.config.macros[this.tab - 1];
       document.getElementById(`macros-name-${this.tab - 1}`).value = defaultValue.name;
       document.getElementById(`macros-color-${this.tab - 1}`).value = defaultValue.color;
-      document.getElementsByClassName("new-gcode").value = "";
+      document.getElementById("gcode-field").value = "";
       this.$set("newGcode[this.tab - 1]", "");
       this.$set("selectedValues[this.tab - 1]", "default");
     },
