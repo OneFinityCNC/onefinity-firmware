@@ -36,11 +36,12 @@ script#macros-template(type="text/x-template")
                 .fa.fa-plus
 
     .tabs
-        input(type="radio",:id="'tab'+index",v-for="(index.macros) in config.macros",
-                :name="'tab'+index", @click="tab=index.toString()")
+        section.tab-cards(v-for="(index,macros) in config.macros")
+                input(type="radio",:id="'tab'+index",
+                        :name="'tab'+index", @click="tab=index.toString()")
                 label(:for="'tab'+index",style="height:50px;width:100px") Macros {{index+1}}
 
-        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index" ,v-show="tab === index")
+        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+index" ,v-show="tab == index")
                 .macros-form
                         p.title Name
                         .input-container
