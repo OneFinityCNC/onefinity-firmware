@@ -178,22 +178,16 @@ module.exports = {
       if (!this.config.macrosList.some(item => item.file_name == filename)) {
         console.log("new gcode uploaded for macros");
         this.config.macrosList.push(gcodeData);
-        try {
-          await api.put("config/save", this.config);
-          this.$dispatch("update");
-        } catch (error) {
-          console.error("Restore Failed: ", error);
-          alert("Restore failed");
-        }
       }
     },
     saveMacros: async function () {
-      const macrosList = this.config.macros.map(item => item.name);
+      const macrosList = this.config.macros.splice(this.tab - 1, 1).map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
       console.log("Macros Name: ", this.macrosName);
       var macrosColor = document.getElementById("macros-color").value;
       if (macrosList.includes(macrosName)) {
         this.sameName = true;
+        this.confirmSave = false;
         return;
       }
 
@@ -212,13 +206,13 @@ module.exports = {
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
-        this.edited = false;
         console.log("Successfully saved");
         this.$dispatch("update");
       } catch (error) {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
+      this.edited = false;
       console.log("tab in saveMacros:", this.tab);
     },
     delete_current: async function () {
