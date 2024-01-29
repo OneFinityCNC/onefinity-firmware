@@ -9,13 +9,13 @@ module.exports = {
 
   data: function () {
     return {
-      tab: "1",
+      tab: "0",
       confirmReset: false,
       confirmSave: false,
       deleteSelected: false,
       deleteGCode: false,
       edited: false,
-      maxLimitReached:false,
+      maxLimitReached: false,
       newGcode: new Array(this.config.macros.length).fill(""),
     };
   },
@@ -41,8 +41,11 @@ module.exports = {
     macrosLength: function () {
       return this.config.macros.length > 8;
     },
-    macrosList: function () {
+    macrosGCodeList: function () {
       return this.config.macrosList.map(el => el.file_name);
+    },
+    macrosList: function () {
+      return this.config.macros.map(item => item.name);
     },
     getMacrosColor: function () {
       return this.config.macros[this.tab - 1]["color"];
@@ -341,6 +344,9 @@ module.exports = {
         alert("Restore failed");
       }
       this.deleteSelected = false;
+    },
+    loadMacrosSettings: function () {
+      console.log("selected : ",this.tab);
     },
   },
 };

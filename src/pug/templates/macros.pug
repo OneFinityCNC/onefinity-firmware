@@ -53,41 +53,15 @@ script#macros-template(type="text/x-template")
     .warning-box
         p
                 u  Note:
-                |  Select a tab to edit its macros settings.
+                |  Select a Macros to edit its settings.
 
     .tabs
-        template(v-for="(index,macros) in config.macros",:key="index+1")
-                input(type="radio",:id="'tab'+(index+1)", name="tabs",@click="tab = (index+1).toString()")
-                label(:for="'tab'+(index+1)",style="height:50px;width:100px") Macros {{index+1}}
+        select(:id="macros-select",title="Select a Macros to edit.",selected
+                                        v-model="tab",@change="loadMacrosSettings",
+                                        style="width:500px;height:50px;border-radius:10px")
+                                        option( selected='' value='0')  Select a Macros
+                                        option(v-for="(index,file) in macrosList", :value="index+1") Macros {{index+1}}
         
-        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+(index+1)")
-                .macros-form
-                        p.title Name
-                        .input-container
-                                input.input-color(type="color",:id="'macros-color-'+index",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',:id="'macros-name-'+index" ,v-model="getMacrosName")
-                        p.title G-Code
-                        .flex-row-container                      
-                                select(:id="'gcodeSelect-'+index",title="Select previously uploaded GCode programs.",selected
-                                        v-model="config.macros[index].file_name",@change="loadMacrosGcode", :disabled="!is_ready",
-                                        style="max-width:100%;height:40px;border-radius:5px")
-                                        option( selected='' value='default')  Create G-Code
-                                        option(v-for="file in macrosList", :value="file") {{file}}
-
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
-                                        :disabled="!is_ready") Upload
-                                        .fa.fa-upload
-
-                                form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
-                                        accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!config.macros[index].file_name =='default'") Delete
-                                        .fa.fa-trash
-                        br
-                        .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value="newGcode[index]" @input="updateNewGcode")
-
         button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px;background-color:#fafafa;") Cancel
 
