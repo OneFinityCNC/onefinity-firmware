@@ -188,7 +188,7 @@ module.exports = {
       }
     },
     saveMacros: async function () {
-      const macrosList = this.macrosList();
+      const macrosList = this.config.macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
       console.log("Macros Name: ", this.macrosName);
       var macrosColor = document.getElementById("macros-color").value;
@@ -251,13 +251,15 @@ module.exports = {
       if (this.tab == 0) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "";
+        this.fileName = "default";
+        this.newGcode = "";
       } else {
         const defaultValue = this.config.macros[this.tab - 1];
         document.getElementById("macros-name").value = defaultValue.name;
         document.getElementById("macros-color").value = defaultValue.color;
+        this.fileName = defaultValue.file_name;
+        this.loadMacrosGcode();
       }
-      this.newGcode = "";
-      this.fileName = "default";
       this.edited = false;
     },
     deleteAllMacros: async function () {
