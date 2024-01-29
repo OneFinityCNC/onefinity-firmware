@@ -55,6 +55,9 @@ module.exports = {
     getMacrosName: function () {
       return this.config.macros[this.tab - 1]["name"];
     },
+    initial_tab: function () {
+      return this.tab == 0;
+    },
   },
   methods: {
     open: function () {
