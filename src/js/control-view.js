@@ -492,6 +492,7 @@ module.exports = {
     },
 
     start_pause: function () {
+      this.macrosLoading = false;
       if (this.state.xx == "RUNNING") {
         this.pause();
       } else if (this.state.xx == "STOPPING" || this.state.xx == "HOLDING") {
