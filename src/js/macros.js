@@ -118,7 +118,6 @@ module.exports = {
       }
       this.$dispatch("macros-edited");
       console.log("file.name", file.name);
-      console.log("file.name type: ", typeof file.name);
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
@@ -158,7 +157,6 @@ module.exports = {
       if (!this.config.macrosList.some(item => item.file_name == filename)) {
         console.log("new gcode uploaded for macros");
         this.config.macrosList.push(gcodeData);
-
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");

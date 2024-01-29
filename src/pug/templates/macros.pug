@@ -38,6 +38,7 @@ script#macros-template(type="text/x-template")
             | &nbsp;Yes
 
     message(:show.sync="maxLimitReached")
+        h3(slot="header") Alert
         div(slot="body")
             p You have reached the maximum macros limit
         div(slot="footer")
@@ -56,17 +57,17 @@ script#macros-template(type="text/x-template")
         template(v-for="(index,macros) in config.macros.slice(1)",:key="index+2")
                 input(type="radio",:id="'tab'+(index+2)", name="tabs",@click="tab = (index+2).toString()")
                 label(:for="'tab'+(index+2)",style="height:50px;width:100px") Macros {{index+2}}
-
-        section.tab-content(v-for="(index,macros) in config.macros",:id="'content'+(index+1)")
+        
+        section#content1.tab-content
                 .macros-form
                         p.title Name
                         .input-container
-                                input.input-color(type="color",:id="'macros-color-'+index",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',:id="'macros-name-'+index" ,v-model="getMacrosName")
+                                input.input-color(type="color",id="macros-color-0",value="#ffffff") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name-0" ,v-model="getMacrosName")
                         p.title G-Code
-                        .flex-row-container                      
-                                select(:id="'gcodeSelect-'+index",title="Select previously uploaded GCode programs.",selected
-                                        v-model="config.macros[index].file_name",@change="loadMacrosGcode", :disabled="!is_ready",
+                        .flex-row-container                     
+                                select#gcodeSelect-0(title="Select previously uploaded GCode programs.",selected
+                                        v-model="config.macros[0].file_name",@change="loadMacrosGcode", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosList", :value="file") {{file}}
@@ -79,11 +80,39 @@ script#macros-template(type="text/x-template")
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
-                                        :disabled="!config.macros[index].file_name =='default'") Delete
+                                        :disabled="!config.macros[0].file_name=='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value="newGcode[index]" @input="updateNewGcode")
+                                textarea.new-gcode( :value='newGcode[0]' @input="updateNewGcode")  
+
+        section.tab-content(v-for="(index,macros) in config.macros.slice(1)",:id="'content'+(index+2)")
+                .macros-form
+                        p.title Name
+                        .input-container
+                                input.input-color(type="color",:id="'macros-color-'+(index+1)",value="#ffffff") 
+                                input.input-name(type="text",minlength='1',maxlength='15',:id="'macros-name-'+(index+1)" ,v-model="getMacrosName")
+                        p.title G-Code
+                        .flex-row-container                      
+                                select(:id="'gcodeSelect-'+(index+1)",title="Select previously uploaded GCode programs.",selected
+                                        v-model="config.macros[index+1].file_name",@change="loadMacrosGcode", :disabled="!is_ready",
+                                        style="max-width:100%;height:40px;border-radius:5px")
+                                        option( selected='' value='default')  Create G-Code
+                                        option(v-for="file in macrosList", :value="file") {{file}}
+
+                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                        :disabled="!is_ready") Upload
+                                        .fa.fa-upload
+
+                                form.gcode-file-input.file-upload
+                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
+                                        accept=".nc,.ngc,.gcode,.gc")
+                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                        :disabled="!config.macros[index+1].file_name =='default'") Delete
+                                        .fa.fa-trash
+                        br
+                        .gcodeContainer
+                                textarea.new-gcode(id="gcode-field", :value="newGcode[index+1]" @input="updateNewGcode")
 
         button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="cancelMacros",style="margin-left:5px;background-color:#fafafa;") Cancel

@@ -546,7 +546,7 @@ module.exports = {
     },
     runMacros: function (id) {
       console.log("index",id);
-      if (this.config.macros[id].file_name == "") {
+      if (this.config.macros[id].file_name == "default") {
         this.showNoGcodeMessage = true;
       } else {
         if (this.config.macros[id].file_name != this.state.selected) {
