@@ -41,10 +41,10 @@ module.exports = {
       return this.mach_state == "READY";
     },
     macrosLength: function () {
-      return this.config.macros.length > 8;
+      return this.tab > 8;
     },
     macrosGCodeList: function () {
-      return this.config.macrosList.map(el => el.file_name);
+      return this.config.macrosList.map(el => el.file_name).sort();
     },
     macrosList: function () {
       return this.config.macros.map(item => item.name);
@@ -63,6 +63,18 @@ module.exports = {
     updateNewGcode: function (event) {
       this.newGcode = event.target.value;
       this.$dispatch("macros-edited");
+    },
+    showDialogAsync: function (title, file) {
+      return new Promise((resolve, reject) => {
+        SvelteComponents.showDialog(title, {
+          file,
+          onComplete: () => {
+            this.last_file_time = undefined; // Force reload
+            resolve(true);
+          },
+          onerror: () => reject(false),
+        });
+      });
     },
     loadMacrosGcode: async function () {
       const file = this.fileName;
@@ -123,13 +135,12 @@ module.exports = {
       }
       this.$dispatch("macros-edited");
       console.log("file.name", file.name);
-      SvelteComponents.showDialog("Upload", {
-        file,
-        onComplete: () => {
-          this.last_file_time = undefined; // Force reload
-        },
-      });
-      this.loadMacrosGcode();
+      try {
+        await this.showDialogAsync("Upload", file);
+        this.loadMacrosGcode();
+      } catch (error) {
+        console.error("Error uploading: ", error);
+      }
     },
     uploadGCode: async function (filename, file) {
       const xhr = new XMLHttpRequest();
@@ -227,15 +238,17 @@ module.exports = {
       this.config.macrosList = [];
     },
     clearMacros: async function () {
-      console.log("this.tab", this.tab - 1);
-      console.log("macros-name: ", document.getElementById("macros-name").value);
-      console.log("macros-color: ", document.getElementById("macros-color").value);
-      const defaultValue = this.config.macros[this.tab - 1];
-      console.log("DefaultValue: ", defaultValue);
-      document.getElementById("macros-name").value = defaultValue.name;
-      document.getElementById("macros-color").value = defaultValue.color;
+      if (this.tab == 0) {
+        document.getElementById("macros-name").value = "";
+        document.getElementById("macros-color").value = "";
+      } else {
+        const defaultValue = this.config.macros[this.tab - 1];
+        document.getElementById("macros-name").value = defaultValue.name;
+        document.getElementById("macros-color").value = defaultValue.color;
+      }
       this.newGcode = "";
       this.fileName = "default";
+      this.edited = false;
     },
     deleteAllMacros: async function () {
       this.config.macros = [
@@ -282,7 +295,7 @@ module.exports = {
       ];
       this.delete_all_macros();
       this.clearMacros();
-      console.log("tab in delete all:", this.tab);
+      this.edited = false;
       this.confirmReset = false;
       try {
         await api.put("config/save", this.config);
@@ -330,6 +343,10 @@ module.exports = {
       }
     },
     deleteSelectedMacros: async function () {
+      if (tab == 0) {
+        this.clearMacros();
+        return;
+      }
       this.config.macros.splice(this.tab - 1, 1);
       this.clearMacros();
       try {
@@ -342,15 +359,19 @@ module.exports = {
       this.deleteSelected = false;
     },
     loadMacrosSettings: function () {
-      console.log("selected : ", this.tab);
-      const macros = this.config.macros[this.tab - 1];
-      console.log("macros-name: ", document.getElementById("macros-name").value);
-      console.log("macros-color: ", document.getElementById("macros-color").value);
-      document.getElementById("macros-name").value = macros.name;
-      document.getElementById("macros-color").value = macros.color;
-      // document.getElementById("gcode-field").value = "";
-      this.newGcode = "";
-      this.$set("fileName", macros.name);
+      if (this.tab == 0) {
+        document.getElementById("macros-name").value = "";
+        document.getElementById("macros-color").value = "";
+        this.newGcode = "";
+        this.filename = "default";
+      } else {
+        const macros = this.config.macros[this.tab - 1];
+        document.getElementById("macros-name").value = macros.name;
+        document.getElementById("macros-color").value = macros.color;
+        this.newGcode = "";
+        this.filename = "default";
+      }
+      this.edited = false;
     },
   },
 };

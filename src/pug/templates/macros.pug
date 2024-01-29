@@ -46,9 +46,9 @@ script#macros-template(type="text/x-template")
 
     h1 Macros Configuration
     .flex-row-container
-        button.blue-button(title="Reset Macros", @click="confirmReset=true") Delete All
-        button.blue-button(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") New Macros
-        button.blue-button(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
+        button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Delete All
+        button.config-button.button-blue(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") New Macros
+        button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
 
     .warning-box
         p
@@ -62,7 +62,7 @@ script#macros-template(type="text/x-template")
                                                 v-model="tab",@change="loadMacrosSettings",
                                                 style="width:250px;height:50px;border-radius:10px;padding-left:15px;font-weight:bold;margin-left:30px")
                                                 option( selected='' value='0')  Select a Macros
-                                                option(v-for="(index,file) in macrosList", :value="index+1") Macros {{index+1}}
+                                                option(v-for="(index,file) in macrosList", :value="index+1") {{file}}
         .macros-form
                         p.title Macros Name
                         .input-container
@@ -76,14 +76,14 @@ script#macros-template(type="text/x-template")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in macrosGCodeList", :value="file") {{file}}
 
-                                button.blue-button(title="Upload a new GCode program.", @click="open",
+                                button.config-button.button-blue(title="Upload a new GCode program.", @click="open",
                                         :disabled="!is_ready") Upload
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                button.blue-button(title="Delete Macros GCode",@click="deleteGCode = true",
+                                button.config-button.button-blue(title="Delete Macros GCode",@click="deleteGCode = true",
                                         :disabled="!fileName =='default'") Delete
                                         .fa.fa-trash
                         br
@@ -91,7 +91,7 @@ script#macros-template(type="text/x-template")
                                 textarea.new-gcode(id="gcode-field", :value="newGcode" @input="updateNewGcode")
 
         button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
-        button.submit-macros(title="Cancel Macros",@click="clearMacros",style="margin-left:5px;background-color:#fafafa;") Cancel
+        button.submit-macros(title="Cancel Macros",@click="clearMacros",style="margin-left:5px;background-color:#fafafa;":disabled="tab==0") Cancel
 
         button.submit-macros(title="Cancel Macros",@click="printState",style="margin-left:5px") Print State
         button.submit-macros(title="Cancel Macros",@click="printConfig",style="margin-left:5px") Print Config
