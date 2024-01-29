@@ -14,7 +14,9 @@ module.exports = {
       confirmSave: false,
       deleteSelected: false,
       deleteGCode: false,
+      sameName:false,
       edited: false,
+      addMacros:false,
       maxLimitReached: false,
       macrosName: "",
       fileName: "default",
@@ -186,9 +188,14 @@ module.exports = {
       }
     },
     saveMacros: async function () {
+      const macrosList = this.macrosList();
       var macrosName = document.getElementById("macros-name").value;
       console.log("Macros Name: ", this.macrosName);
       var macrosColor = document.getElementById("macros-color").value;
+      if (macrosList.includes(macrosName)) {
+        this.sameName = true;
+        return;
+      }
 
       console.log(" this.state.selected && time: ", this.state.selected, this.state.selected_time);
       console.log("selectedValues: ", this.config.macros[this.tab - 1].file_name);
@@ -346,7 +353,7 @@ module.exports = {
       }
     },
     deleteSelectedMacros: async function () {
-      if (tab == 0) {
+      if (this.tab == 0) {
         this.clearMacros();
         return;
       }
@@ -364,16 +371,14 @@ module.exports = {
     loadMacrosSettings: function () {
       if (this.tab == 0) {
         document.getElementById("macros-name").value = "";
-        document.getElementById("macros-color").value = "";
-        this.newGcode = "";
-        this.filename = "default";
+        document.getElementById("macros-color").value = "#fff";
       } else {
         const macros = this.config.macros[this.tab - 1];
         document.getElementById("macros-name").value = macros.name;
         document.getElementById("macros-color").value = macros.color;
-        this.newGcode = "";
-        this.filename = "default";
       }
+      this.newGcode = "";
+      this.filename = "default";
       this.edited = false;
     },
   },

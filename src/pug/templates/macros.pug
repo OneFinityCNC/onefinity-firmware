@@ -43,11 +43,25 @@ script#macros-template(type="text/x-template")
             p You have reached the maximum macros limit
         div(slot="footer")
           button.pure-button.button-submit(@click="maxLimitReached = false") OK
+    
+    message(:show.sync="sameName")
+        h3(slot="header") A macro with this name already exists.
+        div(slot="body")
+            p Please choose a different name.
+        div(slot="footer")
+          button.pure-button.button-submit(@click="sameName = false") OK
+
+    message(:show.sync="addMacros")
+        div(slot="body")
+            p Do you need to add another macros?
+        div(slot="footer")
+          button.pure-button(@click="addMacros = false") Cancel
+          button.pure-button.button-submit(@click="addNewMacros") Add
 
     h1 Macros Configuration
     .flex-row-container
         button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Delete All
-        button.config-button.button-blue(title="Add a Macros", @click="addNewMacros", style="margin-left:5px") New Macros
+        button.config-button.button-blue(title="Add a Macros", @click="addMacros=true", style="margin-left:5px") New Macros
         button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
 
     .warning-box
@@ -59,7 +73,7 @@ script#macros-template(type="text/x-template")
         div(style="display:flex;align-items:center;margin-left:30px")
                 h2 Select Macros
                 select(id="macros-select",title="Select a Macros to edit.",selected
-                                                v-model="tab",@change="loadMacrosSettings",
+                                                v-model="tab",@change="clearMacros",
                                                 style="width:250px;height:50px;border-radius:10px;padding-left:15px;font-weight:bold;margin-left:30px")
                                                 option( selected='' value='0')  Select a Macros
                                                 option(v-for="(index,file) in macrosList", :value="index+1") {{file}}
