@@ -244,7 +244,7 @@ module.exports = {
     clearMacros: async function () {
       if (this.tab == 0) {
         document.getElementById("macros-name").value = "";
-        document.getElementById("macros-color").value = "#fff";
+        document.getElementById("macros-color").value = "#ffffff";
         this.fileName = "default";
         this.newGcode = "";
       } else {
