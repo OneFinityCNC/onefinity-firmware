@@ -14,9 +14,9 @@ module.exports = {
       confirmSave: false,
       deleteSelected: false,
       deleteGCode: false,
-      sameName:false,
+      sameName: false,
       edited: false,
-      addMacros:false,
+      addMacros: false,
       maxLimitReached: false,
       macrosName: "",
       fileName: "default",
@@ -181,7 +181,9 @@ module.exports = {
       }
     },
     saveMacros: async function () {
-      const macrosList = this.config.macros.splice(this.tab - 1, 1).map(item => item.name);
+      const macros = this.config.macros;
+      macros.splice(this.tab - 1, 1);
+      const macrosList = macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
       console.log("Macros Name: ", this.macrosName);
       var macrosColor = document.getElementById("macros-color").value;
@@ -242,7 +244,7 @@ module.exports = {
       this.config.macrosList = [];
     },
     clearMacros: async function () {
-      if (this.tab == 0) {
+      if (this.tab == 0 || this.tab > this.config.macros.length) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
         this.fileName = "default";
@@ -340,6 +342,7 @@ module.exports = {
         file_name: "default",
       };
       this.config.macros.push(newMacros);
+      this.addMacros = false;
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
