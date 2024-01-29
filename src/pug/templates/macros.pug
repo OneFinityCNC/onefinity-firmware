@@ -52,8 +52,8 @@ script#macros-template(type="text/x-template")
           button.pure-button.button-submit(@click="sameName = false") OK
 
     message(:show.sync="addMacros")
-        div(slot="body")
-            p Do you need to add another macros?
+        h3(slot="header") Do you need to add another macros?
+        p(slot="body")
         div(slot="footer")
           button.pure-button(@click="addMacros = false") Cancel
           button.pure-button.button-submit(@click="addNewMacros") Add
