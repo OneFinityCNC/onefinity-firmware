@@ -74,12 +74,12 @@ module.exports = {
         if (response.status == 200) {
           const text = (await response.text()).split(" ").join("\n");
           console.log("text: ", text);
-          this.$set("newGcode", text);
+          this.newGcode = text;
         } else {
           console.log("error loading");
         }
       } else {
-        this.$set("newGcode", "");
+        this.newGcode = "";
       }
       this.$dispatch("macros-edited");
       console.log("loaded GCode: ", this.newGcode);
@@ -204,10 +204,10 @@ module.exports = {
       const filename = this.fileName;
       console.log("delete a gcode");
       if (filename == "default") {
-        this.$set("newGcode", "");
+        this.newGcode = "";
       } else {
         api.delete(`file/${filename}`);
-        this.$set("newGcode", "");
+        this.newGcode = "";
         this.config.macros[this.tab - 1].file_name = "default";
         this.config.macrosList = this.config.macrosList.filter(item => item.file_name !== filename);
       }
@@ -234,7 +234,7 @@ module.exports = {
       console.log("DefaultValue: ", defaultValue);
       document.getElementById("macros-name").value = defaultValue.name;
       document.getElementById("macros-color").value = defaultValue.color;
-      this.$set("newGcode", "");
+      this.newGcode = "";
       this.fileName = "default";
     },
     deleteAllMacros: async function () {
@@ -320,7 +320,6 @@ module.exports = {
         color: "#dedede",
         file_name: "default",
       };
-      this.newGcode.push("");
       this.config.macros.push(newMacros);
       try {
         await api.put("config/save", this.config);
@@ -350,7 +349,7 @@ module.exports = {
       document.getElementById("macros-name").value = macros.name;
       document.getElementById("macros-color").value = macros.color;
       // document.getElementById("gcode-field").value = "";
-      this.$set("newGCode", "");
+      this.newGcode = "";
       this.$set("fileName", macros.name);
     },
   },
