@@ -181,7 +181,11 @@ module.exports = {
       }
     },
     saveMacros: async function () {
-      const macros = this.config.macros;
+      if (this.tab == 0) {
+        this.clearMacros();
+        return;
+      }
+      const macros = [...this.config.macros];
       macros.splice(this.tab - 1, 1);
       const macrosList = macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
@@ -248,6 +252,7 @@ module.exports = {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
         this.fileName = "default";
+        this.tab = "0";
         this.newGcode = "";
       } else {
         const defaultValue = this.config.macros[this.tab - 1];
