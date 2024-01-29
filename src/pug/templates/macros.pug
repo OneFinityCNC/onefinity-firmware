@@ -56,18 +56,19 @@ script#macros-template(type="text/x-template")
                 |  Select a Macros to edit its settings.
 
     .tabs
-        p.title Select Macros
-        select(id="macros-select",title="Select a Macros to edit.",selected
-                                        v-model="tab",@change="loadMacrosSettings",
-                                        style="width:250px;height:50px;border-radius:10px;padding-left:15px;font-weight:bold;margin-left:30px")
-                                        option( selected='' value='0')  Select a Macros
-                                        option(v-for="(index,file) in macrosList", :value="index+1") Macros {{index+1}}
+        div(style="display:flex;align-items:center;margin-left:30px")
+                h2 Select Macros
+                select(id="macros-select",title="Select a Macros to edit.",selected
+                                                v-model="tab",@change="loadMacrosSettings",
+                                                style="width:250px;height:50px;border-radius:10px;padding-left:15px;font-weight:bold;margin-left:30px")
+                                                option( selected='' value='0')  Select a Macros
+                                                option(v-for="(index,file) in macrosList", :value="index+1") Macros {{index+1}}
         .macros-form
-                        p.title Name
+                        p.title Macros Name
                         .input-container
-                                input.input-color(type="color",id="'macros-color",value="#ffffff") 
+                                input.input-color(type="color",id="macros-color",value="#ffffff") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name" ,v-model="macrosName")
-                        p.title G-Code
+                        p.title Macros G-Code
                         .flex-row-container                      
                                 select(id="gcode-select",title="Select previously uploaded GCode programs.",selected
                                         v-model="fileName",@change="loadMacrosGcode", :disabled="!is_ready",
