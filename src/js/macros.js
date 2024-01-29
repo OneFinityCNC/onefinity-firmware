@@ -16,9 +16,9 @@ module.exports = {
       deleteGCode: false,
       edited: false,
       maxLimitReached: false,
-      newGcode: "",
+      macrosName: "",
       fileName: "default",
-      macrosName:"",
+      newGcode: "",
     };
   },
   events: {
@@ -173,7 +173,7 @@ module.exports = {
     },
     saveMacros: async function () {
       var macrosName = document.getElementById("macros-name").value;
-      console.log("Macros Name: ",this.macrosName)
+      console.log("Macros Name: ", this.macrosName);
       var macrosColor = document.getElementById("macros-color").value;
 
       console.log(" this.state.selected && time: ", this.state.selected, this.state.selected_time);
@@ -205,7 +205,6 @@ module.exports = {
       console.log("delete a gcode");
       if (filename == "default") {
         this.$set("newGcode", "");
-        this.fileName="default";
       } else {
         api.delete(`file/${filename}`);
         this.$set("newGcode", "");
@@ -219,7 +218,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
-      console.log("tab in delete_current:", this.tab);
+      this.fileName = "default";
       this.deleteGCode = false;
     },
     delete_all_macros: async function () {
@@ -229,12 +228,12 @@ module.exports = {
     },
     clearMacros: async function () {
       console.log("this.tab", this.tab - 1);
-      console.log(document.getElementById("macros-name").value);
+      console.log("macros-name: ", document.getElementById("macros-name").value);
+      console.log("macros-color: ", document.getElementById("macros-color").value);
       const defaultValue = this.config.macros[this.tab - 1];
-      console.log("DefaultValue: ",defaultValue);
+      console.log("DefaultValue: ", defaultValue);
       document.getElementById("macros-name").value = defaultValue.name;
       document.getElementById("macros-color").value = defaultValue.color;
-      document.getElementById("gcode-field").value = "";
       this.$set("newGcode", "");
       this.fileName = "default";
     },
@@ -345,10 +344,13 @@ module.exports = {
     },
     loadMacrosSettings: function () {
       console.log("selected : ", this.tab);
-      const macros = this.config.macros[this.tab-1];
+      const macros = this.config.macros[this.tab - 1];
+      console.log("macros-name: ", document.getElementById("macros-name").value);
+      console.log("macros-color: ", document.getElementById("macros-color").value);
       document.getElementById("macros-name").value = macros.name;
       document.getElementById("macros-color").value = macros.color;
-      document.getElementById("gcode-field").value = "";
+      // document.getElementById("gcode-field").value = "";
+      this.$set("newGCode", "");
       this.$set("fileName", macros.name);
     },
   },
