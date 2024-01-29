@@ -169,7 +169,7 @@ class State(object):
             self.set('files', files)
 
         if self.get('selected', filename) == filename:
-            if len(files): self.select_file(files[0])
+            if len(files): self.select_file('')
             else: self.select_file('')
 
 

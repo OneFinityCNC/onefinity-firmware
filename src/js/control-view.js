@@ -43,6 +43,7 @@ module.exports = {
       ask_home: true,
       showGcodeMessage: false,
       showNoGcodeMessage: false,
+      macrosLoading: false,
     };
   },
 
@@ -291,6 +292,8 @@ module.exports = {
 
       this.last_file = file;
       this.last_file_time = file_time;
+
+      console.log("loading file: ", file);
 
       this.$broadcast("gcode-load", file);
       this.$broadcast("gcode-line", this.state.line);
@@ -545,7 +548,7 @@ module.exports = {
       SvelteComponents.showDialog("Probe", { probeType });
     },
     runMacros: function (id) {
-      console.log("index",id);
+      console.log("index", id);
       if (this.config.macros[id].file_name == "default") {
         this.showNoGcodeMessage = true;
       } else {
@@ -554,7 +557,8 @@ module.exports = {
         }
         try {
           this.load();
-          this.start_pause();
+          this.macrosLoading = true;
+          // this.start_pause();
         } catch (error) {
           console.warn("Error running program: ", error);
         }

@@ -18,6 +18,15 @@ script#control-view-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="showNoGcodeMessage=false") OK
 
+    message(:show.sync="macrosLoading")
+        h3(slot="header") Run Macros?
+        div(slot="body")
+            p The selected macros is being loaded.
+            
+        div(slot="footer")
+          button.pure-button(@click="macrosLoading=false") Cancel
+          button.pure-button.pure-button-primary(@click="start_pause") Run
+
     table(style="table-layout: fixed; width: 100%;")
       tr(style="height: fit-content;")
         td(style="white-space: nowrap; width: 410px;", rowspan="2")
