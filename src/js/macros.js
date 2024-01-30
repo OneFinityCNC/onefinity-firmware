@@ -66,8 +66,10 @@ module.exports = {
       utils.clickFileInput("gcode-file-input");
     },
     updateNewGcode: function (event) {
-      this.newGcode = event.target.value;
-      this.$dispatch("macros-edited");
+      if (this.tab != 0) {
+        this.newGcode = event.target.value;
+        this.$dispatch("macros-edited");
+      }
     },
     editedColor: function (event) {
       if (this.tab != 0 && this.config.macros[this.tab - 1].color != event.target.value) {
