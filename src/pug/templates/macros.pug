@@ -102,7 +102,7 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", :value="newGcode" @input="updateNewGcode")
+                                textarea.new-gcode(id="gcode-field", v-model="newGcode" @input="updateNewGcode")
 
         button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="clearMacros",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel
