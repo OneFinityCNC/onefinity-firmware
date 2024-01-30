@@ -80,8 +80,8 @@ script#macros-template(type="text/x-template")
         .macros-form
                         p.title Macros Name
                         .input-container
-                                input.input-color(type="color",id="macros-color",value="#ffffff") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name" ,v-model="macrosName")
+                                input.input-color(type="color",id="macros-color",value="#ffffff",@change="editedColor") 
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name" ,v-model="macrosName",@change="editedName")
                         p.title Macros G-Code
                         .flex-row-container                      
                                 select(id="gcode-select",title="Select previously uploaded GCode programs.",selected
@@ -104,5 +104,5 @@ script#macros-template(type="text/x-template")
                         .gcodeContainer
                                 textarea.new-gcode(id="gcode-field", v-model="newGcode" ,@keypress="updateNewGcode")
 
-        button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
+        button.submit-macros.button-success(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="clearMacros",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel

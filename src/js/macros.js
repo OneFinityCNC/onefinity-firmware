@@ -69,6 +69,18 @@ module.exports = {
       this.newGcode = event.target.value;
       this.$dispatch("macros-edited");
     },
+    editedColor: function (event) {
+      console.log("color: ", event.target.value);
+      if (this.config[this.tab - 1].color != event.target.value) {
+        console.log("Value Changed");
+      }
+    },
+    editedName: function (event) {
+      console.log("name: ", event.target.value);
+      if (this.config[this.tab - 1].name != event.target.value) {
+        console.log("Value Changed");
+      }
+    },
     showDialogAsync: function (title, file) {
       return new Promise((resolve, reject) => {
         SvelteComponents.showDialog(title, {
