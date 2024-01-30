@@ -70,12 +70,12 @@ module.exports = {
       this.$dispatch("macros-edited");
     },
     editedColor: function (event) {
-      if (this.config.macros[this.tab - 1].color != event.target.value) {
+      if (this.tab != 0 && this.config.macros[this.tab - 1].color != event.target.value) {
         this.$dispatch("macros-edited");
       }
     },
     editedName: function (event) {
-      if (this.config.macros[this.tab - 1].name != event.target.value) {
+      if (this.tab != 0 && this.config.macros[this.tab - 1].name != event.target.value) {
         this.$dispatch("macros-edited");
       }
     },
