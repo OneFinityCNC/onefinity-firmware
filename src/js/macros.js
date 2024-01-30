@@ -66,6 +66,7 @@ module.exports = {
       utils.clickFileInput("gcode-file-input");
     },
     updateNewGcode: function (event) {
+      console.log("input event fired: ", event.target.value);
       this.newGcode = event.target.value;
       this.$dispatch("macros-edited");
     },
