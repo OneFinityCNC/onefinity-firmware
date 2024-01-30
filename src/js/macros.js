@@ -94,6 +94,9 @@ module.exports = {
       });
     },
     loadMacrosGcode: async function () {
+      if(this.tab==0){
+        return;
+      }
       const file = this.fileName;
       if (file != "default") {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
