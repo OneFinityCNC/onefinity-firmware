@@ -106,7 +106,3 @@ script#macros-template(type="text/x-template")
 
         button.submit-macros.button-submit(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="clearMacros",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel
-
-        button.submit-macros(title="Cancel Macros",@click="printState",style="margin-left:5px") Print State
-        button.submit-macros(title="Cancel Macros",@click="printConfig",style="margin-left:5px") Print Config
-        button.submit-macros(title="Cancel Macros",@click="resetMacrosList",style="margin-left:5px") Reset Macros List

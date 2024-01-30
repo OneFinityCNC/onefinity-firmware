@@ -206,12 +206,9 @@ module.exports = {
       const filesWithNoMacros = this.state.files.filter(
         item => !this.config.macrosList.some(compareItem => compareItem.file_name == item),
       );
-      console.log("filesWithNoMacros: ", filesWithNoMacros);
-      console.log("this.config.gcodeList", this.config.gcodeList);
       const gcodelist = this.config.gcodeList.map(item => item.file_name);
       const unionSet = new Set([...filesWithNoMacros, ...gcodelist]);
       const files = [...unionSet].sort();
-      console.log("final files: ", files);
       return files;
     },
   },
@@ -288,12 +285,8 @@ module.exports = {
         return;
       }
 
-      console.log("file: ", file, " time: ", file_time);
-
       this.last_file = file;
       this.last_file_time = file_time;
-
-      console.log("loading file: ", file);
 
       this.$broadcast("gcode-load", file);
       this.$broadcast("gcode-line", this.state.line);
@@ -382,7 +375,6 @@ module.exports = {
 
       const isAlreadyPresent = this.config.gcodeList.find(element => element.file_name == file.name);
       if (isAlreadyPresent == undefined) {
-        console.log("new gcode file");
         this.config.gcodeList.push({ file_name: file.name });
         try {
           await api.put("config/save", this.config);
@@ -392,11 +384,7 @@ module.exports = {
           alert("Restore failed");
         }
       } else {
-        console.log("Already exists");
-      }
-
-      if (this.config.macrosList.some(obj => obj.file_name == file.name)) {
-        console.log("It is also a macros");
+        //
       }
 
       SvelteComponents.showDialog("Upload", {
@@ -549,7 +537,6 @@ module.exports = {
       SvelteComponents.showDialog("Probe", { probeType });
     },
     runMacros: function (id) {
-      console.log("index", id);
       if (this.config.macros[id].file_name == "default") {
         this.showNoGcodeMessage = true;
       } else {
@@ -559,7 +546,6 @@ module.exports = {
         try {
           this.load();
           this.macrosLoading = true;
-          // this.start_pause();
         } catch (error) {
           console.warn("Error running program: ", error);
         }

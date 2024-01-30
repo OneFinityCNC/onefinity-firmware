@@ -87,19 +87,16 @@ module.exports = {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
-        console.log("response status: ", response.status);
         if (response.status == 200) {
           const text = (await response.text()).split(" ").join("\n");
-          console.log("text: ", text);
           this.newGcode = text;
         } else {
-          console.log("error loading");
+          console.error("error loading");
         }
       } else {
         this.newGcode = "";
       }
       this.$dispatch("macros-edited");
-      console.log("loaded GCode: ", this.newGcode);
     },
     uploadMacrosGcode: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
@@ -125,7 +122,6 @@ module.exports = {
         file_name: file.name,
       };
       if (!this.config.macrosList.some(item => item.file_name == file.name)) {
-        console.log("new gcode file for macros");
         this.fileName = file.name;
         this.config.macrosList.push(gcodeData);
         try {
@@ -136,10 +132,9 @@ module.exports = {
           alert("Restore failed");
         }
       } else {
-        console.log("Already exists");
+        //
       }
       this.$dispatch("macros-edited");
-      console.log("file.name", file.name);
       try {
         await this.showDialogAsync("Upload", file);
         this.loadMacrosGcode();
@@ -176,7 +171,6 @@ module.exports = {
         file_name: filename,
       };
       if (!this.config.macrosList.some(item => item.file_name == filename)) {
-        console.log("new gcode uploaded for macros");
         this.config.macrosList.push(gcodeData);
       }
     },
@@ -189,16 +183,12 @@ module.exports = {
       macros.splice(this.tab - 1, 1);
       const macrosList = macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
-      console.log("Macros Name: ", this.macrosName);
       var macrosColor = document.getElementById("macros-color").value;
       if (macrosList.includes(macrosName)) {
         this.sameName = true;
         this.confirmSave = false;
         return;
       }
-
-      console.log(" this.state.selected && time: ", this.state.selected, this.state.selected_time);
-      console.log("selectedValues: ", this.config.macros[this.tab - 1].file_name);
 
       var file_name = this.fileName == "default" ? macrosName + ".ngc" : this.fileName;
       var file = this.newGcode;
@@ -208,7 +198,6 @@ module.exports = {
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].file_name = file_name;
-      console.log("config.macros[this.tab - 1].file_name", this.config.macros[this.tab - 1].file_name);
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
@@ -219,11 +208,9 @@ module.exports = {
         alert("Restore failed");
       }
       this.edited = false;
-      console.log("tab in saveMacros:", this.tab);
     },
     delete_current: async function () {
       const filename = this.fileName;
-      console.log("delete a gcode");
       if (filename == "default") {
         this.newGcode = "";
       } else {
@@ -310,23 +297,6 @@ module.exports = {
       this.clearMacros();
       this.edited = false;
       this.confirmReset = false;
-      try {
-        await api.put("config/save", this.config);
-        this.$dispatch("update");
-      } catch (error) {
-        console.error("Restore Failed: ", error);
-        alert("Restore failed");
-      }
-    },
-    printState: function () {
-      console.log(this.state);
-    },
-    printConfig: function () {
-      console.log(this.config);
-      console.log(this.newGcode);
-    },
-    resetMacrosList: async function () {
-      this.config.macrosList = [];
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
