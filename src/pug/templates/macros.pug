@@ -81,7 +81,7 @@ script#macros-template(type="text/x-template")
                         p.title Macros Name
                         .input-container
                                 input.input-color(type="color",id="macros-color",value="#ffffff",@change="editedColor") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name" ,v-model="macrosName",@keypress="editedName")
+                                input.input-name(type="text",minlength='1',maxlength='20',id="macros-name" ,v-model="macrosName",@keypress="editedName")
                         p.title Macros G-Code
                         .flex-row-container                      
                                 select(id="gcode-select",title="Select previously uploaded GCode programs.",selected
