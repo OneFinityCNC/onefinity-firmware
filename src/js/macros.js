@@ -72,7 +72,7 @@ module.exports = {
       }
     },
     editedAlert: function () {
-      if (this.tab != 0 && this.config.macros[this.tab - 1].alert != this.isChecked) {
+      if (this.tab != 0 ) {
         this.$dispatch("macros-edited");
       }
     },
