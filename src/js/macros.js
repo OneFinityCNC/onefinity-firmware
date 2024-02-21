@@ -19,6 +19,7 @@ module.exports = {
       addMacros: false,
       maxLimitReached: false,
       macrosName: "",
+      isChecked: false,
       fileName: "default",
       newGcode: "",
     };
@@ -201,7 +202,8 @@ module.exports = {
       const macrosList = macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
       var macrosColor = document.getElementById("macros-color").value;
-      var macrosAlert = document.getElementById("macros-alert").value;
+      var macrosAlert = this.isChecked;
+      console.log(macrosAlert);
       const formattedFilename = macrosName
         .replace(/\\/g, "_")
         .replace(/\//g, "_")
