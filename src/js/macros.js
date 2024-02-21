@@ -99,12 +99,14 @@ module.exports = {
       }
       const file = this.fileName;
       if (file != "default") {
-        const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
-          cache: "no-cache",
-        });
+        const response = await fetch(
+          `/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${encodeURIComponent(file)}`,
+          {
+            cache: "no-cache",
+          },
+        );
         if (response.status == 200) {
           const text = await response.text();
-          console.log("text: ", text);
           this.newGcode = text;
         } else {
           console.error("error loading");
