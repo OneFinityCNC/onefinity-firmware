@@ -545,7 +545,7 @@ module.exports = {
         }
         try {
           this.load();
-          if (this.config.macros[id].alert) {
+          if (this.config.macros[id].alert == true) {
             this.macrosLoading = true;
           } else {
             setImmediate(() => this.start_pause());

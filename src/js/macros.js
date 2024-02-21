@@ -74,6 +74,7 @@ module.exports = {
     editedAlert: function (event) {
       if (this.tab != 0 && this.config.macros[this.tab - 1].alert != event.target.value) {
         this.$dispatch("macros-edited");
+        this.macrosAlert = event.target.value;
       }
     },
     editedName: function (event) {
@@ -213,7 +214,6 @@ module.exports = {
         this.confirmSave = false;
         return;
       }
-
 
       var file_name = this.fileName == "default" ? formattedFilename + ".ngc" : this.fileName;
       var file = this.newGcode;
