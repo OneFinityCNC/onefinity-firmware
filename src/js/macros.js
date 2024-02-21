@@ -217,7 +217,9 @@ module.exports = {
       var file_name = this.fileName == "default" ? formattedFilename + ".ngc" : this.fileName;
       var file = this.newGcode;
 
-      this.uploadGCode(file_name, file);
+      if (file.trim() != "") {
+        this.uploadGCode(file_name, file);
+      }
 
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
