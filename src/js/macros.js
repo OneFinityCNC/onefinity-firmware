@@ -201,18 +201,25 @@ module.exports = {
       const macrosList = macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
       var macrosColor = document.getElementById("macros-color").value;
-      if (macrosList.includes(macrosName)) {
+      const formattedFilename = macrosName
+      .replace(/\\/g, "_")
+        .replace(/\//g, "_")
+        .replace(/#/g, "-")
+        .replace(/\?/g, "-");
+
+      if (macrosList.includes(formattedFilename)) {
         this.sameName = true;
         this.confirmSave = false;
         return;
       }
 
-      var file_name = this.fileName == "default" ? macrosName + ".ngc" : this.fileName;
+
+      var file_name = this.fileName == "default" ? formattedFilename + ".ngc" : this.fileName;
       var file = this.newGcode;
 
       this.uploadGCode(file_name, file);
 
-      this.config.macros[this.tab - 1].name = macrosName;
+      this.config.macros[this.tab - 1].name = formattedFilename;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].file_name = file_name;
       this.confirmSave = false;
