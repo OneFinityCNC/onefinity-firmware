@@ -226,7 +226,7 @@ script#control-view-template(type="text/x-template")
 
     .macros-div(class="present")
        button.macros-button(title="Click to run Macros",v-for="(index,macros) in config.macros",
-          @click="runMacros(index)",:disabled="!is_ready",v-bind:style="{ backgroundColor: macros.color; }") {{macros.name}}
+          @click="runMacros(index)",:disabled="!is_ready",v-bind:style="{ backgroundColor: macros.color }") {{macros.name}}
 
     .tabs
      
