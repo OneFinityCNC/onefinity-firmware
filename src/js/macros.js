@@ -19,6 +19,7 @@ module.exports = {
       addMacros: false,
       maxLimitReached: false,
       macrosName: "",
+      macrosAlert: true,
       fileName: "default",
       newGcode: "",
     };
@@ -51,12 +52,6 @@ module.exports = {
     macrosList: function () {
       return this.config.macros.map(item => item.name);
     },
-    getMacrosColor: function () {
-      return this.config.macros[this.tab - 1]["color"];
-    },
-    getMacrosName: function () {
-      return this.config.macros[this.tab - 1]["name"];
-    },
     initial_tab: function () {
       return this.tab == 0;
     },
@@ -73,6 +68,11 @@ module.exports = {
     },
     editedColor: function (event) {
       if (this.tab != 0 && this.config.macros[this.tab - 1].color != event.target.value) {
+        this.$dispatch("macros-edited");
+      }
+    },
+    editedAlert: function (event) {
+      if (this.tab != 0 && this.config.macros[this.tab - 1].alert != event.target.value) {
         this.$dispatch("macros-edited");
       }
     },
@@ -201,8 +201,9 @@ module.exports = {
       const macrosList = macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
       var macrosColor = document.getElementById("macros-color").value;
+      var macrosAlert = document.getElementById("macros-alert").value;
       const formattedFilename = macrosName
-      .replace(/\\/g, "_")
+        .replace(/\\/g, "_")
         .replace(/\//g, "_")
         .replace(/#/g, "-")
         .replace(/\?/g, "-");
@@ -219,9 +220,10 @@ module.exports = {
 
       this.uploadGCode(file_name, file);
 
-      this.config.macros[this.tab - 1].name = formattedFilename;
+      this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].file_name = file_name;
+      this.config.macros[this.tab - 1].alert = macrosAlert;
       this.confirmSave = false;
       try {
         await api.put("config/save", this.config);
@@ -262,6 +264,7 @@ module.exports = {
       if (this.tab == 0 || this.tab > this.config.macros.length) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
+        document.getElementById("macros-alert").value = true;
         this.fileName = "default";
         this.tab = "0";
         this.newGcode = "";
@@ -269,6 +272,7 @@ module.exports = {
         const defaultValue = this.config.macros[this.tab - 1];
         document.getElementById("macros-name").value = defaultValue.name;
         document.getElementById("macros-color").value = defaultValue.color;
+        document.getElementById("macros-alert").value = defaultValue.alert;
         this.fileName = defaultValue.file_name;
         this.loadMacrosGcode();
       }
@@ -280,41 +284,49 @@ module.exports = {
           name: "Macros 1",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
         {
           name: "Macros 2",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
         {
           name: "Macros 3",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
         {
           name: "Macros 4",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
         {
           name: "Macros 5",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
         {
           name: "Macros 6",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
         {
           name: "Macros 7",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
         {
           name: "Macros 8",
           color: "#dedede",
           file_name: "default",
+          alert: true,
         },
       ];
       this.delete_all_macros();
@@ -339,6 +351,7 @@ module.exports = {
         name: `Macros ${length + 1}`,
         color: "#dedede",
         file_name: "default",
+        alert: true,
       };
       this.config.macros.push(newMacros);
       this.addMacros = false;
@@ -365,19 +378,6 @@ module.exports = {
         alert("Restore failed");
       }
       this.deleteSelected = false;
-    },
-    loadMacrosSettings: function () {
-      if (this.tab == 0) {
-        document.getElementById("macros-name").value = "";
-        document.getElementById("macros-color").value = "#fff";
-      } else {
-        const macros = this.config.macros[this.tab - 1];
-        document.getElementById("macros-name").value = macros.name;
-        document.getElementById("macros-color").value = macros.color;
-      }
-      this.newGcode = "";
-      this.filename = "default";
-      this.edited = false;
     },
   },
 };

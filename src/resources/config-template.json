@@ -539,42 +539,50 @@
       {
         "name": "Macros 1",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       },
       {
         "name": "Macros 2",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       },
       {
         "name": "Macros 3",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       },
       {
         "name": "Macros 4",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       },
       {
         "name": "Macros 5",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       },
       {
         "name": "Macros 6",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       },
       {
         "name": "Macros 7",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       },
       {
         "name": "Macros 8",
         "color": "#dedede",
-        "file_name": "default"
+        "file_name": "default",
+        "alert": true
       }
     ],
     "template": {
@@ -589,6 +597,10 @@
       "file_name": {
         "type": "string",
         "default": "default"
+      },
+      "alert": {
+        "type": "bool",
+        "default": true
       }
     }
   },

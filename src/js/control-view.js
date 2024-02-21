@@ -545,7 +545,11 @@ module.exports = {
         }
         try {
           this.load();
-          this.macrosLoading = true;
+          if (this.config.macros[id].alert) {
+            this.macrosLoading = true;
+          } else {
+            setImmediate(() => this.start_pause());
+          }
         } catch (error) {
           console.warn("Error running program: ", error);
         }
