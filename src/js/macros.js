@@ -72,7 +72,7 @@ module.exports = {
       }
     },
     editedAlert: function () {
-      if (this.tab != 0 ) {
+      if (this.tab != 0) {
         this.$dispatch("macros-edited");
       }
     },
@@ -263,7 +263,7 @@ module.exports = {
       if (this.tab == 0 || this.tab > this.config.macros.length) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
-        document.getElementById("macros-alert").value = true;
+        this.isChecked = true;
         this.fileName = "default";
         this.tab = "0";
         this.newGcode = "";
@@ -271,7 +271,7 @@ module.exports = {
         const defaultValue = this.config.macros[this.tab - 1];
         document.getElementById("macros-name").value = defaultValue.name;
         document.getElementById("macros-color").value = defaultValue.color;
-        document.getElementById("macros-alert").value = defaultValue.alert;
+        this.isChecked = defaultValue.alert;
         this.fileName = defaultValue.file_name;
         this.loadMacrosGcode();
       }
