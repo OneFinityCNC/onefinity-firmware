@@ -133,6 +133,9 @@ class FileHandler(bbctrl.APIHandler):
             filebasename = os.path.basename(url_unescape(filename))
         
         try:
+            filename=self.get_upload(filebasename).encode('utf8')
+            self.get_log('FileHandler').info(
+            '138 FileName: ' + filename)
             with open(self.get_upload(filebasename).encode('utf8'), 'r') as f:
                 self.write(f.read())
         except Exception:

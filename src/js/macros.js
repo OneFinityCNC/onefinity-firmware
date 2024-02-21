@@ -94,7 +94,7 @@ module.exports = {
       });
     },
     loadMacrosGcode: async function () {
-      if(this.tab==0){
+      if (this.tab == 0) {
         return;
       }
       const file = this.fileName;
@@ -103,7 +103,8 @@ module.exports = {
           cache: "no-cache",
         });
         if (response.status == 200) {
-          const text = (await response.text()).split(" ").join("\n");
+          const text = await response.text();
+          console.log("text: ", text);
           this.newGcode = text;
         } else {
           console.error("error loading");
