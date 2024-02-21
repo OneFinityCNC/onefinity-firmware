@@ -72,6 +72,7 @@ module.exports = {
     },
     editedAlert: function (event) {
       if (this.tab != 0 && this.config.macros[this.tab - 1].alert != event.target.value) {
+        console.log(event.target.value);
         this.$dispatch("macros-edited");
       }
     },
