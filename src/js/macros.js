@@ -202,7 +202,6 @@ module.exports = {
       var macrosName = document.getElementById("macros-name").value;
       var macrosColor = document.getElementById("macros-color").value;
       var macrosAlert = this.isChecked;
-      console.log(macrosAlert);
       const formattedFilename = macrosName
         .replace(/\\/g, "_")
         .replace(/\//g, "_")
