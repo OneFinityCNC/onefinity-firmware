@@ -123,8 +123,7 @@ class FileHandler(bbctrl.APIHandler):
 
     @gen.coroutine
     def get(self, filename):
-        self.get_log('FileHandler').info(
-            'FileName: ' + filename)
+        self.get_log('126 FileHandler').info('FileName: ' + filename)
         if not filename:
             raise HTTPError(400, 'Missing filename')
         if filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
@@ -133,9 +132,8 @@ class FileHandler(bbctrl.APIHandler):
             filebasename = os.path.basename(url_unescape(filename))
         
         try:
-            filename=self.get_upload(filebasename).encode('utf8')
-            self.get_log('FileHandler').info(
-            '138 FileName: ' + filename)
+            filenamee=self.get_upload(filebasename).encode('utf8')
+            self.get_log('FileHandler').info('138 FileName: ' + filenamee)
             with open(self.get_upload(filebasename).encode('utf8'), 'r') as f:
                 self.write(f.read())
         except Exception:
