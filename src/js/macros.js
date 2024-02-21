@@ -19,7 +19,6 @@ module.exports = {
       addMacros: false,
       maxLimitReached: false,
       macrosName: "",
-      macrosAlert: true,
       fileName: "default",
       newGcode: "",
     };
@@ -74,8 +73,6 @@ module.exports = {
     editedAlert: function (event) {
       if (this.tab != 0 && this.config.macros[this.tab - 1].alert != event.target.value) {
         this.$dispatch("macros-edited");
-        console.log(event.target.value);
-        this.macrosAlert = !event.target.value;
       }
     },
     editedName: function (event) {
