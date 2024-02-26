@@ -159,13 +159,6 @@ module.exports = {
       this.config.tool = merge({}, this.config.tool, settings["tool"]);
       this.config["pwm-spindle"] = merge({}, this.config["pwm-spindle"], settings["pwm-spindle"]);
       this.config["modbus-spindle"] = merge({}, this.config["modbus-spindle"], settings["modbus-spindle"]);
-      if (this.selected_tool == "pwncnc-vfd" && Object.keys(settings).length == 0) {
-        this.config["modbus-spindle"]["regs"][5] = {
-          "reg-value": 6,
-          "reg-type": "stop-write",
-          "reg-addr": 40960,
-        };
-      }
       const tool = this.toolList.find(tool => tool.id == this.config.tool["selected-tool"]);
       this.config.tool["tool-type"] = tool.type || tool.name;
       this.$dispatch("config-changed");
