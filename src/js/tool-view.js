@@ -155,17 +155,19 @@ module.exports = {
   methods: {
     change_selected_tool: function () {
       const selectedToolSettings = this.config["selected-tool-settings"] || {};
-      console.log("selectedToolSettings: ", selectedToolSettings);
       const settings = selectedToolSettings[this.selected_tool] || {};
-      console.log("settings", settings);
       this.config.tool = merge({}, this.config.tool, settings["tool"]);
       this.config["pwm-spindle"] = merge({}, this.config["pwm-spindle"], settings["pwm-spindle"]);
       this.config["modbus-spindle"] = merge({}, this.config["modbus-spindle"], settings["modbus-spindle"]);
-      console.log(this.config);
+      if (this.selected_tool == "pwncnc-vfd" && _.isEmpty(settings)) {
+        this.config["modbus-spindle"]["regs"][5] = {
+          "reg-value": 6,
+          "reg-type": "stop-write",
+          "reg-addr": 40960,
+        };
+      }
       const tool = this.toolList.find(tool => tool.id == this.config.tool["selected-tool"]);
-      console.log("tool: ", tool);
       this.config.tool["tool-type"] = tool.type || tool.name;
-      console.log(this.config.tool["tool-type"]);
       this.$dispatch("config-changed");
     },
 
