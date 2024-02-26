@@ -407,10 +407,12 @@ module.exports = new Vue({
 
         save: async function() {
             const selected_tool = this.config.tool["selected-tool"];
+            console.log(selected_tool);
             const saveModbus =
                 selected_tool !== "pwm" &&
                 selected_tool !== "laser" &&
                 selected_tool !== "router";
+                console.log("saveModBus: ", saveModbus);
             const settings = {
                 ["tool"]: { ...this.config.tool },
                 ["pwm-spindle"]: { ...this.config["pwm-spindle"] },
@@ -419,6 +421,8 @@ module.exports = new Vue({
                     : undefined,
             };
             delete settings.tool["tool-type"];
+            console.log("settings: ", settings);
+            console.log('this.config["selected-tool-settings"]: ', this.config["selected-tool-settings"]);
 
             this.config["selected-tool-settings"][selected_tool] = settings;
             this.display_units = this.config.settings["units"];

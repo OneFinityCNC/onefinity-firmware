@@ -28,8 +28,8 @@ module.exports = {
           name: "Laser (J Tech, etc)",
         },
         {
-                id: "pwncnc-vfd",
-                name: "PwnCNC VFD",
+          id: "pwncnc-vfd",
+          name: "PwnCNC VFD",
         },
         {
           id: "pwm",
@@ -89,8 +89,8 @@ module.exports = {
         {
           id: "v70-vfd",
           name: "V70",
-          unsupported: true
-              }
+          unsupported: true,
+        },
       ],
     };
   },
@@ -155,24 +155,17 @@ module.exports = {
   methods: {
     change_selected_tool: function () {
       const selectedToolSettings = this.config["selected-tool-settings"] || {};
+      console.log("selectedToolSettings: ", selectedToolSettings);
       const settings = selectedToolSettings[this.selected_tool] || {};
+      console.log("settings", settings);
       this.config.tool = merge({}, this.config.tool, settings["tool"]);
-      this.config["pwm-spindle"] = merge(
-        {},
-        this.config["pwm-spindle"],
-        settings["pwm-spindle"]
-      );
-      this.config["modbus-spindle"] = merge(
-        {},
-        this.config["modbus-spindle"],
-        settings["modbus-spindle"]
-      );
-
-      const tool = this.toolList.find(
-        (tool) => tool.id == this.config.tool["selected-tool"]
-      );
+      this.config["pwm-spindle"] = merge({}, this.config["pwm-spindle"], settings["pwm-spindle"]);
+      this.config["modbus-spindle"] = merge({}, this.config["modbus-spindle"], settings["modbus-spindle"]);
+      console.log(config);
+      const tool = this.toolList.find(tool => tool.id == this.config.tool["selected-tool"]);
+      console.log("tool: ", tool);
       this.config.tool["tool-type"] = tool.type || tool.name;
-
+      console.log(this.config.tool["tool-type"]);
       this.$dispatch("config-changed");
     },
 
@@ -218,10 +211,7 @@ module.exports = {
     },
 
     show_modbus_field: function (key) {
-      return (
-        key != "regs" &&
-        (key != "multi-write" || this.tool_type == "CUSTOM MODBUS VFD")
-      );
+      return key != "regs" && (key != "multi-write" || this.tool_type == "CUSTOM MODBUS VFD");
     },
 
     read: function (e) {
