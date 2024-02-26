@@ -399,6 +399,7 @@ module.exports = {
     delete_current: function () {
       if (this.config.macrosList.find(item => item.file_name == this.state.selected) == undefined) {
         if (this.state.selected) {
+          this.config.gcodeList = this.config.gcodeList.filter(item => item.file_name != this.state.selected);
           api.delete(`file/${this.state.selected}`);
         }
       } else {
