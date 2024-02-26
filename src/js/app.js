@@ -412,7 +412,7 @@ module.exports = new Vue({
                 selected_tool !== "pwm" &&
                 selected_tool !== "laser" &&
                 selected_tool !== "router";
-                console.log("saveModBus: ", saveModbus);
+            console.log("saveModBus: ", saveModbus);
             const settings = {
                 ["tool"]: { ...this.config.tool },
                 ["pwm-spindle"]: { ...this.config["pwm-spindle"] },

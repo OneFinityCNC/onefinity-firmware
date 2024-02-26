@@ -161,7 +161,7 @@ module.exports = {
       this.config.tool = merge({}, this.config.tool, settings["tool"]);
       this.config["pwm-spindle"] = merge({}, this.config["pwm-spindle"], settings["pwm-spindle"]);
       this.config["modbus-spindle"] = merge({}, this.config["modbus-spindle"], settings["modbus-spindle"]);
-      console.log(config);
+      console.log(this.config);
       const tool = this.toolList.find(tool => tool.id == this.config.tool["selected-tool"]);
       console.log("tool: ", tool);
       this.config.tool["tool-type"] = tool.type || tool.name;
