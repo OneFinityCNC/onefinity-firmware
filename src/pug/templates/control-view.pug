@@ -214,13 +214,13 @@ script#control-view-template(type="text/x-template")
                     th ETA
                     td.eta {{eta}}
 
-                   tr
+                  tr
                     th Line
                     td
                       | {{0 <= state.line ? state.line : 0 | number}}
                       span(v-if="toolpath.lines")
                         | &nbsp;of {{toolpath.lines | number}}
-                        
+
                   tr
                     th Progress
                     td.progress
