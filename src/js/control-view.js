@@ -546,6 +546,7 @@ module.exports = {
         }
         try {
           this.load();
+          console.log("selected", this.state.selected);
           if (this.config.macros[id].alert == true) {
             this.macrosLoading = true;
           } else {
