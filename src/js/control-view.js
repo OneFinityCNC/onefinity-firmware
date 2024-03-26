@@ -406,7 +406,9 @@ module.exports = {
         return;
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
+      console.log(files);
       for (let file of files) {
+        console.log(file);
         const extension = file.name.split(".").pop();
         switch (extension.toLowerCase()) {
           case "nc":
