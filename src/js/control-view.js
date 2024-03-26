@@ -406,14 +406,39 @@ module.exports = {
         return;
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
-      while (files.length) {
-        // await this.upload_file(e);
-        console.log(e.target.files || e.dataTransfer.files);
-        if (e.target.files) {
-          e.target.files.delete(0);
-        } else {
-          e.dataTransfer.files.delete(0);
+      for (let file of files) {
+        const extension = file.name.split(".").pop();
+        switch (extension.toLowerCase()) {
+          case "nc":
+          case "ngc":
+          case "gcode":
+          case "gc":
+            break;
+
+          default:
+            alert(`Unsupported file type: ${extension}`);
+            return;
         }
+
+        // const isAlreadyPresent = this.config.gcodeList.find(element => element.file_name == file.name);
+        // if (isAlreadyPresent == undefined) {
+        //   this.config.gcodeList.push({ file_name: file.name });
+        //   try {
+        //     await api.put("config/save", this.config);
+        //     this.$dispatch("update");
+        //   } catch (error) {
+        //     console.error("Restore Failed: ", error);
+        //     alert("Restore failed");
+        //   }
+        // }
+
+        SvelteComponents.showDialog("Upload", {
+          file,
+          onComplete: () => {
+            this.last_file_time = undefined; // Force reload
+            this.$broadcast("gcode-reload", file.name);
+          },
+        });
       }
     },
 

@@ -21,7 +21,10 @@ script#control-view-template(type="text/x-template")
     message(:show.sync="macrosLoading")
         h3(slot="header") Run Macro?
         div(slot="body")
-            p The selected macro is being loaded.
+            p 
+              | The macro file
+              strong {{state.selected}}
+              | is being loaded.
             
         div(slot="footer")
           button.pure-button(@click="macrosLoading=false") Cancel
