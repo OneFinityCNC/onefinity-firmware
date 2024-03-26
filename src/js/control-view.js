@@ -349,8 +349,12 @@ module.exports = {
       this.mdi = this.history[index];
     },
 
-    open: function () {
+    open_file: function () {
       utils.clickFileInput("gcode-file-input");
+    },
+
+    open_folder: function () {
+      utils.clickFileInput("gcode-folder-input");
     },
 
     upload_file: async function (e) {
@@ -396,7 +400,7 @@ module.exports = {
       });
     },
 
-    upload_folder: function (e) {
+    upload_folder: async function (e) {
       console.log(e);
       const folderInput = document.getElementById('folderInput');
       console.log(folderInput);

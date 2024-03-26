@@ -268,7 +268,7 @@ script#control-view-template(type="text/x-template")
             v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-step-forward
 
-          button.pure-button(title="Upload a new GCode program.", @click="open",
+          button.pure-button(title="Upload a new GCode program.", @click="open_file",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
             .fa.fa-folder-open
 
@@ -276,9 +276,9 @@ script#control-view-template(type="text/x-template")
             input(type="file", @change="upload_file", :disabled="!is_ready",
               accept=".nc,.ngc,.gcode,.gc")
           
-          button.pure-button(title="Upload a new GCode folder.", @click="open",
+          button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-folder-plus
+            .fa.fa-folder
 
           form.gcode-folder-input.file-upload
             input#folderInput(type="file", @change="upload_folder", :disabled="!is_ready",
