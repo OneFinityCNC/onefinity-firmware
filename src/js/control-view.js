@@ -358,6 +358,7 @@ module.exports = {
     },
 
     upload_file: async function (e) {
+      console.log(e);
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -401,9 +402,12 @@ module.exports = {
     },
 
     upload_folder: async function (e) {
-      console.log(e);
-      const folderInput = document.getElementById('folderInput');
-      console.log(folderInput);
+      const files = e.target.files;
+      if (!files.length) {
+        return;
+      }
+      const folderName = files[0].webkitRelativePath.split("/")[0];
+      console.log(folderName);
     },
 
     delete_current: function () {
