@@ -353,7 +353,7 @@ module.exports = {
       utils.clickFileInput("gcode-file-input");
     },
 
-    upload: async function (e) {
+    upload_file: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -394,6 +394,12 @@ module.exports = {
           this.$broadcast("gcode-reload", file.name);
         },
       });
+    },
+
+    upload_folder: function (e) {
+      console.log(e);
+      const folderInput = document.getElementById('folderInput');
+      console.log(folderInput);
     },
 
     delete_current: function () {
