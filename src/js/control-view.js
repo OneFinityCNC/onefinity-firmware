@@ -207,6 +207,8 @@ module.exports = {
         item => !this.config.macrosList.some(compareItem => compareItem.file_name == item),
       );
       const gcodelist = this.config.gcodeList.map(item => item.file_name);
+      console.log(filesWithNoMacros);
+      console.log(gcodelist);
       const unionSet = new Set([...filesWithNoMacros, ...gcodelist]);
       const files = [...unionSet].sort();
       return files;
