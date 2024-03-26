@@ -605,7 +605,7 @@
     }
   },
 
-  "macrosList": {
+  "macros_list": {
     "type": "list",
     "default": [],
     "template": {
@@ -616,7 +616,7 @@
     }
   },
 
-  "gcodeList": {
+  "non_macros_list": {
     "type": "list",
     "default": [],
     "template": {

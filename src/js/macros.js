@@ -46,10 +46,10 @@ module.exports = {
     macrosLength: function () {
       return this.tab > 8;
     },
-    macrosGCodeList: function () {
-      return this.config.macrosList.map(el => el.file_name).sort();
+    macros_gcode_list: function () {
+      return this.config.macros_list.map(el => el.file_name).sort();
     },
-    macrosList: function () {
+    macros_list: function () {
       return this.config.macros.map(item => item.name);
     },
     initial_tab: function () {
@@ -138,9 +138,9 @@ module.exports = {
       const gcodeData = {
         file_name: file.name,
       };
-      if (!this.config.macrosList.some(item => item.file_name == file.name)) {
+      if (!this.config.macros_list.some(item => item.file_name == file.name)) {
         this.fileName = file.name;
-        this.config.macrosList.push(gcodeData);
+        this.config.macros_list.push(gcodeData);
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");
@@ -187,8 +187,8 @@ module.exports = {
       const gcodeData = {
         file_name: filename,
       };
-      if (!this.config.macrosList.some(item => item.file_name == filename)) {
-        this.config.macrosList.push(gcodeData);
+      if (!this.config.macros_list.some(item => item.file_name == filename)) {
+        this.config.macros_list.push(gcodeData);
       }
     },
     saveMacros: async function () {
@@ -198,7 +198,7 @@ module.exports = {
       }
       const macros = [...this.config.macros];
       macros.splice(this.tab - 1, 1);
-      const macrosList = macros.map(item => item.name);
+      const macros_list = macros.map(item => item.name);
       var macrosName = document.getElementById("macros-name").value;
       var macrosColor = document.getElementById("macros-color").value;
       var macrosAlert = this.isChecked;
@@ -208,7 +208,7 @@ module.exports = {
         .replace(/#/g, "-")
         .replace(/\?/g, "-");
 
-      if (macrosList.includes(formattedFilename)) {
+      if (macros_list.includes(formattedFilename)) {
         this.sameName = true;
         this.confirmSave = false;
         return;
@@ -244,7 +244,7 @@ module.exports = {
         api.delete(`file/${filename}`);
         this.newGcode = "";
         this.config.macros[this.tab - 1].file_name = "default";
-        this.config.macrosList = this.config.macrosList.filter(item => item.file_name !== filename);
+        this.config.macros_list = this.config.macros_list.filter(item => item.file_name !== filename);
       }
       try {
         await api.put("config/save", this.config);
@@ -257,9 +257,9 @@ module.exports = {
       this.deleteGCode = false;
     },
     delete_all_macros: async function () {
-      const macrosList = this.config.macrosList.map(item => item.file_name).toString();
-      api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macrosList}`);
-      this.config.macrosList = [];
+      const macros_list = this.config.macros_list.map(item => item.file_name).toString();
+      api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macros_list}`);
+      this.config.macros_list = [];
     },
     clearMacros: async function () {
       if (this.tab == 0 || this.tab > this.config.macros.length) {

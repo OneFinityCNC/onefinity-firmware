@@ -115,8 +115,8 @@ module.exports = new Vue({
             ip: "<>",
             wifiName: "not connected",
             macros:[{},{},{},{},{},{},{},{}],
-            macrosList:[],
-            gcodeList:[]
+            macros_list:[],
+            non_macros_list:[]
           },
           state: {
             messages: [],

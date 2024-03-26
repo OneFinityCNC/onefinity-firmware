@@ -204,12 +204,10 @@ module.exports = {
     },
     gcodeFiles: function () {
       const filesWithNoMacros = this.state.files.filter(
-        item => !this.config.macrosList.some(compareItem => compareItem.file_name == item),
+        item => !this.config.macros_list.some(compareItem => compareItem.file_name == item),
       );
-      const gcodelist = this.config.gcodeList.map(item => item.file_name);
-      console.log(filesWithNoMacros);
-      console.log(gcodelist);
-      const unionSet = new Set([...filesWithNoMacros, ...gcodelist]);
+      const gcodeList = this.config.non_macros_list.map(item => item.file_name);
+      const unionSet = new Set([...filesWithNoMacros, ...gcodeList]);
       const files = [...unionSet].sort();
       return files;
     },
@@ -379,9 +377,9 @@ module.exports = {
           return;
       }
 
-      const isAlreadyPresent = this.config.gcodeList.find(element => element.file_name == file.name);
+      const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
       if (isAlreadyPresent == undefined) {
-        this.config.gcodeList.push({ file_name: file.name });
+        this.config.non_macros_list.push({ file_name: file.name });
         try {
           await api.put("config/save", this.config);
           this.$dispatch("update");
@@ -422,17 +420,17 @@ module.exports = {
             return;
         }
 
-        // const isAlreadyPresent = this.config.gcodeList.find(element => element.file_name == file.name);
-        // if (isAlreadyPresent == undefined) {
-        //   this.config.gcodeList.push({ file_name: file.name });
-        //   try {
-        //     await api.put("config/save", this.config);
-        //     this.$dispatch("update");
-        //   } catch (error) {
-        //     console.error("Restore Failed: ", error);
-        //     alert("Restore failed");
-        //   }
-        // }
+        const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+        if (isAlreadyPresent == undefined) {
+          this.config.non_macros_list.push({ file_name: file.name });
+          try {
+            await api.put("config/save", this.config);
+            this.$dispatch("update");
+          } catch (error) {
+            console.error("Restore Failed: ", error);
+            alert("Restore failed");
+          }
+        }
 
         SvelteComponents.showDialog("Upload", {
           file,
@@ -445,13 +443,13 @@ module.exports = {
     },
 
     delete_current: function () {
-      if (this.config.macrosList.find(item => item.file_name == this.state.selected) == undefined) {
+      if (this.config.macros_list.find(item => item.file_name == this.state.selected) == undefined) {
         if (this.state.selected) {
-          this.config.gcodeList = this.config.gcodeList.filter(item => item.file_name != this.state.selected);
+          this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
           api.delete(`file/${this.state.selected}`);
         }
       } else {
-        this.config.gcodeList = this.config.gcodeList.filter(item => item.file_name != this.state.selected);
+        this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
       }
 
       this.deleteGCode = false;
@@ -463,9 +461,9 @@ module.exports = {
     },
 
     delete_all_except_macros: async function () {
-      const macrosList = this.config.macrosList.map(item => item.file_name).toString();
+      const macrosList = this.config.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
-      this.config.gcodeList = [];
+      this.config.non_macros_list = [];
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
