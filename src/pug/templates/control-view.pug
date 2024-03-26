@@ -13,7 +13,7 @@ script#control-view-template(type="text/x-template")
     message(:show.sync="showNoGcodeMessage")
         h3(slot="header") GCode Not Set
         div(slot="body")
-            p Configure the GCode for the selected macros to use it
+            p Configure the GCode for the selected macro to use it
             
         div(slot="footer")
           button.pure-button(@click="showNoGcodeMessage=false") OK
@@ -21,7 +21,7 @@ script#control-view-template(type="text/x-template")
     message(:show.sync="macrosLoading")
         h3(slot="header") Run Macro?
         div(slot="body")
-            p The selected macro is being loaded.
+            p The {{state.selected || "selected macro"}} is being loaded.
             
         div(slot="footer")
           button.pure-button(@click="macrosLoading=false") Cancel

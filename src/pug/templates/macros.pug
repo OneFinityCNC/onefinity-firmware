@@ -29,7 +29,7 @@ script#macros-template(type="text/x-template")
             | &nbsp;Selected
 
     message(:show.sync="deleteSelected")
-        h3(slot="header") Delete Selected Macros?
+        h3(slot="header") Delete Selected Macro?
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="deleteSelected = false") Cancel
@@ -52,7 +52,7 @@ script#macros-template(type="text/x-template")
           button.pure-button.button-submit(@click="sameName = false") OK
 
     message(:show.sync="addMacros")
-        h3(slot="header") Do you need to add another macros?
+        h3(slot="header") Do you need to add another macro?
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="addMacros = false") Cancel
@@ -61,31 +61,31 @@ script#macros-template(type="text/x-template")
     h1 Macros Configuration
     .flex-row-container
         button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Delete All
-        button.config-button.button-blue(title="Add a Macros", @click="addMacros=true", style="margin-left:5px") New Macros
+        button.config-button.button-blue(title="Add a Macros", @click="addMacros=true", style="margin-left:5px") New Macro
         button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
 
     .warning-box
         p
                 u  Note:
-                |  Select a Macros to edit its settings.
+                |  Select a Macro to edit its settings.
 
     .tabs
         div(style="display:flex;align-items:center;margin-left:30px")
-                h2 Select Macros
+                h2 Select Macro
                 select(id="macros-select",title="Select a Macros to edit.",selected
                                                 v-model="tab",@change="clearMacros",
                                                 style="width:250px;height:50px;border-radius:10px;padding-left:15px;font-weight:bold;margin-left:30px")
-                                                option( selected='' value='0')  Select a Macros
+                                                option( selected='' value='0')  Select a Macro
                                                 option(v-for="(index,file) in macrosList", :value="index+1") {{file}}
         .macros-form
-                        p.title Macros Name
+                        p.title Macro Name
                         .input-container
                                 input.input-color(type="color",id="macros-color",value="#ffffff",@change="editedColor") 
                                 input.input-name(type="text",minlength='1',maxlength='15',id="macros-name" ,v-model="macrosName",@keypress="editedName")
                         div
                           input.input-alert(type="checkbox",id="macros-alert" v-model="isChecked",@change="editedAlert")
                           label Would you like an alert when running this macro?
-                        p.title Macros G-Code
+                        p.title Macro G-Code
                         .flex-row-container                      
                                 select(id="gcode-select",title="Select previously uploaded GCode programs.",selected
                                         v-model="fileName",@change="loadMacrosGcode", :disabled="!is_ready",
