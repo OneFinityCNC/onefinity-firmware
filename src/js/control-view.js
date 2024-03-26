@@ -408,9 +408,9 @@ module.exports = {
         // await this.upload_file(e);
         console.log(e.target.files || e.dataTransfer.files);
         if (e.target.files) {
-          e.target.files.shift();
+          e.target.files.delete(0);
         } else {
-          e.dataTransfer.files.shift();
+          e.dataTransfer.files.delete(0);
         }
       }
     },
