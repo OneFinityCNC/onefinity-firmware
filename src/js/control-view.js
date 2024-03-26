@@ -304,23 +304,27 @@ module.exports = {
       this.showGcodeMessage = true;
 
       while (this.showGcodeMessage) {
-        const toolpath = await api.get(`path/${file}`);
-        this.toolpath_progress = toolpath.progress;
+        try {
+          const toolpath = await api.get(`path/${file}`);
+          this.toolpath_progress = toolpath.progress;
 
-        if (toolpath.progress === 1 || typeof toolpath.progress == "undefined") {
-          this.showGcodeMessage = false;
+          if (toolpath.progress === 1 || typeof toolpath.progress == "undefined") {
+            this.showGcodeMessage = false;
 
-          if (toolpath.bounds) {
-            toolpath.filename = file;
-            this.toolpath_progress = 1;
-            this.toolpath = toolpath;
+            if (toolpath.bounds) {
+              toolpath.filename = file;
+              this.toolpath_progress = 1;
+              this.toolpath = toolpath;
 
-            const state = this.$root.state;
-            for (const axis of "xyzabc") {
-              Vue.set(state, `path_min_${axis}`, toolpath.bounds.min[axis]);
-              Vue.set(state, `path_max_${axis}`, toolpath.bounds.max[axis]);
+              const state = this.$root.state;
+              for (const axis of "xyzabc") {
+                Vue.set(state, `path_min_${axis}`, toolpath.bounds.min[axis]);
+                Vue.set(state, `path_max_${axis}`, toolpath.bounds.max[axis]);
+              }
             }
           }
+        } catch (error) {
+          console.error(error);
         }
       }
     },
@@ -445,7 +449,9 @@ module.exports = {
     delete_current: function () {
       if (this.config.macros_list.find(item => item.file_name == this.state.selected) == undefined) {
         if (this.state.selected) {
-          this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
+          this.config.non_macros_list = this.config.non_macros_list.filter(
+            item => item.file_name != this.state.selected,
+          );
           api.delete(`file/${this.state.selected}`);
         }
       } else {
