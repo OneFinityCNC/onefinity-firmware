@@ -358,7 +358,6 @@ module.exports = {
     },
 
     upload_file: async function (e) {
-      console.log(e);
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -388,8 +387,6 @@ module.exports = {
           console.error("Restore Failed: ", error);
           alert("Restore failed");
         }
-      } else {
-        //
       }
 
       SvelteComponents.showDialog("Upload", {
@@ -402,12 +399,20 @@ module.exports = {
     },
 
     upload_folder: async function (e) {
-      const files = e.target.files;
+      const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
-      console.log(folderName);
+      while (files.length) {
+        // await this.upload_file(e);
+        console.log(e.target.files || e.dataTransfer.files);
+        if (e.target.files) {
+          e.target.files.shift();
+        } else {
+          e.dataTransfer.files.shift();
+        }
+      }
     },
 
     delete_current: function () {
