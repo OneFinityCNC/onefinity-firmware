@@ -7,7 +7,7 @@ script#macros-template(type="text/x-template")
 
       div(slot="footer")
         button.pure-button(@click="confirmReset=false") Cancel
-        button.pure-button.button-error(@click="deleteAllMacros")
+        button.pure-button.button-error(@click="delete_all_macros")
           | Delete All
 
     message(:show.sync="confirmSave")
@@ -17,7 +17,7 @@ script#macros-template(type="text/x-template")
             
         div(slot="footer")
           button.pure-button(@click="confirmSave=false") Cancel
-          button.pure-button.pure-button-primary(@click="saveMacros") Confirm
+          button.pure-button.pure-button-primary(@click="save_macro") Confirm
 
     message(:show.sync="deleteGCode")
         h3(slot="header") Delete?
@@ -33,7 +33,7 @@ script#macros-template(type="text/x-template")
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="deleteSelected = false") Cancel
-          button.pure-button.button-error(@click="deleteSelectedMacros")
+          button.pure-button.button-error(@click="delete_selected_macro")
             .fa.fa-trash
             | &nbsp;Yes
 
@@ -56,7 +56,7 @@ script#macros-template(type="text/x-template")
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="addMacros = false") Cancel
-          button.pure-button.button-submit(@click="addNewMacros") Add
+          button.pure-button.button-submit(@click="add_new_macro") Add
 
     h1 Macros Configuration
     .flex-row-container
@@ -73,7 +73,7 @@ script#macros-template(type="text/x-template")
         div(style="display:flex;align-items:center;margin-left:30px")
                 h2 Select Macros
                 select(id="macros-select",title="Select a Macros to edit.",selected
-                                                v-model="tab",@change="clearMacros",
+                                                v-model="tab",@change="clear_macro",
                                                 style="width:250px;height:50px;border-radius:10px;padding-left:15px;font-weight:bold;margin-left:30px")
                                                 option( selected='' value='0')  Select a Macros
                                                 option(v-for="(index,file) in macros_list", :value="index+1") {{file}}
@@ -108,4 +108,7 @@ script#macros-template(type="text/x-template")
                                 textarea.new-gcode(id="gcode-field", v-model="newGcode" ,@keypress="updateNewGcode")
 
         button.submit-macros.button-success(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
-        button.submit-macros(title="Cancel Macros",@click="clearMacros",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel
+        button.submit-macros(title="Cancel Macros",@click="clear_macro",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel
+
+    button.submit-macros(title="Cancel Macros",@click="print_config",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") CONFIG
+    button.submit-macros(title="Cancel Macros",@click="print_state",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") STATE

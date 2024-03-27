@@ -191,9 +191,9 @@ module.exports = {
         this.config.macros_list.push(gcodeData);
       }
     },
-    saveMacros: async function () {
+    save_macro: async function () {
       if (this.tab == 0) {
-        this.clearMacros();
+        this.clear_macro();
         return;
       }
       const macros = [...this.config.macros];
@@ -256,12 +256,7 @@ module.exports = {
       this.fileName = "default";
       this.deleteGCode = false;
     },
-    delete_all_macros: async function () {
-      const macros_list = this.config.macros_list.map(item => item.file_name).toString();
-      api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macros_list}`);
-      this.config.macros_list = [];
-    },
-    clearMacros: async function () {
+    clear_macro: async function () {
       if (this.tab == 0 || this.tab > this.config.macros.length) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
@@ -279,7 +274,7 @@ module.exports = {
       }
       this.edited = false;
     },
-    deleteAllMacros: async function () {
+    delete_all_macros: async function () {
       this.config.macros = [
         {
           name: "Macros 1",
@@ -330,8 +325,10 @@ module.exports = {
           alert: true,
         },
       ];
-      this.delete_all_macros();
-      this.clearMacros();
+      const macros_list = this.config.macros_list.map(item => item.file_name).toString();
+      api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macros_list}`);
+      this.config.macros_list = [];
+      this.clear_macro();
       this.edited = false;
       this.confirmReset = false;
       try {
@@ -342,7 +339,7 @@ module.exports = {
         alert("Restore failed");
       }
     },
-    addNewMacros: async function () {
+    add_new_macro: async function () {
       const length = this.config.macros.length;
       if (length >= 20) {
         this.maxLimitReached = true;
@@ -364,13 +361,13 @@ module.exports = {
         alert("Restore failed");
       }
     },
-    deleteSelectedMacros: async function () {
+    delete_selected_macro: async function () {
       if (this.tab == 0) {
-        this.clearMacros();
+        this.clear_macro();
         return;
       }
       this.config.macros.splice(this.tab - 1, 1);
-      this.clearMacros();
+      this.clear_macro();
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
@@ -380,5 +377,11 @@ module.exports = {
       }
       this.deleteSelected = false;
     },
+  },
+  print_config: function () {
+    console.log(this.config);
+  },
+  print_state: function () {
+    console.log(this.state);
   },
 };

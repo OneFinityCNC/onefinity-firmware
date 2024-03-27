@@ -463,16 +463,24 @@ module.exports = {
       }
     },
 
-    delete_current: function () {
+    delete_current: async function () {
       if (this.config.macros_list.find(item => item.file_name == this.state.selected) == undefined) {
         if (this.state.selected) {
           this.config.non_macros_list = this.config.non_macros_list.filter(
             item => item.file_name != this.state.selected,
           );
+          //TODO: remove file from the gcode_list
           api.delete(`file/${this.state.selected}`);
         }
       } else {
         this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
+      }
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
       }
 
       this.deleteGCode = false;
@@ -487,6 +495,7 @@ module.exports = {
       const macrosList = this.config.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
+      this.config.gcode_list = [];
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
