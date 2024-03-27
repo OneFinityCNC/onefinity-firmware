@@ -399,12 +399,12 @@ module.exports = {
       }
 
       const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
-      if (isAlreadyPresent == undefined) {
+      if (!isAlreadyPresent) {
         this.config.non_macros_list.push({ file_name: file.name });
       }
       if (
         this.state.folder == "Unorganized files" &&
-        this.config.gcode_list.find(item => item.name == file.name && item.type == "file") == undefined
+        !this.config.gcode_list.find(item => item.name == file.name && item.type == "file")
       ) {
         this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
       } else if (!this.state.folder || this.state.folder == "") {
@@ -456,7 +456,7 @@ module.exports = {
         }
 
         const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
-        if (isAlreadyPresent == undefined) {
+        if (!isAlreadyPresent) {
           this.config.non_macros_list.push({ file_name: file.name });
         }
         const uploadPromise = new Promise((resolve, reject) => {
@@ -502,12 +502,16 @@ module.exports = {
     },
 
     delete_current: async function () {
-      if (this.config.macros_list.find(item => item.file_name == this.state.selected) == undefined) {
-        if (this.state.selected) {
+      if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
+        if (this.state.selected && !this.state.folder) {
           this.config.non_macros_list = this.config.non_macros_list.filter(
             item => item.file_name != this.state.selected,
           );
-          //TODO: remove file from the gcode_list
+          if (this.state.folder == "Unorganized files" || !this.state.folder) {
+            this.config.gcode_list.filter(item => item.type == "file" && item.name == this.state.selected);
+          } else {
+            this.config.gcode_list[this.state.folder].files.filter(item => item.file_name == this.state.selected);
+          }
           api.delete(`file/${this.state.selected}`);
         }
       } else {
