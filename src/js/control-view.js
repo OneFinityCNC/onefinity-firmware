@@ -384,13 +384,16 @@ module.exports = {
       const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
       if (isAlreadyPresent == undefined) {
         this.config.non_macros_list.push({ file_name: file.name });
-        try {
-          await api.put("config/save", this.config);
-          this.$dispatch("update");
-        } catch (error) {
-          console.error("Restore Failed: ", error);
-          alert("Restore failed");
-        }
+      }
+      if (this.config.gcode_list.find(item => item.name == file.name && item.type == "file") == undefined) {
+        this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
+      }
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
       }
 
       SvelteComponents.showDialog("Upload", {
@@ -427,13 +430,27 @@ module.exports = {
         const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
         if (isAlreadyPresent == undefined) {
           this.config.non_macros_list.push({ file_name: file.name });
-          try {
-            await api.put("config/save", this.config);
-            this.$dispatch("update");
-          } catch (error) {
-            console.error("Restore Failed: ", error);
-            alert("Restore failed");
-          }
+        }
+        const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
+        if (folder) {
+          folder.files.push({ file_name: file.name });
+        } else {
+          this.config.gcode_list.push({
+            name: folderName,
+            type: "folder",
+            files: [
+              {
+                file_name: file.name,
+              },
+            ],
+          });
+        }
+        try {
+          await api.put("config/save", this.config);
+          this.$dispatch("update");
+        } catch (error) {
+          console.error("Restore Failed: ", error);
+          alert("Restore failed");
         }
 
         SvelteComponents.showDialog("Upload", {

@@ -627,6 +627,32 @@
     }
   },
 
+  "gcode_list": {
+    "type": "list",
+    "default": [],
+    "template": {
+      "name": {
+        "type": "string",
+        "default": ""
+      },
+      "type": {
+        "type": "enum",
+        "values": ["file", "folder"],
+        "default": "folder"
+      },
+      "files": {
+        "type": "list",
+        "default": [],
+        "template": {
+          "file_name": {
+            "type": "string",
+            "default": ""
+          }
+        }
+      }
+    }
+  },
+
   "admin": {
     "auto-check-upgrade": {
       "type": "bool",
