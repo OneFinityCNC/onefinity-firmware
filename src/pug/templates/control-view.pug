@@ -271,23 +271,23 @@ script#control-view-template(type="text/x-template")
             v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-step-forward
           
-          message(:show.sync="show_gcodes")
-            h3(slot="header") Select G-Code
-            div(slot="body")
-              details
-                summary 
-                  | folder name
-                ul.folder-list
-                  li one
-                  li two
+          //- message(:show.sync="show_gcodes")
+          //-   h3(slot="header") Select G-Code
+          //-   div(slot="body")
+          //-     details
+          //-       summary 
+          //-         | folder name
+          //-       ul.folder-list
+          //-         li one
+          //-         li two
                 
-            div(slot="footer")
-              button.pure-button(@click="show_gcodes=false") Cancel
-              button.pure-button.pure-button-primary(@click="show_gcodes=false") Select
+          //-   div(slot="footer")
+          //-     button.pure-button(@click="show_gcodes=false") Cancel
+          //-     button.pure-button.pure-button-primary(@click="show_gcodes=false") Select
 
-          button.pure-button(title="Open Title", @click="show_gcodes=true",
-            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-folder
+          //- button.pure-button(title="Open Title", @click="show_gcodes=true",
+          //-   :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+          //-   .fa.fa-folder
           
           button.pure-button(title="Upload a new GCode program.", @click="open_file",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
@@ -329,9 +329,14 @@ script#control-view-template(type="text/x-template")
                 | &nbsp;Selected
 
           select(title="Select previously uploaded GCode programs.",
+            v-model="state.folder", :disabled="!is_ready",
+            style="max-width:100%")
+            option(v-for="file in gcode_folders", :value="file") {{file}}
+
+          select(title="Select previously uploaded GCode programs.",
             v-model="state.selected", @change="load", :disabled="!is_ready",
             style="max-width:100%")
-            option(v-for="file in gcodeFiles", :value="file") {{file}}
+            option(v-for="file in gcode_files", :value="file") {{file}}
 
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
             title="Simulating GCode to check for errors, calculate ETA and " +

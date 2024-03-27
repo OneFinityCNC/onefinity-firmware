@@ -203,14 +203,26 @@ module.exports = {
       const p = this.plan_time / this.toolpath.time;
       return Math.min(1, p);
     },
-    gcodeFiles: function () {
-      const filesWithNoMacros = this.state.files.filter(
-        item => !this.config.macros_list.some(compareItem => compareItem.file_name == item),
-      );
-      const gcodeList = this.config.non_macros_list.map(item => item.file_name);
-      const unionSet = new Set([...filesWithNoMacros, ...gcodeList]);
-      const files = [...unionSet].sort();
-      return files;
+    gcode_files: function () {
+      const files = this.config.gcode_list
+        .find(item => item.name == this.state.folder)
+        .files.map(item => item.file_name);
+      // const filesWithNoMacros = this.state.files.filter(
+      //   item => !this.config.macros_list.some(compareItem => compareItem.file_name == item),
+      // );
+      // const gcodeList = this.config.non_macros_list.map(item => item.file_name);
+      // const unionSet = new Set([...filesWithNoMacros, ...gcodeList]);
+      // const files = [...unionSet].sort();
+      return files || [];
+    },
+    gcode_folders: function () {
+      let folders = [];
+      for (let item of this.config.gcode_list) {
+        if (item.type == "folder") {
+          folders.push(item.name);
+        }
+      }
+      return folders;
     },
   },
 
@@ -446,14 +458,6 @@ module.exports = {
             ],
           });
         }
-        try {
-          await api.put("config/save", this.config);
-          this.$dispatch("update");
-        } catch (error) {
-          console.error("Restore Failed: ", error);
-          alert("Restore failed");
-        }
-
         setImmediate(() =>
           SvelteComponents.showDialog("Upload", {
             file,
@@ -463,6 +467,13 @@ module.exports = {
             },
           }),
         );
+      }
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
       }
     },
 
