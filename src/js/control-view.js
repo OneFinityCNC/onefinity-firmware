@@ -204,8 +204,9 @@ module.exports = {
       return Math.min(1, p);
     },
     gcode_files: function () {
-      const files = this.config.gcode_list
-        .find(item => item.name == this.state.folder)
+      let files = [];
+      files = this.config.gcode_list
+        .find(item => item.name == this.state.folder || "")
         .files.map(item => item.file_name);
       // const filesWithNoMacros = this.state.files.filter(
       //   item => !this.config.macros_list.some(compareItem => compareItem.file_name == item),
@@ -213,7 +214,7 @@ module.exports = {
       // const gcodeList = this.config.non_macros_list.map(item => item.file_name);
       // const unionSet = new Set([...filesWithNoMacros, ...gcodeList]);
       // const files = [...unionSet].sort();
-      return files || [];
+      return files;
     },
     gcode_folders: function () {
       let folders = [];
@@ -444,6 +445,13 @@ module.exports = {
         if (isAlreadyPresent == undefined) {
           this.config.non_macros_list.push({ file_name: file.name });
         }
+        SvelteComponents.showDialog("Upload", {
+          file,
+          onComplete: () => {
+            this.last_file_time = undefined; // Force reload
+            this.$broadcast("gcode-reload", file.name);
+          },
+        });
         const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
         if (folder) {
           folder.files.push({ file_name: file.name });
@@ -458,15 +466,6 @@ module.exports = {
             ],
           });
         }
-        setImmediate(() =>
-          SvelteComponents.showDialog("Upload", {
-            file,
-            onComplete: () => {
-              this.last_file_time = undefined; // Force reload
-              this.$broadcast("gcode-reload", file.name);
-            },
-          }),
-        );
       }
       try {
         await api.put("config/save", this.config);
