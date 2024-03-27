@@ -378,6 +378,18 @@ module.exports = {
       utils.clickFileInput("gcode-folder-input");
     },
 
+    upload_file_dialog: async function (file) {
+      return SvelteComponents.showDialog("Upload", {
+        file,
+        onComplete: () => {
+          this.last_file_time = undefined; // Force reload
+          this.$broadcast("gcode-reload", file.name);
+          console.log("done!!", file.name);
+          return true;
+        },
+      });
+    },
+
     upload_file: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
@@ -439,7 +451,6 @@ module.exports = {
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
       console.log(files);
-      const upload_files = [];
       for (let file of files) {
         console.log(file.name);
         const extension = file.name.split(".").pop();
@@ -459,19 +470,6 @@ module.exports = {
         if (!isAlreadyPresent) {
           this.config.non_macros_list.push({ file_name: file.name });
         }
-        const uploadPromise = new Promise((resolve, reject) => {
-          SvelteComponents.showDialog("Upload", {
-            file,
-            onComplete: () => {
-              this.last_file_time = undefined; // Force reload
-              this.$broadcast("gcode-reload", file.name);
-              console.log("done!!", file.name);
-              resolve();
-            },
-          });
-        });
-
-        upload_files.push(uploadPromise);
 
         const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
         if (folder) {
@@ -487,11 +485,8 @@ module.exports = {
             ],
           });
         }
+        await this.upload_file_dialog(file);
       }
-
-      const response = await Promise.allSettled(upload_files);
-      console.log("response", response);
-
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
