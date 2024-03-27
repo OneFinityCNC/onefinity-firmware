@@ -208,7 +208,7 @@ module.exports = {
       if (!this.state.folder || this.state.folder == "") {
         return files;
       }
-      if (this.state.folder == "unorganized files") {
+      if (this.state.folder == "Unorganized files") {
         files = this.config.gcode_list.map(item => {
           if (item.type == "file") {
             return item.name;
@@ -217,16 +217,10 @@ module.exports = {
         return files;
       }
       files = this.config.gcode_list.find(item => item.name == this.state.folder).files.map(item => item.file_name);
-      // const filesWithNoMacros = this.state.files.filter(
-      //   item => !this.config.macros_list.some(compareItem => compareItem.file_name == item),
-      // );
-      // const gcodeList = this.config.non_macros_list.map(item => item.file_name);
-      // const unionSet = new Set([...filesWithNoMacros, ...gcodeList]);
-      // const files = [...unionSet].sort();
       return files;
     },
     gcode_folders: function () {
-      let folders = ["unorganized files"];
+      let folders = ["Unorganized files"];
       for (let item of this.config.gcode_list) {
         if (item.type == "folder") {
           folders.push(item.name);
@@ -435,6 +429,7 @@ module.exports = {
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
       console.log(files);
+      const upload_files = [];
       for (let file of files) {
         console.log(file.name);
         const extension = file.name.split(".").pop();
@@ -454,13 +449,19 @@ module.exports = {
         if (isAlreadyPresent == undefined) {
           this.config.non_macros_list.push({ file_name: file.name });
         }
-        await SvelteComponents.showDialog("Upload", {
-          file,
-          onComplete: () => {
-            this.last_file_time = undefined; // Force reload
-            this.$broadcast("gcode-reload", file.name);
-          },
+        const uploadPromise = new Promise((resolve, reject) => {
+          SvelteComponents.showDialog("Upload", {
+            file,
+            onComplete: () => {
+              this.last_file_time = undefined; // Force reload
+              this.$broadcast("gcode-reload", file.name);
+              resolve();
+            },
+          });
         });
+
+        upload_files.push(uploadPromise);
+
         const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
         if (folder) {
           folder.files.push({ file_name: file.name });
@@ -476,6 +477,10 @@ module.exports = {
           });
         }
       }
+
+      const response = await Promise.allSettled(upload_files);
+      console.log(response);
+
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
@@ -517,6 +522,7 @@ module.exports = {
       const macrosList = this.config.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
+      this.state.folder = "";
       this.config.gcode_list = [];
       try {
         await api.put("config/save", this.config);
