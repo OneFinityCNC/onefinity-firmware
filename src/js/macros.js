@@ -377,11 +377,11 @@ module.exports = {
       }
       this.deleteSelected = false;
     },
-  },
-  print_config: function () {
-    console.log(this.config);
-  },
-  print_state: function () {
-    console.log(this.state);
+    print_config: function () {
+      console.log(this.config);
+    },
+    print_state: function () {
+      console.log(this.state);
+    },
   },
 };

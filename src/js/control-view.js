@@ -44,6 +44,7 @@ module.exports = {
       showGcodeMessage: false,
       showNoGcodeMessage: false,
       macrosLoading: false,
+      show_gcodes: false,
     };
   },
 
@@ -413,7 +414,7 @@ module.exports = {
       const folderName = files[0].webkitRelativePath.split("/")[0];
       console.log(files);
       for (let file of files) {
-        console.log(file);
+        console.log(file.name);
         const extension = file.name.split(".").pop();
         switch (extension.toLowerCase()) {
           case "nc":
@@ -453,13 +454,15 @@ module.exports = {
           alert("Restore failed");
         }
 
-        SvelteComponents.showDialog("Upload", {
-          file,
-          onComplete: () => {
-            this.last_file_time = undefined; // Force reload
-            this.$broadcast("gcode-reload", file.name);
-          },
-        });
+        setImmediate(() =>
+          SvelteComponents.showDialog("Upload", {
+            file,
+            onComplete: () => {
+              this.last_file_time = undefined; // Force reload
+              this.$broadcast("gcode-reload", file.name);
+            },
+          }),
+        );
       }
     },
 

@@ -110,5 +110,5 @@ script#macros-template(type="text/x-template")
         button.submit-macros.button-success(title="Save Macros",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macros",@click="clear_macro",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel
 
-    button.submit-macros(title="Cancel Macros",@click="print_config",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") CONFIG
-    button.submit-macros(title="Cancel Macros",@click="print_state",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") STATE
+    button.submit-macros(title="Cancel Macros",@click="print_config",style="margin-left:5px;background-color:#fafafa;") CONFIG
+    button.submit-macros(title="Cancel Macros",@click="print_state",style="margin-left:5px;background-color:#fafafa;") STATE
