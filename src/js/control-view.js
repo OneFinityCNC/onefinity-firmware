@@ -217,6 +217,7 @@ module.exports = {
         return files;
       }
       files = this.config.gcode_list.find(item => item.name == this.state.folder).files.map(item => item.file_name);
+      console.log(files);
       return files;
     },
     gcode_folders: function () {
@@ -378,18 +379,6 @@ module.exports = {
       utils.clickFileInput("gcode-folder-input");
     },
 
-    upload_file_dialog: async function (file) {
-      return SvelteComponents.showDialog("Upload", {
-        file,
-        onComplete: () => {
-          this.last_file_time = undefined; // Force reload
-          this.$broadcast("gcode-reload", file.name);
-          console.log("done!!", file.name);
-          return true;
-        },
-      });
-    },
-
     upload_file: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
@@ -485,8 +474,19 @@ module.exports = {
             ],
           });
         }
-        await this.upload_file_dialog(file);
+        SvelteComponents.showDialog("Upload", {
+          file,
+          onComplete: () => {
+            this.last_file_time = undefined; // Force reload
+            this.$broadcast("gcode-reload", file.name);
+            files.shift();
+            const remaining_files = { ...e };
+            remaining_files.target.files = new DataTransfer(files).files;
+            this.upload_folder(remaining_files);
+          },
+        });
       }
+
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
