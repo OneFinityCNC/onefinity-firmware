@@ -402,7 +402,17 @@ module.exports = {
       if (isAlreadyPresent == undefined) {
         this.config.non_macros_list.push({ file_name: file.name });
       }
-      if (this.config.gcode_list.find(item => item.name == file.name && item.type == "file") == undefined) {
+      if (
+        this.state.folder == "Unorganized files" &&
+        this.config.gcode_list.find(item => item.name == file.name && item.type == "file") == undefined
+      ) {
+        this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
+      } else if (!this.state.folder || this.state.folder == "") {
+        const folder_to_add = this.config.gcode_list.find(
+          item => item.type == "folder" && item.name == this.state.folder,
+        );
+        folder_to_add.files.push({ file_name: file.name });
+      } else {
         this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
       }
       try {
@@ -455,6 +465,7 @@ module.exports = {
             onComplete: () => {
               this.last_file_time = undefined; // Force reload
               this.$broadcast("gcode-reload", file.name);
+              console.log("done!!", file.name);
               resolve();
             },
           });
@@ -479,7 +490,7 @@ module.exports = {
       }
 
       const response = await Promise.allSettled(upload_files);
-      console.log(response);
+      console.log("response", response);
 
       try {
         await api.put("config/save", this.config);
