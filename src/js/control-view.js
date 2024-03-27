@@ -205,9 +205,18 @@ module.exports = {
     },
     gcode_files: function () {
       let files = [];
-      files = this.config.gcode_list
-        .find(item => item.name == this.state.folder || "")
-        .files.map(item => item.file_name);
+      if (!this.state.folder || this.state.folder == "") {
+        return files;
+      }
+      if (this.state.folder == "unorganized files") {
+        files = this.config.gcode_list.map(item => {
+          if (item.type == "file") {
+            return item.name;
+          }
+        });
+        return files;
+      }
+      files = this.config.gcode_list.find(item => item.name == this.state.folder).files.map(item => item.file_name);
       // const filesWithNoMacros = this.state.files.filter(
       //   item => !this.config.macros_list.some(compareItem => compareItem.file_name == item),
       // );
@@ -217,7 +226,7 @@ module.exports = {
       return files;
     },
     gcode_folders: function () {
-      let folders = [];
+      let folders = ["unorganized files"];
       for (let item of this.config.gcode_list) {
         if (item.type == "folder") {
           folders.push(item.name);
@@ -445,7 +454,7 @@ module.exports = {
         if (isAlreadyPresent == undefined) {
           this.config.non_macros_list.push({ file_name: file.name });
         }
-        SvelteComponents.showDialog("Upload", {
+        await SvelteComponents.showDialog("Upload", {
           file,
           onComplete: () => {
             this.last_file_time = undefined; // Force reload
