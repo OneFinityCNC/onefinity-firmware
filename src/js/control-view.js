@@ -620,27 +620,23 @@ module.exports = {
       this.confirmDelete = false;
     },
     delete_folder_and_files: async function () {
-      if (this.state.folder) {
-        if (this.state.folder != "Unorganized files") {
-          const selected_folder = this.config.gcode_list.find(
-            item => (item.type = "folder" && item.name == this.state.folder),
-          );
-          console.log(selected_folder);
-          if (selected_folder) {
-            const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
-            console.log(files_to_delete);
-            await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
-            this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
-            console.log(this.config.gcode_list);
-          }
-        } else {
-          const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
-          if (selected_folder) {
-            const files_to_delete = selected_folder.map(item => item.name).toString();
-            console.log(files_to_delete);
-            await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
-            this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
-          }
+      if (!this.state.folder) return;
+
+      if (this.state.folder != "Unorganized files") {
+        const selected_folder = this.config.gcode_list.find(
+          item => item.type == "folder" && item.name == this.state.folder,
+        ).files;
+        if (selected_folder) {
+          const files_to_delete = selected_folder.map(item => item.file_name).toString();
+          await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
+          this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
+        }
+      } else {
+        const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
+        if (selected_folder) {
+          const files_to_delete = selected_folder.map(item => item.name).toString();
+          await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
+          this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
         }
       }
       this.save_config(this.config);
