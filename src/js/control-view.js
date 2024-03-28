@@ -431,8 +431,6 @@ module.exports = {
         !this.config.gcode_list.find(item => item.name == file.name && item.type == "file")
       ) {
         this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
-      } else if (!this.state.folder || this.state.folder == "") {
-        this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
       } else {
         const folder_to_add = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
@@ -557,12 +555,18 @@ module.exports = {
     },
 
     delete_current: async function () {
+      if (!this.state.selected) {
+        this.deleteGCode = false;
+        return;
+      }
+
       this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
 
-      if (this.state.selected && (this.state.folder == "Unorganized files" || !this.state.folder)) {
+      if (this.state.folder == "Unorganized files") {
         this.config.gcode_list = this.config.gcode_list.filter(
           item => item.type == "file" && item.name != this.state.selected,
         );
+        console.log(this.config.gcode_list);
       } else {
         const file_to_delete = this.config.gcode_list.find(
           item => item.name == this.state.folder && item.type == "folder",
@@ -620,7 +624,10 @@ module.exports = {
       this.confirmDelete = false;
     },
     delete_folder_and_files: async function () {
-      if (!this.state.folder) return;
+      if (!this.state.folder) {
+        this.confirmDelete = false;
+        return;
+      }
 
       if (this.state.folder != "Unorganized files") {
         const selected_folder = this.config.gcode_list.find(
@@ -633,12 +640,10 @@ module.exports = {
         }
       } else {
         const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
-        console.log(selected_folder);
         if (selected_folder) {
           const files_to_delete = selected_folder.map(item => item.name).toString();
           await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
           this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
-          console.log(this.config.gcode_list);
         }
       }
       this.save_config(this.config);
