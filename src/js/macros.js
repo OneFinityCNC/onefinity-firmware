@@ -199,6 +199,7 @@ module.exports = {
       const macros = [...this.config.macros];
       macros.splice(this.tab - 1, 1);
       const macros_list = macros.map(item => item.name);
+      console.log(this.macrosName);
       var macrosName = document.getElementById("macros-name").value;
       var macrosColor = document.getElementById("macros-color").value;
       var macrosAlert = this.isChecked;
@@ -277,49 +278,49 @@ module.exports = {
     delete_all_macros: async function () {
       this.config.macros = [
         {
-          name: "Macros 1",
+          name: "Macro 1",
           color: "#dedede",
           file_name: "default",
           alert: true,
         },
         {
-          name: "Macros 2",
+          name: "Macro 2",
           color: "#dedede",
           file_name: "default",
           alert: true,
         },
         {
-          name: "Macros 3",
+          name: "Macro 3",
           color: "#dedede",
           file_name: "default",
           alert: true,
         },
         {
-          name: "Macros 4",
+          name: "Macro 4",
           color: "#dedede",
           file_name: "default",
           alert: true,
         },
         {
-          name: "Macros 5",
+          name: "Macro 5",
           color: "#dedede",
           file_name: "default",
           alert: true,
         },
         {
-          name: "Macros 6",
+          name: "Macro 6",
           color: "#dedede",
           file_name: "default",
           alert: true,
         },
         {
-          name: "Macros 7",
+          name: "Macro 7",
           color: "#dedede",
           file_name: "default",
           alert: true,
         },
         {
-          name: "Macros 8",
+          name: "Macro 8",
           color: "#dedede",
           file_name: "default",
           alert: true,
@@ -346,7 +347,7 @@ module.exports = {
         return;
       }
       const newMacros = {
-        name: `Macros ${length + 1}`,
+        name: `Macro ${length + 1}`,
         color: "#dedede",
         file_name: "default",
         alert: true,

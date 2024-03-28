@@ -537,49 +537,49 @@
     "type": "list",
     "default": [
       {
-        "name": "Macros 1",
+        "name": "Macro 1",
         "color": "#dedede",
         "file_name": "default",
         "alert": true
       },
       {
-        "name": "Macros 2",
+        "name": "Macro 2",
         "color": "#dedede",
         "file_name": "default",
         "alert": true
       },
       {
-        "name": "Macros 3",
+        "name": "Macro 3",
         "color": "#dedede",
         "file_name": "default",
         "alert": true
       },
       {
-        "name": "Macros 4",
+        "name": "Macro 4",
         "color": "#dedede",
         "file_name": "default",
         "alert": true
       },
       {
-        "name": "Macros 5",
+        "name": "Macro 5",
         "color": "#dedede",
         "file_name": "default",
         "alert": true
       },
       {
-        "name": "Macros 6",
+        "name": "Macro 6",
         "color": "#dedede",
         "file_name": "default",
         "alert": true
       },
       {
-        "name": "Macros 7",
+        "name": "Macro 7",
         "color": "#dedede",
         "file_name": "default",
         "alert": true
       },
       {
-        "name": "Macros 8",
+        "name": "Macro 8",
         "color": "#dedede",
         "file_name": "default",
         "alert": true

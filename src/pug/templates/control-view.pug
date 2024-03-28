@@ -13,7 +13,7 @@ script#control-view-template(type="text/x-template")
     message(:show.sync="showNoGcodeMessage")
         h3(slot="header") GCode Not Set
         div(slot="body")
-            p Configure the GCode for the selected macros to use it
+            p Configure the GCode for the selected macro to use it
             
         div(slot="footer")
           button.pure-button(@click="showNoGcodeMessage=false") OK
@@ -232,7 +232,7 @@ script#control-view-template(type="text/x-template")
 
     .macros-div(class="present")
        button.macros-button(title="Click to run Macros",v-for="(index,macros) in config.macros",
-          @click="runMacros(index)",:disabled="!is_ready",v-bind:style="{ backgroundColor: macros.color }") {{macros.name}}
+          @click="run_macro(index)",:disabled="!is_ready",v-bind:style="{ backgroundColor: macros.color }") {{macros.name}}
 
     .tabs
      
@@ -271,35 +271,17 @@ script#control-view-template(type="text/x-template")
             v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-step-forward
           
-          //- message(:show.sync="show_gcodes")
-          //-   h3(slot="header") Select G-Code
-          //-   div(slot="body")
-          //-     details
-          //-       summary 
-          //-         | folder name
-          //-       ul.folder-list
-          //-         li one
-          //-         li two
-                
-          //-   div(slot="footer")
-          //-     button.pure-button(@click="show_gcodes=false") Cancel
-          //-     button.pure-button.pure-button-primary(@click="show_gcodes=false") Select
-
-          //- button.pure-button(title="Open Title", @click="show_gcodes=true",
+          //- button.pure-button(title="Upload a new GCode program.", @click="open_file",
           //-   :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-          //-   .fa.fa-folder
-          
-          button.pure-button(title="Upload a new GCode program.", @click="open_file",
-            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-folder-open
+          //-   .fa.fa-folder-open
 
           form.gcode-file-input.file-upload
             input(type="file", @change="upload_file", :disabled="!is_ready",
               accept=".nc,.ngc,.gcode,.gc")
           
-          button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
-            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-folder
+          //- button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
+          //-   :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+          //-   .fa.fa-folder
 
           form.gcode-folder-input.file-upload
             input#folderInput(type="file", @change="upload_folder", :disabled="!is_ready",
@@ -317,7 +299,7 @@ script#control-view-template(type="text/x-template")
             .fa.fa-trash
 
           message(:show.sync="deleteGCode")
-            h3(slot="header") Delete GCode?
+            h3(slot="header") Delete G-Code?
             p(slot="body")
             div(slot="footer")
               button.pure-button(@click="deleteGCode = false") Cancel
@@ -329,15 +311,42 @@ script#control-view-template(type="text/x-template")
                 | &nbsp;Selected
 
           .drop-down-container
+            message(:show.sync="create_folder")
+              h3(slot="header") Enter folder name:
+              div(slot="body")
+                input.input-name(type="text",minlength='1',maxlength='15',
+                  id="folder-name" ,v-model="folder_name",@keypress="edited_folder_name")
+
+              div(slot="footer")
+                button.pure-button(@click="create_folder=false") Cancel
+                button.pure-button.button-error(@click="create_new_folder",:disabled="!edited")
+                  | Create
+
             select(title="Select previously uploaded GCode folder.",
               v-model="state.folder", :disabled="!is_ready",
               style="max-width:100%")
+              option( selected='' value='Unorganized files')  Unorganized files
               option(v-for="file in gcode_folders", :value="file") {{file}}
+            
+            button.config-button.button-blue(title="Create a new folder.", @click="create_folder=true",
+              :disabled="!is_ready")
+              .fa.fa-plus
+              | Create Folder
+            
+            button.config-button.button-blue(title="Upload a new folder.", @click="open_folder",
+              :disabled="!is_ready")
+              .fa.fa-plus
+              | Upload Folder
 
             select(title="Select previously uploaded GCode programs.",
               v-model="state.selected", @change="load", :disabled="!is_ready",
               style="max-width:100%")
               option(v-for="file in gcode_files", :value="file") {{file}}
+            
+            button.config-button.button-blue(title="Upload a new GCode program.", @click="open_file",
+              :disabled="!is_ready")
+              .fa.fa-plus
+              | Upload File
 
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
             title="Simulating GCode to check for errors, calculate ETA and " +

@@ -41,6 +41,9 @@ module.exports = {
       deleteGCode: false,
       tab: "auto",
       ask_home: true,
+      folder_name: "",
+      edited: false,
+      create_folder: false,
       showGcodeMessage: false,
       showNoGcodeMessage: false,
       macrosLoading: false,
@@ -214,14 +217,15 @@ module.exports = {
             return item.name;
           }
         });
+        console.log("217", files);
         return files;
       }
       files = this.config.gcode_list.find(item => item.name == this.state.folder).files.map(item => item.file_name);
-      console.log(files);
+      console.log("221", files);
       return files;
     },
     gcode_folders: function () {
-      let folders = ["Unorganized files"];
+      let folders = [];
       for (let item of this.config.gcode_list) {
         if (item.type == "folder") {
           folders.push(item.name);
@@ -249,6 +253,9 @@ module.exports = {
                 G0 ${axis}${value}
                 M72
             `);
+    },
+    folder_name_edited: function () {
+      this.edited = true;
     },
   },
 
@@ -433,6 +440,45 @@ module.exports = {
       });
     },
 
+    edited_folder_name: function (event) {
+      if (event.target.value.trim() != "") {
+        this.$dispatch("folder_name_edited");
+      }
+    },
+
+    modify_files: function (fileList) {
+      const fileArray = Array.from(fileList);
+      fileArray.shift();
+
+      const newFileList = new DataTransfer().files;
+      fileArray.forEach(file => newFileList.add(file));
+
+      return newFileList;
+    },
+
+    create_new_folder: async function () {
+      console.log(this.folder_name);
+      if (
+        this.folder_name.trim() != "" &&
+        !this.config.gcode_list.find(item => item.type == "folder" && item.name == this.folder_name)
+      ) {
+        this.config.gcode_list.push({
+          name: this.folder_name,
+          type: "folder",
+          files: [],
+        });
+        this.edited = false;
+        try {
+          await api.put("config/save", this.config);
+          this.state.folder = this.folder_name;
+          this.$dispatch("update");
+        } catch (error) {
+          console.error("Restore Failed: ", error);
+          alert("Restore failed");
+        }
+      }
+    },
+
     upload_folder: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
@@ -479,10 +525,16 @@ module.exports = {
           onComplete: () => {
             this.last_file_time = undefined; // Force reload
             this.$broadcast("gcode-reload", file.name);
-            files.shift();
-            const remaining_files = { ...e };
-            remaining_files.target.files = new DataTransfer(files).files;
-            this.upload_folder(remaining_files);
+            const remaining_files = this.modify_files(files);
+            const updated_event = { ...e };
+            if (updated_event.target) {
+              updated_event.target.files = remaining_files;
+            } else if (updated_event.dataTransfer) {
+              updated_event.dataTransfer.files = remaining_files;
+            } else {
+              updated_event["target"] = { files: remaining_files };
+            }
+            this.upload_folder(updated_event);
           },
         });
       }
@@ -497,20 +549,14 @@ module.exports = {
     },
 
     delete_current: async function () {
-      if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
-        if (this.state.selected && !this.state.folder) {
-          this.config.non_macros_list = this.config.non_macros_list.filter(
-            item => item.file_name != this.state.selected,
-          );
-          if (this.state.folder == "Unorganized files" || !this.state.folder) {
-            this.config.gcode_list.filter(item => item.type == "file" && item.name == this.state.selected);
-          } else {
-            this.config.gcode_list[this.state.folder].files.filter(item => item.file_name == this.state.selected);
-          }
-          api.delete(`file/${this.state.selected}`);
-        }
+      this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
+      if (this.state.selected && (this.state.folder == "Unorganized files" || !this.state.folder)) {
+        this.config.gcode_list.filter(item => item.type == "file" && item.name == this.state.selected);
       } else {
-        this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
+        this.config.gcode_list[this.state.folder].files.filter(item => item.file_name == this.state.selected);
+      }
+      if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
+        api.delete(`file/${this.state.selected}`);
       }
       try {
         await api.put("config/save", this.config);
@@ -519,7 +565,6 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
-
       this.deleteGCode = false;
     },
 
@@ -532,7 +577,7 @@ module.exports = {
       const macrosList = this.config.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
-      this.state.folder = "";
+      this.state.folder = "Unorganized files";
       this.config.gcode_list = [];
       try {
         await api.put("config/save", this.config);
@@ -653,7 +698,7 @@ module.exports = {
     showProbeDialog: function (probeType) {
       SvelteComponents.showDialog("Probe", { probeType });
     },
-    runMacros: function (id) {
+    run_macro: function (id) {
       if (this.config.macros[id].file_name == "default") {
         this.showNoGcodeMessage = true;
       } else {
