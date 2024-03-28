@@ -43,6 +43,7 @@ module.exports = {
       ask_home: true,
       folder_name: "",
       edited: false,
+      confirmDelete: false,
       create_folder: false,
       showGcodeMessage: false,
       showNoGcodeMessage: false,
@@ -451,13 +452,12 @@ module.exports = {
       fileArray.shift();
 
       const newFileList = new DataTransfer().files;
-      fileArray.forEach(file => newFileList.add(file));
+      fileArray.forEach(file => newFileList.push(file));
 
       return newFileList;
     },
 
     create_new_folder: async function () {
-      console.log(this.folder_name);
       if (
         this.folder_name.trim() != "" &&
         !this.config.gcode_list.find(item => item.type == "folder" && item.name == this.folder_name)
@@ -468,6 +468,8 @@ module.exports = {
           files: [],
         });
         this.edited = false;
+        this.create_folder = false;
+        this.folder_name = "";
         try {
           await api.put("config/save", this.config);
           this.state.folder = this.folder_name;
@@ -587,6 +589,62 @@ module.exports = {
         alert("Restore failed");
       }
       this.deleteGCode = false;
+    },
+
+    delete_folder: async function () {
+      if (!this.state.folder) {
+        const files_to_move = this.config.gcode_list.find(
+          item => item.type == "folder" && item.name == this.state.folder,
+        );
+        if (!files_to_move) {
+          files_to_move.files.forEach(item => {
+            this.config.gcode_list.push({
+              name: item.file_name,
+              type: "file",
+              files: [],
+            });
+          });
+          this.config.gcode_list = this.config.gcode_list.filter(item => {
+            if (item.type == "folder" && item.name == this.state.folder) {
+              return false;
+            }
+            return true;
+          });
+          try {
+            await api.put("config/save", this.config);
+            this.$dispatch("update");
+          } catch (error) {
+            console.error("Restore Failed: ", error);
+            alert("Restore failed");
+          }
+        }
+      }
+      this.confirmDelete = false;
+    },
+    delete_folder_and_files: async function () {
+      if (!this.state.folder) {
+        const selected_folder = this.config.gcode_list.find(
+          item => (item.type = "folder" && item.name == this.state.folder),
+        );
+        if (!selected_folder) {
+          const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
+          api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
+          this.config.gcode_list = this.config.gcode_list.filter(item => {
+            if (item.type == "folder" && item.name == this.state.folder) {
+              return false;
+            }
+            return true;
+          });
+          try {
+            await api.put("config/save", this.config);
+            this.$dispatch("update");
+          } catch (error) {
+            console.error("Restore Failed: ", error);
+            alert("Restore failed");
+          }
+        }
+      }
+      this.confirmDelete = false;
     },
 
     home: function (axis) {

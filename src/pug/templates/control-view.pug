@@ -271,21 +271,21 @@ script#control-view-template(type="text/x-template")
             v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-step-forward
           
-          //- button.pure-button(title="Upload a new GCode program.", @click="open_file",
-          //-   :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-          //-   .fa.fa-folder-open
-
-          form.gcode-file-input.file-upload
-            input(type="file", @change="upload_file", :disabled="!is_ready",
-              accept=".nc,.ngc,.gcode,.gc")
-          
-          //- button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
-          //-   :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-          //-   .fa.fa-folder
+          button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
+            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-folder
 
           form.gcode-folder-input.file-upload
             input#folderInput(type="file", @change="upload_folder", :disabled="!is_ready",
               webkitdirectory, directory, multiple)
+          
+          button.pure-button(title="Upload a new GCode program.", @click="open_file",
+            :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
+            .fa.fa-folder-open
+
+          form.gcode-file-input.file-upload
+            input(type="file", @change="upload_file", :disabled="!is_ready",
+              accept=".nc,.ngc,.gcode,.gc")
 
           a(:disabled="!state.selected", download,
               :href="'/api/file/' + state.selected",
@@ -314,7 +314,7 @@ script#control-view-template(type="text/x-template")
             message(:show.sync="create_folder")
               h3(slot="header") Enter folder name:
               div(slot="body")
-                input.input-name(type="text",minlength='1',maxlength='15',
+                input.input-name(type="text",minlength='1',maxlength='15',style ="margin-top:1rem;margin-bottom:2rem;",
                   id="folder-name" ,v-model="folder_name",@keypress="edited_folder_name")
 
               div(slot="footer")
@@ -330,23 +330,34 @@ script#control-view-template(type="text/x-template")
             
             button.pure-button(title="Create a new folder.", @click="create_folder=true",
               :disabled="!is_ready")
-              .fa.fa-plus
               | Create Folder
+
+            message(:show.sync="confirmDelete")
+              h3(slot="header") Delete Folder?
+              div(slot="body")
+                  p Are you sure to delete the folder?
+                  
+              div(slot="footer")
+                button.pure-button(@click="confirmDelete=false") Cancel
+                button.pure-button.pure-button-primary(@click="delete_folder") Folder only
+                button.pure-button.pure-button-primary(@click="delete_folder_and_files") Folder and files 
             
-            button.pure-button(title="Upload a new folder.", @click="open_folder",
+            button.pure-button(title="Delete a folder.", @click="create_folder=true",
               :disabled="!is_ready")
-              .fa.fa-plus
-              | Upload Folder
+              | Delete Folder
+            
+            //- button.pure-button(title="Upload a new folder.", @click="open_folder",
+            //-   :disabled="!is_ready")
+            //-   | Upload Folder
 
             select(title="Select previously uploaded GCode programs.",
               v-model="state.selected", @change="load", :disabled="!is_ready",
               style="max-width:100%")
               option(v-for="file in gcode_files", :value="file") {{file}}
             
-            button.pure-button(title="Upload a new GCode program.", @click="open_file",
-              :disabled="!is_ready")
-              .fa.fa-plus
-              | Upload File
+            //- button.pure-button(title="Upload a new GCode program.", @click="open_file",
+            //-   :disabled="!is_ready")
+            //-   | Upload File
 
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
             title="Simulating GCode to check for errors, calculate ETA and " +
