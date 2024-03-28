@@ -472,22 +472,28 @@ module.exports = {
     },
 
     create_new_folder: async function () {
-      const folder_name = this.folder_name.trim()
-      if (
-        folder_name != "" &&
-        !this.config.gcode_list.find(item => item.type == "folder" && item.name == folder_name)
-      ) {
-        this.config.gcode_list.push({
-          name: folder_name,
-          type: "folder",
-          files: [],
-        });
+      const folder_name = this.folder_name.trim();
+      if (folder_name != "") {
+        if (this.config.gcode_list.find(item => item.type == "folder" && item.name == folder_name)) {
+          alert("Folder already exists!");
+        } else {
+          this.config.gcode_list.push({
+            name: folder_name,
+            type: "folder",
+            files: [],
+          });
+        }
         this.state.folder = folder_name;
         this.edited = false;
         this.create_folder = false;
         this.folder_name = "";
         this.save_config(this.config);
       }
+    },
+
+    cancel_new_folder: function () {
+      this.create_folder = false;
+      this.folder_name = "";
     },
 
     upload_folder: async function (e) {
@@ -552,7 +558,7 @@ module.exports = {
         const file_to_delete = this.config.gcode_list.find(
           item => item.name == this.state.folder && item.type == "folder",
         );
-        this.config.gcode_list = file_to_delete.files.filter(item => item.file_name != this.state.selected);
+        file_to_delete.files = file_to_delete.files.filter(item => item.file_name != this.state.selected);
       }
       if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
