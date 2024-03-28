@@ -46,8 +46,6 @@ class FileHandler(bbctrl.APIHandler):
 
             for filename in [item for item in allFiles if item not in exceptionList]:
                 filename = os.path.basename(filename)
-                # self.get_log('FileHandler').info('filenamed ' + filename)
-                # self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
                 safe_remove(self.get_upload(filename))
                 self.get_ctrl().preplanner.delete_plans(filename)
                 self.get_ctrl().state.remove_file(filename)
@@ -59,8 +57,6 @@ class FileHandler(bbctrl.APIHandler):
             
             for filename in [item for item in allFiles if item in deletionList]:
                 filename = os.path.basename(filename)
-                self.get_log('FileHandler').info('filename deleted as Macros ' + filename)
-                self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
                 safe_remove(self.get_upload(filename))
                 self.get_ctrl().preplanner.delete_plans(filename)
                 self.get_ctrl().state.remove_file(filename)

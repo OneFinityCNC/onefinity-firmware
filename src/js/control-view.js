@@ -499,7 +499,7 @@ module.exports = {
 
       for (let file of files) {
         console.log(file.name);
-        const gcode = file.text();
+        const gcode = await file.text();
         const extension = file.name.split(".").pop();
         switch (extension.toLowerCase()) {
           case "nc":
@@ -628,7 +628,7 @@ module.exports = {
           if (selected_folder) {
             const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
             console.log(files_to_delete);
-            await api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
+            await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
             this.config.gcode_list = this.config.gcode_list.filter(item => {
               if (item.type == "folder" && item.name == this.state.folder) {
                 return false;
@@ -638,11 +638,11 @@ module.exports = {
             console.log(this.config.gcode_list);
           }
         } else {
-          const selected_folder = this.config.gcode_list.find(item => item.type == "file");
+          const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
           if (selected_folder) {
             const files_to_delete = selected_folder.map(item => item.name).toString();
             console.log(files_to_delete);
-            await api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
+            await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
             this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
           }
         }
