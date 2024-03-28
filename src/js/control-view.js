@@ -385,6 +385,12 @@ module.exports = {
       utils.clickFileInput("gcode-folder-input");
     },
 
+    edited_folder_name: function (event) {
+      if (event.target.value.trim() != "") {
+        this.$dispatch("folder_name_edited");
+      }
+    },
+
     upload_file: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
@@ -415,12 +421,12 @@ module.exports = {
       ) {
         this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
       } else if (!this.state.folder || this.state.folder == "") {
+        this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
+      } else {
         const folder_to_add = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         );
         folder_to_add.files.push({ file_name: file.name });
-      } else {
-        this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
       }
       try {
         await api.put("config/save", this.config);
@@ -437,12 +443,6 @@ module.exports = {
           this.$broadcast("gcode-reload", file.name);
         },
       });
-    },
-
-    edited_folder_name: function (event) {
-      if (event.target.value.trim() != "") {
-        this.$dispatch("folder_name_edited");
-      }
     },
 
     modify_files: function (fileList) {
@@ -465,6 +465,7 @@ module.exports = {
           type: "folder",
           files: [],
         });
+        this.state.folder = this.folder_name;
         this.edited = false;
         this.create_folder = false;
         this.folder_name = "";
@@ -486,58 +487,57 @@ module.exports = {
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
       console.log(files);
-      for (let file of files) {
-        console.log(file.name);
-        const extension = file.name.split(".").pop();
-        switch (extension.toLowerCase()) {
-          case "nc":
-          case "ngc":
-          case "gcode":
-          case "gc":
-            break;
+      const file = files[0];
+      console.log(file.name);
+      const extension = file.name.split(".").pop();
+      switch (extension.toLowerCase()) {
+        case "nc":
+        case "ngc":
+        case "gcode":
+        case "gc":
+          break;
 
-          default:
-            alert(`Unsupported file type: ${extension}`);
-            return;
-        }
+        default:
+          alert(`Unsupported file type: ${extension}`);
+          return;
+      }
 
-        const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
-        if (!isAlreadyPresent) {
-          this.config.non_macros_list.push({ file_name: file.name });
-        }
+      const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+      if (!isAlreadyPresent) {
+        this.config.non_macros_list.push({ file_name: file.name });
+      }
 
-        const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
-        if (folder) {
-          folder.files.push({ file_name: file.name });
-        } else {
-          this.config.gcode_list.push({
-            name: folderName,
-            type: "folder",
-            files: [
-              {
-                file_name: file.name,
-              },
-            ],
-          });
-        }
-        SvelteComponents.showDialog("Upload", {
-          file,
-          onComplete: () => {
-            this.last_file_time = undefined; // Force reload
-            this.$broadcast("gcode-reload", file.name);
-            const remaining_files = this.modify_files(files);
-            const updated_event = { ...e };
-            if (updated_event.target) {
-              updated_event.target.files = remaining_files;
-            } else if (updated_event.dataTransfer) {
-              updated_event.dataTransfer.files = remaining_files;
-            } else {
-              updated_event["target"] = { files: remaining_files };
-            }
-            this.upload_folder(updated_event);
-          },
+      const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
+      if (folder) {
+        folder.files.push({ file_name: file.name });
+      } else {
+        this.config.gcode_list.push({
+          name: folderName,
+          type: "folder",
+          files: [
+            {
+              file_name: file.name,
+            },
+          ],
         });
       }
+      SvelteComponents.showDialog("Upload", {
+        file,
+        onComplete: () => {
+          this.last_file_time = undefined; // Force reload
+          this.$broadcast("gcode-reload", file.name);
+          const remaining_files = this.modify_files(files);
+          const updated_event = { ...e };
+          if (updated_event.target) {
+            updated_event.target.files = remaining_files;
+          } else if (updated_event.dataTransfer) {
+            updated_event.dataTransfer.files = remaining_files;
+          } else {
+            updated_event["target"] = { files: remaining_files };
+          }
+          this.upload_folder(updated_event);
+        },
+      });
 
       try {
         await api.put("config/save", this.config);
@@ -591,9 +591,11 @@ module.exports = {
 
     delete_folder: async function () {
       if (!this.state.folder) {
+        console.log("595");
         const files_to_move = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         );
+        console.log(files_to_move);
         if (!files_to_move) {
           files_to_move.files.forEach(item => {
             this.config.gcode_list.push({
@@ -608,6 +610,7 @@ module.exports = {
             }
             return true;
           });
+          console.log(this.config.gcode_list);
           try {
             await api.put("config/save", this.config);
             this.$dispatch("update");
@@ -624,15 +627,18 @@ module.exports = {
         const selected_folder = this.config.gcode_list.find(
           item => (item.type = "folder" && item.name == this.state.folder),
         );
+        console.log(selected_folder);
         if (!selected_folder) {
           const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
-          api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
+          console.log(files_to_delete);
+          await api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
           this.config.gcode_list = this.config.gcode_list.filter(item => {
             if (item.type == "folder" && item.name == this.state.folder) {
               return false;
             }
             return true;
           });
+          console.log(this.config.gcode_list);
           try {
             await api.put("config/save", this.config);
             this.$dispatch("update");

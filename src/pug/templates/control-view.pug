@@ -319,7 +319,7 @@ script#control-view-template(type="text/x-template")
 
               div(slot="footer")
                 button.pure-button(@click="create_folder=false") Cancel
-                button.pure-button.button-error(@click="create_new_folder",:disabled="!edited")
+                button.pure-button.button-success(@click="create_new_folder",:disabled="!edited")
                   | Create
 
             select(title="Select previously uploaded GCode folder.",
@@ -339,8 +339,8 @@ script#control-view-template(type="text/x-template")
                   
               div(slot="footer")
                 button.pure-button(@click="confirmDelete=false") Cancel
-                button.pure-button.pure-button-primary(@click="delete_folder") Folder only
-                button.pure-button.pure-button-primary(@click="delete_folder_and_files") Folder and files 
+                button.pure-button.button-error(@click="delete_folder") Folder only
+                button.pure-button.button-success(@click="delete_folder_and_files") Folder and files 
             
             button.pure-button(title="Delete a folder.", @click="confirmDelete=true",
               :disabled="!is_ready")
