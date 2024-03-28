@@ -318,7 +318,7 @@ script#control-view-template(type="text/x-template")
                   id="folder-name" ,v-model="folder_name",@keypress="edited_folder_name")
 
               div(slot="footer")
-                button.pure-button(@click="create_folder=false") Cancel
+                button.pure-button(@click="cancel_new_folder") Cancel
                 button.pure-button.button-success(@click="create_new_folder",:disabled="!edited")
                   | Create
 
