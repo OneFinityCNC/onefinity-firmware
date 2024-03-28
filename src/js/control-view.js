@@ -497,7 +497,7 @@ module.exports = {
       const folderName = files[0].webkitRelativePath.split("/")[0];
       console.log(files);
 
-      for (let file in files) {
+      for (let file of files) {
         console.log(file.name);
         const gcode = file.text();
         const extension = file.name.split(".").pop();
