@@ -472,16 +472,17 @@ module.exports = {
     },
 
     create_new_folder: async function () {
+      const folder_name = this.folder_name.trim()
       if (
-        this.folder_name.trim() != "" &&
-        !this.config.gcode_list.find(item => item.type == "folder" && item.name == this.folder_name)
+        folder_name != "" &&
+        !this.config.gcode_list.find(item => item.type == "folder" && item.name == folder_name)
       ) {
         this.config.gcode_list.push({
-          name: this.folder_name,
+          name: folder_name,
           type: "folder",
           files: [],
         });
-        this.state.folder = this.folder_name;
+        this.state.folder = folder_name;
         this.edited = false;
         this.create_folder = false;
         this.folder_name = "";
@@ -542,13 +543,16 @@ module.exports = {
 
     delete_current: async function () {
       this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
+
       if (this.state.selected && (this.state.folder == "Unorganized files" || !this.state.folder)) {
-        this.config.gcode_list.filter(item => item.type == "file" && item.name != this.state.selected);
+        this.config.gcode_list = this.config.gcode_list.filter(
+          item => item.type == "file" && item.name != this.state.selected,
+        );
       } else {
         const file_to_delete = this.config.gcode_list.find(
           item => item.name == this.state.folder && item.type == "folder",
         );
-        file_to_delete.files.filter(item => item.file_name != this.state.selected);
+        this.config.gcode_list = file_to_delete.files.filter(item => item.file_name != this.state.selected);
       }
       if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
