@@ -328,12 +328,12 @@ script#control-view-template(type="text/x-template")
               option( selected='' value='Unorganized files')  Unorganized files
               option(v-for="file in gcode_folders", :value="file") {{file}}
             
-            button.config-button.button-blue(title="Create a new folder.", @click="create_folder=true",
+            button.pure-button(title="Create a new folder.", @click="create_folder=true",
               :disabled="!is_ready")
               .fa.fa-plus
               | Create Folder
             
-            button.config-button.button-blue(title="Upload a new folder.", @click="open_folder",
+            button.pure-button(title="Upload a new folder.", @click="open_folder",
               :disabled="!is_ready")
               .fa.fa-plus
               | Upload Folder
@@ -343,7 +343,7 @@ script#control-view-template(type="text/x-template")
               style="max-width:100%")
               option(v-for="file in gcode_files", :value="file") {{file}}
             
-            button.config-button.button-blue(title="Upload a new GCode program.", @click="open_file",
+            button.pure-button(title="Upload a new GCode program.", @click="open_file",
               :disabled="!is_ready")
               .fa.fa-plus
               | Upload File

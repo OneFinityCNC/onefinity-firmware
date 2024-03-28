@@ -199,11 +199,9 @@ module.exports = {
       const macros = [...this.config.macros];
       macros.splice(this.tab - 1, 1);
       const macros_list = macros.map(item => item.name);
-      console.log(this.macrosName);
-      var macrosName = document.getElementById("macros-name").value;
       var macrosColor = document.getElementById("macros-color").value;
       var macrosAlert = this.isChecked;
-      const formattedFilename = macrosName
+      const formattedFilename = this.macrosName
         .replace(/\\/g, "_")
         .replace(/\//g, "_")
         .replace(/#/g, "-")
@@ -222,7 +220,7 @@ module.exports = {
         this.uploadGCode(file_name, file);
       }
 
-      this.config.macros[this.tab - 1].name = macrosName;
+      this.config.macros[this.tab - 1].name = this.macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].file_name = file_name;
       this.config.macros[this.tab - 1].alert = macrosAlert;
