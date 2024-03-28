@@ -274,7 +274,7 @@ script#control-view-template(type="text/x-template")
           message(:show.sync="showFileDuplicate")
               h3(slot="header") G-Code file with the same name already exists
               div(slot="body")
-                p Please rename the file and try again.
+                p Please rename the file or delete the existing file and try again.
 
               div(slot="footer")
                 button.pure-button(@click="showFileDuplicate=false") OK
