@@ -276,6 +276,15 @@ module.exports = {
   },
 
   methods: {
+    save_config: async function (config) {
+      try {
+        await api.put("config/save", config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
+    },
     getJogIncrStyle(value) {
       const weight = `font-weight:${this.jog_incr === value ? "bold" : "normal"}`;
       const color = this.jog_incr === value ? "color:#0078e7" : "";
@@ -428,13 +437,7 @@ module.exports = {
         );
         folder_to_add.files.push({ file_name: file.name });
       }
-      try {
-        await api.put("config/save", this.config);
-        this.$dispatch("update");
-      } catch (error) {
-        console.error("Restore Failed: ", error);
-        alert("Restore failed");
-      }
+      this.save_config(this.config);
 
       SvelteComponents.showDialog("Upload", {
         file,
@@ -469,14 +472,7 @@ module.exports = {
         this.edited = false;
         this.create_folder = false;
         this.folder_name = "";
-        try {
-          await api.put("config/save", this.config);
-          this.state.folder = this.folder_name;
-          this.$dispatch("update");
-        } catch (error) {
-          console.error("Restore Failed: ", error);
-          alert("Restore failed");
-        }
+        this.save_config(this.config);
       }
     },
 
@@ -508,9 +504,12 @@ module.exports = {
       }
 
       const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
+      console.log(folder);
       if (folder) {
+        console.log("513", file.name);
         folder.files.push({ file_name: file.name });
       } else {
+        console.log("516", file.name);
         this.config.gcode_list.push({
           name: folderName,
           type: "folder",
@@ -521,11 +520,12 @@ module.exports = {
           ],
         });
       }
+      console.log("523", this.config.gcode_list);
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
           this.last_file_time = undefined; // Force reload
-          this.$broadcast("gcode-reload", file.name);
+          // this.$broadcast("gcode-reload", file.name);
           const remaining_files = this.modify_files(files);
           const updated_event = { ...e };
           if (updated_event.target) {
@@ -539,13 +539,7 @@ module.exports = {
         },
       });
 
-      try {
-        await api.put("config/save", this.config);
-        this.$dispatch("update");
-      } catch (error) {
-        console.error("Restore Failed: ", error);
-        alert("Restore failed");
-      }
+      this.save_config(this.config);
     },
 
     delete_current: async function () {
@@ -558,13 +552,7 @@ module.exports = {
       if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
       }
-      try {
-        await api.put("config/save", this.config);
-        this.$dispatch("update");
-      } catch (error) {
-        console.error("Restore Failed: ", error);
-        alert("Restore failed");
-      }
+      this.save_config(this.config);
       this.deleteGCode = false;
     },
 
@@ -579,24 +567,18 @@ module.exports = {
       this.config.non_macros_list = [];
       this.state.folder = "Unorganized files";
       this.config.gcode_list = [];
-      try {
-        await api.put("config/save", this.config);
-        this.$dispatch("update");
-      } catch (error) {
-        console.error("Restore Failed: ", error);
-        alert("Restore failed");
-      }
+      this.save_config(this.config);
       this.deleteGCode = false;
     },
 
     delete_folder: async function () {
-      if (!this.state.folder) {
+      if (this.state.folder) {
         console.log("595");
         const files_to_move = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         );
         console.log(files_to_move);
-        if (!files_to_move) {
+        if (files_to_move) {
           files_to_move.files.forEach(item => {
             this.config.gcode_list.push({
               name: item.file_name,
@@ -611,24 +593,18 @@ module.exports = {
             return true;
           });
           console.log(this.config.gcode_list);
-          try {
-            await api.put("config/save", this.config);
-            this.$dispatch("update");
-          } catch (error) {
-            console.error("Restore Failed: ", error);
-            alert("Restore failed");
-          }
+          this.save_config(this.config);
         }
       }
       this.confirmDelete = false;
     },
     delete_folder_and_files: async function () {
-      if (!this.state.folder) {
+      if (this.state.folder) {
         const selected_folder = this.config.gcode_list.find(
           item => (item.type = "folder" && item.name == this.state.folder),
         );
         console.log(selected_folder);
-        if (!selected_folder) {
+        if (selected_folder) {
           const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
           console.log(files_to_delete);
           await api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
@@ -639,13 +615,7 @@ module.exports = {
             return true;
           });
           console.log(this.config.gcode_list);
-          try {
-            await api.put("config/save", this.config);
-            this.$dispatch("update");
-          } catch (error) {
-            console.error("Restore Failed: ", error);
-            alert("Restore failed");
-          }
+          this.save_config(this.config);
         }
       }
       this.confirmDelete = false;
