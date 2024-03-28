@@ -405,7 +405,7 @@ module.exports = {
       }
 
       const file = files[0];
-      if (this.state.files.includes(file.name)) {
+      if (this.state.files.includes(file.name) && !this.config.macros_list.find(item => item.file_name == file.name)) {
         this.showFileDuplicate = true;
         return;
       }
@@ -505,11 +505,12 @@ module.exports = {
         return;
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
-      console.log(files);
 
       for (let file of files) {
-        console.log(file.name);
-        if (this.state.files.includes(file.name)) {
+        if (
+          this.state.files.includes(file.name) &&
+          !this.config.macros_list.find(item => item.file_name == file.name)
+        ) {
           this.showFileDuplicate = true;
           return;
         }
