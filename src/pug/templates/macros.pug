@@ -88,7 +88,7 @@ script#macros-template(type="text/x-template")
                         p.title Macro G-Code
                         .flex-row-container                      
                                 select(id="gcode-select",title="Select previously uploaded GCode programs.",selected
-                                        v-model="fileName",@change="loadMacrosGcode", :disabled="!is_ready",
+                                        v-model="fileName",@change="load", :disabled="!is_ready",
                                         style="max-width:100%;height:40px;border-radius:5px")
                                         option( selected='' value='default')  Create G-Code
                                         option(v-for="file in macros_gcode_list", :value="file") {{file}}
@@ -98,14 +98,14 @@ script#macros-template(type="text/x-template")
                                         .fa.fa-upload
 
                                 form.gcode-file-input.file-upload
-                                        input(type="file", @change="uploadMacrosGcode", :disabled="!is_ready",
+                                        input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
                                 button.config-button.button-blue(title="Delete Macro GCode",@click="deleteGCode = true",
                                         :disabled="!fileName =='default'") Delete
                                         .fa.fa-trash
                         br
                         .gcodeContainer
-                                textarea.new-gcode(id="gcode-field", v-model="newGcode" ,@keypress="updateNewGcode")
+                                textarea.new-gcode(id="gcode-field", v-model="newGcode" ,@keypress="update_new_gcode")
 
         button.submit-macros.button-success(title="Save Macro",@click="confirmSave=true",:disabled="!edited") Save
         button.submit-macros(title="Cancel Macro",@click="clear_macro",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel

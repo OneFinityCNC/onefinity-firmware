@@ -60,7 +60,7 @@ module.exports = {
     open: function () {
       utils.clickFileInput("gcode-file-input");
     },
-    updateNewGcode: function (event) {
+    update_new_gcode: function (event) {
       if (this.tab != 0) {
         this.newGcode = event.target.value;
         this.$dispatch("macros-edited");
@@ -93,7 +93,7 @@ module.exports = {
         });
       });
     },
-    loadMacrosGcode: async function () {
+    load: async function () {
       if (this.tab == 0) {
         return;
       }
@@ -115,7 +115,7 @@ module.exports = {
         this.$dispatch("macros-edited");
       }
     },
-    uploadMacrosGcode: async function (e) {
+    upload: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -148,18 +148,16 @@ module.exports = {
           console.error("Restore Failed: ", error);
           alert("Restore failed");
         }
-      } else {
-        //
       }
       this.$dispatch("macros-edited");
       try {
         await this.showDialogAsync("Upload", file);
-        this.loadMacrosGcode();
+        this.load();
       } catch (error) {
         console.error("Error uploading: ", error);
       }
     },
-    uploadGCode: async function (filename, file) {
+    upload_gcode: async function (filename, file) {
       const xhr = new XMLHttpRequest();
 
       xhr.onload = function () {
@@ -217,7 +215,7 @@ module.exports = {
       var file = this.newGcode;
 
       if (file.trim() != "") {
-        this.uploadGCode(file_name, file);
+        this.upload_gcode(file_name, file);
       }
 
       this.config.macros[this.tab - 1].name = this.macrosName;
@@ -269,7 +267,7 @@ module.exports = {
         document.getElementById("macros-color").value = defaultValue.color;
         this.isChecked = defaultValue.alert;
         this.fileName = defaultValue.file_name;
-        this.loadMacrosGcode();
+        this.load();
       }
       this.edited = false;
     },
