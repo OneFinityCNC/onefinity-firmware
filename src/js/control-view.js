@@ -536,24 +536,6 @@ module.exports = {
         }
         console.log("537", this.config.gcode_list);
       }
-      // SvelteComponents.showDialog("Upload", {
-      //   file,
-      //   onComplete: () => {
-      //     this.last_file_time = undefined; // Force reload
-      //     // this.$broadcast("gcode-reload", file.name);
-
-      //     const remaining_files = this.modify_files(files);
-      //     const updated_event = { ...e };
-      //     if (updated_event.target) {
-      //       updated_event.target.files = remaining_files;
-      //     } else if (updated_event.dataTransfer) {
-      //       updated_event.dataTransfer.files = remaining_files;
-      //     } else {
-      //       updated_event["target"] = { files: remaining_files };
-      //     }
-      //     this.upload_folder(updated_event);
-      //   },
-      // });
 
       this.save_config(this.config);
     },
@@ -561,12 +543,12 @@ module.exports = {
     delete_current: async function () {
       this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
       if (this.state.selected && (this.state.folder == "Unorganized files" || !this.state.folder)) {
-        this.config.gcode_list.filter(item => item.type == "file" && item.name == this.state.selected);
+        this.config.gcode_list.filter(item => item.type == "file" && item.name != this.state.selected);
       } else {
         const file_to_delete = this.config.gcode_list.find(
           item => item.name == this.state.folder && item.type == "folder",
         );
-        file_to_delete.files.filter(item => item.file_name == this.state.selected);
+        file_to_delete.files.filter(item => item.file_name != this.state.selected);
       }
       if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
