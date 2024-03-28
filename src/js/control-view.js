@@ -214,6 +214,7 @@ module.exports = {
       }
       if (this.state.folder == "Unorganized files") {
         files = this.config.gcode_list.filter(item => item.type == "file");
+        console.log(files);
         files = files.map(item => item.name);
         console.log("217", files);
         return files;
