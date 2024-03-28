@@ -72,9 +72,6 @@ module.exports = {
       }
 
       const response = await fetch(`/api/file/${file}`, { cache: "no-cache" });
-      if (response.status == 400) {
-        return;
-      }
       const text = await response.text();
 
       if (text.length > 20e6) {

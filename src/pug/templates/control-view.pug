@@ -270,6 +270,14 @@ script#control-view-template(type="text/x-template")
             :disabled="(!is_ready && !is_holding) || !state.selected",
             v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-step-forward
+
+          message(:show.sync="showFileDuplicate")
+              h3(slot="header") G-Code file with the same name already exists
+              div(slot="body")
+                p Please rename the file and try again.
+
+              div(slot="footer")
+                button.pure-button(@click="showFileDuplicate=false") OK
           
           button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")

@@ -48,6 +48,7 @@ module.exports = {
       showGcodeMessage: false,
       showNoGcodeMessage: false,
       macrosLoading: false,
+      showFileDuplicate: false,
       show_gcodes: false,
     };
   },
@@ -404,6 +405,10 @@ module.exports = {
       }
 
       const file = files[0];
+      if (this.state.files.includes(file.name)) {
+        this.showFileDuplicate = true;
+        return;
+      }
       const extension = file.name.split(".").pop();
       switch (extension.toLowerCase()) {
         case "nc":
@@ -506,6 +511,10 @@ module.exports = {
 
       for (let file of files) {
         console.log(file.name);
+        if (this.state.files.includes(file.name)) {
+          this.showFileDuplicate = true;
+          return;
+        }
         const gcode = await file.text();
         const extension = file.name.split(".").pop();
         switch (extension.toLowerCase()) {
