@@ -213,11 +213,8 @@ module.exports = {
         return files;
       }
       if (this.state.folder == "Unorganized files") {
-        files = this.config.gcode_list.map(item => {
-          if (item.type == "file") {
-            return item.name;
-          }
-        });
+        files = this.config.gcode_list.filter(item => item.type == "file");
+        files = files.map(item => item.name);
         console.log("217", files);
         return files;
       }
