@@ -480,7 +480,7 @@ module.exports = {
       const folder_name = this.folder_name.trim();
       if (folder_name != "") {
         if (this.config.gcode_list.find(item => item.type == "folder" && item.name == folder_name)) {
-          alert("Folder already exists!");
+          alert("Folder with the same name already exists!");
         } else {
           this.config.gcode_list.push({
             name: folder_name,
@@ -630,12 +630,7 @@ module.exports = {
             const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
             console.log(files_to_delete);
             await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
-            this.config.gcode_list = this.config.gcode_list.filter(item => {
-              if (item.type == "folder" && item.name == this.state.folder) {
-                return false;
-              }
-              return true;
-            });
+            this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
             console.log(this.config.gcode_list);
           }
         } else {
