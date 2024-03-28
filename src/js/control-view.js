@@ -453,7 +453,7 @@ module.exports = {
 
       xhr.onload = function () {
         if (xhr.status >= 200 && xhr.status < 300) {
-          console.log("File uploaded successfully");
+          console.log("File uploaded " + filename);
         } else {
           console.error("File upload failed:", xhr.statusText);
         }
@@ -466,7 +466,7 @@ module.exports = {
       xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
           const progress = (event.loaded / event.total) * 100;
-          console.log("Upload progress:", progress);
+          console.log(filename + " Upload progress:", progress);
         }
       };
 
@@ -548,7 +548,6 @@ module.exports = {
             ],
           });
         }
-        console.log("537", this.config.gcode_list);
       }
 
       this.save_config(this.config);
@@ -564,9 +563,8 @@ module.exports = {
 
       if (this.state.folder == "Unorganized files") {
         this.config.gcode_list = this.config.gcode_list.filter(
-          item => item.type == "file" && item.name != this.state.selected,
+          item => (item.type == "file" || item.type == "folder") && item.name != this.state.selected,
         );
-        console.log(this.config.gcode_list);
       } else {
         const file_to_delete = this.config.gcode_list.find(
           item => item.name == this.state.folder && item.type == "folder",
