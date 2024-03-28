@@ -214,13 +214,10 @@ module.exports = {
       }
       if (this.state.folder == "Unorganized files") {
         files = this.config.gcode_list.filter(item => item.type == "file");
-        console.log(files);
         files = files.map(item => item.name);
-        console.log("217", files);
         return files;
       }
       files = this.config.gcode_list.find(item => item.name == this.state.folder).files.map(item => item.file_name);
-      console.log("221", files);
       return files;
     },
     gcode_folders: function () {
@@ -448,14 +445,30 @@ module.exports = {
       });
     },
 
-    modify_files: function (fileList) {
-      const fileArray = Array.from(fileList);
-      fileArray.shift();
+    upload_gcode: async function (filename, file) {
+      const xhr = new XMLHttpRequest();
 
-      const newFileList = new DataTransfer();
-      fileArray.forEach(file => newFileList.items.add(file));
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          console.log("File uploaded successfully");
+        } else {
+          console.error("File upload failed:", xhr.statusText);
+        }
+      };
 
-      return newFileList.files;
+      xhr.onerror = function () {
+        console.error("Network error during file upload");
+      };
+
+      xhr.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          console.log("Upload progress:", progress);
+        }
+      };
+
+      xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
+      xhr.send(file);
     },
 
     create_new_folder: async function () {
@@ -483,62 +496,64 @@ module.exports = {
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
       console.log(files);
-      const file = files[0];
-      console.log(file.name);
-      const extension = file.name.split(".").pop();
-      switch (extension.toLowerCase()) {
-        case "nc":
-        case "ngc":
-        case "gcode":
-        case "gc":
-          break;
 
-        default:
-          alert(`Unsupported file type: ${extension}`);
-          return;
+      for (let file in files) {
+        console.log(file.name);
+        const gcode = file.text();
+        const extension = file.name.split(".").pop();
+        switch (extension.toLowerCase()) {
+          case "nc":
+          case "ngc":
+          case "gcode":
+          case "gc":
+            break;
+
+          default:
+            alert(`Unsupported file type: ${extension}`);
+            return;
+        }
+
+        await this.upload_gcode(file.name, gcode);
+
+        const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+        if (!isAlreadyPresent) {
+          this.config.non_macros_list.push({ file_name: file.name });
+        }
+
+        const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
+        if (folder) {
+          folder.files.push({ file_name: file.name });
+        } else {
+          this.config.gcode_list.push({
+            name: folderName,
+            type: "folder",
+            files: [
+              {
+                file_name: file.name,
+              },
+            ],
+          });
+        }
+        console.log("537", this.config.gcode_list);
       }
+      // SvelteComponents.showDialog("Upload", {
+      //   file,
+      //   onComplete: () => {
+      //     this.last_file_time = undefined; // Force reload
+      //     // this.$broadcast("gcode-reload", file.name);
 
-      SvelteComponents.showDialog("Upload", {
-        file,
-        onComplete: () => {
-          this.last_file_time = undefined; // Force reload
-          // this.$broadcast("gcode-reload", file.name);
-          
-          const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
-          if (!isAlreadyPresent) {
-            this.config.non_macros_list.push({ file_name: file.name });
-          }
-
-          const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
-          console.log(folder);
-          if (folder) {
-            console.log("513", file.name);
-            folder.files.push({ file_name: file.name });
-          } else {
-            console.log("516", file.name);
-            this.config.gcode_list.push({
-              name: folderName,
-              type: "folder",
-              files: [
-                {
-                  file_name: file.name,
-                },
-              ],
-            });
-          }
-          console.log("523", this.config.gcode_list);
-          const remaining_files = this.modify_files(files);
-          const updated_event = { ...e };
-          if (updated_event.target) {
-            updated_event.target.files = remaining_files;
-          } else if (updated_event.dataTransfer) {
-            updated_event.dataTransfer.files = remaining_files;
-          } else {
-            updated_event["target"] = { files: remaining_files };
-          }
-          this.upload_folder(updated_event);
-        },
-      });
+      //     const remaining_files = this.modify_files(files);
+      //     const updated_event = { ...e };
+      //     if (updated_event.target) {
+      //       updated_event.target.files = remaining_files;
+      //     } else if (updated_event.dataTransfer) {
+      //       updated_event.dataTransfer.files = remaining_files;
+      //     } else {
+      //       updated_event["target"] = { files: remaining_files };
+      //     }
+      //     this.upload_folder(updated_event);
+      //   },
+      // });
 
       this.save_config(this.config);
     },
@@ -548,7 +563,10 @@ module.exports = {
       if (this.state.selected && (this.state.folder == "Unorganized files" || !this.state.folder)) {
         this.config.gcode_list.filter(item => item.type == "file" && item.name == this.state.selected);
       } else {
-        this.config.gcode_list[this.state.folder].files.filter(item => item.file_name == this.state.selected);
+        const file_to_delete = this.config.gcode_list.find(
+          item => item.name == this.state.folder && item.type == "folder",
+        );
+        file_to_delete.files.filter(item => item.file_name == this.state.selected);
       }
       if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
@@ -601,25 +619,35 @@ module.exports = {
       this.confirmDelete = false;
     },
     delete_folder_and_files: async function () {
-      if (this.state.folder && this.state.folder != "Unorganized files") {
-        const selected_folder = this.config.gcode_list.find(
-          item => (item.type = "folder" && item.name == this.state.folder),
-        );
-        console.log(selected_folder);
-        if (selected_folder) {
-          const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
-          console.log(files_to_delete);
-          await api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
-          this.config.gcode_list = this.config.gcode_list.filter(item => {
-            if (item.type == "folder" && item.name == this.state.folder) {
-              return false;
-            }
-            return true;
-          });
-          console.log(this.config.gcode_list);
-          this.save_config(this.config);
+      if (this.state.folder) {
+        if (this.state.folder != "Unorganized files") {
+          const selected_folder = this.config.gcode_list.find(
+            item => (item.type = "folder" && item.name == this.state.folder),
+          );
+          console.log(selected_folder);
+          if (selected_folder) {
+            const files_to_delete = selected_folder.files.map(item => item.file_name).toString();
+            console.log(files_to_delete);
+            await api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
+            this.config.gcode_list = this.config.gcode_list.filter(item => {
+              if (item.type == "folder" && item.name == this.state.folder) {
+                return false;
+              }
+              return true;
+            });
+            console.log(this.config.gcode_list);
+          }
+        } else {
+          const selected_folder = this.config.gcode_list.find(item => item.type == "file");
+          if (selected_folder) {
+            const files_to_delete = selected_folder.map(item => item.name).toString();
+            console.log(files_to_delete);
+            await api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${files_to_delete}`);
+            this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
+          }
         }
       }
+      this.save_config(this.config);
       this.state.folder = "Unorganized files";
       this.confirmDelete = false;
     },
