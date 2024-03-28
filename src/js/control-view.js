@@ -498,34 +498,35 @@ module.exports = {
           return;
       }
 
-      const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
-      if (!isAlreadyPresent) {
-        this.config.non_macros_list.push({ file_name: file.name });
-      }
-
-      const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
-      console.log(folder);
-      if (folder) {
-        console.log("513", file.name);
-        folder.files.push({ file_name: file.name });
-      } else {
-        console.log("516", file.name);
-        this.config.gcode_list.push({
-          name: folderName,
-          type: "folder",
-          files: [
-            {
-              file_name: file.name,
-            },
-          ],
-        });
-      }
-      console.log("523", this.config.gcode_list);
       SvelteComponents.showDialog("Upload", {
         file,
         onComplete: () => {
           this.last_file_time = undefined; // Force reload
           // this.$broadcast("gcode-reload", file.name);
+          
+          const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+          if (!isAlreadyPresent) {
+            this.config.non_macros_list.push({ file_name: file.name });
+          }
+
+          const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
+          console.log(folder);
+          if (folder) {
+            console.log("513", file.name);
+            folder.files.push({ file_name: file.name });
+          } else {
+            console.log("516", file.name);
+            this.config.gcode_list.push({
+              name: folderName,
+              type: "folder",
+              files: [
+                {
+                  file_name: file.name,
+                },
+              ],
+            });
+          }
+          console.log("523", this.config.gcode_list);
           const remaining_files = this.modify_files(files);
           const updated_event = { ...e };
           if (updated_event.target) {
@@ -572,7 +573,7 @@ module.exports = {
     },
 
     delete_folder: async function () {
-      if (this.state.folder) {
+      if (this.state.folder && this.state.folder != "Unorganized files") {
         console.log("595");
         const files_to_move = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
@@ -596,10 +597,11 @@ module.exports = {
           this.save_config(this.config);
         }
       }
+      this.state.folder = "Unorganized files";
       this.confirmDelete = false;
     },
     delete_folder_and_files: async function () {
-      if (this.state.folder) {
+      if (this.state.folder && this.state.folder != "Unorganized files") {
         const selected_folder = this.config.gcode_list.find(
           item => (item.type = "folder" && item.name == this.state.folder),
         );
@@ -618,6 +620,7 @@ module.exports = {
           this.save_config(this.config);
         }
       }
+      this.state.folder = "Unorganized files";
       this.confirmDelete = false;
     },
 
