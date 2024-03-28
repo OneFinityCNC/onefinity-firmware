@@ -342,7 +342,7 @@ script#control-view-template(type="text/x-template")
                 button.pure-button.pure-button-primary(@click="delete_folder") Folder only
                 button.pure-button.pure-button-primary(@click="delete_folder_and_files") Folder and files 
             
-            button.pure-button(title="Delete a folder.", @click="create_folder=true",
+            button.pure-button(title="Delete a folder.", @click="confirmDelete=true",
               :disabled="!is_ready")
               | Delete Folder
             

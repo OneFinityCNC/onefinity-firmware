@@ -449,10 +449,10 @@ module.exports = {
       const fileArray = Array.from(fileList);
       fileArray.shift();
 
-      const newFileList = new DataTransfer().files;
-      fileArray.forEach(file => newFileList.push(file));
+      const newFileList = new DataTransfer();
+      fileArray.forEach(file => newFileList.items.add(file));
 
-      return newFileList;
+      return newFileList.files;
     },
 
     create_new_folder: async function () {
