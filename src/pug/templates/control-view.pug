@@ -322,16 +322,6 @@ script#control-view-template(type="text/x-template")
                 button.pure-button.button-success(@click="create_new_folder",:disabled="!edited")
                   | Create
 
-            select(title="Select previously uploaded GCode folder.",
-              v-model="state.folder", :disabled="!is_ready",
-              style="max-width:100%")
-              option( selected='' value='Unorganized files')  Unorganized files
-              option(v-for="file in gcode_folders", :value="file") {{file}}
-            
-            button.pure-button(title="Create a new folder.", @click="create_folder=true",
-              :disabled="!is_ready")
-              | Create Folder
-
             message(:show.sync="confirmDelete")
               h3(slot="header") Delete Folder?
               div(slot="body")
@@ -342,9 +332,19 @@ script#control-view-template(type="text/x-template")
                 button.pure-button.button-error(@click="delete_folder") Folder only
                 button.pure-button.button-success(@click="delete_folder_and_files") Folder and files 
             
+            button.pure-button(title="Create a new folder.", @click="create_folder=true",
+              :disabled="!is_ready",style="height:100%")
+              | Create Folder
+            
             button.pure-button(title="Delete a folder.", @click="confirmDelete=true",
-              :disabled="!is_ready")
+              :disabled="!is_ready",style="height:100%")
               | Delete Folder
+
+            select(title="Select previously uploaded GCode folder.",
+              v-model="state.folder", :disabled="!is_ready",
+              style="max-width:100%")
+              option( selected='' value='Unorganized files')  Unorganized files
+              option(v-for="file in gcode_folders", :value="file") {{file}}
             
             //- button.pure-button(title="Upload a new folder.", @click="open_folder",
             //-   :disabled="!is_ready")
