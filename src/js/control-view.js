@@ -633,10 +633,12 @@ module.exports = {
         }
       } else {
         const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
+        console.log(selected_folder);
         if (selected_folder) {
           const files_to_delete = selected_folder.map(item => item.name).toString();
           await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
           this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
+          console.log(this.config.gcode_list);
         }
       }
       this.save_config(this.config);
