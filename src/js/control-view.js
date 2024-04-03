@@ -220,8 +220,8 @@ module.exports = {
       }
       files = this.config.gcode_list
         .find(item => item.name == this.state.folder)
-        .filter(item => this.state.files.includes(item.file_name))
-        .files.map(item => item.file_name);
+        .files.filter(item => this.state.files.includes(item.file_name))
+        .map(item => item.file_name);
       return files;
     },
     gcode_folders: function () {
