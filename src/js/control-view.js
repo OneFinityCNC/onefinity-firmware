@@ -209,16 +209,19 @@ module.exports = {
       return Math.min(1, p);
     },
     gcode_files: function () {
-      let files = [];
       if (!this.state.folder || this.state.folder == "") {
-        return files;
+        return [];
       }
+      let files = [];
       if (this.state.folder == "Unorganized files") {
-        files = this.config.gcode_list.filter(item => item.type == "file");
+        files = this.config.gcode_list.filter(item => item.type == "file" && this.state.files.includes(item.name));
         files = files.map(item => item.name);
         return files;
       }
-      files = this.config.gcode_list.find(item => item.name == this.state.folder).files.map(item => item.file_name);
+      files = this.config.gcode_list
+        .find(item => item.name == this.state.folder)
+        .filter(item => this.state.files.includes(item.file_name))
+        .files.map(item => item.file_name);
       return files;
     },
     gcode_folders: function () {
