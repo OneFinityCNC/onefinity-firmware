@@ -459,18 +459,12 @@ module.exports = {
           console.log("File uploaded " + filename);
         } else {
           console.error("File upload failed:", xhr.statusText);
+          alert("Upload failed.");
         }
       };
 
       xhr.onerror = function () {
         alert("Upload failed.");
-      };
-
-      xhr.upload.onprogress = function (event) {
-        if (event.lengthComputable) {
-          const progress = (event.loaded / event.total) * 100;
-          console.log(filename + " Upload progress:", progress);
-        }
       };
 
       xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
@@ -504,7 +498,6 @@ module.exports = {
 
     upload_folder: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
-      console.log(files);
       if (!files.length) {
         return;
       }
