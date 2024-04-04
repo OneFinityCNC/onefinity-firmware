@@ -533,7 +533,7 @@ module.exports = {
           const fileContent = await readFile(file);
           console.log(fileContent);
         } catch (error) {
-          alert("Error reading file:", error);
+          console.error("Error reading file:", error);
         }
       }
       //   const extension = file.name.split(".").pop();
