@@ -508,7 +508,7 @@ module.exports = {
         reader.onload = () => {
           resolve(reader.result);
         };
-        reader.onerror = reject("Error reading the file " + file.name);
+        reader.onerror = error => reject(error);
         reader.readAsText(file, "utf-8");
       });
     },
