@@ -502,17 +502,6 @@ module.exports = {
       this.folder_name = "";
     },
 
-    readFile: function (file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          resolve(reader.result);
-        };
-        reader.onerror = error => reject(error);
-        reader.readAsText(file, "utf-8");
-      });
-    },
-
     upload_folder: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       console.log(files);
@@ -529,12 +518,12 @@ module.exports = {
           this.showFileDuplicate = true;
           return;
         }
-        try {
-          const fileContent = await readFile(file);
-          console.log(fileContent);
-        } catch (error) {
-          console.error("Error reading file:", error);
-        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          console.log(reader.result);
+        };
+        reader.onerror = error => console.error("Error reading file: ", error);
+        reader.readAsText(file, "utf-8");
       }
       //   const extension = file.name.split(".").pop();
       //   switch (extension.toLowerCase()) {
