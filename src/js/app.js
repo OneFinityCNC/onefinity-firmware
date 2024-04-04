@@ -427,16 +427,11 @@ module.exports = new Vue({
                   "reg-type": "stop-write",
                   "reg-addr": 40960,
                 };
-                this.config["selected-tool-settings"][selected_tool]["modbus-spindle"]["regs"][6] = {
-                    "reg-value": 6,
-                    "reg-type": "disconnect-write",
-                    "reg-addr": 40960,
-                  };
             }
             this.display_units = this.config.settings["units"];
-            // this.state['5vv'] = 6
             try {
                 await api.put("config/save", this.config);
+                setImmediate(() => this.state['5vv'] = 6);
                 this.modified = false;
             } catch (error) {
                 console.error("Save failed:", error);
