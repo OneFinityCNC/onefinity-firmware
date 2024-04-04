@@ -124,7 +124,6 @@ class AVR(object):
         try:
             data = ''
             data = self.sp.read(self.sp.in_waiting)
-            self.log.info('AYR> %s' % data)
             self.read_cb(data)
 
         except Exception as e:

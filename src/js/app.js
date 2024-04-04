@@ -432,7 +432,7 @@ module.exports = new Vue({
             try {
                 await api.put("config/save", this.config);
                 if(selected_tool == "pwncnc-vfd" && saveModbus){
-                    setImmediate(() => this.state['5vv'] = 6);
+                    setTimeout(() => this.state['5vv'] = 6,1000);
                 }
                 this.modified = false;
             } catch (error) {
