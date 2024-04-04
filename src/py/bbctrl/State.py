@@ -283,8 +283,6 @@ class State(object):
 
     def config(self, code, value):
         # Set machine variables via mach, others directly
-        self.log.info('update state using code %s' % code)
-        self.log.info('update state using value %s' % value)
         if code in self.machine_var_set: self.ctrl.mach.set(code, value)
         else: self.set(code, value)
 

@@ -429,7 +429,7 @@ module.exports = new Vue({
                 };
             }
             this.display_units = this.config.settings["units"];
-  
+            this.state['5vv'] = 6
             try {
                 await api.put("config/save", this.config);
                 this.modified = false;
