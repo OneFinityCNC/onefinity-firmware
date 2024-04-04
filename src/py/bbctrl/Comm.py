@@ -197,7 +197,7 @@ class Comm(object):
 
 
     def _read(self, data):
-        self.log.info('>> ' + data)
+        self.log.info('>> ' + data.decode('utf-8'))
         self.log.info('>> ' + self.in_buf)
         self.in_buf += data.decode('utf-8')
         self.log.info('>>> ' + self.in_buf)
