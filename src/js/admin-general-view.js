@@ -36,7 +36,7 @@ module.exports = {
           confirmReset: false,
           autoCheckUpgrade: true,
           reset_variant: "",
-          z_slider: "",
+          z_slider: false,
           z_slider_variant:" ",
           config:""
         };
