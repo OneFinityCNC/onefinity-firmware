@@ -216,13 +216,13 @@ module.exports = {
       if (this.state.folder == "Unorganized files") {
         files = this.config.gcode_list.filter(item => item.type == "file" && this.state.files.includes(item.name));
         files = files.map(item => item.name);
-        return files;
+        return files.sort();
       }
       files = this.config.gcode_list
         .find(item => item.name == this.state.folder)
         .files.filter(item => this.state.files.includes(item.file_name))
         .map(item => item.file_name);
-      return files;
+      return files.sort();
     },
     gcode_folders: function () {
       let folders = [];
@@ -231,7 +231,7 @@ module.exports = {
           folders.push(item.name);
         }
       }
-      return folders;
+      return folders.sort();
     },
   },
 
@@ -463,7 +463,7 @@ module.exports = {
       };
 
       xhr.onerror = function () {
-        console.error("Network error during file upload");
+        alert("Upload failed.");
       };
 
       xhr.upload.onprogress = function (event) {

@@ -47,7 +47,10 @@ module.exports = {
       return this.tab > 8;
     },
     macros_gcode_list: function () {
-      return this.config.macros_list.map(el => el.file_name).sort();
+      return this.config.macros_list
+        .filter(item => this.state.files.includes(item.file_name))
+        .map(item => item.file_name)
+        .sort();
     },
     macros_list: function () {
       return this.config.macros.map(item => item.name);
