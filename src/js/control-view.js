@@ -508,8 +508,8 @@ module.exports = {
         reader.onload = () => {
           resolve(reader.result);
         };
-        reader.onerror = reject;
-        reader.readAsText(file);
+        reader.onerror = reject("Error reading the file " + file.name);
+        reader.readAsText(file, "utf-8");
       });
     },
 
@@ -533,7 +533,7 @@ module.exports = {
           const fileContent = await readFile(file);
           console.log(fileContent);
         } catch (error) {
-          alert('Error reading file:', error);
+          alert("Error reading file:", error);
         }
       }
       //   const extension = file.name.split(".").pop();
