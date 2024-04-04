@@ -504,6 +504,7 @@ module.exports = {
 
     upload_folder: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
+      console.log(files);
       if (!files.length) {
         return;
       }
