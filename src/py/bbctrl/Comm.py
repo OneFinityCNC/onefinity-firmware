@@ -197,13 +197,17 @@ class Comm(object):
 
 
     def _read(self, data):
+        self.log.info('>> ' + data)
+        self.log.info('>> ' + self.in_buf)
         self.in_buf += data.decode('utf-8')
+        self.log.info('>>> ' + self.in_buf)
 
         # Parse incoming serial data into lines
         while True:
             i = self.in_buf.find('\n')
             if i == -1: break
             line = self.in_buf[0:i].strip()
+            self.log.info('>>line ' + line)
             self.in_buf = self.in_buf[i + 1:]
 
             if line:
