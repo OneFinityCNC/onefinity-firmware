@@ -220,7 +220,9 @@ class Config(object):
                     self._encode(name, index + tmpl['index'][i], conf,
                                 tmpl['template'], with_defaults)
             else:
-                self.values[name]=value;
+                self.values[name]=value
+                self.log.info('>>config to state'+name)
+                self.ctrl.state.config(name,value)
             return
 
         # Update config values
@@ -228,10 +230,7 @@ class Config(object):
             if not name in self.values: self.values[name] = {}
             self.values[name][index] = value
 
-        else: 
-            self.values[name] = value
-            if name == "macros":
-                self.ctrl.state.config(name,value)
+        else: self.values[name] = value
 
         # Update state variable
         if not 'code' in tmpl: return
