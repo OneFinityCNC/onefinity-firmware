@@ -116,7 +116,7 @@ module.exports = {
         } else if (response.status == 400) {
           return (this.GCodeNotFound = true);
         } else {
-          console.error("error loading");
+          return alert("error loading");
         }
       } else {
         this.newGcode = "";
