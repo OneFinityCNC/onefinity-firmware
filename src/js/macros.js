@@ -27,7 +27,7 @@ module.exports = {
     };
   },
   events: {
-    "macros-edited": function () {
+    "macro-edited": function () {
       this.edited = true;
     },
   },
@@ -70,22 +70,22 @@ module.exports = {
     update_new_gcode: function (event) {
       if (this.tab != 0) {
         this.newGcode = event.target.value;
-        this.$dispatch("macros-edited");
+        this.$dispatch("macro-edited");
       }
     },
     editedColor: function (event) {
       if (this.tab != 0 && this.config.macros[this.tab - 1].color != event.target.value) {
-        this.$dispatch("macros-edited");
+        this.$dispatch("macro-edited");
       }
     },
     editedAlert: function () {
       if (this.tab != 0) {
-        this.$dispatch("macros-edited");
+        this.$dispatch("macro-edited");
       }
     },
     editedName: function (event) {
       if (this.tab != 0 && this.config.macros[this.tab - 1].name != event.target.value) {
-        this.$dispatch("macros-edited");
+        this.$dispatch("macro-edited");
       }
     },
     showDialogAsync: function (title, file) {
@@ -122,7 +122,7 @@ module.exports = {
         this.newGcode = "";
       }
       if (file != this.config.macros[this.tab - 1].file_name) {
-        this.$dispatch("macros-edited");
+        this.$dispatch("macro-edited");
       }
     },
     removeFromList: async function () {
@@ -169,7 +169,7 @@ module.exports = {
           alert("Restore failed");
         }
       }
-      this.$dispatch("macros-edited");
+      this.$dispatch("macro-edited");
       try {
         await this.showDialogAsync("Upload", file);
         this.load();
@@ -255,7 +255,9 @@ module.exports = {
       this.edited = false;
     },
     check_gcode_with_macro: function () {
-      const macro_with_filename = this.config.macros.find(item => item.file_name == this.fileName);
+      const macro_with_filename = this.config.macros.find(
+        item => this.fileName != "default" && item.file_name == this.fileName,
+      );
       if (macro_with_filename) {
         this.deleteGCode = false;
         this.macroFound = true;
@@ -265,7 +267,9 @@ module.exports = {
     },
     delete_current: async function () {
       const filename = this.fileName;
-      const macro_with_filename = this.config.macros.filter(item => item.file_name == this.fileName);
+      const macro_with_filename = this.config.macros.filter(
+        item => item.file_name != "default" && item.file_name == this.fileName,
+      );
       if (macro_with_filename.length != 0) {
         this.macroFound = false;
         macro_with_filename.forEach(item => (item.file_name = "default"));
