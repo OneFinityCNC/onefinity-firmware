@@ -24,9 +24,19 @@ script#macros-template(type="text/x-template")
         p(slot="body")
         div(slot="footer")
           button.pure-button(@click="deleteGCode = false") Cancel
-          button.pure-button.button-error(@click="delete_current")
+          button.pure-button.button-error(@click="check_gcode_with_macro")
             .fa.fa-trash
             | &nbsp;Selected
+
+    message(:show.sync="macroFound")
+        h3(slot="header") The file is currently being used by a macro.
+        p(slot="body")
+            p You need to re-select a file for the macro.
+        div(slot="footer")
+          button.pure-button(@click="macroFound = false") Cancel
+          button.pure-button.button-error(@click="delete_current")
+            .fa.fa-trash
+            | &nbsp;Delete Anyway
 
     message(:show.sync="deleteSelected")
         h3(slot="header") Delete Selected Macro?
@@ -57,6 +67,15 @@ script#macros-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="addMacros = false") Cancel
           button.pure-button.button-submit(@click="add_new_macro") Add
+
+    message(:show.sync="GCodeNotFound")
+        h3(slot="header") File not found
+        p(slot="body")
+            p It seems like the file you selected cannot be found.
+        div(slot="footer")
+          button.pure-button.button-error(@click="removeFromList")
+            .fa.fa-trash
+            | &nbsp;Remove
 
     h1 Macros Configuration
     .flex-row-container

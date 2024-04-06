@@ -18,6 +18,8 @@ module.exports = {
       edited: false,
       addMacros: false,
       maxLimitReached: false,
+      macroFound: false,
+      GCodeNotFound: false,
       macrosName: "",
       isChecked: false,
       fileName: "default",
@@ -111,6 +113,8 @@ module.exports = {
         if (response.status == 200) {
           const text = await response.text();
           this.newGcode = text;
+        } else if (response.status == 400) {
+          return (this.GCodeNotFound = true);
         } else {
           console.error("error loading");
         }
@@ -119,6 +123,16 @@ module.exports = {
       }
       if (file != this.config.macros[this.tab - 1].file_name) {
         this.$dispatch("macros-edited");
+      }
+    },
+    removeFromList: async function () {
+      this.config.macros_list = this.config.macros_list.filter(item => item.file_name != this.fileName);
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
       }
     },
     upload: async function (e) {
@@ -203,9 +217,10 @@ module.exports = {
       const macros = [...this.config.macros];
       macros.splice(this.tab - 1, 1);
       const macros_list = macros.map(item => item.name);
+      var macrosName = document.getElementById(`macros-name`).value;
       var macrosColor = document.getElementById("macros-color").value;
       var macrosAlert = this.isChecked;
-      const formattedFilename = this.macrosName
+      const formattedFilename = macrosName
         .replace(/\\/g, "_")
         .replace(/\//g, "_")
         .replace(/#/g, "-")
@@ -224,7 +239,7 @@ module.exports = {
         this.upload_gcode(file_name, file);
       }
 
-      this.config.macros[this.tab - 1].name = this.macrosName;
+      this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].file_name = file_name;
       this.config.macros[this.tab - 1].alert = macrosAlert;
@@ -239,14 +254,27 @@ module.exports = {
       }
       this.edited = false;
     },
+    check_gcode_with_macro: function () {
+      const macro_with_filename = this.config.macros.find(item => item.file_name == this.fileName);
+      if (macro_with_filename) {
+        this.deleteGCode = false;
+        this.macroFound = true;
+      } else {
+        this.delete_current();
+      }
+    },
     delete_current: async function () {
       const filename = this.fileName;
+      const macro_with_filename = this.config.macros.filter(item => item.file_name == this.fileName);
+      if (macro_with_filename.length != 0) {
+        this.macroFound = false;
+        macro_with_filename.forEach(item => (item.file_name = "default"));
+      }
       if (filename == "default") {
         this.newGcode = "";
       } else {
         api.delete(`file/${filename}`);
         this.newGcode = "";
-        this.config.macros[this.tab - 1].file_name = "default";
         this.config.macros_list = this.config.macros_list.filter(item => item.file_name !== filename);
       }
       try {
