@@ -431,9 +431,6 @@ module.exports = new Vue({
             this.display_units = this.config.settings["units"];
             try {
                 await api.put("config/save", this.config);
-                if(selected_tool == "pwncnc-vfd" && saveModbus){
-                    setTimeout(() => this.state['5vv'] = 6, 2000);
-                }
                 this.modified = false;
             } catch (error) {
                 console.error("Save failed:", error);
