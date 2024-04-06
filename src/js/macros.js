@@ -47,10 +47,12 @@ module.exports = {
       return this.tab > 8;
     },
     macros_gcode_list: function () {
-      return this.config.macros_list
-        .filter(item => this.state.files.includes(item.file_name))
-        .map(item => item.file_name)
-        .sort();
+      return (
+        this.config.macros_list
+          // .filter(item => this.state.files.includes(item.file_name))
+          .map(item => item.file_name)
+          .sort()
+      );
     },
     macros_list: function () {
       return this.config.macros.map(item => item.name);
@@ -105,6 +107,7 @@ module.exports = {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
+        console.log("response", response);
         if (response.status == 200) {
           const text = await response.text();
           this.newGcode = text;

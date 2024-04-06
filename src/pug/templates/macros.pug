@@ -81,7 +81,7 @@ script#macros-template(type="text/x-template")
                         p.title Macro Name
                         .input-container
                                 input.input-color(type="color",id="macros-color",value="#ffffff",@change="editedColor") 
-                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name" ,v-model="macrosName",@keypress="editedName")
+                                input.input-name(type="text",minlength='1',maxlength='15',id="macros-name" ,v-model="macrosName",@keydown="editedName")
                         div
                           input.input-alert(type="checkbox",id="macros-alert" v-model="isChecked",@change="editedAlert")
                           label Would you like an alert when running this macro?
