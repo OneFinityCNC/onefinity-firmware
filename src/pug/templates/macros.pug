@@ -29,8 +29,9 @@ script#macros-template(type="text/x-template")
             | &nbsp;Selected
 
     message(:show.sync="macroFound")
-        h3(slot="header") The file is currently being used by a macro.
-        p(slot="body")
+        h3(slot="header") Alert
+        div(slot="body")
+            p The file is currently being used by a macro.
             p You need to re-select a file for the macro.
         div(slot="footer")
           button.pure-button(@click="macroFound = false") Cancel
@@ -70,7 +71,7 @@ script#macros-template(type="text/x-template")
 
     message(:show.sync="GCodeNotFound")
         h3(slot="header") File not found
-        p(slot="body")
+        div(slot="body")
             p It seems like the file you selected cannot be found.
         div(slot="footer")
           button.pure-button.button-error(@click="removeFromList")

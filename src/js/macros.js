@@ -134,6 +134,8 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
+      this.fileName = "default";
+      this.GCodeNotFound = false;
     },
     upload: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
