@@ -279,34 +279,35 @@ module.exports = {
     },
     delete_current: async function () {
       const filename = this.fileName;
-      const macro_with_filename = this.state.macros.filter(
-        item => item.file_name != "default" && item.file_name == this.fileName,
-      );
-      if (macro_with_filename.length != 0) {
-        this.macroFound = false;
-        this.macroFoundName = "";
-        this.macroFoundGcode = "";
-        macro_with_filename.forEach(item => {
-          console.log(item.name);
-          item.file_name = "default";
-        });
-      }
       if (filename == "default") {
         this.newGcode = "";
       } else {
+        this.config.macros = [...this.state.macros];
+        const macro_with_filename = this.config.macros.filter(
+          item => item.file_name != "default" && item.file_name == this.fileName,
+        );
+        if (macro_with_filename.length != 0) {
+          this.macroFound = false;
+          this.macroFoundName = "";
+          this.macroFoundGcode = "";
+          macro_with_filename.forEach(item => {
+            console.log(item.name);
+            item.file_name = "default";
+          });
+        }
         api.delete(`file/${filename}`);
         this.newGcode = "";
         this.config.macros_list = [...this.state.macros_list];
         this.config.macros_list = this.config.macros_list.filter(item => item.file_name !== filename);
+        this.fileName = "default";
+        try {
+          await api.put("config/save", this.config);
+          this.$dispatch("update");
+        } catch (error) {
+          console.error("Restore Failed: ", error);
+          alert("Restore failed");
+        }
       }
-      try {
-        await api.put("config/save", this.config);
-        this.$dispatch("update");
-      } catch (error) {
-        console.error("Restore Failed: ", error);
-        alert("Restore failed");
-      }
-      this.fileName = "default";
       this.deleteGCode = false;
     },
     clear_macro: async function () {
