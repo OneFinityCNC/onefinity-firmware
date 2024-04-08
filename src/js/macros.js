@@ -23,6 +23,7 @@ module.exports = {
       macrosName: "",
       isChecked: false,
       macroFoundName: "",
+      macroFoundGcode: "",
       fileName: "default",
       newGcode: "",
     };
@@ -124,6 +125,8 @@ module.exports = {
     removeFromList: async function () {
       this.config.macros_list = [...this.state.macros_list];
       this.config.macros_list = this.config.macros_list.filter(item => item.file_name != this.fileName);
+      this.config.macros = [...this.state.macros];
+      this.config.macros.filter(item => item.file_name == this.fileName).forEach(item => (item.file_name = "default"));
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
@@ -267,7 +270,8 @@ module.exports = {
       );
       if (macro_with_filename) {
         this.deleteGCode = false;
-        this.macroFoundName = macro_with_filename.file_name;
+        this.macroFoundName = macro_with_filename.name;
+        this.macroFoundGcode = macro_with_filename.file_name;
         this.macroFound = true;
       } else {
         this.delete_current();
@@ -280,6 +284,8 @@ module.exports = {
       );
       if (macro_with_filename.length != 0) {
         this.macroFound = false;
+        this.macroFoundName = "";
+        this.macroFoundGcode = "";
         macro_with_filename.forEach(item => (item.file_name = "default"));
       }
       if (filename == "default") {

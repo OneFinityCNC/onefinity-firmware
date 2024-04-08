@@ -13,9 +13,11 @@ script#macros-template(type="text/x-template")
         h3(slot="header") Alert
         div(slot="body")
             p 
-            | The file is currently being used by a macro 
+            | The file 
+            strong {{macroFoundGcode}}
+            |  is currently being used by a macro 
             strong {{macroFoundName}}
-            |  . You need to re-select a file for the macro.
+            | . You need to re-select a file for the macro.
         div(slot="footer")
           button.pure-button(@click="macroFound = false") Cancel
           button.pure-button.button-error(@click="delete_current")
