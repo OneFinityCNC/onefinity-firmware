@@ -38,6 +38,7 @@ module.exports = {
           reset_variant: "",
           z_slider: false,
           z_slider_variant:" ",
+          config:""
         };
     },
 
