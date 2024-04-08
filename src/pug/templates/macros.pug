@@ -82,7 +82,7 @@ script#macros-template(type="text/x-template")
         div(style="display:flex;align-items:center;margin-left:30px")
                 h2 Select Macro
                 select(id="macros-select",title="Select a Macro to edit.",selected
-                                                v-model="tab",@change="clear_macro",
+                                                v-model="tab",@change="load_macro",
                                                 style="width:250px;height:50px;border-radius:10px;padding-left:15px;font-weight:bold;margin-left:30px")
                                                 option( selected='' value='0')  Select a Macro
                                                 option(v-for="(index,file) in macros_list", :value="index+1") {{file}}
@@ -135,4 +135,4 @@ script#macros-template(type="text/x-template")
             button.pure-button(@click="confirmSave=false") Cancel
             button.pure-button.pure-button-primary(@click="save_macro") Confirm
 
-        button.submit-macros(title="Cancel Macro",@click="clear_macro",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel
+        button.submit-macros(title="Cancel Macro",@click="load_macro",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel

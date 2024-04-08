@@ -217,7 +217,7 @@ module.exports = {
     },
     save_macro: async function () {
       if (this.tab == 0 || !this.state.macros[this.tab - 1]) {
-        this.clear_macro();
+        this.load_macro();
         this.confirmSave = false;
         return;
       }
@@ -307,13 +307,12 @@ module.exports = {
       }
       this.deleteGCode = false;
     },
-    clear_macro: async function () {
-      if (this.tab == 0 || this.tab > this.state.macros.length) {
+    load_macro: async function () {
+      if (this.tab == 0) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
         this.isChecked = true;
         this.fileName = "default";
-        this.tab = "0";
         this.newGcode = "";
       } else {
         const defaultValue = this.state.macros[this.tab - 1];
@@ -388,7 +387,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
-      this.clear_macro();
+      this.load_macro();
     },
     add_new_macro: async function () {
       let length = this.state.macros.length;
@@ -407,6 +406,8 @@ module.exports = {
       };
       this.config.macros = [...this.state.macros];
       this.config.macros.push(newMacros);
+      this.tab = this.state.macros.length + 1;
+      this.load_macro();
       this.addMacros = false;
       try {
         await api.put("config/save", this.config);
@@ -418,14 +419,14 @@ module.exports = {
     },
     delete_selected_macro: async function () {
       if (this.tab == 0) {
-        this.clear_macro();
+        this.load_macro();
         this.deleteSelected = false;
         return;
       }
       this.config.macros = [...this.state.macros];
       this.config.macros.splice(this.tab - 1, 1);
       this.tab--;
-      this.clear_macro();
+      this.load_macro();
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
