@@ -224,6 +224,12 @@ module.exports = {
       var macrosName = document.getElementById(`macros-name`).value;
       var macrosColor = document.getElementById("macros-color").value;
       var macrosAlert = this.isChecked;
+
+      if (this.fileName != "default" && !this.state.macros_list.map(item => item.file_name).includes(this.fileName)) {
+        this.fileName = "default";
+        this.newGcode = "";
+      }
+
       const macros = [...this.state.macros];
       macros.splice(this.tab - 1, 1);
       const macros_list = macros.map(item => item.name);
@@ -406,7 +412,7 @@ module.exports = {
       };
       this.config.macros = [...this.state.macros];
       this.config.macros.push(newMacros);
-      this.tab = this.state.macros.length + 1;
+      this.tab = this.state.macros.length;
       this.load_macro();
       this.addMacros = false;
       try {
