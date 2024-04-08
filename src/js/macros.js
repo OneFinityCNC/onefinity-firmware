@@ -286,7 +286,10 @@ module.exports = {
         this.macroFound = false;
         this.macroFoundName = "";
         this.macroFoundGcode = "";
-        macro_with_filename.forEach(item => (item.file_name = "default"));
+        macro_with_filename.forEach(item => {
+          console.log(item.name);
+          item.file_name = "default";
+        });
       }
       if (filename == "default") {
         this.newGcode = "";
@@ -378,7 +381,6 @@ module.exports = {
       const macros_list = this.state.macros_list.map(item => item.file_name).toString();
       api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macros_list}`);
       this.config.macros_list = [];
-      this.clear_macro();
       this.edited = false;
       this.confirmReset = false;
       try {
@@ -388,6 +390,7 @@ module.exports = {
         console.error("Restore Failed: ", error);
         alert("Restore failed");
       }
+      this.clear_macro();
     },
     add_new_macro: async function () {
       let length = this.state.macros.length;

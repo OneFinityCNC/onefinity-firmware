@@ -221,7 +221,6 @@ class Config(object):
                                 tmpl['template'], with_defaults)
             else:
                 self.values[name]=value
-                self.log.info('>> config to state'+name)
                 self.ctrl.state.config(name,value)
             return
 
