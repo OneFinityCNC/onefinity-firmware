@@ -209,22 +209,22 @@ module.exports = {
       return Math.min(1, p);
     },
     gcode_files: function () {
-      let files = [];
       if (!this.state.folder || this.state.folder == "") {
-        return files;
+        return [];
       }
       if (this.state.folder == "default") {
-        files = this.state.gcode_list
+        const files = this.state.gcode_list
           .filter(item => item.type == "file")
           .map(item => item.name)
           .sort();
         return files;
       }
-      files = this.state.gcode_list
-        .find(item => item.name == this.state.folder)
-        .files.map(item => item.file_name)
-        .sort();
-      return files;
+      const folder = this.state.gcode_list.find(item => item.name == this.state.folder);
+      if (folder) {
+        return folder.files.map(item => item.file_name).sort();
+      } else {
+        return [];
+      }
     },
     gcode_folders: function () {
       let folders = [];
@@ -449,7 +449,9 @@ module.exports = {
         const folder_to_add = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         );
-        folder_to_add.files.push({ file_name: file.name });
+        if (!folder_to_add.files.find(item => item.file_name == file.name)) {
+          folder_to_add.files.push({ file_name: file.name });
+        }
       }
       this.save_config(this.config);
 
@@ -487,6 +489,7 @@ module.exports = {
       if (folder_name != "") {
         if (this.state.gcode_list.find(item => item.type == "folder" && item.name == folder_name)) {
           alert("Folder with the same name already exists!");
+          return;
         } else {
           this.config.gcode_list = [...this.state.gcode_list];
           this.config.gcode_list.push({
@@ -545,7 +548,9 @@ module.exports = {
 
           const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
           if (folder) {
-            folder.files.push({ file_name: file.name });
+            if (!folder.files.map(item => item.file_name).includes(file.name)) {
+              folder.files.push({ file_name: file.name });
+            }
           } else {
             this.config.gcode_list.push({
               name: folderName,
@@ -606,7 +611,11 @@ module.exports = {
       if (this.state.folder == "default") {
         this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
       } else {
-        this.config.gcode_list.find(item => item.type == "folder" && item.name == this.state.folder).files = [];
+        this.config.gcode_list
+          .filter(item => item.type == "folder")
+          .forEach(item => {
+            item.files = [];
+          });
       }
       this.save_config(this.config);
       this.deleteGCode = false;
