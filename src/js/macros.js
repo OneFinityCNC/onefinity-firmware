@@ -390,10 +390,13 @@ module.exports = {
       }
     },
     add_new_macro: async function () {
-      const length = this.state.macros.length;
+      let length = this.state.macros.length;
       if (length >= 20) {
         this.maxLimitReached = true;
         return;
+      }
+      while (this.state.macros.find(item => item.name == `Macro ${length + 1}`)) {
+        length++;
       }
       const newMacros = {
         name: `Macro ${length + 1}`,
