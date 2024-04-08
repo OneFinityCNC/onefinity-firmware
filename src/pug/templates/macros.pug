@@ -61,7 +61,7 @@ script#macros-template(type="text/x-template")
             button.pure-button(@click="addMacros = false") Cancel
             button.pure-button.button-submit(@click="add_new_macro") Add
             
-        button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px") Delete Selected Macro
+        button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px;width:40%") Delete Selected Macro
 
         message(:show.sync="deleteSelected")
           div(slot="header")

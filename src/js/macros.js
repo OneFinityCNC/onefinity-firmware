@@ -419,11 +419,12 @@ module.exports = {
     delete_selected_macro: async function () {
       if (this.tab == 0) {
         this.clear_macro();
+        this.deleteSelected = false;
         return;
       }
       this.config.macros = [...this.state.macros];
       this.config.macros.splice(this.tab - 1, 1);
-      this.tab = this.state.macros.length - 1;
+      this.tab--;
       this.clear_macro();
       try {
         await api.put("config/save", this.config);
