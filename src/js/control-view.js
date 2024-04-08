@@ -214,14 +214,17 @@ module.exports = {
       }
       if (this.state.folder == "default") {
         const files = this.state.gcode_list
-          .filter(item => item.type == "file")
+          .filter(item => item.type == "file" && this.state.includes(item.name))
           .map(item => item.name)
           .sort();
         return files;
       }
       const folder = this.state.gcode_list.find(item => item.name == this.state.folder);
       if (folder) {
-        return folder.files.map(item => item.file_name).sort();
+        return folder.files
+          .filter(item => this.state.includes(item.file_name))
+          .map(item => item.file_name)
+          .sort();
       } else {
         return [];
       }
