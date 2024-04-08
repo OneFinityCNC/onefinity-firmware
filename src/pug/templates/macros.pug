@@ -1,21 +1,12 @@
 script#macros-template(type="text/x-template")
   #macros
-    message(:show.sync="confirmReset")
-      h3(slot="header") Delete All Macros?
-      div(slot="body")
-        p Are you sure you want to Delete all macros?
-      div(slot="footer")
-        button.pure-button(@click="confirmReset=false") Cancel
-        button.pure-button.button-error(@click="delete_all_macros")
-          | Delete All
-
     message(:show.sync="macroFound")
         h3(slot="header") Alert
         div(slot="body")
             p 
             | The file 
             strong {{macroFoundGcode}}
-            |  is currently being used by a macro 
+            |  is currently being used by macro 
             strong {{macroFoundName}}
             | . You need to re-select a file for the macro.
         div(slot="footer")
@@ -50,7 +41,18 @@ script#macros-template(type="text/x-template")
     h1 Macros Configuration
     .flex-row-container
         button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Delete All
+
+        message(:show.sync="confirmReset")
+          h3(slot="header") Delete All Macros?
+          div(slot="body")
+            p Are you sure you want to delete all macros?
+          div(slot="footer")
+            button.pure-button(@click="confirmReset=false") Cancel
+            button.pure-button.button-error(@click="delete_all_macros")
+              | Delete All
+              
         button.config-button.button-blue(title="Add a Macros", @click="addMacros=true", style="margin-left:5px") New Macro
+
         message(:show.sync="addMacros")
           div(slot="header") 
           div(slot="body")
@@ -60,6 +62,7 @@ script#macros-template(type="text/x-template")
             button.pure-button.button-submit(@click="add_new_macro") Add
             
         button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
+
         message(:show.sync="deleteSelected")
           div(slot="header")
           div(slot="body")
