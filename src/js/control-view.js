@@ -49,6 +49,7 @@ module.exports = {
       showNoGcodeMessage: false,
       macrosLoading: false,
       show_gcodes: false,
+      GCodeNotFound: false,
     };
   },
 
@@ -317,6 +318,11 @@ module.exports = {
       const file_time = this.state.selected_time;
       const file = this.state.selected;
       if (this.last_file == file && this.last_file_time == file_time) {
+        return;
+      }
+
+      if (!this.state.files.includes(this.state.selected)) {
+        this.GCodeNotFound = true;
         return;
       }
 
@@ -617,7 +623,6 @@ module.exports = {
             }
             return true;
           });
-          console.log(this.config.gcode_list);
           this.save_config(this.config);
         }
       }
@@ -771,7 +776,6 @@ module.exports = {
         }
         try {
           this.load();
-          console.log("selected", this.state);
           if (this.state.macros[id].alert == true) {
             this.macrosLoading = true;
           } else {

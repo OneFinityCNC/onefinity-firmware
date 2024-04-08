@@ -29,6 +29,14 @@ script#control-view-template(type="text/x-template")
         div(slot="footer")
           button.pure-button(@click="macrosLoading=false") Cancel
           button.pure-button.pure-button-primary(@click="start_pause") Run
+    
+    message(:show.sync="GCodeNotFound")
+      h3(slot="header") File not found
+      div(slot="body")
+          p It seems like the file you selected cannot be found. Try uploading again.
+      div(slot="footer")
+        button.pure-button.button-error(@click="GCodeNotFound=false")
+          | OK
 
     table(style="table-layout: fixed; width: 100%;")
       tr(style="height: fit-content;")
