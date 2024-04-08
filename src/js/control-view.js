@@ -408,6 +408,11 @@ module.exports = {
       }
     },
 
+    reset_gcode: function () {
+      this.state.selected = "";
+      this.$broadcast("gcode-load", "");
+    },
+
     upload_file: async function (e) {
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
