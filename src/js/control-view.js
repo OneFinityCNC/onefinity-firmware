@@ -321,7 +321,7 @@ module.exports = {
         return;
       }
 
-      if (!this.state.files.includes(this.state.selected)) {
+      if (this.state.selected && !this.state.files.includes(this.state.selected)) {
         this.GCodeNotFound = true;
         return;
       }
@@ -597,8 +597,12 @@ module.exports = {
       const macrosList = this.state.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
-      this.state.folder = "default";
-      this.config.gcode_list = [];
+      this.config.gcode_list = [...this.state.gcode_list];
+      if (this.state.folder == "default") {
+        this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
+      } else {
+        this.config.gcode_list.find(item => item.type == "folder" && item.name == this.state.folder).files = [];
+      }
       this.save_config(this.config);
       this.deleteGCode = false;
     },
@@ -653,7 +657,7 @@ module.exports = {
           this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
         }
       }
-      
+
       await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete.toString()}`);
       this.config.non_macros_list = this.config.non_macros_list.filter(
         item => !files_to_delete.includes(item.file_name),
