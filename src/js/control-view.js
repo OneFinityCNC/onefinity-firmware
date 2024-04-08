@@ -635,24 +635,29 @@ module.exports = {
         return;
       }
 
+      this.config.gcode_list = [...this.state.gcode_list];
+      this.config.non_macros_list = [...this.state.non_macros_list];
+
       if (this.state.folder != "default") {
-        this.config.gcode_list = [...this.state.gcode_list];
         const selected_folder = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         ).files;
         if (selected_folder) {
-          const files_to_delete = selected_folder.map(item => item.file_name).toString();
-          await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
+          var files_to_delete = selected_folder.map(item => item.file_name);
           this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
         }
       } else {
         const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
         if (selected_folder) {
-          const files_to_delete = selected_folder.map(item => item.name).toString();
-          await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete}`);
+          var files_to_delete = selected_folder.map(item => item.name);
           this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
         }
       }
+      
+      await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete.toString()}`);
+      this.config.non_macros_list = this.config.non_macros_list.filter(
+        item => !files_to_delete.includes(item.file_name),
+      );
       this.save_config(this.config);
       this.state.folder = "default";
       this.confirmDelete = false;
