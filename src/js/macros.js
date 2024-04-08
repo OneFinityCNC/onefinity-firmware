@@ -47,9 +47,6 @@ module.exports = {
     is_ready: function () {
       return this.mach_state == "READY";
     },
-    macrosLength: function () {
-      return this.tab > 8;
-    },
     macros_gcode_list: function () {
       return this.state.macros_list.map(item => item.file_name).sort();
     },
