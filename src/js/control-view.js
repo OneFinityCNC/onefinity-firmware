@@ -213,7 +213,7 @@ module.exports = {
         return [];
       }
       let files = [];
-      if (this.state.folder == "Unorganized files") {
+      if (this.state.folder == "default") {
         files = this.config.gcode_list.filter(item => item.type == "file" && this.state.files.includes(item.name));
         files = files.map(item => item.name);
         return files.sort();
@@ -430,7 +430,7 @@ module.exports = {
         this.config.non_macros_list.push({ file_name: file.name });
       }
       if (
-        this.state.folder == "Unorganized files" &&
+        this.state.folder == "default" &&
         !this.config.gcode_list.find(item => item.name == file.name && item.type == "file")
       ) {
         this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
@@ -567,7 +567,7 @@ module.exports = {
 
       this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
 
-      if (this.state.folder == "Unorganized files") {
+      if (this.state.folder == "default") {
         this.config.gcode_list = this.config.gcode_list.filter(
           item => (item.type == "file" || item.type == "folder") && item.name != this.state.selected,
         );
@@ -593,14 +593,14 @@ module.exports = {
       const macrosList = this.config.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
-      this.state.folder = "Unorganized files";
+      this.state.folder = "default";
       this.config.gcode_list = [];
       this.save_config(this.config);
       this.deleteGCode = false;
     },
 
     delete_folder: async function () {
-      if (this.state.folder && this.state.folder != "Unorganized files") {
+      if (this.state.folder && this.state.folder != "default") {
         console.log("595");
         const files_to_move = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
@@ -624,7 +624,7 @@ module.exports = {
           this.save_config(this.config);
         }
       }
-      this.state.folder = "Unorganized files";
+      this.state.folder = "default";
       this.confirmDelete = false;
     },
     delete_folder_and_files: async function () {
@@ -633,7 +633,7 @@ module.exports = {
         return;
       }
 
-      if (this.state.folder != "Unorganized files") {
+      if (this.state.folder != "default") {
         const selected_folder = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         ).files;
@@ -651,7 +651,7 @@ module.exports = {
         }
       }
       this.save_config(this.config);
-      this.state.folder = "Unorganized files";
+      this.state.folder = "default";
       this.confirmDelete = false;
     },
 

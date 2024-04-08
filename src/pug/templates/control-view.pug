@@ -351,7 +351,7 @@ script#control-view-template(type="text/x-template")
             select(title="Select previously uploaded GCode folder.",
               v-model="state.folder", :disabled="!is_ready",
               style="max-width:100%")
-              option( selected='' value='Unorganized files')  Unorganized files
+              option( selected='' value='default')  Default folder
               option(v-for="file in gcode_folders", :value="file") {{file}}
             
             //- button.pure-button(title="Upload a new folder.", @click="open_folder",
