@@ -359,6 +359,9 @@ script#control-view-template(type="text/x-template")
             //-   :disabled="!is_ready")
             //-   | Upload File
 
+            button.submit-macros(title="Cancel Macros",@click="print_config",style="margin-left:5px;background-color:#fafafa;") CONFIG
+            button.submit-macros(title="Cancel Macros",@click="print_state",style="margin-left:5px;background-color:#fafafa;") STATE
+
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
             title="Simulating GCode to check for errors, calculate ETA and " +
               "generate 3D view.  You can run GCode before the simulation " +

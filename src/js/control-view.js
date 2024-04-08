@@ -506,10 +506,10 @@ module.exports = {
 
       this.config.non_macros_list = [...this.state.non_macros_list];
       this.config.gcode_list = [...this.state.gcode_list];
-      
+
       for (let file of files) {
         const reader = new FileReader();
-        reader.onload = async () => {
+        reader.onload = () => {
           const gcode = reader.result;
 
           const extension = file.name.split(".").pop();
@@ -525,7 +525,7 @@ module.exports = {
               return;
           }
 
-          await this.upload_gcode(file.name, gcode);
+          this.upload_gcode(file.name, gcode);
 
           const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
           if (!isAlreadyPresent) {
@@ -781,6 +781,12 @@ module.exports = {
           console.warn("Error running program: ", error);
         }
       }
+    },
+    print_config: function () {
+      console.log(this.config);
+    },
+    print_state: function () {
+      console.log(this.state);
     },
   },
 
