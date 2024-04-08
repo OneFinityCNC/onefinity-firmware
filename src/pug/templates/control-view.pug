@@ -231,7 +231,7 @@ script#control-view-template(type="text/x-template")
                       .bar(:style="'width:' + (progress || 0) * 100 + '%'")
 
     .macros-div(class="present")
-       button.macros-button(title="Click to run Macros",v-for="(index,macros) in config.macros",
+       button.macros-button(title="Click to run Macros",v-for="(index,macros) in state.macros",
           @click="run_macro(index)",:disabled="!is_ready",v-bind:style="{ backgroundColor: macros.color }") {{macros.name}}
 
     .tabs
@@ -270,14 +270,6 @@ script#control-view-template(type="text/x-template")
             :disabled="(!is_ready && !is_holding) || !state.selected",
             v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-step-forward
-
-          message(:show.sync="showFileDuplicate")
-              h3(slot="header") G-Code file with the same name already exists
-              div(slot="body")
-                p Please rename the file or delete the existing file and try again.
-
-              div(slot="footer")
-                button.pure-button(@click="showFileDuplicate=false") OK
           
           button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
@@ -345,12 +337,12 @@ script#control-view-template(type="text/x-template")
               | Create Folder
             
             button.pure-button(title="Delete a folder.", @click="confirmDelete=true",
-              :disabled="!is_ready",style="height:100%")
+              :disabled="!is_ready",style="height:100%;margin-left:5px")
               | Delete Folder
 
             select(title="Select previously uploaded GCode folder.",
               v-model="state.folder", :disabled="!is_ready",
-              style="max-width:100%")
+              style="max-width:100%;margin-left:5px")
               option( selected='' value='default')  Default folder
               option(v-for="file in gcode_folders", :value="file") {{file}}
             
@@ -360,7 +352,7 @@ script#control-view-template(type="text/x-template")
 
             select(title="Select previously uploaded GCode programs.",
               v-model="state.selected", @change="load", :disabled="!is_ready",
-              style="max-width:100%")
+              style="max-width:100%;margin-left:5px")
               option(v-for="file in gcode_files", :value="file") {{file}}
             
             //- button.pure-button(title="Upload a new GCode program.", @click="open_file",
