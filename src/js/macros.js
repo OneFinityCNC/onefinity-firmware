@@ -106,14 +106,15 @@ module.exports = {
         const response = await fetch(`/api/file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${file}`, {
           cache: "no-cache",
         });
-        console.log("response", response);
         if (response.status == 200) {
           const text = await response.text();
           this.newGcode = text;
         } else if (response.status == 400) {
-          return (this.GCodeNotFound = true);
+          this.GCodeNotFound = true;
+          return;
         } else {
-          return alert("error loading");
+          alert("error loading");
+          return;
         }
       } else {
         this.newGcode = "";
@@ -126,7 +127,11 @@ module.exports = {
       this.config.macros_list = [...this.state.macros_list];
       this.config.macros_list = this.config.macros_list.filter(item => item.file_name != this.fileName);
       this.config.macros = [...this.state.macros];
-      this.config.macros.filter(item => item.file_name == this.fileName).forEach(item => (item.file_name = "default"));
+      this.config.macros
+        .filter(item => item.file_name == this.fileName)
+        .forEach(item => {
+          item.file_name = "default";
+        });
       try {
         await api.put("config/save", this.config);
         this.$dispatch("update");
@@ -187,7 +192,7 @@ module.exports = {
         if (xhr.status >= 200 && xhr.status < 300) {
           console.log("File uploaded successfully");
         } else {
-          console.error("File upload failed:", xhr.statusText);
+          alert("File upload failed:", xhr.statusText);
         }
       };
 
@@ -210,7 +215,6 @@ module.exports = {
       };
       this.config.macros_list = [...this.state.macros_list];
       if (!this.state.macros_list.some(item => item.file_name == filename)) {
-        this.config.macros_list = [...this.state.macros_list];
         this.config.macros_list.push(gcodeData);
       }
     },
@@ -238,13 +242,13 @@ module.exports = {
         return;
       }
 
+      var file = this.newGcode;
       var file_name =
         this.fileName == "default"
-          ? this.newGcode.trim() != ""
+          ? file.trim() != ""
             ? formattedFilename + ".ngc"
             : "default"
           : this.fileName;
-      var file = this.newGcode;
 
       if (file.trim() != "") {
         this.upload_gcode(file_name, file);
@@ -285,7 +289,7 @@ module.exports = {
       } else {
         this.config.macros = [...this.state.macros];
         const macro_with_filename = this.config.macros.filter(
-          item => item.file_name != "default" && item.file_name == this.fileName,
+          item => item.file_name != "default" && item.file_name == filename,
         );
         if (macro_with_filename.length != 0) {
           this.macroFound = false;
