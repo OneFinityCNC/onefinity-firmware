@@ -244,11 +244,7 @@ module.exports = {
 
       var file = this.newGcode;
       var file_name =
-        this.fileName == "default"
-          ? file.trim() != ""
-            ? formattedFilename + ".ngc"
-            : "default"
-          : this.fileName;
+        this.fileName == "default" ? (file.trim() != "" ? formattedFilename + ".ngc" : "default") : this.fileName;
 
       if (file.trim() != "") {
         this.upload_gcode(file_name, file);
@@ -440,12 +436,6 @@ module.exports = {
         alert("Restore failed");
       }
       this.deleteSelected = false;
-    },
-    print_config: function () {
-      console.log(this.config);
-    },
-    print_state: function () {
-      console.log(this.state);
     },
   },
 };
