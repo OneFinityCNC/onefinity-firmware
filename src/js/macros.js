@@ -426,6 +426,7 @@ module.exports = {
       }
       this.config.macros = [...this.state.macros];
       this.config.macros.splice(this.tab - 1, 1);
+      this.tab = this.state.macros.length - 1;
       this.clear_macro();
       try {
         await api.put("config/save", this.config);
