@@ -292,10 +292,8 @@ module.exports = {
           this.macroFoundName = "";
           this.macroFoundGcode = "";
           macro_with_filename.forEach(item => {
-            console.log(item.name);
             item.file_name = "default";
           });
-          console.log(this.config.macros);
         }
         api.delete(`file/${filename}`);
         this.newGcode = "";
