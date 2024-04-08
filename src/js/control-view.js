@@ -48,7 +48,6 @@ module.exports = {
       showGcodeMessage: false,
       showNoGcodeMessage: false,
       macrosLoading: false,
-      showFileDuplicate: false,
       show_gcodes: false,
     };
   },
@@ -209,24 +208,26 @@ module.exports = {
       return Math.min(1, p);
     },
     gcode_files: function () {
-      if (!this.state.folder || this.state.folder == "") {
-        return [];
-      }
       let files = [];
-      if (this.state.folder == "default") {
-        files = this.config.gcode_list.filter(item => item.type == "file" && this.state.files.includes(item.name));
-        files = files.map(item => item.name);
-        return files.sort();
+      if (!this.state.folder || this.state.folder == "") {
+        return files;
       }
-      files = this.config.gcode_list
+      if (this.state.folder == "default") {
+        files = this.state.gcode_list
+          .filter(item => item.type == "file")
+          .map(item => item.name)
+          .sort();
+        return files;
+      }
+      files = this.state.gcode_list
         .find(item => item.name == this.state.folder)
-        .files.filter(item => this.state.files.includes(item.file_name))
-        .map(item => item.file_name);
-      return files.sort();
+        .files.map(item => item.file_name)
+        .sort();
+      return files;
     },
     gcode_folders: function () {
       let folders = [];
-      for (let item of this.config.gcode_list) {
+      for (let item of this.state.gcode_list) {
         if (item.type == "folder") {
           folders.push(item.name);
         }
@@ -408,10 +409,7 @@ module.exports = {
       }
 
       const file = files[0];
-      if (this.state.files.includes(file.name) && !this.config.macros_list.find(item => item.file_name == file.name)) {
-        this.showFileDuplicate = true;
-        return;
-      }
+
       const extension = file.name.split(".").pop();
       switch (extension.toLowerCase()) {
         case "nc":
@@ -425,13 +423,15 @@ module.exports = {
           return;
       }
 
-      const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+      const isAlreadyPresent = this.state.non_macros_list.find(element => element.file_name == file.name);
       if (!isAlreadyPresent) {
+        this.config.non_macros_list = [...this.state.non_macros_list];
         this.config.non_macros_list.push({ file_name: file.name });
       }
+      this.config.gcode_list = [...this.state.gcode_list];
       if (
         this.state.folder == "default" &&
-        !this.config.gcode_list.find(item => item.name == file.name && item.type == "file")
+        !this.state.gcode_list.find(item => item.name == file.name && item.type == "file")
       ) {
         this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
       } else {
@@ -474,9 +474,10 @@ module.exports = {
     create_new_folder: async function () {
       const folder_name = this.folder_name.trim();
       if (folder_name != "") {
-        if (this.config.gcode_list.find(item => item.type == "folder" && item.name == folder_name)) {
+        if (this.state.gcode_list.find(item => item.type == "folder" && item.name == folder_name)) {
           alert("Folder with the same name already exists!");
         } else {
+          this.config.gcode_list = [...this.state.gcode_list];
           this.config.gcode_list.push({
             name: folder_name,
             type: "folder",
@@ -504,14 +505,6 @@ module.exports = {
       const folderName = files[0].webkitRelativePath.split("/")[0];
 
       for (let file of files) {
-        if (
-          this.state.files.includes(file.name) &&
-          !this.config.macros_list.find(item => item.file_name == file.name)
-        ) {
-          this.showFileDuplicate = true;
-          return;
-        }
-
         const reader = new FileReader();
         reader.onload = async () => {
           const gcode = reader.result;
@@ -531,11 +524,13 @@ module.exports = {
 
           await this.upload_gcode(file.name, gcode);
 
-          const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+          const isAlreadyPresent = this.state.non_macros_list.find(element => element.file_name == file.name);
           if (!isAlreadyPresent) {
+            this.config.non_macros_list = [...this.state.non_macros_list];
             this.config.non_macros_list.push({ file_name: file.name });
           }
 
+          this.config.gcode_list = [...this.state.gcode_list];
           const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
           if (folder) {
             folder.files.push({ file_name: file.name });
@@ -565,8 +560,10 @@ module.exports = {
         return;
       }
 
+      this.config.non_macros_list = [...this.state.non_macros_list];
       this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
 
+      this.config.gcode_list = [...this.state.gcode_list];
       if (this.state.folder == "default") {
         this.config.gcode_list = this.config.gcode_list.filter(
           item => (item.type == "file" || item.type == "folder") && item.name != this.state.selected,
@@ -577,7 +574,7 @@ module.exports = {
         );
         file_to_delete.files = file_to_delete.files.filter(item => item.file_name != this.state.selected);
       }
-      if (!this.config.macros_list.find(item => item.file_name == this.state.selected)) {
+      if (!this.state.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
       }
       this.save_config(this.config);
@@ -590,7 +587,7 @@ module.exports = {
     },
 
     delete_all_except_macros: async function () {
-      const macrosList = this.config.macros_list.map(item => item.file_name).toString();
+      const macrosList = this.state.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
       this.state.folder = "default";
@@ -601,11 +598,10 @@ module.exports = {
 
     delete_folder: async function () {
       if (this.state.folder && this.state.folder != "default") {
-        console.log("595");
+        this.config.gcode_list = [...this.state.gcode_list];
         const files_to_move = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         );
-        console.log(files_to_move);
         if (files_to_move) {
           files_to_move.files.forEach(item => {
             this.config.gcode_list.push({
@@ -634,6 +630,7 @@ module.exports = {
       }
 
       if (this.state.folder != "default") {
+        this.config.gcode_list = [...this.state.gcode_list];
         const selected_folder = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         ).files;
@@ -765,16 +762,16 @@ module.exports = {
       SvelteComponents.showDialog("Probe", { probeType });
     },
     run_macro: function (id) {
-      if (this.config.macros[id].file_name == "default") {
+      if (this.state.macros[id].file_name == "default") {
         this.showNoGcodeMessage = true;
       } else {
-        if (this.config.macros[id].file_name != this.state.selected) {
-          this.state.selected = this.config.macros[id].file_name; //TODO :get file
+        if (this.state.macros[id].file_name != this.state.selected) {
+          this.state.selected = this.state.macros[id].file_name;
         }
         try {
           this.load();
           console.log("selected", this.state);
-          if (this.config.macros[id].alert == true) {
+          if (this.state.macros[id].alert == true) {
             this.macrosLoading = true;
           } else {
             setImmediate(() => this.start_pause());
