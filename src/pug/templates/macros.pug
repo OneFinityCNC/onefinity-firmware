@@ -4,49 +4,23 @@ script#macros-template(type="text/x-template")
       h3(slot="header") Delete All Macros?
       div(slot="body")
         p Are you sure you want to Delete all macros?
-
       div(slot="footer")
         button.pure-button(@click="confirmReset=false") Cancel
         button.pure-button.button-error(@click="delete_all_macros")
           | Delete All
 
-    message(:show.sync="confirmSave")
-        h3(slot="header") Confirm Save?
-        div(slot="body")
-            p Are you sure you want to save the current settings?
-            
-        div(slot="footer")
-          button.pure-button(@click="confirmSave=false") Cancel
-          button.pure-button.pure-button-primary(@click="save_macro") Confirm
-
-    message(:show.sync="deleteGCode")
-        h3(slot="header") Delete?
-        p(slot="body")
-        div(slot="footer")
-          button.pure-button(@click="deleteGCode = false") Cancel
-          button.pure-button.button-error(@click="check_gcode_with_macro")
-            .fa.fa-trash
-            | &nbsp;Selected
-
     message(:show.sync="macroFound")
         h3(slot="header") Alert
         div(slot="body")
-            p The file is currently being used by a macro.
-            p You need to re-select a file for the macro.
+            p 
+            | The file is currently being used by a macro.
+            strong {{macroFoundName}}
+            | You need to re-select a file for the macro.
         div(slot="footer")
           button.pure-button(@click="macroFound = false") Cancel
           button.pure-button.button-error(@click="delete_current")
             .fa.fa-trash
             | &nbsp;Delete Anyway
-
-    message(:show.sync="deleteSelected")
-        h3(slot="header") Delete Selected Macro?
-        p(slot="body")
-        div(slot="footer")
-          button.pure-button(@click="deleteSelected = false") Cancel
-          button.pure-button.button-error(@click="delete_selected_macro")
-            .fa.fa-trash
-            | &nbsp;Yes
 
     message(:show.sync="maxLimitReached")
         h3(slot="header") Alert
@@ -62,13 +36,6 @@ script#macros-template(type="text/x-template")
         div(slot="footer")
           button.pure-button.button-submit(@click="sameName = false") OK
 
-    message(:show.sync="addMacros")
-        h3(slot="header") Do you need to add another macro?
-        p(slot="body")
-        div(slot="footer")
-          button.pure-button(@click="addMacros = false") Cancel
-          button.pure-button.button-submit(@click="add_new_macro") Add
-
     message(:show.sync="GCodeNotFound")
         h3(slot="header") File not found
         div(slot="body")
@@ -82,7 +49,22 @@ script#macros-template(type="text/x-template")
     .flex-row-container
         button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Delete All
         button.config-button.button-blue(title="Add a Macros", @click="addMacros=true", style="margin-left:5px") New Macro
+        message(:show.sync="addMacros")
+          h3(slot="header") Do you need to add another macro?
+          p(slot="body")
+          div(slot="footer")
+            button.pure-button(@click="addMacros = false") Cancel
+            button.pure-button.button-submit(@click="add_new_macro") Add
+            
         button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
+        message(:show.sync="deleteSelected")
+          h3(slot="header") Delete Selected Macro?
+          p(slot="body")
+          div(slot="footer")
+            button.pure-button(@click="deleteSelected = false") Cancel
+            button.pure-button.button-error(@click="delete_selected_macro")
+              .fa.fa-trash
+              | &nbsp;Yes
 
     .warning-box
         p
@@ -120,14 +102,32 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
+                                        
                                 button.config-button.button-blue(title="Delete Macro GCode",@click="deleteGCode = true",
                                         :disabled="!fileName =='default'") Delete
                                         .fa.fa-trash
+                                message(:show.sync="deleteGCode")
+                                  h3(slot="header") Delete G-Code?
+                                  p(slot="body")
+                                  div(slot="footer")
+                                    button.pure-button(@click="deleteGCode = false") Cancel
+                                    button.pure-button.button-error(@click="check_gcode_with_macro")
+                                      .fa.fa-trash
+                                      | &nbsp;Selected
+
                         br
                         .gcodeContainer
                                 textarea.new-gcode(id="gcode-field", v-model="newGcode" ,@keypress="update_new_gcode")
 
         button.submit-macros.button-success(title="Save Macro",@click="confirmSave=true",:disabled="!edited") Save
+        message(:show.sync="confirmSave")
+          h3(slot="header") Confirm Save?
+          div(slot="body")
+              p Are you sure you want to save the current settings?  
+          div(slot="footer")
+            button.pure-button(@click="confirmSave=false") Cancel
+            button.pure-button.pure-button-primary(@click="save_macro") Confirm
+
         button.submit-macros(title="Cancel Macro",@click="clear_macro",style="margin-left:5px;background-color:#fafafa;",:disabled="initial_tab") Cancel
 
     button.submit-macros(title="Cancel Macros",@click="print_config",style="margin-left:5px;background-color:#fafafa;") CONFIG
