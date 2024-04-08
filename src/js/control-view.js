@@ -504,6 +504,9 @@ module.exports = {
       }
       const folderName = files[0].webkitRelativePath.split("/")[0];
 
+      this.config.non_macros_list = [...this.state.non_macros_list];
+      this.config.gcode_list = [...this.state.gcode_list];
+      
       for (let file of files) {
         const reader = new FileReader();
         reader.onload = async () => {
@@ -524,13 +527,11 @@ module.exports = {
 
           await this.upload_gcode(file.name, gcode);
 
-          const isAlreadyPresent = this.state.non_macros_list.find(element => element.file_name == file.name);
+          const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
           if (!isAlreadyPresent) {
-            this.config.non_macros_list = [...this.state.non_macros_list];
             this.config.non_macros_list.push({ file_name: file.name });
           }
 
-          this.config.gcode_list = [...this.state.gcode_list];
           const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
           if (folder) {
             folder.files.push({ file_name: file.name });
