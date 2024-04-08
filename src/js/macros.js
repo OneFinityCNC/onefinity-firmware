@@ -211,7 +211,7 @@ module.exports = {
       }
     },
     save_macro: async function () {
-      if (this.tab == 0 || !this.config.macros[this.tab - 1]) {
+      if (this.tab == 0 || !this.state.macros[this.tab - 1]) {
         this.clear_macro();
         this.confirmSave = false;
         return;
@@ -234,7 +234,12 @@ module.exports = {
         return;
       }
 
-      var file_name = this.fileName == "default" ? formattedFilename + ".ngc" : this.fileName;
+      var file_name =
+        this.fileName == "default"
+          ? this.newGcode.trim() != ""
+            ? formattedFilename + ".ngc"
+            : "default"
+          : this.fileName;
       var file = this.newGcode;
 
       if (file.trim() != "") {
