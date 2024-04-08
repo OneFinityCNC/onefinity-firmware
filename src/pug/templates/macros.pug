@@ -13,9 +13,9 @@ script#macros-template(type="text/x-template")
         h3(slot="header") Alert
         div(slot="body")
             p 
-            | The file is currently being used by a macro.
+            | The file is currently being used by a macro 
             strong {{macroFoundName}}
-            | You need to re-select a file for the macro.
+            |  . You need to re-select a file for the macro.
         div(slot="footer")
           button.pure-button(@click="macroFound = false") Cancel
           button.pure-button.button-error(@click="delete_current")
@@ -50,16 +50,18 @@ script#macros-template(type="text/x-template")
         button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Delete All
         button.config-button.button-blue(title="Add a Macros", @click="addMacros=true", style="margin-left:5px") New Macro
         message(:show.sync="addMacros")
-          h3(slot="header") Do you need to add another macro?
-          p(slot="body")
+          div(slot="header") 
+          div(slot="body")
+            p Do you need to add another macro?
           div(slot="footer")
             button.pure-button(@click="addMacros = false") Cancel
             button.pure-button.button-submit(@click="add_new_macro") Add
             
         button.config-button.button-blue(title="Delete a Macros", @click="deleteSelected=true", style="margin-left:5px",:disabled="!macrosLength") Delete Selected
         message(:show.sync="deleteSelected")
-          h3(slot="header") Delete Selected Macro?
-          p(slot="body")
+          div(slot="header")
+          div(slot="body")
+            p Delete Selected Macro?
           div(slot="footer")
             button.pure-button(@click="deleteSelected = false") Cancel
             button.pure-button.button-error(@click="delete_selected_macro")
@@ -102,7 +104,7 @@ script#macros-template(type="text/x-template")
                                 form.gcode-file-input.file-upload
                                         input(type="file", @change="upload", :disabled="!is_ready",
                                         accept=".nc,.ngc,.gcode,.gc")
-                                        
+
                                 button.config-button.button-blue(title="Delete Macro GCode",@click="deleteGCode = true",
                                         :disabled="!fileName =='default'") Delete
                                         .fa.fa-trash
