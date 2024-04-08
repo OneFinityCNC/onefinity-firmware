@@ -352,7 +352,7 @@ script#control-view-template(type="text/x-template")
               | Delete Folder
 
             select(title="Select previously uploaded GCode folder.",
-              v-model="state.folder", :disabled="!is_ready",
+              v-model="state.folder", @change="this.state.selected=''", :disabled="!is_ready",
               style="max-width:100%;margin-left:5px")
               option( selected='' value='default')  Default folder
               option(v-for="file in gcode_folders", :value="file") {{file}}
