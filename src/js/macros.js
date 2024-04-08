@@ -22,6 +22,7 @@ module.exports = {
       GCodeNotFound: false,
       macrosName: "",
       isChecked: false,
+      macroFoundName: "",
       fileName: "default",
       newGcode: "",
     };
@@ -210,16 +211,17 @@ module.exports = {
       }
     },
     save_macro: async function () {
-      if (this.tab == 0) {
+      if (this.tab == 0 || !this.config.macros[this.tab - 1]) {
         this.clear_macro();
+        this.confirmSave = false;
         return;
       }
-      const macros = [...this.state.macros];
-      macros.splice(this.tab - 1, 1);
-      const macros_list = macros.map(item => item.name);
       var macrosName = document.getElementById(`macros-name`).value;
       var macrosColor = document.getElementById("macros-color").value;
       var macrosAlert = this.isChecked;
+      const macros = [...this.state.macros];
+      macros.splice(this.tab - 1, 1);
+      const macros_list = macros.map(item => item.name);
       const formattedFilename = macrosName
         .replace(/\\/g, "_")
         .replace(/\//g, "_")
@@ -260,6 +262,7 @@ module.exports = {
       );
       if (macro_with_filename) {
         this.deleteGCode = false;
+        this.macroFoundName = macro_with_filename.file_name;
         this.macroFound = true;
       } else {
         this.delete_current();
@@ -403,7 +406,8 @@ module.exports = {
         this.clear_macro();
         return;
       }
-      this.config.macros = this.state.macros.splice(this.tab - 1, 1);
+      this.config.macros = [...this.state.macros];
+      this.config.macros.splice(this.tab - 1, 1);
       this.clear_macro();
       try {
         await api.put("config/save", this.config);
