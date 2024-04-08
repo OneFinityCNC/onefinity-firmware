@@ -160,9 +160,9 @@ module.exports = {
       const gcodeData = {
         file_name: file.name,
       };
+      this.config.macros_list = [...this.state.macros_list];
       if (!this.state.macros_list.some(item => item.file_name == file.name)) {
         this.fileName = file.name;
-        this.config.macros_list = [...this.state.macros_list];
         this.config.macros_list.push(gcodeData);
         try {
           await api.put("config/save", this.config);
@@ -208,6 +208,7 @@ module.exports = {
       const gcodeData = {
         file_name: filename,
       };
+      this.config.macros_list = [...this.state.macros_list];
       if (!this.state.macros_list.some(item => item.file_name == filename)) {
         this.config.macros_list = [...this.state.macros_list];
         this.config.macros_list.push(gcodeData);
@@ -294,6 +295,7 @@ module.exports = {
             console.log(item.name);
             item.file_name = "default";
           });
+          console.log(this.config.macros);
         }
         api.delete(`file/${filename}`);
         this.newGcode = "";
