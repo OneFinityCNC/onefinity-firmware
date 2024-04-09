@@ -212,17 +212,17 @@ module.exports = {
       if (!this.state.folder || this.state.folder == "") {
         return [];
       }
-      if (this.state.folder == "default") {
-        const files = this.state.gcode_list
-          .filter(item => item.type == "file" && this.state.includes(item.name))
-          .map(item => item.name)
-          .sort();
-        return files;
-      }
+      // if (this.state.folder == "default") {
+      //   const files = this.state.gcode_list
+      //     .filter(item => item.type == "file" && this.state.files.includes(item.name))
+      //     .map(item => item.name)
+      //     .sort();
+      //   return files;
+      // }
       const folder = this.state.gcode_list.find(item => item.name == this.state.folder);
       if (folder) {
-        return folder.files
-          .filter(item => this.state.includes(item.file_name))
+        return this.state.gcode_list.files
+          .filter(item => this.state.files.includes(item.file_name))
           .map(item => item.file_name)
           .sort();
       } else {
@@ -230,13 +230,7 @@ module.exports = {
       }
     },
     gcode_folders: function () {
-      let folders = [];
-      for (let item of this.state.gcode_list) {
-        if (item.type == "folder") {
-          folders.push(item.name);
-        }
-      }
-      return folders.sort();
+      return this.state.gcode_list.map(item => item.name).sort();
     },
   },
 
@@ -443,18 +437,18 @@ module.exports = {
         this.config.non_macros_list.push({ file_name: file.name });
       }
       this.config.gcode_list = [...this.state.gcode_list];
-      if (
-        this.state.folder == "default" &&
-        !this.state.gcode_list.find(item => item.name == file.name && item.type == "file")
-      ) {
-        this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
-      } else {
-        const folder_to_add = this.config.gcode_list.find(
-          item => item.type == "folder" && item.name == this.state.folder,
-        );
-        if (!folder_to_add.files.find(item => item.file_name == file.name)) {
-          folder_to_add.files.push({ file_name: file.name });
-        }
+      // if (
+      //   this.state.folder == "default" &&
+      //   !this.state.gcode_list.find(item => item.name == file.name && item.type == "file")
+      // ) {
+      //   this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
+      // } else {
+      const folder_to_add = this.config.gcode_list.find(
+        item => item.type == "folder" && item.name == this.state.folder,
+      );
+      if (!folder_to_add.files.find(item => item.file_name == file.name)) {
+        folder_to_add.files.push({ file_name: file.name });
+        // }
       }
       this.save_config(this.config);
 
@@ -584,16 +578,16 @@ module.exports = {
       this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
 
       this.config.gcode_list = [...this.state.gcode_list];
-      if (this.state.folder == "default") {
-        this.config.gcode_list = this.config.gcode_list.filter(
-          item => (item.type == "file" || item.type == "folder") && item.name != this.state.selected,
-        );
-      } else {
-        const file_to_delete = this.config.gcode_list.find(
-          item => item.name == this.state.folder && item.type == "folder",
-        );
-        file_to_delete.files = file_to_delete.files.filter(item => item.file_name != this.state.selected);
-      }
+      // if (this.state.folder == "default") {
+      //   this.config.gcode_list = this.config.gcode_list.filter(
+      //     item => (item.type == "file" || item.type == "folder") && item.name != this.state.selected,
+      //   );
+      // } else {
+      const file_to_delete = this.config.gcode_list.find(
+        item => item.name == this.state.folder && item.type == "folder",
+      );
+      file_to_delete.files = file_to_delete.files.filter(item => item.file_name != this.state.selected);
+      // }
       if (!this.state.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
       }
@@ -611,15 +605,15 @@ module.exports = {
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
       this.config.gcode_list = [...this.state.gcode_list];
-      if (this.state.folder == "default") {
-        this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
-      } else {
-        this.config.gcode_list
-          .filter(item => item.type == "folder")
-          .forEach(item => {
-            item.files = [];
-          });
-      }
+      // if (this.state.folder == "default") {
+      //   this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
+      // } else {
+      this.config.gcode_list
+        .filter(item => item.type == "folder")
+        .forEach(item => {
+          item.files = [];
+        });
+      // }
       this.save_config(this.config);
       this.deleteGCode = false;
     },
@@ -631,19 +625,22 @@ module.exports = {
           item => item.type == "folder" && item.name == this.state.folder,
         );
         if (files_to_move) {
-          files_to_move.files.forEach(item => {
-            this.config.gcode_list.push({
-              name: item.file_name,
-              type: "file",
-              files: [],
-            });
-          });
-          this.config.gcode_list = this.config.gcode_list.filter(item => {
-            if (item.type == "folder" && item.name == this.state.folder) {
-              return false;
-            }
-            return true;
-          });
+          const default_folder = this.config.gcode_list.find(item => item.name == "default");
+          default_folder.files = [...default_folder.files, ...files_to_move.files].sort();
+          this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
+          // files_to_move.files.forEach(item => {
+          //   this.config.gcode_list.push({
+          //     name: item.file_name,
+          //     type: "file",
+          //     files: [],
+          //   });
+          // });
+          // this.config.gcode_list = this.config.gcode_list.filter(item => {
+          //   if (item.type == "folder" && item.name == this.state.folder) {
+          //     return false;
+          //   }
+          //   return true;
+          // });
           this.save_config(this.config);
         }
       }
@@ -659,21 +656,34 @@ module.exports = {
       this.config.gcode_list = [...this.state.gcode_list];
       this.config.non_macros_list = [...this.state.non_macros_list];
 
-      if (this.state.folder != "default") {
-        const selected_folder = this.config.gcode_list.find(
-          item => item.type == "folder" && item.name == this.state.folder,
-        ).files;
-        if (selected_folder) {
-          var files_to_delete = selected_folder.map(item => item.file_name);
-          this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
-        }
-      } else {
-        const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
-        if (selected_folder) {
-          var files_to_delete = selected_folder.map(item => item.name);
-          this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
-        }
+      const selected_folder = this.config.gcode_list.find(
+        item => item.type == "folder" && item.name == this.state.folder,
+      );
+      if (!selected_folder) {
+        return;
       }
+      var files_to_delete = selected_folder.files.map(item => item.file_name);
+      if (selected_folder.name != "default") {
+        this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
+      } else {
+        selected_folder.files = [];
+      }
+
+      // if (this.state.folder != "default") {
+      //   const selected_folder = this.config.gcode_list.find(
+      //     item => item.type == "folder" && item.name == this.state.folder,
+      //   ).files;
+      //   if (selected_folder) {
+      //     var files_to_delete = selected_folder.map(item => item.file_name);
+      //     this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
+      //   }
+      // } else {
+      //   const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
+      //   if (selected_folder) {
+      //     var files_to_delete = selected_folder.map(item => item.name);
+      //     this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
+      //   }
+      // }
 
       await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete.toString()}`);
       this.config.non_macros_list = this.config.non_macros_list.filter(
