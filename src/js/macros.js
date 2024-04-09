@@ -238,6 +238,7 @@ module.exports = {
       }
 
       this.update_config();
+      const macros = [...this.state.macros];
 
       macros.splice(this.tab - 1, 1);
       const macros_list = macros.map(item => item.name);
@@ -305,7 +306,9 @@ module.exports = {
             item.file_name = "default";
           });
         }
-        api.delete(`file/${filename}`);
+        if (!this.state.non_macros_list.find(item => item.file_name == filename)) {
+          api.delete(`file/${filename}`);
+        }
         this.newGcode = "";
         this.config.macros_list = this.config.macros_list.filter(item => item.file_name !== filename);
         this.fileName = "default";

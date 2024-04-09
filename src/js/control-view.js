@@ -606,16 +606,11 @@ module.exports = {
       this.update_config();
 
       this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
-      // if (this.state.folder == "default") {
-      //   this.config.gcode_list = this.config.gcode_list.filter(
-      //     item => (item.type == "file" || item.type == "folder") && item.name != this.state.selected,
-      //   );
-      // } else {
       const file_to_delete = this.config.gcode_list.find(
         item => item.name == this.state.folder && item.type == "folder",
       );
       file_to_delete.files = file_to_delete.files.filter(item => item.file_name != this.state.selected);
-      // }
+
       if (!this.state.macros_list.find(item => item.file_name == this.state.selected)) {
         api.delete(`file/${this.state.selected}`);
       }
