@@ -670,7 +670,8 @@ module.exports = {
       if (!selected_folder) {
         return;
       }
-      var files_to_delete = selected_folder.files.map(item => item.file_name);
+      const macrosList = this.state.macros_list.map(item => item.file_name);
+      var files_to_delete = selected_folder.files.map(item => item.file_name).filter(item => macrosList.includes(item));
       if (selected_folder.name != "default") {
         this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
       } else {
