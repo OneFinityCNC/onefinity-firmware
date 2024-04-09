@@ -94,6 +94,14 @@ module.exports = {
         });
       });
     },
+
+    update_config: function () {
+      this.config.gcode_list = [...this.state.gcode_list];
+      this.config.non_macros_list = [...this.state.non_macros_list];
+      this.config.macros_list = [...this.state.macros_list];
+      this.config.macros = [...this.state.macros];
+    },
+
     load: async function () {
       if (this.tab == 0) {
         return;
@@ -121,9 +129,8 @@ module.exports = {
       }
     },
     removeFromList: async function () {
-      this.config.macros_list = [...this.state.macros_list];
+      this.update_config();
       this.config.macros_list = this.config.macros_list.filter(item => item.file_name != this.fileName);
-      this.config.macros = [...this.state.macros];
       this.config.macros
         .filter(item => item.file_name == this.fileName)
         .forEach(item => {
@@ -162,7 +169,7 @@ module.exports = {
       const gcodeData = {
         file_name: file.name,
       };
-      this.config.macros_list = [...this.state.macros_list];
+      this.update_config();
       if (!this.state.macros_list.some(item => item.file_name == file.name)) {
         this.fileName = file.name;
         this.config.macros_list.push(gcodeData);
@@ -210,7 +217,7 @@ module.exports = {
       const gcodeData = {
         file_name: filename,
       };
-      this.config.macros_list = [...this.state.macros_list];
+      this.update_config();
       if (!this.state.macros_list.some(item => item.file_name == filename)) {
         this.config.macros_list.push(gcodeData);
       }
@@ -230,7 +237,8 @@ module.exports = {
         this.newGcode = "";
       }
 
-      const macros = [...this.state.macros];
+      this.update_config();
+
       macros.splice(this.tab - 1, 1);
       const macros_list = macros.map(item => item.name);
       const formattedFilename = macrosName
@@ -247,12 +255,11 @@ module.exports = {
 
       var file = this.newGcode;
       var file_name =
-        this.fileName == "default" ? (file.trim() != "" ? formattedFilename + ".ngc" : "default") : this.fileName;
+        this.fileName == "default" ? (file.trim() ? formattedFilename + ".ngc" : "default") : this.fileName;
 
-      if (file.trim() != "") {
+      if (file.trim()) {
         this.upload_gcode(file_name, file);
       }
-      this.config.macros = [...this.state.macros];
       this.config.macros[this.tab - 1].name = macrosName;
       this.config.macros[this.tab - 1].color = macrosColor;
       this.config.macros[this.tab - 1].file_name = file_name;
@@ -282,11 +289,11 @@ module.exports = {
       }
     },
     delete_current: async function () {
+      this.update_config();
       const filename = this.fileName;
       if (filename == "default") {
         this.newGcode = "";
       } else {
-        this.config.macros = [...this.state.macros];
         const macro_with_filename = this.config.macros.filter(
           item => item.file_name != "default" && item.file_name == filename,
         );
@@ -300,7 +307,6 @@ module.exports = {
         }
         api.delete(`file/${filename}`);
         this.newGcode = "";
-        this.config.macros_list = [...this.state.macros_list];
         this.config.macros_list = this.config.macros_list.filter(item => item.file_name !== filename);
         this.fileName = "default";
         try {
@@ -396,6 +402,8 @@ module.exports = {
       this.load_macro();
     },
     add_new_macro: async function () {
+      this.update_config();
+
       let length = this.state.macros.length;
       if (length >= 20) {
         this.maxLimitReached = true;
@@ -410,7 +418,6 @@ module.exports = {
         file_name: "default",
         alert: true,
       };
-      this.config.macros = [...this.state.macros];
       this.config.macros.push(newMacros);
       this.tab = this.state.macros.length;
       this.load_macro();
@@ -429,7 +436,8 @@ module.exports = {
         this.deleteSelected = false;
         return;
       }
-      this.config.macros = [...this.state.macros];
+      this.update_config();
+
       this.config.macros.splice(this.tab - 1, 1);
       this.tab--;
       this.load_macro();

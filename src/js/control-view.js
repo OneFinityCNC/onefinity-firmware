@@ -404,6 +404,13 @@ module.exports = {
       }
     },
 
+    update_config: function () {
+      this.config.gcode_list = [...this.state.gcode_list];
+      this.config.non_macros_list = [...this.state.non_macros_list];
+      this.config.macros_list = [...this.state.macros_list];
+      this.config.macros = [...this.state.macros];
+    },
+
     reset_gcode: function () {
       this.state.selected = "";
       this.last_file = "";
@@ -431,13 +438,13 @@ module.exports = {
           return;
       }
 
+      this.update_config();
+
       const isAlreadyPresent = this.state.non_macros_list.find(element => element.file_name == file.name);
       if (!isAlreadyPresent) {
-        this.config.non_macros_list = [...this.state.non_macros_list];
         this.config.non_macros_list.push({ file_name: file.name });
       }
 
-      this.config.gcode_list = [...this.state.gcode_list];
       var folder_to_add = this.config.gcode_list.find(item => item.type == "folder" && item.name == this.state.folder);
       if (!folder_to_add) {
         folder_to_add = this.config.gcode_list.unshift({
@@ -498,7 +505,7 @@ module.exports = {
           alert("Folder with the same name already exists!");
           return;
         } else {
-          this.config.gcode_list = [...this.state.gcode_list];
+          this.update_config();
           this.config.gcode_list.push({
             name: folder_name,
             type: "folder",
@@ -529,8 +536,7 @@ module.exports = {
       this.totalFiles = files.length;
       const folderName = files[0].webkitRelativePath.split("/")[0];
 
-      this.config.non_macros_list = [...this.state.non_macros_list];
-      this.config.gcode_list = [...this.state.gcode_list];
+      this.update_config();
 
       for (let file of files) {
         const reader = new FileReader();
@@ -597,10 +603,9 @@ module.exports = {
         return;
       }
 
-      this.config.non_macros_list = [...this.state.non_macros_list];
-      this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
+      this.update_config();
 
-      this.config.gcode_list = [...this.state.gcode_list];
+      this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
       // if (this.state.folder == "default") {
       //   this.config.gcode_list = this.config.gcode_list.filter(
       //     item => (item.type == "file" || item.type == "folder") && item.name != this.state.selected,
@@ -640,8 +645,8 @@ module.exports = {
     },
 
     delete_folder: async function () {
+      this.update_config();
       if (this.state.folder && this.state.folder != "default") {
-        this.config.gcode_list = [...this.state.gcode_list];
         const files_to_move = this.config.gcode_list.find(
           item => item.type == "folder" && item.name == this.state.folder,
         );
@@ -661,8 +666,7 @@ module.exports = {
         return;
       }
 
-      this.config.gcode_list = [...this.state.gcode_list];
-      this.config.non_macros_list = [...this.state.non_macros_list];
+      this.update_config();
 
       const selected_folder = this.config.gcode_list.find(
         item => item.type == "folder" && item.name == this.state.folder,
