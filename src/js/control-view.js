@@ -538,12 +538,12 @@ module.exports = {
     upload_folder: async function (e) {
       this.uploadFolder = true;
       this.filesUploaded = 0;
-      this.totalFiles = files.length;
 
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
       }
+      this.totalFiles = files.length;
       const folderName = files[0].webkitRelativePath.split("/")[0];
 
       this.config.non_macros_list = [...this.state.non_macros_list];
