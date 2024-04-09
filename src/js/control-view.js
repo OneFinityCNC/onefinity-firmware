@@ -52,6 +52,7 @@ module.exports = {
       GCodeNotFound: false,
       uploadFolder: false,
       filesUploaded: 0,
+      totalFiles: 0,
     };
   },
 
@@ -488,7 +489,9 @@ module.exports = {
 
       xhr.onload = function () {
         this.filesUploaded++;
-        checkIfAllFilesUploaded();
+        if (this.filesUploaded == this.totalFiles) {
+          this.uploadFolder = false;
+        }
         if (xhr.status >= 200 && xhr.status < 300) {
           console.log("File uploaded " + filename);
         } else {
@@ -535,6 +538,8 @@ module.exports = {
     upload_folder: async function (e) {
       this.uploadFolder = true;
       this.filesUploaded = 0;
+      this.totalFiles = files.length;
+
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -543,8 +548,6 @@ module.exports = {
 
       this.config.non_macros_list = [...this.state.non_macros_list];
       this.config.gcode_list = [...this.state.gcode_list];
-
-      const totalFiles = files.length;
 
       for (let file of files) {
         const reader = new FileReader();
@@ -562,7 +565,9 @@ module.exports = {
             default:
               alert(`Unsupported file type: ${extension}`);
               this.filesUploaded++;
-              checkIfAllFilesUploaded();
+              if (this.filesUploaded == this.totalFiles) {
+                this.uploadFolder = false;
+              }
               return;
           }
 
@@ -597,7 +602,9 @@ module.exports = {
           alert("Error uploading file: ", error);
           this.uploadFolder = false;
           this.filesUploaded++;
-          checkIfAllFilesUploaded();
+          if (this.filesUploaded == this.totalFiles) {
+            this.uploadFolder = false;
+          }
         };
         reader.readAsText(file, "utf-8");
       }
