@@ -274,6 +274,11 @@ script#control-view-template(type="text/x-template")
             @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-stop-circle-o
 
+          message(:show.sync="uploadFolder")
+            h3(slot="header") Uploading
+            p(slot="body") Uploading files is currently in progress. Do not close window.
+            div(slot="footer")
+
           button.pure-button(title="Execute one program step.", @click="step",
             :disabled="(!is_ready && !is_holding) || !state.selected",
             v-if="false", style="height:100px;width:100px;font-weight:normal")

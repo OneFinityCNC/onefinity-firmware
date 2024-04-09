@@ -50,6 +50,7 @@ module.exports = {
       macrosLoading: false,
       show_gcodes: false,
       GCodeNotFound: false,
+      uploadFolder: false,
     };
   },
 
@@ -523,6 +524,7 @@ module.exports = {
     },
 
     upload_folder: async function (e) {
+      this.uploadFolder = true;
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -577,9 +579,13 @@ module.exports = {
           this.save_config(this.config);
         };
 
-        reader.onerror = error => alert("Error uploading file: ", error);
+        reader.onerror = error => {
+          alert("Error uploading file: ", error);
+          this.uploadFolder = false;
+        };
         reader.readAsText(file, "utf-8");
       }
+      this.uploadFolder = false;
     },
 
     delete_current: async function () {
