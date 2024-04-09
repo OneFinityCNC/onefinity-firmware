@@ -815,12 +815,6 @@ module.exports = {
         }
       }
     },
-    print_config: function () {
-      console.log(this.config);
-    },
-    print_state: function () {
-      console.log(this.state);
-    },
   },
 
   mixins: [require("./axis-vars")],

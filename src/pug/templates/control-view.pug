@@ -326,9 +326,6 @@ script#control-view-template(type="text/x-template")
               button.pure-button.button-success(@click="delete_current")
                 .fa.fa-trash
                 | &nbsp;Selected
-          
-          button.submit-macros(title="Cancel Macros",@click="print_config",style="margin-left:5px;background-color:#fafafa;") CONFIG
-          button.submit-macros(title="Cancel Macros",@click="print_state",style="margin-left:5px;background-color:#fafafa;") STATE
 
           .drop-down-container
             message(:show.sync="create_folder")
