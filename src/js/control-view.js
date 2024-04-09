@@ -51,6 +51,7 @@ module.exports = {
       show_gcodes: false,
       GCodeNotFound: false,
       uploadFolder: false,
+      filesUploaded: 0,
     };
   },
 
@@ -476,10 +477,18 @@ module.exports = {
       });
     },
 
+    checkIfAllFilesUploaded: function () {
+      if (filesUploaded === totalFiles) {
+        this.uploadFolder = false;
+      }
+    },
+
     upload_gcode: async function (filename, file) {
       const xhr = new XMLHttpRequest();
 
       xhr.onload = function () {
+        this.filesUploaded++;
+        checkIfAllFilesUploaded();
         if (xhr.status >= 200 && xhr.status < 300) {
           console.log("File uploaded " + filename);
         } else {
@@ -525,6 +534,7 @@ module.exports = {
 
     upload_folder: async function (e) {
       this.uploadFolder = true;
+      this.filesUploaded = 0;
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
@@ -534,14 +544,7 @@ module.exports = {
       this.config.non_macros_list = [...this.state.non_macros_list];
       this.config.gcode_list = [...this.state.gcode_list];
 
-      let filesUploaded = 0;
       const totalFiles = files.length;
-
-      const checkIfAllFilesUploaded = () => {
-        if (filesUploaded === totalFiles) {
-          this.uploadFolder = false;
-        }
-      };
 
       for (let file of files) {
         const reader = new FileReader();
@@ -558,7 +561,7 @@ module.exports = {
 
             default:
               alert(`Unsupported file type: ${extension}`);
-              filesUploaded++;
+              this.filesUploaded++;
               checkIfAllFilesUploaded();
               return;
           }
@@ -588,14 +591,12 @@ module.exports = {
           }
 
           this.save_config(this.config);
-          filesUploaded++;
-          checkIfAllFilesUploaded();
         };
 
         reader.onerror = error => {
           alert("Error uploading file: ", error);
           this.uploadFolder = false;
-          filesUploaded++;
+          this.filesUploaded++;
           checkIfAllFilesUploaded();
         };
         reader.readAsText(file, "utf-8");
