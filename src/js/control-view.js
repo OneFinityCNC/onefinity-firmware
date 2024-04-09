@@ -636,6 +636,7 @@ module.exports = {
       ];
 
       this.save_config(this.config);
+      this.state.folder = "default";
       this.deleteGCode = false;
     },
 

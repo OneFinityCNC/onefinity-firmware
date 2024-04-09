@@ -390,7 +390,11 @@ module.exports = {
           alert: true,
         },
       ];
-      const macros_list = this.state.macros_list.map(item => item.file_name).toString();
+      const non_macros_list = this.state.non_macros_list.map(item => item.file_name);
+      const macros_list = this.state.macros_list
+        .filter(item => !non_macros_list.includes(item.file_name))
+        .map(item => item.file_name)
+        .toString();
       api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macros_list}`);
       this.config.macros_list = [];
       this.edited = false;
