@@ -73,8 +73,6 @@ class FileHandler(bbctrl.APIHandler):
         else:
             # Delete a single file
             filename = os.path.basename(filename)
-            # self.get_log('FileHandler').info('filenamed ' + filename)
-            # self.get_log('FileHandler').info(' self.get_upload(filename)' + self.get_upload(filename))
             safe_remove(self.get_upload(filename))
             self.get_ctrl().preplanner.delete_plans(filename)
             self.get_ctrl().state.remove_file(filename)
@@ -84,8 +82,7 @@ class FileHandler(bbctrl.APIHandler):
             os.mkdir(self.get_upload())
 
         self.get_log('FileHandler').info('uploadFilename ' + self.uploadFilename)
-        if self.uploadFilename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
-            self.get_log('FileHandler').info('it is from macros')
+        if self.uploadFilename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):#macros
             self.uploadFilename=self.uploadFilename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
             filename = self.get_upload(self.uploadFilename).encode('utf8')
             safe_remove(filename)
