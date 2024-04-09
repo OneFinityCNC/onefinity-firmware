@@ -230,7 +230,10 @@ module.exports = {
       }
     },
     gcode_folders: function () {
-      return this.state.gcode_list.map(item => item.name).sort();
+      return this.state.gcode_list
+        .map(item => item.name)
+        .filter(element => element !== "default")
+        .sort();
     },
   },
 
@@ -443,9 +446,19 @@ module.exports = {
       // ) {
       //   this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
       // } else {
-      const folder_to_add = this.config.gcode_list.find(
-        item => item.type == "folder" && item.name == this.state.folder,
-      );
+      var folder_to_add = this.config.gcode_list.find(item => item.type == "folder" && item.name == this.state.folder);
+      if (!folder_to_add) {
+        folder_to_add = this.config.gcode_list.unshift({
+          name: this.state.folder,
+          type: "folder",
+          files: [
+            {
+              file_name: file.name,
+            },
+          ],
+        });
+        folder_to_add = this.config.gcode_list[0];
+      }
       if (!folder_to_add.files.find(item => item.file_name == file.name)) {
         folder_to_add.files.push({ file_name: file.name });
         // }
