@@ -209,7 +209,7 @@ module.exports = {
       return Math.min(1, p);
     },
     gcode_files: function () {
-      if (!this.state.folder || this.state.folder == "") {
+      if (!this.state.folder) {
         return [];
       }
       // if (this.state.folder == "default") {
@@ -221,7 +221,7 @@ module.exports = {
       // }
       const folder = this.state.gcode_list.find(item => item.name == this.state.folder);
       if (folder) {
-        return this.state.gcode_list.files
+        return folder.files
           .filter(item => this.state.files.includes(item.file_name))
           .map(item => item.file_name)
           .sort();
@@ -410,6 +410,7 @@ module.exports = {
 
     reset_gcode: function () {
       this.state.selected = "";
+      this.last_file = "";
       this.$broadcast("gcode-load", "");
     },
 
