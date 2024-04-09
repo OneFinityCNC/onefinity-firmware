@@ -481,7 +481,7 @@ module.exports = {
     upload_gcode: async function (filename, file) {
       const xhr = new XMLHttpRequest();
 
-      xhr.onload = function () {
+      xhr.onload = () => {
         this.filesUploaded++;
         if (this.filesUploaded == this.totalFiles) {
           this.uploadFolder = false;
@@ -495,7 +495,7 @@ module.exports = {
         }
       };
 
-      xhr.onerror = function () {
+      xhr.onerror = () => {
         alert("Upload failed.");
       };
 
