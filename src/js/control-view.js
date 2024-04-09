@@ -215,13 +215,6 @@ module.exports = {
       if (!this.state.folder) {
         return [];
       }
-      // if (this.state.folder == "default") {
-      //   const files = this.state.gcode_list
-      //     .filter(item => item.type == "file" && this.state.files.includes(item.name))
-      //     .map(item => item.name)
-      //     .sort();
-      //   return files;
-      // }
       const folder = this.state.gcode_list.find(item => item.name == this.state.folder);
       if (folder) {
         return folder.files
@@ -443,13 +436,8 @@ module.exports = {
         this.config.non_macros_list = [...this.state.non_macros_list];
         this.config.non_macros_list.push({ file_name: file.name });
       }
+
       this.config.gcode_list = [...this.state.gcode_list];
-      // if (
-      //   this.state.folder == "default" &&
-      //   !this.state.gcode_list.find(item => item.name == file.name && item.type == "file")
-      // ) {
-      //   this.config.gcode_list.push({ name: file.name, type: "file", files: [] });
-      // } else {
       var folder_to_add = this.config.gcode_list.find(item => item.type == "folder" && item.name == this.state.folder);
       if (!folder_to_add) {
         folder_to_add = this.config.gcode_list.unshift({
@@ -465,8 +453,8 @@ module.exports = {
       }
       if (!folder_to_add.files.find(item => item.file_name == file.name)) {
         folder_to_add.files.push({ file_name: file.name });
-        // }
       }
+
       this.save_config(this.config);
 
       SvelteComponents.showDialog("Upload", {
@@ -639,16 +627,14 @@ module.exports = {
       const macrosList = this.state.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];
-      this.config.gcode_list = [...this.state.gcode_list];
-      // if (this.state.folder == "default") {
-      //   this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
-      // } else {
-      this.config.gcode_list
-        .filter(item => item.type == "folder")
-        .forEach(item => {
-          item.files = [];
-        });
-      // }
+      this.config.gcode_list = [
+        {
+          name: "default",
+          type: "folder",
+          files: [],
+        },
+      ];
+
       this.save_config(this.config);
       this.deleteGCode = false;
     },
@@ -663,19 +649,6 @@ module.exports = {
           const default_folder = this.config.gcode_list.find(item => item.name == "default");
           default_folder.files = [...default_folder.files, ...files_to_move.files].sort();
           this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
-          // files_to_move.files.forEach(item => {
-          //   this.config.gcode_list.push({
-          //     name: item.file_name,
-          //     type: "file",
-          //     files: [],
-          //   });
-          // });
-          // this.config.gcode_list = this.config.gcode_list.filter(item => {
-          //   if (item.type == "folder" && item.name == this.state.folder) {
-          //     return false;
-          //   }
-          //   return true;
-          // });
           this.save_config(this.config);
         }
       }
@@ -703,22 +676,6 @@ module.exports = {
       } else {
         selected_folder.files = [];
       }
-
-      // if (this.state.folder != "default") {
-      //   const selected_folder = this.config.gcode_list.find(
-      //     item => item.type == "folder" && item.name == this.state.folder,
-      //   ).files;
-      //   if (selected_folder) {
-      //     var files_to_delete = selected_folder.map(item => item.file_name);
-      //     this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
-      //   }
-      // } else {
-      //   const selected_folder = this.config.gcode_list.filter(item => item.type == "file");
-      //   if (selected_folder) {
-      //     var files_to_delete = selected_folder.map(item => item.name);
-      //     this.config.gcode_list = this.config.gcode_list.filter(item => item.type != "file");
-      //   }
-      // }
 
       await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete.toString()}`);
       this.config.non_macros_list = this.config.non_macros_list.filter(
