@@ -478,12 +478,6 @@ module.exports = {
       });
     },
 
-    checkIfAllFilesUploaded: function () {
-      if (filesUploaded === totalFiles) {
-        this.uploadFolder = false;
-      }
-    },
-
     upload_gcode: async function (filename, file) {
       const xhr = new XMLHttpRequest();
 
@@ -491,6 +485,7 @@ module.exports = {
         this.filesUploaded++;
         if (this.filesUploaded == this.totalFiles) {
           this.uploadFolder = false;
+          this.save_config(this.config);
         }
         if (xhr.status >= 200 && xhr.status < 300) {
           console.log("File uploaded " + filename);
@@ -594,8 +589,6 @@ module.exports = {
               ],
             });
           }
-
-          this.save_config(this.config);
         };
 
         reader.onerror = error => {
