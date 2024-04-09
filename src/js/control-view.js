@@ -534,6 +534,15 @@ module.exports = {
       this.config.non_macros_list = [...this.state.non_macros_list];
       this.config.gcode_list = [...this.state.gcode_list];
 
+      let filesUploaded = 0;
+      const totalFiles = files.length;
+
+      const checkIfAllFilesUploaded = () => {
+        if (filesUploaded === totalFiles) {
+          this.uploadFolder = false;
+        }
+      };
+
       for (let file of files) {
         const reader = new FileReader();
         reader.onload = () => {
@@ -549,6 +558,8 @@ module.exports = {
 
             default:
               alert(`Unsupported file type: ${extension}`);
+              filesUploaded++;
+              checkIfAllFilesUploaded();
               return;
           }
 
@@ -577,15 +588,18 @@ module.exports = {
           }
 
           this.save_config(this.config);
+          filesUploaded++;
+          checkIfAllFilesUploaded();
         };
 
         reader.onerror = error => {
           alert("Error uploading file: ", error);
           this.uploadFolder = false;
+          filesUploaded++;
+          checkIfAllFilesUploaded();
         };
         reader.readAsText(file, "utf-8");
       }
-      this.uploadFolder = false;
     },
 
     delete_current: async function () {
