@@ -419,15 +419,7 @@ module.exports = new Vue({
                     : undefined,
             };
             delete settings.tool["tool-type"];
-
-            this.config["selected-tool-settings"][selected_tool] = settings;
-            if (selected_tool == "pwncnc-vfd" && saveModbus) {
-                this.config["selected-tool-settings"][selected_tool]["modbus-spindle"]["regs"][5] = {
-                  "reg-value": 6,
-                  "reg-type": "stop-write",
-                  "reg-addr": 40960,
-                };
-            }
+            
             this.display_units = this.config.settings["units"];
             try {
                 await api.put("config/save", this.config);
