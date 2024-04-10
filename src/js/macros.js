@@ -322,7 +322,7 @@ module.exports = {
       this.deleteGCode = false;
     },
     load_macro: async function () {
-      if (this.tab == 0 || !this.state.macros[this.tab - 1]) {
+      if (this.tab == 0) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
         this.isChecked = true;
@@ -397,6 +397,7 @@ module.exports = {
         .toString();
       api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${macros_list}`);
       this.config.macros_list = [];
+      this.tab = "0";
       this.edited = false;
       this.confirmReset = false;
       try {
