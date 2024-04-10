@@ -224,7 +224,6 @@ module.exports = {
     },
     save_macro: async function () {
       if (this.tab == 0 || !this.state.macros[this.tab - 1]) {
-        this.load_macro();
         this.confirmSave = false;
         return;
       }
@@ -323,10 +322,11 @@ module.exports = {
       this.deleteGCode = false;
     },
     load_macro: async function () {
-      if (this.tab == 0) {
+      if (this.tab == 0 || !this.state.macros[this.tab - 1]) {
         document.getElementById("macros-name").value = "";
         document.getElementById("macros-color").value = "#ffffff";
         this.isChecked = true;
+        this.tab = "0";
         this.fileName = "default";
         this.newGcode = "";
       } else {

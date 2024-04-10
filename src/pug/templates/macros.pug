@@ -40,16 +40,16 @@ script#macros-template(type="text/x-template")
 
     h1 Macros Configuration
     .flex-row-container
-        button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Delete All
+        button.config-button.button-blue(title="Reset Macros", @click="confirmReset=true") Reset 
 
         message(:show.sync="confirmReset")
-          h3(slot="header") Delete All Macros?
+          h3(slot="header") Reset Macros?
           div(slot="body")
-            p Are you sure you want to delete all macros?
+            p Are you sure you want to reset all macros?
           div(slot="footer")
             button.pure-button(@click="confirmReset=false") Cancel
             button.pure-button.button-error(@click="delete_all_macros")
-              | Delete All
+              | Reset
               
         button.config-button.button-blue(title="Add a Macros", @click="addMacros=true", style="margin-left:5px") New Macro
 
