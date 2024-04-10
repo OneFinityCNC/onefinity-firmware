@@ -419,8 +419,10 @@ module.exports = new Vue({
                     : undefined,
             };
             delete settings.tool["tool-type"];
-            
+
+            this.config["selected-tool-settings"][selected_tool] = settings;
             this.display_units = this.config.settings["units"];
+            
             try {
                 await api.put("config/save", this.config);
                 this.modified = false;
