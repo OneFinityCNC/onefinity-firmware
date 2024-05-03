@@ -418,6 +418,7 @@ module.exports = {
     },
 
     upload_files: async function (files, folderName) {
+      this.update_config();
       for (let file of files) {
         const reader = new FileReader();
         reader.onload = () => {
@@ -496,6 +497,7 @@ module.exports = {
         };
         reader.readAsText(file, "utf-8");
       }
+      this.save_config();
     },
 
     upload_file: async function (e) {
@@ -509,9 +511,7 @@ module.exports = {
 
       this.totalFiles = files.length;
 
-      this.update_config();
       this.upload_files(files);
-      this.save_config();
     },
 
     upload_gcode: async function (filename, file) {
@@ -569,17 +569,15 @@ module.exports = {
     upload_folder: async function (e) {
       this.uploadFiles = true;
       this.filesUploaded = 0;
-      
+
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
       }
       this.totalFiles = files.length;
       const folderName = files[0].webkitRelativePath.split("/")[0];
-      
-      this.update_config();
+
       this.upload_files(files, folderName);
-      this.save_config();
     },
 
     delete_current: async function () {
