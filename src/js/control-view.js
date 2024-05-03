@@ -485,6 +485,7 @@ module.exports = {
               folder_to_add.files.push({ file_name: file.name });
             }
           }
+          this.save_config(this.config);
         };
 
         reader.onerror = error => {
@@ -497,7 +498,6 @@ module.exports = {
         };
         reader.readAsText(file, "utf-8");
       }
-      this.save_config();
     },
 
     upload_file: async function (e) {
@@ -521,7 +521,6 @@ module.exports = {
         this.filesUploaded++;
         if (this.filesUploaded == this.totalFiles) {
           this.uploadFiles = false;
-          this.save_config(this.config);
         }
         if (xhr.status >= 200 && xhr.status < 300) {
           console.log("File uploaded " + filename);
