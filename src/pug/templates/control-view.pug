@@ -270,16 +270,16 @@ script#control-view-template(type="text/x-template")
             title="{{is_running ? 'Pause' : 'Start'}} program.",
             @click="start_pause", :disabled="!state.selected",
             style="height:100px;width:100px;font-weight:normal")
-            .fa(:class="is_running ? 'fa-pause' : 'fa-play'")
+            .fa(:class="is_running ? 'fa-pause' : 'fa-play'" style="font-size:30px")
 
           button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
-            img(src="images/stop.png" style="height: 22px;width: 22px;")
+            img(src="images/stop.png" style="height: 25px;")
 
           button.pure-button(title="Pause program at next optional stop (M1).",
             @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-stop-circle-o
 
-          message(:show.sync="uploadFolder")
+          message(:show.sync="uploadFiles")
             h3(slot="header") Files uploading
             div(slot="body") 
               h3 Please wait...
@@ -295,7 +295,7 @@ script#control-view-template(type="text/x-template")
           
           button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            img(src="images/upload_folder.png" style="height: 22px;width: 22px;")
+            img(src="images/upload_folder.png" style="height: 40px;")
 
           form.gcode-folder-input.file-upload
             input#folderInput(type="file", @change="upload_folder", :disabled="!is_ready",
@@ -303,7 +303,7 @@ script#control-view-template(type="text/x-template")
           
           button.pure-button(title="Upload a new GCode program.", @click="open_file",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            img(src="images/upload_gcode.png" style="height: 22px;width: 22px;")
+            img(src="images/upload_gcode.png" style="height: 30px;")
 
           form.gcode-file-input.file-upload
             input(type="file", @change="upload_file", :disabled="!is_ready",
@@ -313,12 +313,12 @@ script#control-view-template(type="text/x-template")
               :href="'/api/file/' + state.selected",
               title="Download the selected GCode program.")
             button.pure-button(:disabled="!state.selected", style="height:100px;width:100px")
-              img(src="images/download_gcode.png" style="height: 22px;width: 22px;")
+              img(src="images/download_gcode.png" style="height: 30px;")
 
           button.pure-button(title="Delete current GCode program.",
             @click="deleteGCode = true",
             :disabled="!state.selected || !is_ready",style="height:100px;width:100px;font-weight:normal")
-            img(src="images/delete_gcode.png" style="height: 22px;width: 22px;")
+            img(src="images/delete_gcode.png" style="height: 30px;")
 
           message(:show.sync="deleteGCode")
             h3(slot="header") Delete G-Code?
@@ -367,19 +367,11 @@ script#control-view-template(type="text/x-template")
               style="max-width:100%;margin-left:5px")
               option( selected='' value='default')  Default folder
               option(v-for="file in gcode_folders", :value="file") {{file}}
-            
-            //- button.pure-button(title="Upload a new folder.", @click="open_folder",
-            //-   :disabled="!is_ready")
-            //-   | Upload Folder
 
             select(title="Select previously uploaded GCode programs.",
               v-model="state.selected", @change="load", :disabled="!is_ready",
               style="max-width:100%;margin-left:5px")
               option(v-for="file in gcode_files", :value="file") {{file}}
-            
-            //- button.pure-button(title="Upload a new GCode program.", @click="open_file",
-            //-   :disabled="!is_ready")
-            //-   | Upload File
 
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
             title="Simulating GCode to check for errors, calculate ETA and " +
