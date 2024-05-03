@@ -63,13 +63,15 @@ script#control-view-template(type="text/x-template")
                 button(@click="jog_fn(-1,0,0,0)") X-
               td(style="height:100px",align="center")
                 button(@click="showMoveToZeroDialog('xy')")
-                  | XY 
+                  | XY
+                  br 
                   | Origin
               td(style="height:100px",align="center")
                 button(@click="jog_fn(1,0,0,0)") X+
               td(style="height:100px",align="center")
                 button(@click="showMoveToZeroDialog('z')") 
                   | Z
+                  br
                   | Origin
             tr
               td(style="height:100px",align="center")
@@ -271,7 +273,7 @@ script#control-view-template(type="text/x-template")
             .fa(:class="is_running ? 'fa-pause' : 'fa-play'")
 
           button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
-            img(src="resources/icons/icon.webp", alt="Icon")
+            img(src="images/stop.png")
 
           button.pure-button(title="Pause program at next optional stop (M1).",
             @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
