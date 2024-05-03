@@ -62,12 +62,11 @@ script#control-view-template(type="text/x-template")
               td(style="height:100px",align="center")
                 button(@click="jog_fn(-1,0,0,0)") X-
               td(style="height:100px",align="center")
-                button(@click="showMoveToZeroDialog('xy')")
-                  .fa.fa-bullseye(style="font-size: 173%")
+                button(@click="showMoveToZeroDialog('xy')") XY Origin
               td(style="height:100px",align="center")
                 button(@click="jog_fn(1,0,0,0)") X+
               td(style="height:100px",align="center")
-                button(@click="showMoveToZeroDialog('z')") Z0
+                button(@click="showMoveToZeroDialog('z')") Z Origin
             tr
               td(style="height:100px",align="center")
                 button(@click="jog_fn(-1,-1,0,0)")
@@ -268,7 +267,8 @@ script#control-view-template(type="text/x-template")
             .fa(:class="is_running ? 'fa-pause' : 'fa-play'")
 
           button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
-            .fa.fa-stop
+            svg(width="50", height="50")
+              image(href="../resources/icons/Execute_button_stop.webp", width="50", height="50")
 
           button.pure-button(title="Pause program at next optional stop (M1).",
             @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
@@ -294,7 +294,7 @@ script#control-view-template(type="text/x-template")
 
           form.gcode-folder-input.file-upload
             input#folderInput(type="file", @change="upload_folder", :disabled="!is_ready",
-              webkitdirectory, directory, multiple)
+              webkitdirectory, directory)
           
           button.pure-button(title="Upload a new GCode program.", @click="open_file",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
@@ -302,7 +302,7 @@ script#control-view-template(type="text/x-template")
 
           form.gcode-file-input.file-upload
             input(type="file", @change="upload_file", :disabled="!is_ready",
-              accept=".nc,.ngc,.gcode,.gc")
+              accept=".nc,.ngc,.gcode,.gc", multiple)
 
           a(:disabled="!state.selected", download,
               :href="'/api/file/' + state.selected",
