@@ -50,7 +50,7 @@ module.exports = {
       macrosLoading: false,
       show_gcodes: false,
       GCodeNotFound: false,
-      uploadFolder: false,
+      uploadFiles: false,
       filesUploaded: 0,
       totalFiles: 0,
     };
@@ -417,60 +417,101 @@ module.exports = {
       this.$broadcast("gcode-load", "");
     },
 
+    upload_files: async function (files, folderName) {
+      for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const gcode = reader.result;
+
+          const extension = file.name.split(".").pop();
+          switch (extension.toLowerCase()) {
+            case "nc":
+            case "ngc":
+            case "gcode":
+            case "gc":
+              break;
+
+            default:
+              alert(`Unsupported file type: ${extension}`);
+              this.filesUploaded++;
+              if (this.filesUploaded == this.totalFiles) {
+                this.uploadFiles = false;
+              }
+              return;
+          }
+
+          this.upload_gcode(file.name, gcode);
+
+          const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+          if (!isAlreadyPresent) {
+            this.config.non_macros_list.push({ file_name: file.name });
+          }
+
+          if (folderName) {
+            const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
+            if (folder) {
+              if (!folder.files.map(item => item.file_name).includes(file.name)) {
+                folder.files.push({ file_name: file.name });
+              }
+            } else {
+              this.config.gcode_list.push({
+                name: folderName,
+                type: "folder",
+                files: [
+                  {
+                    file_name: file.name,
+                  },
+                ],
+              });
+            }
+          } else {
+            var folder_to_add = this.config.gcode_list.find(
+              item => item.type == "folder" && item.name == this.state.folder,
+            );
+            if (!folder_to_add) {
+              folder_to_add = this.config.gcode_list.unshift({
+                name: this.state.folder,
+                type: "folder",
+                files: [
+                  {
+                    file_name: file.name,
+                  },
+                ],
+              });
+              folder_to_add = this.config.gcode_list[0];
+            }
+            if (!folder_to_add.files.find(item => item.file_name == file.name)) {
+              folder_to_add.files.push({ file_name: file.name });
+            }
+          }
+        };
+
+        reader.onerror = error => {
+          alert("Error uploading file: ", error);
+          this.uploadFiles = false;
+          this.filesUploaded++;
+          if (this.filesUploaded == this.totalFiles) {
+            this.uploadFiles = false;
+          }
+        };
+        reader.readAsText(file, "utf-8");
+      }
+    },
+
     upload_file: async function (e) {
+      this.uploadFiles = true;
+      this.filesUploaded = 0;
+
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
       }
 
-      const file = files[0];
-
-      const extension = file.name.split(".").pop();
-      switch (extension.toLowerCase()) {
-        case "nc":
-        case "ngc":
-        case "gcode":
-        case "gc":
-          break;
-
-        default:
-          alert(`Unsupported file type: ${extension}`);
-          return;
-      }
+      this.totalFiles = files.length;
 
       this.update_config();
-
-      const isAlreadyPresent = this.state.non_macros_list.find(element => element.file_name == file.name);
-      if (!isAlreadyPresent) {
-        this.config.non_macros_list.push({ file_name: file.name });
-      }
-
-      var folder_to_add = this.config.gcode_list.find(item => item.type == "folder" && item.name == this.state.folder);
-      if (!folder_to_add) {
-        folder_to_add = this.config.gcode_list.unshift({
-          name: this.state.folder,
-          type: "folder",
-          files: [
-            {
-              file_name: file.name,
-            },
-          ],
-        });
-        folder_to_add = this.config.gcode_list[0];
-      }
-      if (!folder_to_add.files.find(item => item.file_name == file.name)) {
-        folder_to_add.files.push({ file_name: file.name });
-      }
-
-      this.save_config(this.config);
-
-      SvelteComponents.showDialog("Upload", {
-        file,
-        onComplete: () => {
-          this.last_file_time = undefined; // Force reload
-          this.$broadcast("gcode-reload", file.name);
-        },
-      });
+      this.upload_files(files);
+      this.save_config();
     },
 
     upload_gcode: async function (filename, file) {
@@ -479,7 +520,7 @@ module.exports = {
       xhr.onload = () => {
         this.filesUploaded++;
         if (this.filesUploaded == this.totalFiles) {
-          this.uploadFolder = false;
+          this.uploadFiles = false;
           this.save_config(this.config);
         }
         if (xhr.status >= 200 && xhr.status < 300) {
@@ -526,75 +567,19 @@ module.exports = {
     },
 
     upload_folder: async function (e) {
-      this.uploadFolder = true;
+      this.uploadFiles = true;
       this.filesUploaded = 0;
-
+      
       const files = e.target.files || e.dataTransfer.files;
       if (!files.length) {
         return;
       }
       this.totalFiles = files.length;
       const folderName = files[0].webkitRelativePath.split("/")[0];
-
+      
       this.update_config();
-
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const gcode = reader.result;
-
-          const extension = file.name.split(".").pop();
-          switch (extension.toLowerCase()) {
-            case "nc":
-            case "ngc":
-            case "gcode":
-            case "gc":
-              break;
-
-            default:
-              alert(`Unsupported file type: ${extension}`);
-              this.filesUploaded++;
-              if (this.filesUploaded == this.totalFiles) {
-                this.uploadFolder = false;
-              }
-              return;
-          }
-
-          this.upload_gcode(file.name, gcode);
-
-          const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
-          if (!isAlreadyPresent) {
-            this.config.non_macros_list.push({ file_name: file.name });
-          }
-
-          const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
-          if (folder) {
-            if (!folder.files.map(item => item.file_name).includes(file.name)) {
-              folder.files.push({ file_name: file.name });
-            }
-          } else {
-            this.config.gcode_list.push({
-              name: folderName,
-              type: "folder",
-              files: [
-                {
-                  file_name: file.name,
-                },
-              ],
-            });
-          }
-        };
-
-        reader.onerror = error => {
-          alert("Error uploading file: ", error);
-          this.uploadFolder = false;
-          this.filesUploaded++;
-          if (this.filesUploaded == this.totalFiles) {
-            this.uploadFolder = false;
-          }
-        };
-        reader.readAsText(file, "utf-8");
-      }
+      this.upload_files(files, folderName);
+      this.save_config();
     },
 
     delete_current: async function () {
