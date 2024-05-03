@@ -271,7 +271,7 @@ script#control-view-template(type="text/x-template")
             .fa(:class="is_running ? 'fa-pause' : 'fa-play'")
 
           button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
-            img(src=require("../resources/icons/button_stop.webp"), alt="Stop")
+            img(src="resources/icons/icon.webp", alt="Icon")
 
           button.pure-button(title="Pause program at next optional stop (M1).",
             @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
