@@ -41,8 +41,6 @@ class FileHandler(bbctrl.APIHandler):
 
         if filename.startswith('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
             exceptionList=filename.replace('/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','').split(',')
-            for i in exceptionList:
-                self.get_log('FileHandler').info('macrosListItem ' + i)
 
             for filename in [item for item in allFiles if item not in exceptionList]:
                 filename = os.path.basename(filename)
@@ -52,8 +50,6 @@ class FileHandler(bbctrl.APIHandler):
         
         elif filename.startswith('/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH'):
             deletionList=filename.replace('/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH','').split(',')
-            for i in deletionList:
-                self.get_log('FileHandler').info('macrosListItem ' + i)
             
             for filename in [item for item in allFiles if item in deletionList]:
                 filename = os.path.basename(filename)
@@ -81,12 +77,10 @@ class FileHandler(bbctrl.APIHandler):
         if not os.path.exists(self.get_upload()):
             os.mkdir(self.get_upload())
 
-        self.get_log('FileHandler').info('uploadFilename ' + self.uploadFilename)
         if self.uploadFilename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):#macros
             self.uploadFilename=self.uploadFilename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
             filename = self.get_upload(self.uploadFilename).encode('utf8')
             safe_remove(filename)
-            self.get_log('FileHandler').info('uploadFile.name ' + self.uploadFile.name)
             os.link(self.uploadFile.name, filename)
 
             self.uploadFile.close()
@@ -95,12 +89,10 @@ class FileHandler(bbctrl.APIHandler):
 
             self.get_ctrl().preplanner.invalidate(self.uploadFilename)
             self.get_ctrl().state.add_file('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'+self.uploadFilename)
-            self.get_log('FileHandler').info(
-                'GCode received: ' + self.uploadFilename)
+
         else:
             filename = self.get_upload(self.uploadFilename).encode('utf8')
             safe_remove(filename)
-            self.get_log('FileHandler').info('uploadFile.name ' + self.uploadFile.name)
             os.link(self.uploadFile.name, filename)
 
             self.uploadFile.close()
@@ -109,14 +101,11 @@ class FileHandler(bbctrl.APIHandler):
 
             self.get_ctrl().preplanner.invalidate(self.uploadFilename)
             self.get_ctrl().state.add_file(self.uploadFilename)
-            self.get_log('FileHandler').info(
-                'GCode received: ' + self.uploadFilename)
 
         del (self.uploadFilename)
 
     @gen.coroutine
     def get(self, filename):
-        self.get_log('FileHandler').info('138 FileName: ' + filename)
         filebasename=filename
         if not filename:
             raise HTTPError(400, 'Missing filename')

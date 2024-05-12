@@ -119,7 +119,7 @@ class State(object):
     def load_files(self):
         files = []
 
-        upload = self.ctrl.get_upload()        
+        upload = self.ctrl.get_upload()
 
         if not os.path.exists(upload):
             os.mkdir(upload)
@@ -147,14 +147,12 @@ class State(object):
     def add_file(self, filename):
         if filename.startswith('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE'):
             filename=filename.replace('EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE','')
-            self.log.info('filename %s' % filename)
             files = copy.deepcopy(self.get('files'))
             if not filename in files:
                 files.append(filename)
                 files.sort()
                 self.set('files', files)
         else:
-            self.log.info('filename %s' % filename)
             files = copy.deepcopy(self.get('files'))
             if not filename in files:
                 files.append(filename)

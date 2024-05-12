@@ -241,9 +241,7 @@ class Preplanner(object):
 
     def delete_all_plans(self):
         files = glob.glob(self.ctrl.get_plan('*'))
-        for path in files: 
-            self.log.info('deleting files: '+path)
-            safe_remove(path)
+        for path in files: safe_remove(path)
         self.invalidate_all()
 
 
