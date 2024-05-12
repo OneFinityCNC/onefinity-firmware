@@ -606,6 +606,7 @@ module.exports = {
     },
 
     delete_all_except_macros: async function () {
+      this.update_config();
       const macrosList = this.state.macros_list.map(item => item.file_name).toString();
       api.delete(`file/EgZjaHJvbWUqCggBEAAYsQMYgAQyBggAEEUYOTIKCAE${macrosList}`);
       this.config.non_macros_list = [];

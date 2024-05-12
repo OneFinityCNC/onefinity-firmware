@@ -340,6 +340,7 @@ module.exports = {
       this.edited = false;
     },
     delete_all_macros: async function () {
+      this.update_config();
       this.config.macros = [
         {
           name: "Macro 1",
