@@ -162,7 +162,7 @@ module.exports = {
           break;
 
         default:
-          alert(`Unsupported file type: ${extension}`);
+          alert(`Unsupported file : ${file.name}`);
           return;
       }
 
