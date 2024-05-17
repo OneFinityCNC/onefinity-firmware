@@ -471,6 +471,10 @@ module.exports = {
           validFiles.push(file);
         } else {
           alert(`Unsupported file : ${file.name}`);
+          this.filesUploaded++;
+          if (this.filesUploaded == this.totalFiles) {
+            this.uploadFiles = false;
+          }
         }
       }
 
