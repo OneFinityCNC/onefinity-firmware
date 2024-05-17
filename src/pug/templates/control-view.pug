@@ -280,7 +280,7 @@ script#control-view-template(type="text/x-template")
             @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
             .fa.fa-stop-circle-o
 
-          message(:show.sync="uploadFiles")
+          message(:show.sync="uploadingFiles")
             h3(slot="header") Files uploading
             div(slot="body") 
               h3 Please wait...

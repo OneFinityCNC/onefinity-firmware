@@ -43,6 +43,7 @@ module.exports = {
       ask_home: true,
       folder_name: "",
       edited: false,
+      uploading_files: false,
       confirmDelete: false,
       create_folder: false,
       showGcodeMessage: false,
@@ -50,7 +51,6 @@ module.exports = {
       macrosLoading: false,
       show_gcodes: false,
       GCodeNotFound: false,
-      uploadFiles: false,
       filesUploaded: 0,
       totalFiles: 0,
     };
@@ -417,45 +417,88 @@ module.exports = {
       this.$broadcast("gcode-load", "");
     },
 
-    upload_files: async function (files, folderName) {
-      this.update_config();
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const gcode = reader.result;
+    upload_gcode: async function (filename, file) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
 
-          const extension = file.name.split(".").pop();
-          switch (extension.toLowerCase()) {
-            case "nc":
-            case "ngc":
-            case "gcode":
-            case "gc":
-              break;
+        this.filesUploaded++;
+        if (this.filesUploaded == this.totalFiles) {
+          this.uploading_files = false;
+        }
 
-            default:
-              alert(`Unsupported file type: ${extension}`);
-              this.filesUploaded++;
-              if (this.filesUploaded == this.totalFiles) {
-                this.uploadFiles = false;
-              }
-              return;
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve("file uploaded");
+          } else {
+            console.error("File upload failed:", xhr.statusText);
+            reject("upload failed");
           }
+        };
 
-          this.upload_gcode(file.name, gcode);
+        xhr.onerror = () => {
+          alert("Upload failed.");
+          reject("upload failed");
+        };
 
-          const isAlreadyPresent = this.config.non_macros_list.find(element => element.file_name == file.name);
+        xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
+        xhr.send(file);
+      });
+    },
+
+    readFile: function (file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+
+        reader.onerror = error => {
+          reject(error);
+        };
+
+        reader.readAsText(file, "utf-8");
+      });
+    },
+
+    validateFiles: async function (files) {
+      const validFiles = [];
+      for (const file of files) {
+        const extension = file.name.split(".").pop().toLowerCase();
+        const validExtensions = ["nc", "ngc", "gcode", "gc"];
+
+        if (validExtensions.includes(extension)) {
+          validFiles.push(file);
+        } else {
+          alert(`Unsupported file : ${file.name}`);
+        }
+      }
+
+      return validFiles;
+    },
+
+    uploadValidFiles: async function (files, folderName) {
+      const updatedConfig = { ...this.config };
+
+      for (const file of files) {
+        try {
+          const gcode = await this.readFile(file);
+          await this.upload_gcode(file.name, gcode);
+
+          const isAlreadyPresent = updatedConfig.non_macros_list.some(element => element.file_name === file.name);
+
           if (!isAlreadyPresent) {
-            this.config.non_macros_list.push({ file_name: file.name });
+            updatedConfig.non_macros_list.push({ file_name: file.name });
           }
 
           if (folderName) {
-            const folder = this.config.gcode_list.find(item => item.type == "folder" && item.name == folderName);
+            const folder = updatedConfig.gcode_list.find(item => item.type == "folder" && item.name == folderName);
             if (folder) {
               if (!folder.files.map(item => item.file_name).includes(file.name)) {
                 folder.files.push({ file_name: file.name });
               }
             } else {
-              this.config.gcode_list.push({
+              updatedConfig.gcode_list.push({
                 name: folderName,
                 type: "folder",
                 files: [
@@ -466,11 +509,11 @@ module.exports = {
               });
             }
           } else {
-            var folder_to_add = this.config.gcode_list.find(
+            var folder_to_add = updatedConfig.gcode_list.find(
               item => item.type == "folder" && item.name == this.state.folder,
             );
             if (!folder_to_add) {
-              folder_to_add = this.config.gcode_list.unshift({
+              folder_to_add = updatedConfig.gcode_list.unshift({
                 name: this.state.folder,
                 type: "folder",
                 files: [
@@ -479,29 +522,30 @@ module.exports = {
                   },
                 ],
               });
-              folder_to_add = this.config.gcode_list[0];
+              folder_to_add = updatedConfig.gcode_list[0];
             }
             if (!folder_to_add.files.find(item => item.file_name == file.name)) {
               folder_to_add.files.push({ file_name: file.name });
             }
           }
-          this.save_config(this.config);
-        };
-
-        reader.onerror = error => {
-          alert("Error uploading file: ", error);
-          this.uploadFiles = false;
-          this.filesUploaded++;
-          if (this.filesUploaded == this.totalFiles) {
-            this.uploadFiles = false;
-          }
-        };
-        reader.readAsText(file, "utf-8");
+        } catch (error) {
+          console.warn(`error uploading file : `, error);
+        }
       }
+      return updatedConfig;
+    },
+
+    upload_files: async function (files, folderName) {
+      this.update_config();
+
+      const validFiles = await this.validateFiles(files);
+      const updatedConfig = await this.uploadValidFiles(validFiles, folderName);
+
+      await this.save_config(updatedConfig);
     },
 
     upload_file: async function (e) {
-      this.uploadFiles = true;
+      this.uploading_files = true;
       this.filesUploaded = 0;
 
       const files = e.target.files || e.dataTransfer.files;
@@ -511,31 +555,7 @@ module.exports = {
 
       this.totalFiles = files.length;
 
-      this.upload_files(files);
-    },
-
-    upload_gcode: async function (filename, file) {
-      const xhr = new XMLHttpRequest();
-
-      xhr.onload = () => {
-        this.filesUploaded++;
-        if (this.filesUploaded == this.totalFiles) {
-          this.uploadFiles = false;
-        }
-        if (xhr.status >= 200 && xhr.status < 300) {
-          console.log("File uploaded " + filename);
-        } else {
-          console.error("File upload failed:", xhr.statusText);
-          alert("Upload failed.");
-        }
-      };
-
-      xhr.onerror = () => {
-        alert("Upload failed.");
-      };
-
-      xhr.open("PUT", `/api/file/${encodeURIComponent(filename)}`, true);
-      xhr.send(file);
+      await this.upload_files(files);
     },
 
     create_new_folder: async function () {
@@ -566,7 +586,7 @@ module.exports = {
     },
 
     upload_folder: async function (e) {
-      this.uploadFiles = true;
+      this.uploading_files = true;
       this.filesUploaded = 0;
 
       const files = e.target.files || e.dataTransfer.files;
