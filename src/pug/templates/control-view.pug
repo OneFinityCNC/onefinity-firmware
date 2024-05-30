@@ -324,15 +324,13 @@ script#control-view-template(type="text/x-template")
             h3(slot="header") Delete G-Code?
             div(slot="body")
               p Select files to delete:
-              ul
-                li(v-for="item in gcode_files" :key="item")
-                  input(type="checkbox" :value="item" v-model="selected_items_to_delete")
-                  | {{ item }}
+                input(v-for="item in gcode_files" :key="item", type="checkbox" :value="item" v-model="selected_items_to_delete")
+                | {{ item }}
             div(slot="footer")
-              button.pure-button(@click="deleteGCode = false") Cancel
-              //- button.pure-button.button-error(@click="delete_all_except_macros")
-              //-   .fa.fa-trash
-              //-   | &nbsp;All
+              button.pure-button(@click="cancel_delete") Cancel
+              button.pure-button.button-error(@click="delete_all_except_macros")
+                .fa.fa-trash
+                | &nbsp;All
               button.pure-button.button-success(@click="delete_current")
                 .fa.fa-trash
                 | &nbsp;Selected
