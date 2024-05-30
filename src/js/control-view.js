@@ -671,6 +671,7 @@ module.exports = {
 
       this.save_config(this.config);
       this.state.folder = "default";
+      this.state.selected = "";
       this.selected_items_to_delete = [];
       this.deleteGCode = false;
     },
