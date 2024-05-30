@@ -53,6 +53,7 @@ module.exports = {
       GCodeNotFound: false,
       filesUploaded: 0,
       totalFiles: 0,
+      files_sortby: "By Date",
     };
   },
 
@@ -216,13 +217,16 @@ module.exports = {
         return [];
       }
       const folder = this.state.gcode_list.find(item => item.name == this.state.folder);
-      if (folder) {
-        return folder.files
-          .filter(item => this.state.files.includes(item.file_name))
-          .map(item => item.file_name)
-          .sort();
-      } else {
+      if (!folder) {
         return [];
+      }
+      const files = folder.files.filter(item => this.state.files.includes(item.file_name)).map(item => item.file_name);
+      if (this.files_sortby == "A-Z") {
+        return files.sort();
+      } else if (this.files_sortby == "Z-A") {
+        return files.sort().reverse();
+      } else {
+        return files;
       }
     },
     gcode_folders: function () {
@@ -230,6 +234,15 @@ module.exports = {
         .map(item => item.name)
         .filter(element => element !== "default")
         .sort();
+    },
+    toggle_sorting: function () {
+      if (this.files_sortby === "By Date") {
+        this.files_sortby = "A-Z";
+      } else if (this.files_sortby === "A-Z") {
+        this.files_sortby = "Z-A";
+      } else if (this.files_sortby === "Z-A") {
+        this.files_sortby = "By Date";
+      }
     },
   },
 
