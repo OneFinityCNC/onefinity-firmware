@@ -321,9 +321,9 @@ script#control-view-template(type="text/x-template")
             img(src="images/delete_gcode.png" style="height: 30px;")
 
           message(:show.sync="deleteGCode")
-            h3(slot="header") Delete G-Code?
+            h3(slot="header") Select files to delete:
             div(slot="body")
-              p Select files to delete:
+              .gcode_container
                 label(v-for="item in gcode_files" :key="item")
                   input(type="checkbox" :value="item" v-model="selected_items_to_delete")
                   | {{ item }}

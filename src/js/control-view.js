@@ -625,7 +625,6 @@ module.exports = {
       }
 
       this.update_config();
-      console.log("files deleted: ", this.selected_items_to_delete);
 
       this.config.non_macros_list = this.config.non_macros_list.filter(
         item => !this.selected_items_to_delete.includes(item.file_name),
@@ -637,10 +636,10 @@ module.exports = {
         item => !this.selected_items_to_delete.includes(item.file_name),
       );
 
-      let files_to_delete = this.selected_items_to_delete.filter(item => !this.state.macros_list.includes(item));
+      const exception_list = this.state.macros_list.map(item => item.file_name);
+      let files_to_delete = this.selected_items_to_delete.filter(item => !exception_list.includes(item));
 
       await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete.toString()}`);
-      console.log(this.config.non_macros_list, this.config.gcode_list);
 
       this.save_config(this.config);
       this.selected_items_to_delete = [];
