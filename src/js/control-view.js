@@ -53,7 +53,8 @@ module.exports = {
       GCodeNotFound: false,
       filesUploaded: 0,
       totalFiles: 0,
-      files_sortby: "By Date",
+      files_sortby: "By Upload Date",
+      selected_items_to_delete: [],
     };
   },
 
@@ -235,15 +236,6 @@ module.exports = {
         .filter(element => element !== "default")
         .sort();
     },
-    toggle_sorting: function () {
-      if (this.files_sortby === "By Date") {
-        this.files_sortby = "A-Z";
-      } else if (this.files_sortby === "A-Z") {
-        this.files_sortby = "Z-A";
-      } else if (this.files_sortby === "Z-A") {
-        this.files_sortby = "By Date";
-      }
-    },
   },
 
   events: {
@@ -321,6 +313,16 @@ module.exports = {
 
     send: function (msg) {
       this.$dispatch("send", msg);
+    },
+
+    toggle_sorting: function () {
+      if (this.files_sortby === "By Upload Date") {
+        this.files_sortby = "A-Z";
+      } else if (this.files_sortby === "A-Z") {
+        this.files_sortby = "Z-A";
+      } else if (this.files_sortby === "Z-A") {
+        this.files_sortby = "By Upload Date";
+      }
     },
 
     load: function () {
@@ -622,18 +624,20 @@ module.exports = {
         return;
       }
 
-      this.update_config();
+      console.log(this.selected_items_to_delete);
 
-      this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
-      const file_to_delete = this.config.gcode_list.find(
-        item => item.name == this.state.folder && item.type == "folder",
-      );
-      file_to_delete.files = file_to_delete.files.filter(item => item.file_name != this.state.selected);
+      // this.update_config();
 
-      if (!this.state.macros_list.find(item => item.file_name == this.state.selected)) {
-        api.delete(`file/${this.state.selected}`);
-      }
-      this.save_config(this.config);
+      // this.config.non_macros_list = this.config.non_macros_list.filter(item => item.file_name != this.state.selected);
+      // const file_to_delete = this.config.gcode_list.find(
+      //   item => item.name == this.state.folder && item.type == "folder",
+      // );
+      // file_to_delete.files = file_to_delete.files.filter(item => item.file_name != this.state.selected);
+
+      // if (!this.state.macros_list.find(item => item.file_name == this.state.selected)) {
+      //   api.delete(`file/${this.state.selected}`);
+      // }
+      // this.save_config(this.config);
       this.deleteGCode = false;
     },
 

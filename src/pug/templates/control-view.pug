@@ -322,12 +322,17 @@ script#control-view-template(type="text/x-template")
 
           message(:show.sync="deleteGCode")
             h3(slot="header") Delete G-Code?
-            p(slot="body")
+            div(slot="body")
+              p Select files to delete:
+              ul
+                li(v-for="item in gcode_files" :key="item")
+                  input(type="checkbox" :value="item" v-model="selected_items_to_delete")
+                  | {{ item }}
             div(slot="footer")
               button.pure-button(@click="deleteGCode = false") Cancel
-              button.pure-button.button-error(@click="delete_all_except_macros")
-                .fa.fa-trash
-                | &nbsp;All
+              //- button.pure-button.button-error(@click="delete_all_except_macros")
+              //-   .fa.fa-trash
+              //-   | &nbsp;All
               button.pure-button.button-success(@click="delete_current")
                 .fa.fa-trash
                 | &nbsp;Selected
@@ -370,11 +375,11 @@ script#control-view-template(type="text/x-template")
 
             select(title="Select previously uploaded GCode programs.",
               v-model="state.selected", @change="load", :disabled="!is_ready",
-              style="max-width:100%;margin-left:5px")
+              style="max-width:300px;margin-left:5px")
               option(v-for="file in gcode_files", :value="file") {{file}}
             
             button.pure-button(@click="toggle_sorting", :disabled="!is_ready",
-              style="height:100%")
+              style="height:75%")
               | {{files_sortby}}
 
           .progress(v-if="toolpath_progress && toolpath_progress < 1",
