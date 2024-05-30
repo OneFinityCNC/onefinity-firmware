@@ -637,7 +637,7 @@ module.exports = {
         item => !this.selected_items_to_delete.includes(item.file_name),
       );
 
-      let files_to_delete = [...this.selected_items_to_delete].filter(item => !this.state.macros_list.includes(item));
+      let files_to_delete = this.selected_items_to_delete.filter(item => !this.state.macros_list.includes(item));
 
       await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete.toString()}`);
       console.log(this.config.non_macros_list, this.config.gcode_list);
