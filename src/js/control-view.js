@@ -57,6 +57,7 @@ module.exports = {
       selected_items_to_delete: [],
       search_query: "",
       filtered_files: [],
+      selected_folder_index: null,
     };
   },
 
@@ -296,6 +297,7 @@ module.exports = {
     },
 
     populateFiles(index) {
+      this.selected_folder_index = index;
       this.filtered_files = this.state.gcode_list[index].files.map(item => item.file_name);
     },
 
