@@ -323,11 +323,10 @@ script#control-view-template(type="text/x-template")
           message.error-message(:show.sync="deleteGCode")
             h3(slot="header") Select files to delete:
             div(slot="body")
-              .search-bar
-                input(type="text" v-model="search_query" placeholder="Search Files...")
+              input.search-bar(type="text" v-model="search_query" placeholder="Search Files...")
               .container
                 .folders
-                  div(v-for="(folder, index) in state.gcode_list" :key="index" @click="populateFiles(index)" class="folder-item") {{ folder.name }}
+                  div(v-for="(index, folder) in state.gcode_list" :key="index" @click="populateFiles(index)" class="folder-item") {{ folder.name }}
                 .files
                   label.file-item(v-for="item in gcode_filtered_files" :key="item")
                     input(type="checkbox" :value="item" v-model="selected_items_to_delete")
