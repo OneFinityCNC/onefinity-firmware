@@ -55,6 +55,8 @@ module.exports = {
       totalFiles: 0,
       files_sortby: "By Upload Date",
       selected_items_to_delete: [],
+      search_query: "",
+      filtered_files: [],
     };
   },
 
@@ -230,6 +232,9 @@ module.exports = {
         return files;
       }
     },
+    gcode_filtered_files: function () {
+      return this.filtered_files.filter(file => file.toLowerCase().includes(this.search_query.toLowerCase()));
+    },
     gcode_folders: function () {
       return this.state.gcode_list
         .map(item => item.name)
@@ -289,6 +294,11 @@ module.exports = {
         alert("Restore failed");
       }
     },
+
+    populateFiles(index) {
+      this.filtered_files = this.state.gcode_list[index].files.map(item => item.file_name);
+    },
+
     getJogIncrStyle(value) {
       const weight = `font-weight:${this.jog_incr === value ? "bold" : "normal"}`;
       const color = this.jog_incr === value ? "color:#0078e7" : "";
