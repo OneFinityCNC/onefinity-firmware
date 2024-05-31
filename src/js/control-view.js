@@ -642,7 +642,7 @@ module.exports = {
         item => !this.selected_items_to_delete.includes(item.file_name),
       );
       const folder_to_update = this.config.gcode_list.find(
-        item => item.name == this.state.folder && item.type == "folder",
+        item => item.name == this.config.gcode_list[this.selected_folder_index].name && item.type == "folder",
       );
       folder_to_update.files = folder_to_update.files.filter(
         item => !this.selected_items_to_delete.includes(item.file_name),
@@ -655,6 +655,7 @@ module.exports = {
 
       this.save_config(this.config);
       this.filtered_files = [];
+      this.search_query = "";
       this.selected_folder_index = null;
       this.selected_items_to_delete = [];
       this.deleteGCode = false;
@@ -662,6 +663,7 @@ module.exports = {
 
     cancel_delete: function () {
       this.filtered_files = [];
+      this.search_query = "";
       this.selected_folder_index = null;
       this.selected_items_to_delete = [];
       this.deleteGCode = false;
