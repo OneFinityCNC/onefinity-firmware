@@ -655,11 +655,14 @@ module.exports = {
 
       this.save_config(this.config);
       this.filtered_files = [];
+      this.selected_folder_index = null;
       this.selected_items_to_delete = [];
       this.deleteGCode = false;
     },
 
     cancel_delete: function () {
+      this.filtered_files = [];
+      this.selected_folder_index = null;
       this.selected_items_to_delete = [];
       this.deleteGCode = false;
     },
