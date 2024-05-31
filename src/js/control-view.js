@@ -652,6 +652,7 @@ module.exports = {
       await api.delete(`file/DINCAIQABiDARixAxiABDIHCAMQABiABDIHCAQQABiABDIH${files_to_delete.toString()}`);
 
       this.save_config(this.config);
+      this.filtered_files = [];
       this.selected_items_to_delete = [];
       this.deleteGCode = false;
     },
