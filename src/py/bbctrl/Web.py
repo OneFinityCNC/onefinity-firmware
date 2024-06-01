@@ -11,6 +11,8 @@ import re
 import bbctrl
 from urllib.request import urlopen
 import iw_parse
+import io
+import zipfile
 
 
 def call_get_output(cmd):
@@ -608,6 +610,28 @@ class StaticFileHandler(tornado.web.StaticFileHandler):
         self.set_header('Cache-Control',
                         'no-store, no-cache, must-revalidate, max-age=0')
 
+class MacrosDownloadHandler(bbctrl.APIHandler):
+    def get(self,filename):
+      if not filename:
+          raise HTTPError(400, 'Missing filename')
+      files = filename.split(',')
+      self.get_log('Macros Download').info('files ' + files.join(' '))
+
+      buffer = io.BytesIO()
+      zip_file = zipfile.ZipFile(buffer, mode="w")
+
+      for filename in files:
+          filepath = self.get_upload(filename).encode('utf8')
+          filename = os.path.basename(filepath)
+          zip_file.write(filepath, filename)
+      zip_file.close()
+      buffer.seek(0)
+      # Send the zip file for download
+      self.set_header('Content-Type', 'application/octet-stream')
+      self.set_header('Content-Disposition', 'attachment; filename="macros.zip"')
+      self.write(buffer.getvalue())
+      self.finish()  
+
 
 class Web(tornado.web.Application):
     def __init__(self, args, ioloop):
@@ -646,6 +670,7 @@ class Web(tornado.web.Application):
             (r'/api/firmware/update', FirmwareUpdateHandler),
             (r'/api/upgrade', UpgradeHandler),
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
+            (r'/api/macros/download',MacrosDownloadHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
             (r'/api/start', StartHandler),
