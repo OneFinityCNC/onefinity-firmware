@@ -74,7 +74,7 @@ script#macros-template(type="text/x-template")
               | &nbsp;Yes
         
         a(download, title="Download Macros", :href="download_macros_url", style="text-decoration: none;", :disabled="!can_download_macros")
-          button.config-button.button-blue(style="width:160px;") Download Macros
+          button.config-button.button-blue(style="width:160px;", :disabled="!can_download_macros") Download Macros
 
     .warning-box
         p
