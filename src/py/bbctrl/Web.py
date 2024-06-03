@@ -617,20 +617,17 @@ class MacrosDownloadHandler(bbctrl.APIHandler):
           raise HTTPError(400, 'Missing filename')
       filename = filename[1:]
       files = filename.split(',')
-      self.get_log('Macros Download').info('files ' + ",".join(files))
 
       buffer = io.BytesIO()
       zip_file = zipfile.ZipFile(buffer, mode="w")
-
+      
       for filename in files:
           filename = os.path.basename(url_unescape(filename))
-          self.get_log('Macros Download').info('filename ' + filename)
           filepath = self.get_upload(filename)
-          self.get_log('Macros Download').info('filepath: ' + filepath)
           zip_file.write(filepath, filename)
       zip_file.close()
       buffer.seek(0)
-      # Send the zip file for download
+      
       self.set_header('Content-Type', 'application/octet-stream')
       self.set_header('Content-Disposition', 'attachment; filename="macros.zip"')
       self.write(buffer.getvalue())
