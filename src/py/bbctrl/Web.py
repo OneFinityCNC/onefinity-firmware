@@ -7,6 +7,7 @@ import subprocess
 import socket
 from tornado.web import HTTPError
 from tornado import gen
+from tornado.escape import url_unescape
 import re
 import bbctrl
 from urllib.request import urlopen
@@ -614,6 +615,7 @@ class MacrosDownloadHandler(bbctrl.APIHandler):
     def get(self,filename):
       if not filename:
           raise HTTPError(400, 'Missing filename')
+      filename = filename[1:]
       files = filename.split(',')
       self.get_log('Macros Download').info('files ' + ",".join(files))
 
@@ -621,8 +623,10 @@ class MacrosDownloadHandler(bbctrl.APIHandler):
       zip_file = zipfile.ZipFile(buffer, mode="w")
 
       for filename in files:
-          filepath = self.get_upload(filename).encode('utf8')
-          filename = os.path.basename(filepath)
+          filename = os.path.basename(url_unescape(filename))
+          self.get_log('Macros Download').info('filename ' + filename)
+          filepath = self.get_upload(filename)
+          self.get_log('Macros Download').info('filepath: ' + filepath)
           zip_file.write(filepath, filename)
       zip_file.close()
       buffer.seek(0)
