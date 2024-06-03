@@ -670,7 +670,7 @@ class Web(tornado.web.Application):
             (r'/api/firmware/update', FirmwareUpdateHandler),
             (r'/api/upgrade', UpgradeHandler),
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
-            (r'/api/macros/download',MacrosDownloadHandler),
+            (r'/api/macros/download(/[^/]+)?',MacrosDownloadHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
             (r'/api/start', StartHandler),

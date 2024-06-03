@@ -319,10 +319,6 @@ script#control-view-template(type="text/x-template")
             @click="deleteGCode = true",
             :disabled="!state.selected || !is_ready",style="height:100px;width:100px;font-weight:normal")
             img(src="images/delete_gcode.png" style="height: 30px;")
-          
-          a(download, title="Download Macros",
-            :href="'/api/macros/download/' + state.macros_list.map(item => item.file_name).join(',')")
-            button.pure-button(style="height:100px;width:100px") Download Macros
 
           message.error-message(:show.sync="deleteGCode")
             h3(slot="header") Select files to delete:

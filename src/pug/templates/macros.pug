@@ -72,6 +72,9 @@ script#macros-template(type="text/x-template")
             button.pure-button.button-error(@click="delete_selected_macro")
               .fa.fa-trash
               | &nbsp;Yes
+        
+        a(download, title="Download Macros", :href="downloadMacrosUrl")
+          button.config-button.button-blue(style="margin-left:5px;width:55%") Download Macros
 
     .warning-box
         p

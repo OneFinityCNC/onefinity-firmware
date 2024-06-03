@@ -56,6 +56,9 @@ module.exports = {
     initial_tab: function () {
       return this.tab == 0;
     },
+    downloadMacrosUrl() {
+      return '/api/macros/download/' + this.state.macros_list.map(item => item.file_name).join(',');
+    },
   },
   methods: {
     open: function () {
