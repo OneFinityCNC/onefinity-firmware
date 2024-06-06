@@ -625,6 +625,17 @@ class MacrosDownloadHandler(bbctrl.APIHandler):
           filename = os.path.basename(url_unescape(filename))
           filepath = self.get_upload(filename)
           zip_file.write(filepath, filename)
+     
+      config_path = self.ctrl.get_path('config.json')
+      try:
+          if os.path.exists(config_path):
+              zip_file.write(config_path,'config.json')
+          else: 
+              json_bytes = json.dumps({'version': self.version}).encode("utf-8")
+              zip_file.writestr("config.json",json_bytes)
+          
+      except Exception: self.log.exception('Internal error: Failed to upgrade config')
+              
       zip_file.close()
       buffer.seek(0)
       
