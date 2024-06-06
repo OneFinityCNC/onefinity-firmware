@@ -626,7 +626,7 @@ class MacrosDownloadHandler(bbctrl.APIHandler):
           filepath = self.get_upload(filename)
           zip_file.write(filepath, filename)
      
-      config_path = self.ctrl.get_path('config.json')
+      config_path = self.get_path('config.json')
       try:
           if os.path.exists(config_path):
               zip_file.write(config_path,'config.json')
