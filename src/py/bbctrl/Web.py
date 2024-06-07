@@ -326,7 +326,16 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
                 if file =="config.json":
                     with open(file_path, 'r') as json_file:
                         json_data = json.load(json_file)
-                        json_data["macros_list"] = [{"file_name": item["file_name"]} for item in json_data["gcode_list"]]
+
+                        if "macros" in json_data and isinstance(json_data['macros'], list):
+                            json_data["macros_list"] = [
+                                {"file_name": item["file_name"]}
+                                for item in json_data["macros"]
+                                if isinstance(item, dict) and "file_name" in item
+                            ]
+                        else:
+                            json_data["macros_list"] = []
+
                         keys_to_remove = ['non_macros_list','gcode_list']
                         for key in keys_to_remove:
                             if key in json_data:
