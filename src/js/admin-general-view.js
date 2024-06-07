@@ -48,7 +48,7 @@ module.exports = {
 
     methods: {
         backup: function() {
-            document.getElementById("download-target").src = "/api/config/download";
+            document.getElementById("download-target").src = "/api/config/download/"+ this.state.macros_list.map(item => item.file_name).join(",");
         },
 
         restore_config: function() {

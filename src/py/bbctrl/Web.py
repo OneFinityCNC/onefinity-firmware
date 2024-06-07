@@ -255,14 +255,43 @@ class ConfigLoadHandler(bbctrl.APIHandler):
 
 class ConfigDownloadHandler(bbctrl.APIHandler):
     def set_default_headers(self):
-        fmt = socket.gethostname() + '-%Y%m%d.json'
+        fmt = socket.gethostname() + '-%Y%m%d.zip'
         filename = datetime.date.today().strftime(fmt)
         self.set_header('Content-Type', 'application/octet-stream')
         self.set_header('Content-Disposition',
                         'attachment; filename="%s"' % filename)
 
-    def get(self):
-        self.write_json(self.get_ctrl().config.load(), pretty = True)
+    def get(self,filename):
+      buffer = io.BytesIO()
+      zip_file = zipfile.ZipFile(buffer, mode="w")
+      config_path = self.get_path('config.json')
+      try:
+          if os.path.exists(config_path):
+              zip_file.write(config_path,'config.json')
+          else: 
+              json_bytes = json.dumps({'version': self.version}).encode("utf-8")
+              zip_file.writestr("config.json",json_bytes)
+
+      except Exception: self.log.exception('Internal error: Failed to download config')
+      if not filename:
+          zip_file.close()
+          buffer.seek(0)
+          self.write(buffer.getvalue())
+          self.finish()
+
+      filename = filename[1:]
+      files = filename.split(',')
+
+      for filename in files:
+          filename = os.path.basename(url_unescape(filename))
+          filepath = self.get_upload(filename)
+          zip_file.write(filepath, filename)
+        
+      zip_file.close()
+      buffer.seek(0)
+
+      self.write(buffer.getvalue())
+      self.finish()
 
 
 class ConfigSaveHandler(bbctrl.APIHandler):
@@ -611,38 +640,29 @@ class StaticFileHandler(tornado.web.StaticFileHandler):
         self.set_header('Cache-Control',
                         'no-store, no-cache, must-revalidate, max-age=0')
 
-class MacrosDownloadHandler(bbctrl.APIHandler):
-    def get(self,filename):
-      if not filename:
-          raise HTTPError(400, 'Missing filename')
-      filename = filename[1:]
-      files = filename.split(',')
+class MacrosUploadHandler(bbctrl.APIHandler):
+    def post(self):
+        zip_file = self.request.files['file'][0]
 
-      buffer = io.BytesIO()
-      zip_file = zipfile.ZipFile(buffer, mode="w")
-      
-      for filename in files:
-          filename = os.path.basename(url_unescape(filename))
-          filepath = self.get_upload(filename)
-          zip_file.write(filepath, filename)
-     
-      config_path = self.get_path('config.json')
-      try:
-          if os.path.exists(config_path):
-              zip_file.write(config_path,'config.json')
-          else: 
-              json_bytes = json.dumps({'version': self.version}).encode("utf-8")
-              zip_file.writestr("config.json",json_bytes)
-          
-      except Exception: self.log.exception('Internal error: Failed to upgrade config')
-              
-      zip_file.close()
-      buffer.seek(0)
-      
-      self.set_header('Content-Type', 'application/octet-stream')
-      self.set_header('Content-Disposition', 'attachment; filename="macros.zip"')
-      self.write(buffer.getvalue())
-      self.finish()  
+        if not os.path.exists('./config-temp'):
+            os.mkdir('./config-temp')
+        
+        if not os.path.exists(self.get_upload()):
+            os.mkdir(self.get_upload())
+
+        # zip_path = os.path.join("./temp", zip_file['filename'])
+        # with open(zip_path, 'wb') as f:
+        #     f.write(zip_file['body'])
+        
+        # with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        #     zip_ref.extractall("./temp")
+        
+        # for root, dirs, files in os.walk("./temp"):
+        #     for files in files:
+
+        
+        self.write("File processed successfully.")
+        self.finish()
 
 
 class Web(tornado.web.Application):
@@ -676,13 +696,13 @@ class Web(tornado.web.Application):
             (r'/api/remote/username', UsernameHandler),
             (r'/api/remote/password', PasswordHandler),
             (r'/api/config/load', ConfigLoadHandler),
-            (r'/api/config/download', ConfigDownloadHandler),
+            (r'/api/config/download(/[^/]+)?', ConfigDownloadHandler),
             (r'/api/config/save', ConfigSaveHandler),
             (r'/api/config/reset', ConfigResetHandler),
             (r'/api/firmware/update', FirmwareUpdateHandler),
             (r'/api/upgrade', UpgradeHandler),
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
-            (r'/api/macros/download(/[^/]+)?',MacrosDownloadHandler),
+            (r'/api/macros/upload',MacrosUploadHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
             (r'/api/start', StartHandler),
