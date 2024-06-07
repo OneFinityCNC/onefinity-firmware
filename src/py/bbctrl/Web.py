@@ -306,41 +306,36 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
 
         files_path = os.path.join(temp_dir, zip_file['filename'])
 
-        try:
-            with open(files_path, 'wb') as f:
-                f.write(zip_file['body'])
-        
-        except Exception as e: self.log.exception(f"Internal error: {str(e)}")
+        with open(files_path, 'wb') as f:
+            f.write(zip_file['body'])
 
         if not os.path.exists(self.get_upload()):
             os.mkdir(self.get_upload())
 
-        try:
-            with zipfile.ZipFile(files_path, 'r') as zip_ref:
-                zip_ref.extractall(temp_dir+'/extracted')
 
-            extension = (".nc", ".ngc", ".gcode", ".gc")
+        with zipfile.ZipFile(files_path, 'r') as zip_ref:
+            zip_ref.extractall(temp_dir+'/extracted')
 
-            for root, dirs, files in os.walk(temp_dir+'/extracted'):
-                for file in files:
-                    file_path = os.path.join(root, file)
+        extension = (".nc", ".ngc", ".gcode", ".gc")
 
-                    #Updating the config.json
-                    if file =="config.json":
-                        with open(file_path, 'r') as json_file:
-                            json_data = json.load(json_file)
-                            keys_to_remove = ['non_macros_list','gcode_list']
-                            for key in keys_to_remove:
-                                if key in json_data:
-                                    del json_data[key]
+        for root, dirs, files in os.walk(temp_dir+'/extracted'):
+            for file in files:
+                file_path = os.path.join(root, file)
 
-                            self.get_ctrl().config.save(json_data)
+                #Updating the config.json
+                if file =="config.json":
+                    with open(file_path, 'r') as json_file:
+                        json_data = json.load(json_file)
+                        json_data["macros_list"] = [{"file_name": item["file_name"]} for item in json_data["gcode_list"]]
+                        keys_to_remove = ['non_macros_list','gcode_list']
+                        for key in keys_to_remove:
+                            if key in json_data:
+                                del json_data[key]
+                        self.get_ctrl().config.save(json_data)
 
-                    #moving the gcodes from temp to uploads
-                    elif file.endswith(extension):
-                        shutil.move(file_path,self.get_upload(file))
-        except Exception as e:
-            self.log.exception(f"Internal error: {str(e)}")
+                #moving the gcodes from temp to uploads
+                # elif file.endswith(extension):
+                    # shutil.move(file_path,self.get_upload(file))
                 
         shutil.rmtree(temp_dir)
        
