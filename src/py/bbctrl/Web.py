@@ -334,8 +334,11 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
                         self.get_ctrl().config.save(json_data)
 
                 #moving the gcodes from temp to uploads
-                # elif file.endswith(extension):
-                    # shutil.move(file_path,self.get_upload(file))
+                elif file.endswith(extension):
+                    filename = self.get_upload(file).encode('utf8')
+                    os.link(file_path,filename)
+                    self.get_ctrl().preplanner.invalidate(file_path)
+                    self.get_ctrl().state.add_file(file_path)
                 
         shutil.rmtree(temp_dir)
        
