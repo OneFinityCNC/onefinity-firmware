@@ -293,6 +293,30 @@ class ConfigDownloadHandler(bbctrl.APIHandler):
       self.write(buffer.getvalue())
       self.finish()
 
+class ConfigRestoreHandler(bbctrl.APIHandler):
+    def put(self):
+        zip_file = self.request.files['file'][0]
+        if not os.path.exists('./config-temp'):
+            os.mkdir('./config-temp')
+        
+        if not os.path.exists(self.get_upload()):
+            os.mkdir(self.get_upload())
+
+        zip_path = os.path.join("./temp", zip_file['filename'])
+        print(zip_path)
+        # with open(zip_path, 'wb') as f:
+        #     f.write(zip_file['body'])
+        
+        # with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        #     zip_ref.extractall("./temp")
+        
+        # for root, dirs, files in os.walk("./temp"):
+        #     for files in files:
+
+        
+        self.write("File processed successfully.")
+        self.finish()
+
 
 class ConfigSaveHandler(bbctrl.APIHandler):
     def put_ok(self): self.get_ctrl().config.save(self.json)
@@ -640,31 +664,6 @@ class StaticFileHandler(tornado.web.StaticFileHandler):
         self.set_header('Cache-Control',
                         'no-store, no-cache, must-revalidate, max-age=0')
 
-class MacrosUploadHandler(bbctrl.APIHandler):
-    def post(self):
-        zip_file = self.request.files['file'][0]
-
-        if not os.path.exists('./config-temp'):
-            os.mkdir('./config-temp')
-        
-        if not os.path.exists(self.get_upload()):
-            os.mkdir(self.get_upload())
-
-        # zip_path = os.path.join("./temp", zip_file['filename'])
-        # with open(zip_path, 'wb') as f:
-        #     f.write(zip_file['body'])
-        
-        # with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        #     zip_ref.extractall("./temp")
-        
-        # for root, dirs, files in os.walk("./temp"):
-        #     for files in files:
-
-        
-        self.write("File processed successfully.")
-        self.finish()
-
-
 class Web(tornado.web.Application):
     def __init__(self, args, ioloop):
         self.args = args
@@ -699,10 +698,10 @@ class Web(tornado.web.Application):
             (r'/api/config/download(/[^/]+)?', ConfigDownloadHandler),
             (r'/api/config/save', ConfigSaveHandler),
             (r'/api/config/reset', ConfigResetHandler),
+            (r'/api/config/restore',ConfigRestoreHandler),
             (r'/api/firmware/update', FirmwareUpdateHandler),
             (r'/api/upgrade', UpgradeHandler),
             (r'/api/file(/[^/]+)?', bbctrl.FileHandler),
-            (r'/api/macros/upload',MacrosUploadHandler),
             (r'/api/path/([^/]+)((/positions)|(/speeds))?', PathHandler),
             (r'/api/home(/[xyzabcXYZABC]((/set)|(/clear))?)?', HomeHandler),
             (r'/api/start', StartHandler),

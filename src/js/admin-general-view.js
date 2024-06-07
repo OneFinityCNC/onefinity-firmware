@@ -7,11 +7,11 @@ const merge = require("lodash.merge");
 const config_defaults = require("../resources/onefinity_defaults.json");
 
 const variant_defaults = {
-    machinist_x35: require("../resources/onefinity_machinist_x35_defaults.json"),
-    woodworker_x35: require("../resources/onefinity_woodworker_x35_defaults.json"),
-    woodworker_x50: require("../resources/onefinity_woodworker_x50_defaults.json"),
-    journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json"),
-    foreman_pro: require('../resources/onefinity_foreman_pro_defaults.json')
+  machinist_x35: require("../resources/onefinity_machinist_x35_defaults.json"),
+  woodworker_x35: require("../resources/onefinity_woodworker_x35_defaults.json"),
+  woodworker_x50: require("../resources/onefinity_woodworker_x50_defaults.json"),
+  journeyman_x50: require("../resources/onefinity_journeyman_x50_defaults.json"),
+  foreman_pro: require("../resources/onefinity_foreman_pro_defaults.json"),
 };
 
 const z_slider_defaults = {
@@ -25,135 +25,138 @@ const z_slider_defaults = {
     "min-soft-limit": -160,
     "max-velocity": 7,
   },
-}; 
+};
 
 module.exports = {
-    template: "#admin-general-view-template",
-    props: [ "config", "state" ],
+  template: "#admin-general-view-template",
+  props: ["config", "state"],
 
-    data: function() {
-        return {
-          confirmReset: false,
-          autoCheckUpgrade: true,
-          reset_variant: "",
-          z_slider: false,
-          z_slider_variant:" ",
-          config:""
-        };
+  data: function () {
+    return {
+      confirmReset: false,
+      autoCheckUpgrade: true,
+      reset_variant: "",
+      z_slider: false,
+      z_slider_variant: " ",
+      config: "",
+    };
+  },
+
+  ready: function () {
+    this.autoCheckUpgrade = this.config.admin["auto-check-upgrade"];
+  },
+
+  methods: {
+    backup: function () {
+      document.getElementById("download-target").src =
+        "/api/config/download/" + this.state.macros_list.map(item => item.file_name).join(",");
     },
 
-    ready: function() {
-        this.autoCheckUpgrade = this.config.admin["auto-check-upgrade"];
+    restore_config: function () {
+      utils.clickFileInput("restore-config");
     },
 
-    methods: {
-        backup: function() {
-            document.getElementById("download-target").src = "/api/config/download/"+ this.state.macros_list.map(item => item.file_name).join(",");
-        },
+    restore: async function (e) {
+      const files = e.target.files || e.dataTransfer.files;
+      if (!files.length) {
+        return;
+      }
+      
+      try {
+        await api.put("/api/config/restore", files[0]);
+        SvelteComponents.showDialog("Message", {
+          title: "Success",
+          message: "Configuration restored",
+        });
+        this.confirmReset = false;
+      } catch (error) {
+        console.error("Restore Failed: ", error);
+        alert("Restore failed");
+      }
 
-        restore_config: function() {
-            utils.clickFileInput("restore-config");
-        },
+      // const fileReader = new FileReader();
+      // fileReader.onload = async ({ target }) => {
+      //     let config;
+      //     try {
+      //         config = JSON.parse(target.result);
+      //     } catch (error) {
+      //         console.error("Invalid config file:", error);
+      //         alert("Invalid config file");
+      //         return;
+      //     }
 
-        restore: function(e) {
-            const files = e.target.files || e.dataTransfer.files;
-            if (!files.length) {
-                return;
-            }
+      //     try {
+      //         await api.put("config/save", config);
+      //         this.$dispatch("update");
+      //         SvelteComponents.showDialog("Message", {
+      //             title: "Success",
+      //             message: "Configuration restored"
+      //         });
+      //         this.confirmReset= false
+      //     } catch (error) {
+      //         console.error("Restore failed:", error);
+      //         alert("Restore failed");
+      //     }
+      // };
 
-            console.log(files);
+      // fileReader.readAsText(files[0]);
+    },
 
-            // const fileReader = new FileReader();
-            // fileReader.onload = async ({ target }) => {
-            //     let config;
-            //     try {
-            //         config = JSON.parse(target.result);
-            //     } catch (error) {
-            //         console.error("Invalid config file:", error);
-            //         alert("Invalid config file");
-            //         return;
-            //     }
+    next: async function () {
+      const config = merge({}, config_defaults, variant_defaults[this.reset_variant]);
 
-            //     try {
-            //         await api.put("config/save", config);
-            //         this.$dispatch("update");
-            //         SvelteComponents.showDialog("Message", {
-            //             title: "Success",
-            //             message: "Configuration restored"
-            //         });
-            //         this.confirmReset= false
-            //     } catch (error) {
-            //         console.error("Restore failed:", error);
-            //         alert("Restore failed");
-            //     }
-            // };
+      try {
+        await api.put("config/save", config);
+        this.confirmReset = false;
+        this.$dispatch("update");
+        this.config = config;
+        this.z_slider = true;
+      } catch (error) {
+        console.error("Restore failed:", error);
+        alert("Restore failed");
+      }
+    },
 
-            // fileReader.readAsText(files[0]);
-        },
-        
-        next: async function() {
-            const config = merge(
-                {},
-                config_defaults,
-                variant_defaults[this.reset_variant]
-                );
-                
-                try {
-                    await api.put("config/save", config);
-                    this.confirmReset = false;
-                    this.$dispatch("update");
-                    this.config= config
-                    this.z_slider = true;
-                } catch (error) {
-                    console.error("Restore failed:", error);
-                    alert("Restore failed");
-                }
-            },
-            
-            set_z_slider: async function(){
-                 const z_variant = merge(
-                   {},
-                   this.config.motors[3],
-                   z_slider_defaults[this.z_slider_variant],
-                 );
-                 
-                this.config.motors[3] = z_variant;
-                 try {
-                   await api.put("config/save", this.config);
-                   this.$dispatch("update");
-                   SvelteComponents.showDialog("Message", {
-                       title: "Success",
-                       message: "Configuration restored",
-                    });
-                    this.z_slider = false;
-                 } catch (error) {
-                   console.error("Z slider failed:", error);
-                   alert("failed to set Z slider  ");
-                 }    
-            },
-        check: function() {
-            this.$dispatch("check");
-        },
+    set_z_slider: async function () {
+      const z_variant = merge({}, this.config.motors[3], z_slider_defaults[this.z_slider_variant]);
 
-        upgrade: function() {
-            this.$dispatch("upgrade");
-        },
+      this.config.motors[3] = z_variant;
+      try {
+        await api.put("config/save", this.config);
+        this.$dispatch("update");
+        SvelteComponents.showDialog("Message", {
+          title: "Success",
+          message: "Configuration restored",
+        });
+        this.z_slider = false;
+      } catch (error) {
+        console.error("Z slider failed:", error);
+        alert("failed to set Z slider  ");
+      }
+    },
+    check: function () {
+      this.$dispatch("check");
+    },
 
-        upload_firmware: function() {
-            utils.clickFileInput("upload-firmware");
-        },
+    upgrade: function () {
+      this.$dispatch("upgrade");
+    },
 
-        upload: function(e) {
-            const files = e.target.files || e.dataTransfer.files;
-            if (!files.length) {
-                return;
-            }
-            this.$dispatch("upload", files[0]);
-        },
+    upload_firmware: function () {
+      utils.clickFileInput("upload-firmware");
+    },
 
-        change_auto_check_upgrade: function() {
-            this.config.admin["auto-check-upgrade"] = this.autoCheckUpgrade;
-            this.$dispatch("config-changed");
-        }
-    }
+    upload: function (e) {
+      const files = e.target.files || e.dataTransfer.files;
+      if (!files.length) {
+        return;
+      }
+      this.$dispatch("upload", files[0]);
+    },
+
+    change_auto_check_upgrade: function () {
+      this.config.admin["auto-check-upgrade"] = this.autoCheckUpgrade;
+      this.$dispatch("config-changed");
+    },
+  },
 };
