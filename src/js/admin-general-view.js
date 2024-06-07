@@ -69,6 +69,9 @@ module.exports = {
         await fetch("/api/config/restore", {
           method: "PUT",
           body: formData,
+          headers:{
+            'Type':'zip'
+          }
         });
         console.log('done');
         // SvelteComponents.showDialog("Message", {

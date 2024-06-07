@@ -295,18 +295,16 @@ class ConfigDownloadHandler(bbctrl.APIHandler):
 
 class ConfigRestoreHandler(bbctrl.APIHandler):
     def put(self):
-        zip_file = self.request.files['zipfile'][0]
-        self.get_log('ConfigRestoreHandler').info('Request Hit')
-        # if 'zipfile' not in self.request.files:
-        #     raise HTTPError(400, 'No file uploaded')
+        if 'zipfile' not in self.request.files:
+            raise HTTPError(400, 'No file uploaded')
         
-        # zip_file = self.request.files['zipfile'][0]
-        # temp_dir = './config-temp';
+        zip_file = self.request.files['zipfile'][0]
+        temp_dir = './config-temp';
 
-        # if not os.path.exists(temp_dir):
-        #     os.mkdir(temp_dir)
+        if not os.path.exists(temp_dir):
+            os.mkdir(temp_dir)
 
-        # files_path = os.path.join(temp_dir, zip_file['filename'])
+        files_path = os.path.join(temp_dir, zip_file['filename'])
 
         # try:
         #     with open(files_path, 'wb') as f:

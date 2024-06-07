@@ -53,7 +53,7 @@ class APIHandler(bbctrl.RequestHandler):
     def prepare(self):
         self.json = {}
 
-        if self.request.body:
+        if self.request.body and self.request.headers.get('Type') != 'zip':
             try:
                 self.json = tornado.escape.json_decode(self.request.body)
             except ValueError:
