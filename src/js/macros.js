@@ -56,12 +56,6 @@ module.exports = {
     initial_tab: function () {
       return this.tab == 0;
     },
-    download_macros_url: function () {
-      return "/api/macros/download/" + this.state.macros_list.map(item => item.file_name).join(",");
-    },
-    can_download_macros: function () {
-      return this.state.macros_list.length;
-    },
   },
   methods: {
     open: function () {
@@ -99,6 +93,11 @@ module.exports = {
           onerror: () => reject(false),
         });
       });
+    },
+
+    printconfig: function () {
+      console.log(this.state);
+      console.log(this.config);
     },
 
     update_config: function () {

@@ -73,8 +73,8 @@ script#macros-template(type="text/x-template")
               .fa.fa-trash
               | &nbsp;Yes
         
-        a(download, title="Download Macros", :href="can_download_macros? download_macros_url : null", style="text-decoration: none;")
-          button.config-button.button-blue(style="width:160px;") Download Macros
+
+        button.config-button.button-blue(style="width:160px;", @click="printconfig") Print Config
 
     .warning-box
         p
