@@ -49,7 +49,11 @@ module.exports = {
   methods: {
     backup: function () {
       document.getElementById("download-target").src =
-        "/api/config/download/" + this.state.macros_list.map(item => item.file_name).join(",");
+        "/api/config/download/" +
+        this.state.macros
+          .filter(item => item.file_name != "default")
+          .map(item => item.file_name)
+          .join(",");
     },
 
     restore_config: function () {
@@ -69,11 +73,11 @@ module.exports = {
         await fetch("/api/config/restore", {
           method: "PUT",
           body: formData,
-          headers:{
-            'Type':'zip'
-          }
+          headers: {
+            Type: "zip",
+          },
         });
-        console.log('done');
+        console.log("done");
         // SvelteComponents.showDialog("Message", {
         //   title: "Success",
         //   message: "Configuration restored",
