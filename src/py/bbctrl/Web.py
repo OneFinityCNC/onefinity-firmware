@@ -294,7 +294,7 @@ class ConfigDownloadHandler(bbctrl.APIHandler):
       self.finish()
 
 class ConfigRestoreHandler(bbctrl.APIHandler):
-    def put(self):
+    def put_ok(self):
         if 'zipfile' not in self.request.files:
             raise HTTPError(401,'No file uploaded')
         
@@ -308,9 +308,10 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
         
         fmt = socket.gethostname() + '-%Y%m%d.zip'
         filename = datetime.date.today().strftime(fmt)
+        file_path = os.path.join(temp_dir, filename)
 
         try:
-            with open(temp_dir+filename,'wb') as f:
+            with open(file_path, 'wb') as f:
                 f.write(zip_file['body'])
         
         except Exception as e:
