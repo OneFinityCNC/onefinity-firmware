@@ -306,11 +306,11 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
 
         files_path = os.path.join(temp_dir, zip_file['filename'])
 
-        # try:
-        #     with open(files_path, 'wb') as f:
-        #         f.write(zip_file['body'])
-        # except Exception as e:
-        #     raise HTTPError(500, f"Error handling zip file: {str(e)}")
+        try:
+            with open(files_path, 'wb') as f:
+                f.write(zip_file['body'])
+        except Exception as e:
+            raise HTTPError(500, f"Error handling zip file: {str(e)}")
 
         # if not os.path.exists(self.get_upload()):
         #     os.mkdir(self.get_upload())
