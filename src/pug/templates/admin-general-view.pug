@@ -17,7 +17,7 @@ script#admin-general-view-template(type="text/x-template")
 
     label.pure-button.pure-button-primary(@click="restore_config") Restore
     form.restore-config.file-upload
-      input(type="file", accept=".json", @change="restore")
+      input(type="file", accept=".zip", @change="restore")
 
     button.pure-button.pure-button-primary(@click="confirmReset = true") Reset    
     message(:show.sync="confirmReset")

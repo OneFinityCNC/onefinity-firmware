@@ -61,32 +61,34 @@ module.exports = {
                 return;
             }
 
-            const fileReader = new FileReader();
-            fileReader.onload = async ({ target }) => {
-                let config;
-                try {
-                    config = JSON.parse(target.result);
-                } catch (error) {
-                    console.error("Invalid config file:", error);
-                    alert("Invalid config file");
-                    return;
-                }
+            console.log(files);
 
-                try {
-                    await api.put("config/save", config);
-                    this.$dispatch("update");
-                    SvelteComponents.showDialog("Message", {
-                        title: "Success",
-                        message: "Configuration restored"
-                    });
-                    this.confirmReset= false
-                } catch (error) {
-                    console.error("Restore failed:", error);
-                    alert("Restore failed");
-                }
-            };
+            // const fileReader = new FileReader();
+            // fileReader.onload = async ({ target }) => {
+            //     let config;
+            //     try {
+            //         config = JSON.parse(target.result);
+            //     } catch (error) {
+            //         console.error("Invalid config file:", error);
+            //         alert("Invalid config file");
+            //         return;
+            //     }
 
-            fileReader.readAsText(files[0]);
+            //     try {
+            //         await api.put("config/save", config);
+            //         this.$dispatch("update");
+            //         SvelteComponents.showDialog("Message", {
+            //             title: "Success",
+            //             message: "Configuration restored"
+            //         });
+            //         this.confirmReset= false
+            //     } catch (error) {
+            //         console.error("Restore failed:", error);
+            //         alert("Restore failed");
+            //     }
+            // };
+
+            // fileReader.readAsText(files[0]);
         },
         
         next: async function() {
