@@ -14,7 +14,7 @@ from urllib.request import urlopen
 import iw_parse
 import io
 import zipfile
-
+import shutil
 
 def call_get_output(cmd):
     p = subprocess.Popen(cmd, stdout = subprocess.PIPE)
@@ -294,44 +294,55 @@ class ConfigDownloadHandler(bbctrl.APIHandler):
       self.finish()
 
 class ConfigRestoreHandler(bbctrl.APIHandler):
-    def put_ok(self):
-        if 'zipfile' not in self.request.files:
-            raise HTTPError(401,'No file uploaded')
-        
-        self.get_log('ConfigRestoreHandler').info('self.request: {}'.format(str(self.request)))
+    def put(self):
+        if 'zipfile' not in self.request.files['zipfile']:
+            raise HTTPError(400,'No file uploaded')
         
         zip_file = self.request.files['zipfile'][0]
-
         temp_dir = './config-temp';
+
         if not os.path.exists(temp_dir):
             os.mkdir(temp_dir)
-        
-        fmt = socket.gethostname() + '-%Y%m%d.zip'
-        filename = datetime.date.today().strftime(fmt)
-        file_path = os.path.join(temp_dir, filename)
+
+        files_path = os.path.join(temp_dir, zip_file['filename'])
 
         try:
-            with open(file_path, 'wb') as f:
+            with open(files_path, 'wb') as f:
                 f.write(zip_file['body'])
-        
         except Exception as e:
-            raise HTTPError(500, f"Unexpected error: {str(e)}")
-        # if not os.path.exists(self.get_upload()):
-            # os.mkdir(self.get_upload())
+            raise HTTPError(500, f"Error handling zip file: {str(e)}")
 
-        
+        if not os.path.exists(self.get_upload()):
+            os.mkdir(self.get_upload())
 
-        # zip_path = os.path.join("./temp", zip_file['filename'])
-        # print(zip_path)
-        # with open(zip_path, 'wb') as f:
-        #     f.write(zip_file['body'])
-        
-        # with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        #     zip_ref.extractall("./temp")
-        
-        # for root, dirs, files in os.walk("./temp"):
-        #     for files in files:
+        with zipfile.ZipFile(files_path, 'r') as zip_ref:
+            zip_ref.extractall(temp_dir+'/extracted')
 
+        extension = (".nc", ".ngc", ".gcode", ".gc")
+
+        try:
+            for root, dirs, files in os.walk(temp_dir+'/extracted'):
+                for file in files:
+                    file_path = os.path.join(root, file)
+
+                    #Updating the config.json
+                    if file =="config.json":
+                        with open(file_path, 'r') as json_file:
+                            json_data = json.load(json_file)
+                            keys_to_remove = ['non_macros_list','gcode_list']
+                            for key in keys_to_remove:
+                                if key in json_data:
+                                    del json_data[key]
+
+                            self.get_ctrl().config.save(json_data)
+                    #moving the gcodes from temp to uploads
+                    elif file.endswith(extension):
+                        shutil.move(file_path,self.get_upload(file))
+        except Exception as e:
+            raise HTTPError(500, f"Error restoring: {str(e)}")
+                
+        shutil.rmtree(temp_dir)
+       
 
 class ConfigSaveHandler(bbctrl.APIHandler):
     def put_ok(self): self.get_ctrl().config.save(self.json)
