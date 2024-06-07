@@ -295,15 +295,33 @@ class ConfigDownloadHandler(bbctrl.APIHandler):
 
 class ConfigRestoreHandler(bbctrl.APIHandler):
     def put(self):
-        zip_file = self.request.files['file'][0]
-        if not os.path.exists('./config-temp'):
-            os.mkdir('./config-temp')
+        if 'zipfile' not in self.request.files:
+            raise HTTPError(401,'No file uploaded')
         
-        if not os.path.exists(self.get_upload()):
-            os.mkdir(self.get_upload())
+        self.get_log('ConfigRestoreHandler').info('self.request: {}'.format(str(self.request)))
+        
+        zip_file = self.request.files['zipfile'][0]
 
-        zip_path = os.path.join("./temp", zip_file['filename'])
-        print(zip_path)
+        temp_dir = './config-temp';
+        if not os.path.exists(temp_dir):
+            os.mkdir(temp_dir)
+        
+        fmt = socket.gethostname() + '-%Y%m%d.zip'
+        filename = datetime.date.today().strftime(fmt)
+
+        try:
+            with open(temp_dir+filename,'wb') as f:
+                f.write(zip_file['body'])
+        
+        except Exception as e:
+            raise HTTPError(500, f"Unexpected error: {str(e)}")
+        # if not os.path.exists(self.get_upload()):
+            # os.mkdir(self.get_upload())
+
+        
+
+        # zip_path = os.path.join("./temp", zip_file['filename'])
+        # print(zip_path)
         # with open(zip_path, 'wb') as f:
         #     f.write(zip_file['body'])
         
@@ -312,10 +330,6 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
         
         # for root, dirs, files in os.walk("./temp"):
         #     for files in files:
-
-        
-        self.write("File processed successfully.")
-        self.finish()
 
 
 class ConfigSaveHandler(bbctrl.APIHandler):
