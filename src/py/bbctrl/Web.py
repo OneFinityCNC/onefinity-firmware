@@ -299,7 +299,7 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
             raise HTTPError(400, 'No file uploaded')
         
         zip_file = self.request.files['zipfile'][0]
-        temp_dir = './config-temp';
+        temp_dir = './config-temp'
 
         if not os.path.exists(temp_dir):
             os.mkdir(temp_dir)
@@ -309,40 +309,40 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
         try:
             with open(files_path, 'wb') as f:
                 f.write(zip_file['body'])
+        
+        except Exception as e: self.log.exception(f"Internal error: {str(e)}")
+
+        if not os.path.exists(self.get_upload()):
+            os.mkdir(self.get_upload())
+
+        try:
+            with zipfile.ZipFile(files_path, 'r') as zip_ref:
+                zip_ref.extractall(temp_dir+'/extracted')
+
+            extension = (".nc", ".ngc", ".gcode", ".gc")
+
+            for root, dirs, files in os.walk(temp_dir+'/extracted'):
+                for file in files:
+                    file_path = os.path.join(root, file)
+
+                    #Updating the config.json
+                    if file =="config.json":
+                        with open(file_path, 'r') as json_file:
+                            json_data = json.load(json_file)
+                            keys_to_remove = ['non_macros_list','gcode_list']
+                            for key in keys_to_remove:
+                                if key in json_data:
+                                    del json_data[key]
+
+                            self.get_ctrl().config.save(json_data)
+
+                    #moving the gcodes from temp to uploads
+                    elif file.endswith(extension):
+                        shutil.move(file_path,self.get_upload(file))
         except Exception as e:
-            raise HTTPError(500, f"Error handling zip file: {str(e)}")
-
-        # if not os.path.exists(self.get_upload()):
-        #     os.mkdir(self.get_upload())
-
-        # with zipfile.ZipFile(files_path, 'r') as zip_ref:
-        #     zip_ref.extractall(temp_dir+'/extracted')
-
-        # extension = (".nc", ".ngc", ".gcode", ".gc")
-
-        # try:
-        #     for root, dirs, files in os.walk(temp_dir+'/extracted'):
-        #         for file in files:
-        #             file_path = os.path.join(root, file)
-
-        #             #Updating the config.json
-        #             if file =="config.json":
-        #                 with open(file_path, 'r') as json_file:
-        #                     json_data = json.load(json_file)
-        #                     keys_to_remove = ['non_macros_list','gcode_list']
-        #                     for key in keys_to_remove:
-        #                         if key in json_data:
-        #                             del json_data[key]
-
-        #                     self.get_ctrl().config.save(json_data)
-
-        #             #moving the gcodes from temp to uploads
-        #             elif file.endswith(extension):
-        #                 shutil.move(file_path,self.get_upload(file))
-        # except Exception as e:
-        #     raise HTTPError(500, f"Error restoring: {str(e)}")
+            self.log.exception(f"Internal error: {str(e)}")
                 
-        # shutil.rmtree(temp_dir)
+        shutil.rmtree(temp_dir)
        
 
 class ConfigSaveHandler(bbctrl.APIHandler):
