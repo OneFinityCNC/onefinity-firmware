@@ -66,11 +66,15 @@ module.exports = {
       formData.append("zipfile", files[0]);
 
       try {
-        await api.put("config/restore", formData);
-        SvelteComponents.showDialog("Message", {
-          title: "Success",
-          message: "Configuration restored",
+        await fetch("/api/config/restore", {
+          method: "PUT",
+          body: formData,
         });
+        console.log('done');
+        // SvelteComponents.showDialog("Message", {
+        //   title: "Success",
+        //   message: "Configuration restored",
+        // });
         this.confirmReset = false;
       } catch (error) {
         console.error("Restore Failed: ", error);
