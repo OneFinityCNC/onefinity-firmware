@@ -95,11 +95,6 @@ module.exports = {
       });
     },
 
-    printconfig: function () {
-      console.log(this.state);
-      console.log(this.config);
-    },
-
     update_config: function () {
       this.config.gcode_list = [...this.state.gcode_list];
       this.config.non_macros_list = [...this.state.non_macros_list];
