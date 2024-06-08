@@ -77,11 +77,10 @@ module.exports = {
             Type: "zip",
           },
         });
-        console.log("done");
-        // SvelteComponents.showDialog("Message", {
-        //   title: "Success",
-        //   message: "Configuration restored",
-        // });
+        SvelteComponents.showDialog("Message", {
+          title: "Success",
+          message: "Configuration restored",
+        });
         this.confirmReset = false;
       } catch (error) {
         console.error("Restore Failed: ", error);
