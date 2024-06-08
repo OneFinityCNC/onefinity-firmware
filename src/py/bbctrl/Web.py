@@ -331,7 +331,7 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
                             json_data["macros_list"] = [
                                 {"file_name": item["file_name"]}
                                 for item in json_data["macros"]
-                                if isinstance(item, dict) and "file_name" in item
+                                if isinstance(item, dict) and "file_name" in item and item["file_name"] != "default"
                             ]
                         else:
                             json_data["macros_list"] = []
@@ -349,11 +349,11 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
                         os.link(file_path,filename)
                     except FileExistsError as e:
                         print('File already exists')
-                    self.get_ctrl().preplanner.invalidate(file_path)
-                    self.get_ctrl().state.add_file(file_path)
-                
+                    self.get_ctrl().preplanner.invalidate(file)
+                    self.get_ctrl().state.add_file(file)
+
         shutil.rmtree(temp_dir)
-       
+
 
 class ConfigSaveHandler(bbctrl.APIHandler):
     def put_ok(self): self.get_ctrl().config.save(self.json)
