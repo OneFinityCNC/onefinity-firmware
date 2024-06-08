@@ -273,7 +273,7 @@ class ConfigDownloadHandler(bbctrl.APIHandler):
               zip_file.writestr("config.json",json_bytes)
 
       except Exception: self.log.exception('Internal error: Failed to download config')
-      if not filename:
+      if not filename or filename == '/':
           zip_file.close()
           buffer.seek(0)
           self.write(buffer.getvalue())
@@ -732,7 +732,7 @@ class Web(tornado.web.Application):
             (r'/api/remote/username', UsernameHandler),
             (r'/api/remote/password', PasswordHandler),
             (r'/api/config/load', ConfigLoadHandler),
-            (r'/api/config/download(/[^/]+)?', ConfigDownloadHandler),
+            (r'/api/config/download(/.*)?', ConfigDownloadHandler),
             (r'/api/config/save', ConfigSaveHandler),
             (r'/api/config/reset', ConfigResetHandler),
             (r'/api/config/restore',ConfigRestoreHandler),
