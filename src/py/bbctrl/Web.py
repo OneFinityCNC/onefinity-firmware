@@ -345,7 +345,10 @@ class ConfigRestoreHandler(bbctrl.APIHandler):
                 #moving the gcodes from temp to uploads
                 elif file.endswith(extension):
                     filename = self.get_upload(file).encode('utf8')
-                    os.link(file_path,filename)
+                    try:
+                        os.link(file_path,filename)
+                    except FileExistsError as e:
+                        print('File already exists')
                     self.get_ctrl().preplanner.invalidate(file_path)
                     self.get_ctrl().state.add_file(file_path)
                 
