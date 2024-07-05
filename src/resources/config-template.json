@@ -653,6 +653,39 @@
     }
   },
 
+  "axes": {
+    "x": {
+      "abs": {
+        "type": "string",
+        "default": "0"
+      },
+      "off": {
+        "type": "string",
+        "default": "0"
+      }
+    },
+    "y": {
+      "abs": {
+        "type": "string",
+        "default": "0"
+      },
+      "off": {
+        "type": "string",
+        "default": "0"
+      }
+    },
+    "z": {
+      "abs": {
+        "type": "string",
+        "default": "0"
+      },
+      "off": {
+        "type": "string",
+        "default": "0"
+      }
+    }
+  },
+
   "admin": {
     "auto-check-upgrade": {
       "type": "bool",
