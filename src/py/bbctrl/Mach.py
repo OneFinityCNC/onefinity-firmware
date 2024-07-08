@@ -371,12 +371,14 @@ class Mach(Comm):
 
             # Set the absolute position both locally and via the AVR
             target = position + state.get('offset_' + axis)
-            self.mlog.info('target ' + str(target))
-            self.mlog.info('state.get ' + str(state.get('offset_' + axis)))
+            self.mlog.info('target %s' % str(target))
+            self.mlog.info('state.get %s axis' % str(state.get('offset_' + axis)))
             state.set(axis + 'p', target)
             axes = config.values.setdefault('axes',{})
             axes[axis + 'p'] = target
+            self.mlog.info('Saving %s axis' % axis)
             config.set('axes', axes)
+            self.mlog
             super().queue_command(Cmd.set_axis(axis, target))
 
 
