@@ -358,7 +358,7 @@ class Mach(Comm):
     def set_position(self, axis, position):
         axis = axis.lower()
         state = self.ctrl.state
-        config = self.ctrl.config
+        # config = self.ctrl.config
 
         if state.is_axis_homed(axis):
             # If homed, change the offset rather than the absolute position
@@ -371,11 +371,11 @@ class Mach(Comm):
 
             # Set the absolute position both locally and via the AVR
             target = position + state.get('offset_' + axis)
-            json_data = config.values
-            axes = json_data.setdefault('axes', {})
-            axes[axis] = { 'abs' : target, 'off' : state.get('offset_' + axis)}
-            self.mlog.info('json_data: ' + repr(json_data))
-            # config.save(json_data)
+            # json_data = config.values
+            # axes = json_data.setdefault('axes', {})
+            # axes[axis] = { 'abs' : target, 'off' : state.get('offset_' + axis)}
+            self.mlog.info('target ' + target)
+            self.mlog.info('state.get ' + state.get('offset_' + axis))
             state.set(axis + 'p', target)
             super().queue_command(Cmd.set_axis(axis, target))
 

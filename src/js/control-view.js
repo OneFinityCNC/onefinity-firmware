@@ -725,7 +725,9 @@ module.exports = {
         return;
       }
       const macrosList = this.state.macros_list.map(item => item.file_name);
-      var files_to_delete = selected_folder.files.map(item => item.file_name).filter(item => !macrosList.includes(item));
+      var files_to_delete = selected_folder.files
+        .map(item => item.file_name)
+        .filter(item => !macrosList.includes(item));
       if (selected_folder.name != "default") {
         this.config.gcode_list = this.config.gcode_list.filter(item => item.name != this.state.folder);
       } else {
@@ -773,8 +775,17 @@ module.exports = {
       SvelteComponents.showDialog("Message", { title: this[axis].toolmsg });
     },
 
-    set_position: function (axis, position) {
-      api.put(`position/${axis}`, { position: parseFloat(position) });
+    set_position: async function (axis, position) {
+      this.update_config();
+      if (!this.config.axes) {
+        this.config.axes = {};
+      }
+      this.config.axes[axis] = {
+        abs: position + this.state["offset_" + axis],
+        off: this.state["offset_" + axis],
+      };
+      console.log(this.config);
+      await api.put(`position/${axis}`, { position: parseFloat(position) });
     },
 
     zero_all: function () {
