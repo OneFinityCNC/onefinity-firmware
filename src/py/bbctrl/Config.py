@@ -79,6 +79,10 @@ class Config(object):
     def get(self, name, default = None):
         return self.values.get(name, default)
 
+    def set(self, name, default = None):
+        self.log.info(f'name:{name} default:{default}')
+        self.log.info(f'config: {repr(self)}')
+
 
     def save(self, config):
         self._upgrade(config)

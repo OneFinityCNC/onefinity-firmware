@@ -377,10 +377,9 @@ class Mach(Comm):
             self.mlog.info('target ' + str(target))
             self.mlog.info('state.get ' + str(state.get('offset_' + axis)))
             state.set(axis + 'p', target)
-            if 'axes' in config.values:
-                config.values['axes'][axis] = { 'abs' : target, 'off' : state.get('offset_' + axis) }
-            else:
-                config.values['axes'] = { axis : { 'abs' : target, 'off' : state.get('offset_' + axis) } }
+            axes = config.values.setdefault('axes',{})
+            axes[axis]['abs'] = target
+            config.set('axes',axes)
             super().queue_command(Cmd.set_axis(axis, target))
 
 
