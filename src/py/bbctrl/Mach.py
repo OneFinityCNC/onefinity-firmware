@@ -28,7 +28,8 @@
 import bbctrl
 from bbctrl.Comm import Comm
 import bbctrl.Cmd as Cmd
-
+import os
+import json
 
 # Axis homing procedure:
 #
@@ -354,11 +355,26 @@ class Mach(Comm):
     def optional_pause(self, enable = True):
         self.ctrl.state.set('optional_pause', enable)
 
+    def save_config(self, axis, target):
+        config = self.ctrl.config
+        path = self.ctrl.get_path('config.json')
+
+        try:
+            if os.path.exists(path):
+                with open(path, 'r') as f: config_data = json.load(f)
+            else: config_data = {'version': self.version}
+
+            axes = config_data.setdefault('axes',{})
+            axes[axis]['abs'] = target
+            config.save(config_data)
+            self.mlog.info(f'done with config: {config_data}')
+        except Exception: self.log.exception('Internal error: Failed to upgrade config')
+
+
 
     def set_position(self, axis, position):
         axis = axis.lower()
         state = self.ctrl.state
-        config = self.ctrl.config
 
         if state.is_axis_homed(axis):
             # If homed, change the offset rather than the absolute position
@@ -374,9 +390,7 @@ class Mach(Comm):
             self.mlog.info('target ' + str(target))
             self.mlog.info('state.get ' + str(state.get('offset_' + axis)))
             state.set(axis + 'p', target)
-            axes = config.values.setdefault('axes',{})
-            axes[axis]['abs'] = target
-            # config.set_values('axes',axes)
+            self.save_config(axis, target)
             super().queue_command(Cmd.set_axis(axis, target))
 
 
