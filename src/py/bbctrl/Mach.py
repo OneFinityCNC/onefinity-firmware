@@ -376,7 +376,7 @@ class Mach(Comm):
             state.set(axis + 'p', target)
             axes = config.values.setdefault('axes',{})
             axes[axis]['abs'] = target
-            config.set_values('axes',axes)
+            # config.set_values('axes',axes)
             super().queue_command(Cmd.set_axis(axis, target))
 
 
