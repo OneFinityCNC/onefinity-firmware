@@ -654,35 +654,29 @@
   },
 
   "axes": {
-    "x": {
-      "abs": {
-        "type": "string",
-        "default": "0"
-      },
-      "off": {
-        "type": "string",
-        "default": "0"
-      }
+    "xp": {
+      "type": "int",
+      "default": 0
     },
-    "y": {
-      "abs": {
-        "type": "string",
-        "default": "0"
-      },
-      "off": {
-        "type": "string",
-        "default": "0"
-      }
+    "yp": {
+      "type": "int",
+      "default": 0
     },
-    "z": {
-      "abs": {
-        "type": "string",
-        "default": "0"
-      },
-      "off": {
-        "type": "string",
-        "default": "0"
-      }
+    "zp": {
+      "type": "int",
+      "default": 0
+    },
+    "offset_x": {
+      "type": "int",
+      "default": 0
+    },
+    "offset_y": {
+      "type": "int",
+      "default": 0
+    },
+    "offset_z": {
+      "type": "int",
+      "default": 0
     }
   },
 
