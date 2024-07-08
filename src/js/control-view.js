@@ -776,16 +776,17 @@ module.exports = {
     },
 
     set_position: async function (axis, position) {
-      this.update_config();
-      if (!this.config.axes) {
-        this.config.axes = {};
-      }
-      this.config.axes[axis] = {
-        abs: position + this.state["offset_" + axis],
-        off: this.state["offset_" + axis],
-      };
-      console.log(this.config);
-      await api.put(`position/${axis}`, { position: parseFloat(position) });
+      api.put(`position/${axis}`, { position: parseFloat(position) });
+      // this.update_config();
+      // if (!this.config.axes) {
+        // this.config.axes = {};
+      // }
+      // this.config.axes[axis] = {
+      //   abs: position + this.state["offset_" + axis],
+      //   off: this.state["offset_" + axis],
+      // };
+      // console.log(this.config);
+      // await this.save_config(this.config);
     },
 
     zero_all: function () {
