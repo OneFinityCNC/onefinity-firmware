@@ -144,7 +144,6 @@ class Config(object):
 
     def __defaults(self, config, name, template):
         if 'type' in template:
-            self.log.info('147 name %s' % name)
             if (not name in config or
                 not self._valid_value(template, config[name])):
                 config[name] = template['default']
@@ -156,8 +155,7 @@ class Config(object):
                 config[name] = template['min']
             
             if name in ['xp', 'yp', 'zp', 'offset_x', 'offset_y', 'offset_z']:
-                # self.ctrl.state.config(name, config[name])
-                self.log.info('147 name %s : %f' % (name, config[name]))
+                self.ctrl.state.set(name, config[name])
 
             if template['type'] == 'list':
                 if 'index' in template:
