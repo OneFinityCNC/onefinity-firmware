@@ -28,8 +28,7 @@
 import bbctrl
 from bbctrl.Comm import Comm
 import bbctrl.Cmd as Cmd
-import os
-import json
+
 
 # Axis homing procedure:
 #
@@ -358,7 +357,6 @@ class Mach(Comm):
     def set_position(self, axis, position):
         axis = axis.lower()
         state = self.ctrl.state
-        config = self.ctrl.config
 
         if state.is_axis_homed(axis):
             # If homed, change the offset rather than the absolute position
@@ -371,14 +369,7 @@ class Mach(Comm):
 
             # Set the absolute position both locally and via the AVR
             target = position + state.get('offset_' + axis)
-            self.mlog.info('target %s' % str(target))
-            self.mlog.info('state.get %s axis' % str(state.get('offset_' + axis)))
             state.set(axis + 'p', target)
-            axes = config.values.setdefault('axes',{})
-            axes[axis + 'p'] = target
-            self.mlog.info('Saving %s axis' % axis)
-            config.set('axes', axes)
-            self.mlog
             super().queue_command(Cmd.set_axis(axis, target))
 
 

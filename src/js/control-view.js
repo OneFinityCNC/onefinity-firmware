@@ -775,18 +775,8 @@ module.exports = {
       SvelteComponents.showDialog("Message", { title: this[axis].toolmsg });
     },
 
-    set_position: async function (axis, position) {
+    set_position: function (axis, position) {
       api.put(`position/${axis}`, { position: parseFloat(position) });
-      // this.update_config();
-      // if (!this.config.axes) {
-        // this.config.axes = {};
-      // }
-      // this.config.axes[axis] = {
-      //   abs: position + this.state["offset_" + axis],
-      //   off: this.state["offset_" + axis],
-      // };
-      // console.log(this.config);
-      // await this.save_config(this.config);
     },
 
     zero_all: function () {

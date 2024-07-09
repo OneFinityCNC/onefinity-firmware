@@ -241,8 +241,11 @@ class State(object):
 
 
     def update(self, update):
+        keys = ['xp', 'yp', 'zp', 'offset_x', 'offset_y', 'offset_z']
         for name, value in update.items():
             self.set(name, value)
+            if name in keys:
+                self.log.info('Sanjay name: %s : data: %f' % (name,value))
 
 
     def get(self, name, default = None):
