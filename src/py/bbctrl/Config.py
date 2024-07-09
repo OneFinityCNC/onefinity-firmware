@@ -90,8 +90,8 @@ class Config(object):
             if name in config_data:
                 existing_value = config_data[name]
                 if isinstance(existing_value, dict) and isinstance(default, dict):
-                    # config_data[name] = {**existing_value, **default}
-                    existing_value.update(default)
+                    config_data[name] = {**existing_value, **default}
+                    # existing_value.update(default)
                 elif isinstance(existing_value, list) and isinstance(default, list):
                     config_data[name].extend(default)
                 elif isinstance(existing_value, list):
