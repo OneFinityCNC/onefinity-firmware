@@ -244,7 +244,7 @@ class State(object):
         keys = ['xp', 'yp', 'zp', 'offset_x', 'offset_y', 'offset_z']
         for name, value in update.items():
             self.set(name, value)
-            if name in keys and 'cycle' in self.vars:
+            if 'cycle' in self.vars and name in keys:
                 if self.vars.cycle == 'idle':
                     self.ctrl.config.set('axes',{name: value})
 
