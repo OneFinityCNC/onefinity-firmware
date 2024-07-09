@@ -144,6 +144,7 @@ class Config(object):
 
     def __defaults(self, config, name, template):
         if 'type' in template:
+            self.log.info('147 name %s' % name)
             if (not name in config or
                 not self._valid_value(template, config[name])):
                 config[name] = template['default']

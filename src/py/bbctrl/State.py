@@ -245,7 +245,7 @@ class State(object):
         for name, value in update.items():
             self.set(name, value)
             if name in keys:
-                self.log.info('Sanjay name: %s : data: %f' % (name,value))
+                self.ctrl.config.set('axes',{name: value})
 
 
     def get(self, name, default = None):

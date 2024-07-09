@@ -354,6 +354,7 @@ class Mach(Comm):
     def optional_pause(self, enable = True):
         self.ctrl.state.set('optional_pause', enable)
 
+
     def set_position(self, axis, position):
         axis = axis.lower()
         state = self.ctrl.state
