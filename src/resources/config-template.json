@@ -655,27 +655,27 @@
 
   "axes": {
     "xp": {
-      "type": "int",
+      "type": "float",
       "default": 0
     },
     "yp": {
-      "type": "int",
+      "type": "float",
       "default": 0
     },
     "zp": {
-      "type": "int",
+      "type": "float",
       "default": 0
     },
     "offset_x": {
-      "type": "int",
+      "type": "float",
       "default": 0
     },
     "offset_y": {
-      "type": "int",
+      "type": "float",
       "default": 0
     },
     "offset_z": {
-      "type": "int",
+      "type": "float",
       "default": 0
     }
   },
