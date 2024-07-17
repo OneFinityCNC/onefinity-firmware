@@ -246,6 +246,7 @@ class State(object):
             self.set(name, value)
             if 'cycle' in self.vars and name in keys:
                 if self.vars['cycle'] == 'idle':
+                    self.log.info('Sanjay %s : %f' % (name,value))
                     self.ctrl.config.set('axes',{name: value})
 
 
