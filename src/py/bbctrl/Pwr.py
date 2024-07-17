@@ -161,6 +161,7 @@ class Pwr():
                 else: value /= 100.0
 
                 key = reg_names[i]
+                self.log.info('164 pwr: {}:{}'.format(key,value))
                 self.ctrl.state.set(key, value)
 
                 if self.regs[i] != value:
