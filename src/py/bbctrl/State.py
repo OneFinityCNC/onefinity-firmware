@@ -230,6 +230,9 @@ class State(object):
 
     def set(self, name, value):
         name = self.resolve(name)
+        keys = ['xp', 'yp', 'zp', 'offset_x', 'offset_y', 'offset_z']
+        self.log.info('234 Sanjay %s : %f' % (name,value))
+
 
         if not name in self.vars or self.vars[name] != value:
             self.vars[name] = value
@@ -238,6 +241,10 @@ class State(object):
             # Trigger listener notify
             if self.timeout is None:
                 self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
+            
+            if name in keys:
+                self.log.info('246 cycle: %s'%self.vars['cycle'])
+                self.log.info('247 Sanjay %s : %f , %f' % (name,value,self.vars[name]))
 
 
     def update(self, update):
@@ -246,6 +253,7 @@ class State(object):
             self.set(name, value)
             if 'cycle' in self.vars and name in keys:
                 if self.vars['cycle'] == 'idle':
+                    self.log.info('256 cycle: %s'%self.vars['cycle'])
                     self.log.info('Sanjay %s : %f' % (name,value))
                     self.ctrl.config.set('axes',{name: value})
 
