@@ -313,7 +313,9 @@ class Mach(Comm):
 
             self.planner.mdi(gcode, False)
             super().resume()
-            if 'offset_' + axis in config.values:
+            if 'offset_' + axis and axis + 'p' in config.values:
+                state.set('offset_' + axis, config.values['offset_' + axis])
+                state.set(axis + 'p', 0)
                 self.log.info('Set the state value from config: {} = {}'.format('offset_' + axis , config.values['offset_' + axis]))
             else:
                 self.log.info('Values is not present in config:{}'.format('offset_' + axis))

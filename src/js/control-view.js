@@ -748,7 +748,6 @@ module.exports = {
 
       if (typeof axis == "undefined") {
         api.put("home");
-        console.log('store data')
       } else if (this[axis].homingMode != "manual") {
         api.put(`home/${axis}`);
       } else {

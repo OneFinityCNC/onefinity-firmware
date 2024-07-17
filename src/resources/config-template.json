@@ -654,18 +654,6 @@
   },
 
   "axes": {
-    "xp": {
-      "type": "float",
-      "default": 0
-    },
-    "yp": {
-      "type": "float",
-      "default": 0
-    },
-    "zp": {
-      "type": "float",
-      "default": 0
-    },
     "offset_x": {
       "type": "float",
       "default": 0
