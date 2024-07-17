@@ -231,6 +231,12 @@ class State(object):
     def set(self, name, value):
         name = self.resolve(name)
         keys = ['xp', 'yp', 'zp', 'offset_x', 'offset_y', 'offset_z']
+        
+        if name in keys and 'cycle' in self.vars:
+            self.log.info('244 sanjay cycle: %s'%self.vars['cycle'])
+            # if self.vars['cycle'] == 'mdi':
+                # self.log.info('246 changing data %s : %d , %d' % (name,value,self.vars[name]))
+                # self.ctrl.config.set('axes',{name: value})
 
         if not name in self.vars or self.vars[name] != value:
             self.vars[name] = value
@@ -239,17 +245,15 @@ class State(object):
             # Trigger listener notify
             if self.timeout is None:
                 self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
-            
-            if name in keys and 'cycle' in self.vars:
-                self.log.info('244 sanjay cycle: %s'%self.vars['cycle'])
-                # if self.vars['cycle'] == 'mdi':
-                    # self.log.info('246 changing data %s : %d , %d' % (name,value,self.vars[name]))
-                    # self.ctrl.config.set('axes',{name: value})
 
 
     def update(self, update):
+        keys = ['xp', 'yp', 'zp', 'offset_x', 'offset_y', 'offset_z']
         for name, value in update.items():
             self.set(name, value)
+            if name in keys and 'cycle' in self.vars:
+                self.log.info('255 sanjay cycle: %s'%self.vars['cycle'])
+                self.log.info('256 name :{} value:{}'.format(name, value))
 
 
     def get(self, name, default = None):
