@@ -242,20 +242,14 @@ class State(object):
             
             if name in keys and 'cycle' in self.vars:
                 self.log.info('244 sanjay cycle: %s'%self.vars['cycle'])
-                if self.vars['cycle'] == 'mdi':
-                    self.log.info('246 changing data %s : %d , %d' % (name,value,self.vars[name]))
-                    self.ctrl.config.set('axes',{name: value})
+                # if self.vars['cycle'] == 'mdi':
+                    # self.log.info('246 changing data %s : %d , %d' % (name,value,self.vars[name]))
+                    # self.ctrl.config.set('axes',{name: value})
 
 
     def update(self, update):
-        keys = ['xp', 'yp', 'zp', 'offset_x', 'offset_y', 'offset_z']
         for name, value in update.items():
             self.set(name, value)
-            if 'cycle' in self.vars and name in keys:
-                self.log.info('256 cycle: %s'%self.vars['cycle'])
-                if self.vars['cycle'] == 'idle':
-                    self.log.info('Sanjay %s : %f' % (name,value))
-                    self.ctrl.config.set('axes',{name: value})
 
 
     def get(self, name, default = None):

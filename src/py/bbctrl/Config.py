@@ -102,7 +102,7 @@ class Config(object):
                 config_data[name] = default
             
             self.save(config_data)
-            self.values[name] = config_data[name]
+            # self.values[name] = config_data[name]
             self.log.info('105: name:{} default:{}'.format(name, default))
         except Exception: self.log.exception('Internal error: Failed to upgrade config')
 
