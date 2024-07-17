@@ -275,6 +275,7 @@ class Mach(Comm):
 
     def home(self, axis, position = None):
         state = self.ctrl.state
+        config = self.ctrl.config
 
         if axis is None: axes = 'zxyabc' # TODO This should be configurable
         else: axes = '%c' % axis
@@ -312,6 +313,10 @@ class Mach(Comm):
 
             self.planner.mdi(gcode, False)
             super().resume()
+            if 'offset_' + axis in config.values:
+                self.log.info('Set the state value from config: {} = {}'.format('offset_' + axis , config.values['offset_' + axis]))
+            else:
+                self.log.info('Values is not present in config:{}'.format('offset_' + axis))
 
 
     def unhome(self, axis): self.mdi('G28.2 %c0' % axis)
