@@ -743,14 +743,14 @@ module.exports = {
       this.confirmDelete = false;
     },
 
-    home: async function (axis) {
+    home: function (axis) {
       this.ask_home = false;
 
       if (typeof axis == "undefined") {
-        await api.put("home");
+        api.put("home");
         console.log('store data')
       } else if (this[axis].homingMode != "manual") {
-        await api.put(`home/${axis}`);
+        api.put(`home/${axis}`);
       } else {
         SvelteComponents.showDialog("ManualHomeAxis", { axis });
       }
