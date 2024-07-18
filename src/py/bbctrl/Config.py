@@ -153,10 +153,6 @@ class Config(object):
 
             elif 'min' in template and config[name] < template['min']:
                 config[name] = template['min']
-            
-            if name in ['offset_x', 'offset_y', 'offset_z']:
-                self.log.info('159: name:{} default:{}'.format(name, config[name])) # make sure that cycle is idle
-                # self.ctrl.state.set(name, config[name])
 
             if template['type'] == 'list':
                 if 'index' in template:
