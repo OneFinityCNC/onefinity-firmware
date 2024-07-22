@@ -319,6 +319,13 @@ class Mach(Comm):
                 self.log.info('Set the state value from config: {} = {}'.format('offset_' + axis , config.values['offset_' + axis]))
             else:
                 self.log.info('Values is not present in config:{}'.format('offset_' + axis))
+        
+        self.log.info('324: Cycle : {}'.format(state.get('cycle')))
+
+        for axis in axes:
+            if 'offset_' + axis in config.values:
+                self.log.info('327 axis: {} == {}'.format(axis, config.values['offset_' + axis]))
+                # self.set_position(axis, -float(config.values['offset_' + axis]))
 
 
     def unhome(self, axis): self.mdi('G28.2 %c0' % axis)
