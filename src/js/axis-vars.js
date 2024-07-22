@@ -240,9 +240,10 @@ module.exports = {
 
             if (!homed && this.ask_home) {
                 this.ask_home = false;
-                SvelteComponents.showDialog("HomeMachine", {
-                    home: () => this.home()
-                });
+                this.home()
+                // SvelteComponents.showDialog("HomeMachine", {
+                //     home: () => this.home()
+                // });
             }
 
             return {

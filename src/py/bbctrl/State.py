@@ -230,6 +230,14 @@ class State(object):
 
     def set(self, name, value):
         name = self.resolve(name)
+        keys = ['offset_x', 'offset_y', 'offset_z']
+        
+        if name in keys and 'cycle' in self.vars:
+            self.log.info('236 cycle:{} name:{} value:{}'.format(self.vars['cycle'], name, value))
+            if self.vars['cycle'] == 'mdi':
+                self.log.info('238 changing data %s : %d , %d' % (name, value, self.vars[name]))
+                self.ctrl.config.set('axes', {name: value})
+
 
         if not name in self.vars or self.vars[name] != value:
             self.vars[name] = value

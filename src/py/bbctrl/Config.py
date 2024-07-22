@@ -78,7 +78,32 @@ class Config(object):
 
     def get(self, name, default = None):
         return self.values.get(name, default)
+    
+    def set(self, name, default = None):
+        path = self.ctrl.get_path('config.json')
 
+        try:
+            if os.path.exists(path):
+                with open(path, 'r') as f: config_data = json.load(f)
+            else: config_data = {'version': self.version}
+
+            if name in config_data:
+                existing_value = config_data[name]
+                if isinstance(existing_value, dict) and isinstance(default, dict):
+                    config_data[name] = {**existing_value, **default}
+                    # existing_value.update(default)
+                elif isinstance(existing_value, list) and isinstance(default, list):
+                    config_data[name].extend(default)
+                elif isinstance(existing_value, list):
+                    config_data[name].append(default)
+                else:
+                    config_data[name] = default
+            else:
+                config_data[name] = default
+            
+            self.save(config_data)
+            self.log.info('105: name:{} default:{}'.format(name, default))
+        except Exception: self.log.exception('Internal error: Failed to upgrade config')
 
     def save(self, config):
         self._upgrade(config)
