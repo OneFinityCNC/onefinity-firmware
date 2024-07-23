@@ -275,7 +275,7 @@ class Mach(Comm):
 
     def home(self, axis, position = None):
         state = self.ctrl.state
-        config = self.ctrl.config
+        # config = self.ctrl.config
 
         if axis is None: axes = 'zxyabc' # TODO This should be configurable
         else: axes = '%c' % axis
@@ -313,18 +313,18 @@ class Mach(Comm):
 
             self.planner.mdi(gcode, False)
             super().resume()
-            if 'offset_' + axis and axis + 'p' in config.values:
-                state.set('offset_' + axis, config.values['offset_' + axis])
-                state.set(axis + 'p', 0)
-                self.log.info('Set the state value from config: {} = {}'.format('offset_' + axis , config.values['offset_' + axis]))
-            else:
-                self.log.info('Values is not present in config:{}'.format('offset_' + axis))
+        #     if 'offset_' + axis and axis + 'p' in config.values:
+        #         state.set('offset_' + axis, config.values['offset_' + axis])
+        #         state.set(axis + 'p', 0)
+        #         self.log.info('Set the state value from config: {} = {}'.format('offset_' + axis , config.values['offset_' + axis]))
+        #     else:
+        #         self.log.info('Values is not present in config:{}'.format('offset_' + axis))
         
-        self.log.info('324: Cycle : {}'.format(state.get('cycle')))
+        # self.log.info('324: Cycle : {}'.format(state.get('cycle')))
 
-        for axis in axes:
-            if 'offset_' + axis in config.values:
-                self.log.info('327 axis: {} == {}'.format(axis, config.values['offset_' + axis]))
+        # for axis in axes:
+        #     if 'offset_' + axis in config.values:
+        #         self.log.info('327 axis: {} == {}'.format(axis, config.values['offset_' + axis]))
                 # self.set_position(axis, -float(config.values['offset_' + axis]))
 
 
