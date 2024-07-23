@@ -129,6 +129,10 @@ script#control-view-template(type="text/x-template")
                 button.pure-button(title="Home all axes.", @click="home()",
                   :disabled="!is_idle",style="height:60px;width:60px")
                   .fa.fa-home
+
+                button.pure-button(:disabled="!is_idle", @click=`load_position('xyz')`,
+                    title=`Load all origin.`, style="height:60px;width:60px")
+                    .fa.fa-map-pin
             
             each axis in 'xyzabc'
               tr.axis(:class=`${axis}.klass`, v-if=`${axis}.enabled`,

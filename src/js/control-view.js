@@ -779,9 +779,17 @@ module.exports = {
       api.put(`position/${axis}`, { position: parseFloat(position) });
     },
 
-    load_position: function (axis) {
-      console.log(this.config.axes["offset_" + axis]);
-      this.set_position(axis, -this.config.axes["offset_" + axis]);
+    load_position: function (axes) {
+      try {
+        for (const axis of axes) {
+          if (this.config.axes["offset_" + axis]) {
+            console.log(axis, this.config.axes["offset_" + axis]);
+            this.set_position(axis, -this.config.axes["offset_" + axis]);
+          }
+        }
+      } catch (error) {
+        console.warn(error);
+      }
     },
 
     zero_all: function () {
