@@ -779,6 +779,11 @@ module.exports = {
       api.put(`position/${axis}`, { position: parseFloat(position) });
     },
 
+    load_position: function (axis) {
+      console.log(this.config.axes["offset_" + axis]);
+      this.set_position(axis, -this.config.axes["offset_" + axis]);
+    },
+
     zero_all: function () {
       for (const axis of "xyzabc") {
         if (this[axis].enabled) {
@@ -804,10 +809,6 @@ module.exports = {
       } else {
         this.start();
       }
-    },
-
-    load_position: function (axis) {
-      console.log(this.config.axes["offset_" + axis]);
     },
 
     start: function () {
