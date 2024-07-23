@@ -806,6 +806,10 @@ module.exports = {
       }
     },
 
+    load_position: function (axis) {
+      console.log(this.config.axes["offset_" + axis]);
+    },
+
     start: function () {
       api.put("start");
     },
