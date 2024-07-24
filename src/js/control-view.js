@@ -165,6 +165,10 @@ module.exports = {
       // return this.is_idle || this.is_paused;
     },
 
+    can_load_origin: function (axis) {
+      return this.is_idle && this.state["offset_" + axis] == 0;
+    },
+
     message: function () {
       if (this.mach_state == "ESTOPPED") {
         return this.state.er;

@@ -163,7 +163,7 @@ script#control-view-template(type="text/x-template")
                     title=`Home {{'${axis}' | upper}} axis.`, style="height:60px;width:60px")
                     .fa.fa-home
 
-                  button.pure-button(:disabled="!is_idle", @click=`load_position('${axis}')`,
+                  button.pure-button(:disabled="!can_load_origin", @click=`load_position('${axis}')`,
                     title=`Load {{'${axis}' | upper}} origin.`, style="height:60px;width:60px")
                     .fa.fa-map-pin
 
