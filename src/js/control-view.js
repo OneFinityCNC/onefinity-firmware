@@ -165,10 +165,6 @@ module.exports = {
       // return this.is_idle || this.is_paused;
     },
 
-    can_load_origin: function (axis) {
-      return this.is_idle && this.state["offset_" + axis] == 0;
-    },
-
     message: function () {
       if (this.mach_state == "ESTOPPED") {
         return this.state.er;
@@ -786,7 +782,7 @@ module.exports = {
     load_position: function (axes) {
       try {
         for (const axis of axes) {
-          if (this.config.axes["offset_" + axis]) {
+          if (this.config.axes["offset_" + axis] && this.state["offset_" + axis] == 0) {
             this.set_position(axis, -this.config.axes["offset_" + axis]);
           }
         }
