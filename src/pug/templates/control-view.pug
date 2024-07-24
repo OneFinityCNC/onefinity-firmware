@@ -131,7 +131,7 @@ script#control-view-template(type="text/x-template")
                   .fa.fa-home
 
                 button.pure-button(:disabled="!is_idle", @click=`load_position('xyz')`,
-                    title=`Load all origin.`, style="height:60px;width:60px")
+                    title=`Load all axis origin.`, style="height:60px;width:60px")
                     .fa.fa-map-pin
             
             each axis in 'xyzabc'

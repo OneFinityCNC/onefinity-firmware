@@ -783,7 +783,6 @@ module.exports = {
       try {
         for (const axis of axes) {
           if (this.config.axes["offset_" + axis]) {
-            console.log(axis, this.config.axes["offset_" + axis]);
             this.set_position(axis, -this.config.axes["offset_" + axis]);
           }
         }
