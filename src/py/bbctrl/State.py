@@ -243,6 +243,7 @@ class State(object):
         if name in keys and 'cycle' in self.vars:
             if self.vars['cycle'] == 'mdi':
                 self.ctrl.config.set('axes', {name: value})
+                self.set('cycle', 'idle')
 
 
     def update(self, update):
