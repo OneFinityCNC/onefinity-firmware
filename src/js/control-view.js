@@ -782,7 +782,7 @@ module.exports = {
     load_position: function (axes) {
       try {
         for (const axis of axes) {
-          if (this.config.axes["offset_" + axis] && this.state["offset_" + axis] == 0) {
+          if (this.config.axes["offset_" + axis] && this.state["offset_" + axis] == 0 && this[axis].state == "HOMED") {
             this.set_position(axis, -this.config.axes["offset_" + axis]);
           }
         }
