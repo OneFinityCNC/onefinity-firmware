@@ -230,7 +230,6 @@ class State(object):
 
     def set(self, name, value):
         name = self.resolve(name)
-        keys = ['offset_x', 'offset_y', 'offset_z']
 
         if not name in self.vars or self.vars[name] != value:
             self.vars[name] = value
@@ -240,7 +239,7 @@ class State(object):
             if self.timeout is None:
                 self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
         
-        if name in keys and 'cycle' in self.vars:
+        if name in ['offset_x', 'offset_y', 'offset_z'] and 'cycle' in self.vars:
             if self.vars['cycle'] == 'mdi':
                 self.ctrl.config.set('axes', {name: value})
                 self.set('cycle', 'idle')
