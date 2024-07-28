@@ -783,7 +783,10 @@ module.exports = {
       try {
         for (const axis of axes) {
           if (this.config.axes["offset_" + axis] && this.state["offset_" + axis] == 0 && this[axis].state == "HOMED") {
-            this.set_position(axis, -this.config.axes["offset_" + axis]);
+            const position = this.state.metric
+              ? this.config.axes["offset_" + axis]
+              : this.config.axes["offset_" + axis] / 25.4;
+            this.set_position(axis, -position);
           }
         }
       } catch (error) {
