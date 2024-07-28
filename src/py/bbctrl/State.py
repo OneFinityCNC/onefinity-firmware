@@ -244,6 +244,8 @@ class State(object):
                 self.ctrl.config.set('axes', {name: value})
                 self.set('cycle', 'idle')
 
+        if name == 'cycle' and 'cycle' in self.vars:
+            self.log.info('248 ecycle: {} , new: {}'.format(self.vars['cycle'], value))
 
     def update(self, update):
         for name, value in update.items():
