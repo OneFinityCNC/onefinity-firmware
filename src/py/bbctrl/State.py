@@ -230,6 +230,10 @@ class State(object):
 
     def set(self, name, value):
         name = self.resolve(name)
+        load_position = False
+
+        if name == 'cycle' and self.vars.get('cycle') == 'homing' and value == 'idle':
+            load_position = True
 
         if not name in self.vars or self.vars[name] != value:
             self.vars[name] = value
@@ -239,13 +243,13 @@ class State(object):
             if self.timeout is None:
                 self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
         
-        if name in ['offset_x', 'offset_y', 'offset_z'] and 'cycle' in self.vars:
-            if self.vars['cycle'] == 'mdi':
-                self.ctrl.config.set('axes', {name: value})
-                self.set('cycle', 'idle')
+        if name in ['offset_x', 'offset_y', 'offset_z'] and 'cycle' in self.vars.get('cycle') == 'mdi':
+            self.ctrl.config.set('axes', {name: value})
+            self.set('cycle', 'idle')
 
-        if name == 'cycle' and 'cycle' in self.vars:
-            self.log.info('248 ecycle: {} , new: {}'.format(self.vars['cycle'], value))
+        if load_position and self.vars.get('cycle') == 'idle':
+            self.log.info('set the position value')
+            
 
     def update(self, update):
         for name, value in update.items():
