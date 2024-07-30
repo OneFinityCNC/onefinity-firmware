@@ -242,7 +242,7 @@ class State(object):
             # Trigger listener notify
             if self.timeout is None:
                 self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
-        
+
         # Storing origin to config
         if name in ['offset_x', 'offset_y', 'offset_z'] and self.vars.get('cycle') == 'mdi':
             self.ctrl.config.set('axes', {name: value})
@@ -252,7 +252,7 @@ class State(object):
         if load_position and self.vars.get('cycle') == 'idle':
             for axis in 'xyz':
                 offset = self.ctrl.config.get('offset_' + axis)
-                if offset is not None:
+                if offset is not None and self.get('offset_'+ axis) == 0:
                     origin = offset if self.get('metric') == True else offset / 25.4
                     self.log.info('axis: {} offset: {} origin: {}'.format(axis, offset, origin))
                     self.ctrl.mach.set_position(axis,-origin)
