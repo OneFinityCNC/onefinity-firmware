@@ -243,12 +243,19 @@ class State(object):
             if self.timeout is None:
                 self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
         
-        if name in ['offset_x', 'offset_y', 'offset_z'] and 'cycle' in self.vars.get('cycle') == 'mdi':
+        # Storing origin to config
+        if name in ['offset_x', 'offset_y', 'offset_z'] and self.vars.get('cycle') == 'mdi':
             self.ctrl.config.set('axes', {name: value})
             self.set('cycle', 'idle')
 
+        # Loading origin from config after homing 
         if load_position and self.vars.get('cycle') == 'idle':
-            self.log.info('set the position value')
+            for axis in 'xyz':
+                offset = self.ctrl.config.get('offset_' + axis)
+                if offset is not None:
+                    origin = offset if self.get('metric') == True else offset / 25.4
+                    self.log.info('axis: {} offset: {} origin: {}'.format(axis, offset, origin))
+                    self.ctrl.mach.set_position(axis,-origin)
             
 
     def update(self, update):
