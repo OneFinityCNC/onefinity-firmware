@@ -130,9 +130,9 @@ script#control-view-template(type="text/x-template")
                   :disabled="!is_idle",style="height:60px;width:60px")
                   .fa.fa-home
 
-                button.pure-button(:disabled="!is_idle", @click=`load_position('xyz')`,
-                    title=`Load all axis origin.`, style="height:60px;width:60px")
-                    .fa.fa-map-pin
+                //- button.pure-button(:disabled="!is_idle", @click=`load_position('xyz')`,
+                //-     title=`Load all axis origin.`, style="height:60px;width:60px")
+                //-     .fa.fa-map-pin
             
             each axis in 'xyzabc'
               tr.axis(:class=`${axis}.klass`, v-if=`${axis}.enabled`,
@@ -163,9 +163,9 @@ script#control-view-template(type="text/x-template")
                     title=`Home {{'${axis}' | upper}} axis.`, style="height:60px;width:60px")
                     .fa.fa-home
 
-                  button.pure-button(:disabled="!can_set_axis", @click=`load_position('${axis}')`,
-                    title=`Load {{'${axis}' | upper}} origin.`, style="height:60px;width:60px")
-                    .fa.fa-map-pin
+                  //- button.pure-button(:disabled="!can_set_axis", @click=`load_position('${axis}')`,
+                  //-   title=`Load {{'${axis}' | upper}} origin.`, style="height:60px;width:60px")
+                  //-   .fa.fa-map-pin
 
       
       tr(style="vertical-align: top;")

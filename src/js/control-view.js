@@ -779,20 +779,20 @@ module.exports = {
       api.put(`position/${axis}`, { position: parseFloat(position) });
     },
 
-    load_position: function (axes) {
-      try {
-        for (const axis of axes) {
-          if (this.config.axes["offset_" + axis] && this.state["offset_" + axis] == 0 && this[axis].state == "HOMED") {
-            const position = this.state.metric
-              ? this.config.axes["offset_" + axis]
-              : this.config.axes["offset_" + axis] / 25.4;
-            this.set_position(axis, -position);
-          }
-        }
-      } catch (error) {
-        console.warn(error);
-      }
-    },
+    // load_position: function (axes) {
+    //   try {
+    //     for (const axis of axes) {
+    //       if (this.config.axes["offset_" + axis] && this.state["offset_" + axis] == 0 && this[axis].state == "HOMED") {
+    //         const position = this.state.metric
+    //           ? this.config.axes["offset_" + axis]
+    //           : this.config.axes["offset_" + axis] / 25.4;
+    //         this.set_position(axis, -position);
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.warn(error);
+    //   }
+    // },
 
     zero_all: function () {
       for (const axis of "xyzabc") {
