@@ -158,7 +158,7 @@ module.exports = {
             }
 
             return {
-                pos: abs - off,
+                pos: abs - off < 0.00001 ? 0 : abs - off,
                 abs: abs,
                 off: off,
                 min: min,
