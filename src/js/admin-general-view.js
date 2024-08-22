@@ -39,6 +39,7 @@ module.exports = {
       z_slider: false,
       z_slider_variant: " ",
       config: "",
+      selected_date_time: null,
     };
   },
 
@@ -143,6 +144,10 @@ module.exports = {
     change_auto_check_upgrade: function () {
       this.config.admin["auto-check-upgrade"] = this.autoCheckUpgrade;
       this.$dispatch("config-changed");
+    },
+
+    change_date_time: function () {
+      console.log(this.selected_date_time);
     },
   },
 };
