@@ -582,8 +582,12 @@ class TimeHandler(bbctrl.APIHandler):
     def put_ok(self):
         datetime = self.json['datetime']
         timezone = self.json['timezone']
-        subprocess.Popen(['timedatectl', 'set-time', datetime])
-        subprocess.Popen(['timedatectl', 'set-timezone', timezone])
+        try:
+            subprocess.Popen(['timedatectl', 'set-time', datetime])
+            subprocess.Popen(['timedatectl', 'set-timezone', timezone])
+            self.get_log('TimeHandler').info('Time changed: datetime: {}'.format(datetime))
+        except Exception as e:
+            self.get_log('TimeHandler').info('Error updating time or timezone: {}'.format(e))
 
 
 class RemoteDiagnosticsHandler(bbctrl.APIHandler):

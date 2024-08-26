@@ -146,8 +146,23 @@ module.exports = {
       this.$dispatch("config-changed");
     },
 
-    change_date_time: function () {
-      console.log(this.selected_date_time);
+    change_date_time: async function () {
+      // console.log(this.selected_date_time);
+      if (!this.selected_date_time) {
+        return;
+      }
+      try {
+        const [date, time] = this.selected_date_time.split("T");
+
+        const datetime = `${date} ${time}`;
+        const timezone = "UTC";
+
+        const response = await api.put("time", { datetime, timezone });
+
+        console.log("Time update successful: ", response);
+      } catch (error) {
+        alert("Error updating time: ", error);
+      }
     },
   },
 };

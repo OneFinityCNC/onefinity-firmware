@@ -65,5 +65,6 @@ script#admin-general-view-template(type="text/x-template")
       button.pure-button.pure-button-primary Bug Report
     
     h2 Date/Time
-    input(id="datetime" type="datetime-local" v-model="selected_date_time")
+    .pure-control-group
+      input(id="datetime" type="datetime-local" v-model="selected_date_time")
     button.pure-button.pure-button-primary(@click="change_date_time") Update Date/Time 
