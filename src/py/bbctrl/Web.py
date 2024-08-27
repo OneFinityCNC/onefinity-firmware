@@ -572,18 +572,16 @@ class TimeHandler(bbctrl.APIHandler):
 
     def get(self):
         timeinfo = call_get_output(['timedatectl'])
-        timezones = call_get_output(
-            ['timedatectl', 'list-timezones', '--no-pager'])
-        self.get_log('TimeHandler').info('Time stuff: {}, {}'.format(
-            timeinfo, timezones))
-
+        timezones = call_get_output(['timedatectl', 'list-timezones', '--no-pager'])
         self.write_json({'timeinfo': timeinfo, 'timezones': timezones})
 
     def put_ok(self):
         datetime = self.json['datetime']
 
         try:
+            subprocess.Popen(['sudo','timedatectl', 'set-ntp', 'false'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
             result = subprocess.Popen(['sudo','date', '-s', datetime], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            subprocess.Popen(['sudo','timedatectl', 'set-ntp', 'true'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
             stdout, stderr = result.communicate()
 
             if(result.returncode == 0):
