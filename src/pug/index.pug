@@ -6,7 +6,6 @@ html(lang="en")
 
     title Onefinity CNC - Web interface
 
-    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css")
 
     style: include ../static/css/pure-min.css
     style: include ../static/css/side-menu.css
@@ -179,16 +178,6 @@ html(lang="en")
     #templates: include ../../build/templates.pug
     iframe#download-target(style="display:none")
 
-    script.
-      document.addEventListener('DOMContentLoaded', function() {
-        flatpickr(".flatpickr", {
-          enableTime: true,
-          noCalendar: true,
-          dateFormat: "H:i", 
-          time_24hr: true, 
-        });
-      });
-    script(src="https://cdn.jsdelivr.net/npm/flatpickr")
 
     script: include ../static/js/vue.js
     script: include ../static/js/sockjs.min.js

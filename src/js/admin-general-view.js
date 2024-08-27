@@ -40,7 +40,8 @@ module.exports = {
       z_slider_variant: " ",
       config: "",
       selected_date: null,
-      selected_time: null,
+      selected_hours: null,
+      selected_minutes: null,
     };
   },
 
@@ -148,12 +149,12 @@ module.exports = {
     },
 
     change_date_time: async function () {
-      if (!this.selected_date || !this.selected_time) {
+      if (!this.selected_date || !this.selected_hours || !this.selected_minutes) {
         return;
       }
-      
+
       try {
-        const datetime = `${this.selected_date} ${this.selected_time}:00`;
+        const datetime = `${this.selected_date} ${this.selected_hours}:${this.selected_minutes}:00`;
         const response = await api.put("time", { datetime });
 
         if (response == "ok") {
