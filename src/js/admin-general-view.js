@@ -152,13 +152,18 @@ module.exports = {
         return;
       }
       console.log(this.selected_date, this.selected_time);
-      return;
 
       try {
-        const datetime = `${date} ${time}`;
+        const datetime = `${this.selected_date} ${this.selected_time}`;
         const timezone = "UTC";
 
         const response = await api.put("time", { datetime, timezone });
+
+        if (response == "ok") {
+          alert("Date/Time updated successfully.");
+        } else {
+          throw response;
+        }
 
         console.log("Time update successful: ", response);
       } catch (error) {
