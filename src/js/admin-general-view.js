@@ -152,7 +152,6 @@ module.exports = {
       if (!this.selected_date || !this.selected_hours || !this.selected_minutes) {
         return;
       }
-
       try {
         const datetime = `${this.selected_date} ${this.selected_hours}:${this.selected_minutes}:00`;
         const response = await api.put("time", { datetime });
@@ -162,8 +161,6 @@ module.exports = {
         } else {
           throw response;
         }
-
-        console.log("Time update successful: ", response);
       } catch (error) {
         alert("Error updating time: ", error);
       }
