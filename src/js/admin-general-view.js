@@ -39,7 +39,8 @@ module.exports = {
       z_slider: false,
       z_slider_variant: " ",
       config: "",
-      selected_date_time: null,
+      selected_date: null,
+      selected_time: null,
     };
   },
 
@@ -147,13 +148,13 @@ module.exports = {
     },
 
     change_date_time: async function () {
-      // console.log(this.selected_date_time);
-      if (!this.selected_date_time) {
+      if (!this.selected_date || !this.selected_time) {
         return;
       }
-      try {
-        const [date, time] = this.selected_date_time.split("T");
+      console.log(this.selected_date, this.selected_time);
+      return;
 
+      try {
         const datetime = `${date} ${time}`;
         const timezone = "UTC";
 
