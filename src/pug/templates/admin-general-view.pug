@@ -68,5 +68,5 @@ script#admin-general-view-template(type="text/x-template")
     .pure-form
       input(id="date" type="date" v-model="selected_date")
       input(id="hours" type="text" v-model="selected_hours" placeholder="HH" maxlength="2" min="0" max="23" style="width:45px")
-      input(id="minutes" type="text" v-model="selected_minutes" placeholder="MM" maxlength="2" min="0" max="59" style="width:45px")
+      input(id="minutes" type="text" v-model="selected_minutes" placeholder="MM" maxlength="2" min="0" max="59" style="width:48px")
       button.pure-button.pure-button-primary(@click="change_date_time", style="margin:5px") Update Date/Time 
