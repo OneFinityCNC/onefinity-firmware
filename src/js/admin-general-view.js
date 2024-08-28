@@ -55,22 +55,6 @@ module.exports = {
     this.autoCheckUpgrade = this.config.admin["auto-check-upgrade"];
   },
 
-  computed: {
-    get_current_time: async function () {
-      try {
-        const response = await api.get("time");
-        if (response.timeinfo) {
-          const { timeinfo } = response;
-          return timeinfo.split(": ")[1].split(" U")[0];
-        } else {
-          return " ";
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  },
-
   methods: {
     fetch_current_time: async function () {
       try {
@@ -208,6 +192,7 @@ module.exports = {
 
         if (response == "ok") {
           alert("Date/Time updated successfully.");
+          this.fetch_current_time();
         } else {
           throw response;
         }
