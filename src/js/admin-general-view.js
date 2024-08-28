@@ -40,13 +40,8 @@ module.exports = {
       z_slider_variant: " ",
       config: "",
       selected_date: null,
-      now: new Date(),
-      current_date: `${(now.getMonth() + 1).toString().padStart(2, "0")}:${now
-        .getHours()
-        .toString()
-        .padStart(2, "0")}:${now.getFullYear()}`,
-      selected_hours: `${now.getMinutes()}`,
-      selected_minutes: `${now.getMinutes()}`,
+      selected_hours: `${new Date().getMinutes()}`,
+      selected_minutes: `${new Date().getMinutes()}`,
     };
   },
 
