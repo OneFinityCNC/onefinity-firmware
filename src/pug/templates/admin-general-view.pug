@@ -65,6 +65,9 @@ script#admin-general-view-template(type="text/x-template")
       button.pure-button.pure-button-primary Bug Report
     
     h2 Date/Time
+    p
+      strong Current Date/Time:
+      | {{current_date}}  {{selected_hours}}:{{selected_minutes}}
     .pure-form
       input(id="date" type="date" v-model="selected_date")
       input(id="hours" type="text" v-model="selected_hours" placeholder="HH" maxlength="2" min="0" max="23" style="width:45px")
