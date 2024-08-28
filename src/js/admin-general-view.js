@@ -40,7 +40,7 @@ module.exports = {
       z_slider_variant: " ",
       config: "",
       selected_date: null,
-      selected_hours: `${new Date().getMinutes()}`,
+      selected_hours: `${new Date().getHours()}`,
       selected_minutes: `${new Date().getMinutes()}`,
     };
   },
