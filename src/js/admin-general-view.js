@@ -154,7 +154,9 @@ module.exports = {
         return;
       }
       try {
-        const datetime = `${this.selected_date} ${this.selected_hours}:${this.selected_minutes}:00`;
+        const datetime = `${this.selected_date} ${this.selected_hours
+          .toString()
+          .padStart(2, "0")}:${this.selected_minutes.toString().padStart(2, "0")}:00`;
         const response = await api.put("time", { datetime });
 
         if (response == "ok") {
