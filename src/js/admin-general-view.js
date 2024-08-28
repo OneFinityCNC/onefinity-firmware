@@ -39,7 +39,6 @@ module.exports = {
       z_slider: false,
       z_slider_variant: " ",
       config: "",
-      current_date_time: `${new Date()}`.split(" ").slice(1, 5).join(" "),
       selected_date: null,
       selected_hours: `${new Date().getHours()}`,
       selected_minutes: `${new Date().getMinutes()}`,
@@ -48,6 +47,22 @@ module.exports = {
 
   ready: function () {
     this.autoCheckUpgrade = this.config.admin["auto-check-upgrade"];
+  },
+
+  computed: {
+    get_current_time: async function () {
+      try {
+        const response = await api.get("time");
+        if (response.timeinfo) {
+          const { timeinfo } = response;
+          return timeinfo.split(": ")[1].split(" U")[0];
+        } else {
+          return " ";
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 
   methods: {
@@ -153,6 +168,14 @@ module.exports = {
       if (!this.selected_date || !this.selected_hours || !this.selected_minutes) {
         return;
       }
+      if (
+        this.selected_hours < 0 ||
+        this.selected_hours > 23 ||
+        this.selected_minutes < 0 ||
+        this.selected_minutes > 59
+      ) {
+        return alert("Invalid Time");
+      }
       try {
         const datetime = `${this.selected_date} ${this.selected_hours
           .toString()
@@ -161,7 +184,6 @@ module.exports = {
 
         if (response == "ok") {
           alert("Date/Time updated successfully.");
-          this.current_date_time = `${new Date()}`.split(" ").slice(1, 5).join(" ");
         } else {
           throw response;
         }
