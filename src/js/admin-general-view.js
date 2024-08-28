@@ -39,6 +39,7 @@ module.exports = {
       z_slider: false,
       z_slider_variant: " ",
       config: "",
+      current_date_time: `${new Date()}`.split(" ").slice(1, 5).join(" "),
       selected_date: null,
       selected_hours: `${new Date().getHours()}`,
       selected_minutes: `${new Date().getMinutes()}`,
@@ -158,6 +159,7 @@ module.exports = {
 
         if (response == "ok") {
           alert("Date/Time updated successfully.");
+          this.current_date_time = `${new Date()}`.split(" ").slice(1, 5).join(" ");
         } else {
           throw response;
         }
