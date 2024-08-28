@@ -39,10 +39,16 @@ module.exports = {
       z_slider: false,
       z_slider_variant: " ",
       config: "",
+      current_time: "",
+      is_loading_time: false,
       selected_date: null,
       selected_hours: `${new Date().getHours()}`,
       selected_minutes: `${new Date().getMinutes()}`,
     };
+  },
+
+  created: function () {
+    this.fetch_current_time();
   },
 
   ready: function () {
@@ -66,6 +72,24 @@ module.exports = {
   },
 
   methods: {
+    fetch_current_time: async function () {
+      try {
+        this.is_loading_time = true;
+        const response = await api.get("time");
+        if (response.timeinfo) {
+          const { timeinfo } = response;
+          this.current_time = timeinfo.split(": ")[1].split(" U")[0];
+        } else {
+          this.current_time = " ";
+        }
+      } catch (error) {
+        console.error("Error fetching time:", error);
+        this.current_time = "Error fetching time";
+      } finally {
+        this.is_loading_time = false;
+      }
+    },
+
     backup: function () {
       document.getElementById("download-target").src =
         "/api/config/download/" +
