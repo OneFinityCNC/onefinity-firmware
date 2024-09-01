@@ -44,6 +44,7 @@ module.exports = {
       selected_date: null,
       selected_hours: `${new Date().getHours()}`,
       selected_minutes: `${new Date().getMinutes()}`,
+      selected_meridiem: "AM",
     };
   },
 
@@ -174,20 +175,30 @@ module.exports = {
 
     change_date_time: async function () {
       if (!this.selected_date || !this.selected_hours || !this.selected_minutes) {
+        alert("Please enter all required fields.");
         return;
       }
-      if (
-        this.selected_hours < 0 ||
-        this.selected_hours > 23 ||
-        this.selected_minutes < 0 ||
-        this.selected_minutes > 59
-      ) {
+
+      const hours = parseInt(this.selected_hours, 10);
+      const minutes = parseInt(this.selected_minutes, 10);
+
+      if (hours < 1 || hours > 12 || minutes < 1 || minutes > 59) {
         return alert("Invalid Time");
       }
+
+      let converted_hours = hours;
+
+      if (this.selected_meridiem === "PM" && hours !== 12) {
+        converted_hours += 12;
+      } else if (this.selected_meridiem === "AM" && hours === 12) {
+        converted_hours = 0;
+      }
+
       try {
-        const datetime = `${this.selected_date} ${this.selected_hours
+        const datetime = `${this.selected_date} ${converted_hours.toString().padStart(2, "0")}:${minutes
           .toString()
-          .padStart(2, "0")}:${this.selected_minutes.toString().padStart(2, "0")}:00`;
+          .padStart(2, "0")}:00`;
+
         const response = await api.put("time", { datetime });
 
         if (response == "ok") {

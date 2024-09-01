@@ -70,7 +70,14 @@ script#admin-general-view-template(type="text/x-template")
       span(v-if="isLoadingTime") Loading...
       span(v-else) {{ current_time }}
     .pure-form
-      input(id="date" type="date" v-model="selected_date")
-      input(id="hours" type="number" v-model="selected_hours" placeholder="HH" maxlength="2" min="0" max="23" style="width:45px")
-      input(id="minutes" type="number" v-model="selected_minutes" placeholder="MM" maxlength="2" min="0" max="59" style="width:48px")
+      input(id="date" type="date" v-model="selected_date" required)
+      input(id="hours" type="number" v-model="selected_hours" placeholder="HH" maxlength="2" min="1" max="12" style="width:45px" required)
+      input(id="minutes" type="number" v-model="selected_minutes" placeholder="MM" maxlength="2" min="0" max="59" style="width:48px" required)
+      select(v-model="selected_meridian" style="width:60px")
+        option(value="AM") AM
+        option(value="PM") PM
       button.pure-button.pure-button-primary(@click="change_date_time", style="margin:5px") Update Date/Time 
+      .tip
+        strong Note:
+        | Internet connected controllers times is set automatically.
+        | Non-internet connected controllers will need to set time manually on every boot up.
