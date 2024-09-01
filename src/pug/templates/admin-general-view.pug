@@ -101,7 +101,7 @@ script#admin-general-view-template(type="text/x-template")
         required
       )
       
-      select(:disabled="is_24_hr_format" v-model="selected_meridian" style="width:65px")
+      select(:disabled="is_24_hr_format" v-model="selected_meridiem" style="width:65px")
         option(value="AM" selected) AM
         option(value="PM") PM
 
@@ -109,5 +109,6 @@ script#admin-general-view-template(type="text/x-template")
       
       .tip
         strong Note:
+      .tip
         | Internet connected controllers times is set automatically.
         | Non-internet connected controllers will need to set time manually on every boot up.
