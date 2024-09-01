@@ -41,6 +41,7 @@ module.exports = {
       config: "",
       current_time: "",
       is_loading_time: false,
+      is_24_hr_format: false,
       selected_date: null,
       selected_hours: `${new Date().getHours()}`,
       selected_minutes: `${new Date().getMinutes()}`,
@@ -174,28 +175,31 @@ module.exports = {
     },
 
     change_date_time: async function () {
-      if (!this.selected_date || !this.selected_hours || !this.selected_minutes) {
+      if (!this.selected_date || !this.selected_hours === "" || !this.selected_minutes === "") {
         alert("Please enter all required fields.");
         return;
       }
 
-      const hours = parseInt(this.selected_hours, 10);
+      let hours = parseInt(this.selected_hours, 10);
       const minutes = parseInt(this.selected_minutes, 10);
 
-      if (hours < 1 || hours > 12 || minutes < 1 || minutes > 59) {
-        return alert("Invalid Time");
-      }
-
-      let converted_hours = hours;
-
-      if (this.selected_meridiem === "PM" && hours !== 12) {
-        converted_hours += 12;
-      } else if (this.selected_meridiem === "AM" && hours === 12) {
-        converted_hours = 0;
+      if (this.is_24_hr_format) {
+        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+          return alert("Invalid Time");
+        }
+      } else {
+        if (hours < 1 || hours > 12 || minutes < 0 || minutes > 59) {
+          return alert("Invalid Time");
+        }
+        if (this.selected_meridiem === "PM" && hours !== 12) {
+          hours += 12;
+        } else if (this.selected_meridiem === "AM" && hours === 12) {
+          hours = 0;
+        }
       }
 
       try {
-        const datetime = `${this.selected_date} ${converted_hours.toString().padStart(2, "0")}:${minutes
+        const datetime = `${this.selected_date} ${hours.toString().padStart(2, "0")}:${minutes
           .toString()
           .padStart(2, "0")}:00`;
 
