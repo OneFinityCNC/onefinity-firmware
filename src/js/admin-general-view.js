@@ -57,6 +57,19 @@ module.exports = {
     this.autoCheckUpgrade = this.config.admin["auto-check-upgrade"];
   },
 
+  computed: {
+    get_current_time: function () {
+      if (this.is_24_hr_format == true) {
+        return this.current_time;
+      } else {
+        const [hour, minutes, seconds] = this.current_time.split(":");
+        const suffix = hour >= 12 ? "PM" : "AM";
+        const hour12 = (hour % 12 || 12).toString().padStart(2, "0");
+        return `${hour12}:${minutes}:${seconds} ${suffix}`;
+      }
+    },
+  },
+
   methods: {
     fetch_current_time: async function () {
       try {

@@ -68,7 +68,7 @@ script#admin-general-view-template(type="text/x-template")
     p
       strong Current Date/Time: 
       span(v-if="isLoadingTime") Loading...
-      span(v-else) {{ current_time }}
+      span(v-else) {{ get_current_time }}
     
     label
       input(type="checkbox" v-model="is_24_hr_format") 
