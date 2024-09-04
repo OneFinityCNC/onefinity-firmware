@@ -672,6 +672,10 @@
     "auto-check-upgrade": {
       "type": "bool",
       "default": true
+    },
+    "time-format": {
+      "type": "bool",
+      "default": true
     }
   }
 }
