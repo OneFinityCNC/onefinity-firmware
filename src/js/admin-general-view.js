@@ -61,10 +61,11 @@ module.exports = {
       if (this.config.admin.time_format == true) {
         return this.current_time;
       } else {
-        const [hour, minutes, seconds] = this.current_time.split(":");
+        const date_time_array = this.current_time.split(" ");
+        const [hour, minutes, seconds] = date_time_array[2].split(":");
         const suffix = hour >= 12 ? "PM" : "AM";
         const hour12 = (hour % 12 || 12).toString().padStart(2, "0");
-        return `${hour12}:${minutes}:${seconds} ${suffix}`;
+        return `${date_time_array[0]} ${date_time_array[1]} ${hour12}:${minutes}:${seconds} ${suffix}`;
       }
     },
   },
