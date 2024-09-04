@@ -673,7 +673,7 @@
       "type": "bool",
       "default": true
     },
-    "time-format": {
+    "time_format": {
       "type": "bool",
       "default": true
     }

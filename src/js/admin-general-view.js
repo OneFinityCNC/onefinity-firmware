@@ -41,7 +41,6 @@ module.exports = {
       config: "",
       current_time: "",
       is_loading_time: false,
-      is_24_hr_format: false,
       selected_date: null,
       selected_hours: `${new Date().getHours()}`,
       selected_minutes: `${new Date().getMinutes()}`,
@@ -59,7 +58,7 @@ module.exports = {
 
   computed: {
     get_current_time: function () {
-      if (this.is_24_hr_format == true) {
+      if (this.config.admin.time_format == true) {
         return this.current_time;
       } else {
         const [hour, minutes, seconds] = this.current_time.split(":");
@@ -187,6 +186,16 @@ module.exports = {
       this.$dispatch("config-changed");
     },
 
+    change_time_format: async function () {
+      try {
+        this.config.admin.time_format = !this.config.admin.time_format;
+        await api.put("config/save", this.config);
+      } catch (error) {
+        console.error("Update failed:", error);
+        alert("Update failed");
+      }
+    },
+
     change_date_time: async function () {
       if (!this.selected_date || !this.selected_hours === "" || !this.selected_minutes === "") {
         alert("Please enter all required fields.");
@@ -196,7 +205,7 @@ module.exports = {
       let hours = parseInt(this.selected_hours, 10);
       const minutes = parseInt(this.selected_minutes, 10);
 
-      if (this.is_24_hr_format) {
+      if (this.config.admin.time_format) {
         if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
           return alert("Invalid Time");
         }
