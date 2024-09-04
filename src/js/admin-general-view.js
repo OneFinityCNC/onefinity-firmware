@@ -189,7 +189,6 @@ module.exports = {
 
     change_time_format: async function () {
       try {
-        this.config.admin.time_format = !this.config.admin.time_format;
         await api.put("config/save", this.config);
       } catch (error) {
         console.error("Update failed:", error);
