@@ -45,8 +45,8 @@ module.exports = {
       time_zones: [],
       is_loading_time: false,
       selected_date: null,
-      selected_hours: this.current_time == null ? "00" : this.current_time.getHours(),
-      selected_minutes: this.current_time == null ? "00" : this.current_time.getMinutes(),
+      selected_hours: "",
+      selected_minutes: "",
       selected_meridiem: "AM",
     };
   },
@@ -105,6 +105,7 @@ module.exports = {
 
           if (time_zone) {
             this.current_timezone = time_zone[1];
+            this.selected_timezone = time_zone[1];
           }
         }
       } catch (error) {

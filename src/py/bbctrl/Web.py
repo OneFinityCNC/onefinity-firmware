@@ -576,8 +576,8 @@ class TimeHandler(bbctrl.APIHandler):
         self.write_json({'timeinfo': timeinfo, 'timezones': timezones})
 
     def put_ok(self):
-        datetime = self.json['datetime']
-        timezone = self.json['timezone']
+        datetime = self.json.get('datetime', None)
+        timezone = self.json.get('timezone', None)
 
         try:
             if datetime is not None:
