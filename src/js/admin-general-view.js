@@ -45,8 +45,8 @@ module.exports = {
       time_zones: [],
       is_loading_time: false,
       selected_date: null,
-      selected_hours: `${new Date().getHours()}`,
-      selected_minutes: `${new Date().getMinutes()}`,
+      selected_hours: this.current_time == null ? "00" : this.current_time.getHours(),
+      selected_minutes: this.current_time == null ? "00" : this.current_time.getMinutes(),
       selected_meridiem: "AM",
     };
   },
@@ -72,7 +72,7 @@ module.exports = {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
-          hour12: this.config.admin.time_format === true,
+          hour12: this.config.admin.time_format !== true,
         };
         if (this.current_timezone != "") {
           options.timeZone = this.current_timezone;
@@ -100,7 +100,7 @@ module.exports = {
           const time_zone = timeinfo.match(/Time zone:\s*([^ ]*)/);
 
           if (universal_time) {
-            this.current_time = newDate(universal_time[1]);
+            this.current_time = new Date(universal_time[1]);
           }
 
           if (time_zone) {
@@ -265,9 +265,17 @@ module.exports = {
       }
     },
 
-    change_timezone: function () {
+    change_timezone: async function () {
       try {
         console.log(this.selected_timezone);
+        // const response = await api.put("time", { timezone: this.selected_timezone });
+
+        // if (response == "ok") {
+        //   alert("Time zone updated successfully.");
+        //   this.fetch_current_time();
+        // } else {
+        //   throw response;
+        // }
       } catch (error) {
         alert("Error updating time zone");
       }
