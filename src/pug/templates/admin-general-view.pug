@@ -71,8 +71,7 @@ script#admin-general-view-template(type="text/x-template")
     
     .pure-form
       select(v-model="selected_timezone")
-        each timezone in time_zones
-          option(value=timezone) {{ timezone }}
+        option(v-for="(index,timezone) in time_zone" :value=timezone) {{ timezone }}
       
       button.pure-button.pure-button-primary(@click="change_timezone", style="margin:5px") Change Time Zone
     
