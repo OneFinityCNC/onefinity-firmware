@@ -577,17 +577,29 @@ class TimeHandler(bbctrl.APIHandler):
 
     def put_ok(self):
         datetime = self.json['datetime']
+        timezone = self.json['timezone']
 
         try:
-            subprocess.Popen(['sudo','timedatectl', 'set-ntp', 'false'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-            result = subprocess.Popen(['sudo','date', '-s', datetime], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-            subprocess.Popen(['sudo','timedatectl', 'set-ntp', 'true'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-            stdout, stderr = result.communicate()
+            if datetime is not None:
+                subprocess.Popen(['sudo','timedatectl', 'set-ntp', 'false'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+                result1 = subprocess.Popen(['sudo','date', '-s', datetime], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+                subprocess.Popen(['sudo','timedatectl', 'set-ntp', 'true'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+                stdout, stderr = result1.communicate()
 
-            if(result.returncode == 0):
-                self.get_log('TimeHandler').info('Result {} = {}'.format(result.returncode, stdout))
-            else:
-                raise Exception(stderr)
+                if(result1.returncode == 0):
+                    self.get_log('TimeHandler').info('Result1 {} = {}'.format(result1.returncode, stdout))
+                else:
+                    raise Exception(stderr)
+            
+            if timezone is not None:
+                result2 = subprocess.Popen(['sudo','timedatectl', 'set-timezone', timezone], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+                stdout, stderr = result2.communicate()
+
+                if(result2.returncode == 0):
+                    self.get_log('TimeHandler').info('Result2 {} = {}'.format(result2.returncode, stdout))
+                else:
+                    raise Exception(stderr)
+
         except Exception as e:
             self.get_log('TimeHandler').info('Error: {}'.format(e))
 
