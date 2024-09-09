@@ -63,6 +63,19 @@ script#admin-general-view-template(type="text/x-template")
       button.pure-button.pure-button-primary View Log
     a(href="/api/bugreport")
       button.pure-button.pure-button-primary Bug Report
+
+    h2 Time Zone
+    p
+      strong Current Time Zone: 
+      | {{current_timezone}}
+    
+    .pure-form
+      select(v-model="selected_timezone")
+        option(value="" disabled selected {{current_timezone}})
+        each timezone in time_zones
+          option(value=timezone) {{ timezone }}
+      
+      button.pure-button.pure-button-primary(@click="change_timezone", style="margin:5px") Change Time Zone
     
     h2 Date/Time
     p
@@ -110,5 +123,5 @@ script#admin-general-view-template(type="text/x-template")
       .tip
         strong Note:
         br
-        | Internet connected controllers time is set automatically.
+        | Internet connected controller time is set automatically.
         | Non-internet connected controllers will need to set time manually on every boot up.
