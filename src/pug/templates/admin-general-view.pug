@@ -71,7 +71,6 @@ script#admin-general-view-template(type="text/x-template")
     
     .pure-form
       select(v-model="selected_timezone")
-        option(value="" disabled selected {{current_timezone}})
         each timezone in time_zones
           option(value=timezone) {{ timezone }}
       
