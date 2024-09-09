@@ -39,7 +39,10 @@ module.exports = {
       z_slider: false,
       z_slider_variant: " ",
       config: "",
-      current_time: "",
+      current_time: null,
+      current_timezone: "",
+      selected_timezone: "",
+      time_zones: [],
       is_loading_time: false,
       selected_date: null,
       selected_hours: `${new Date().getHours()}`,
@@ -58,16 +61,27 @@ module.exports = {
 
   computed: {
     get_current_time: function () {
-      if (this.config.admin.time_format == true) {
-        return this.current_time;
-      } else if (this.current_time.length != 0) {
-        const date_time_array = this.current_time.split(" ");
-        const [hour, minutes, seconds] = date_time_array[2].split(":");
-        const suffix = hour >= 12 ? "PM" : "AM";
-        const hour12 = (hour % 12 || 12).toString().padStart(2, "0");
-        return `${date_time_array[0]} ${date_time_array[1]} ${hour12}:${minutes}:${seconds} ${suffix}`;
-      } else {
-        return "";
+      try {
+        if (this.current_time == null) {
+          return "Loading...";
+        }
+        const options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: this.config.admin.time_format === true,
+        };
+        if (this.current_timezone != "") {
+          options.timeZone = this.current_timezone;
+        }
+        const formatter = new Intl.DateTimeFormat("en-US", options);
+        return formatter.format(this.current_time);
+      } catch (error) {
+        console.error(error);
+        return "Error loading time...";
       }
     },
   },
@@ -78,14 +92,24 @@ module.exports = {
         this.is_loading_time = true;
         const response = await api.get("time");
         if (response.timeinfo) {
-          const { timeinfo } = response;
-          this.current_time = timeinfo.split(": ")[1].split(" U")[0];
-        } else {
-          this.current_time = " ";
+          const { timeinfo, timezones } = response;
+
+          this.time_zones = timezones.split("\n");
+
+          const universal_time = timeinfo.match(/Universal time:\s*(.*) UTC/);
+          const time_zone = timeinfo.match(/Time zone:\s*([^ ]*)/);
+
+          if (universal_time) {
+            this.current_time = newDate(universal_time[1]);
+          }
+
+          if (time_zone) {
+            this.current_timezone = time_zone[1];
+          }
         }
       } catch (error) {
         console.error("Error fetching time:", error);
-        this.current_time = "Error fetching time";
+        alert("Error fetching time");
       } finally {
         this.is_loading_time = false;
       }
@@ -236,7 +260,16 @@ module.exports = {
           throw response;
         }
       } catch (error) {
-        alert("Error updating time: ", error);
+        console.error(error);
+        alert("Error updating time");
+      }
+    },
+
+    change_timezone: function () {
+      try {
+        console.log(this.selected_timezone);
+      } catch (error) {
+        alert("Error updating time zone");
       }
     },
   },
