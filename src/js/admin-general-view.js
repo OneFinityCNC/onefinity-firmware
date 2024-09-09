@@ -96,11 +96,11 @@ module.exports = {
 
           this.time_zones = timezones.split("\n");
 
-          const universal_time = timeinfo.match(/Universal time:\s*(.*) UTC/);
+          const local_time = timeinfo.match(/Local time:\s+([A-Za-z]{3}\s\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})/);
           const time_zone = timeinfo.match(/Time zone:\s*([^ ]*)/);
 
-          if (universal_time) {
-            this.current_time = new Date(universal_time[1]);
+          if (local_time) {
+            this.current_time = new Date(local_time[1]);
           }
 
           if (time_zone) {
