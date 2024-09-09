@@ -268,15 +268,17 @@ module.exports = {
 
     change_timezone: async function () {
       try {
-        console.log(this.selected_timezone);
-        // const response = await api.put("time", { timezone: this.selected_timezone });
+        if (this.selected_timezone == this.current_timezone) return;
+        if (this.selected_timezone == null) return;
 
-        // if (response == "ok") {
-        //   alert("Time zone updated successfully.");
-        //   this.fetch_current_time();
-        // } else {
-        //   throw response;
-        // }
+        const response = await api.put("time", { timezone: this.selected_timezone });
+
+        if (response == "ok") {
+          alert("Time zone updated successfully.");
+          this.fetch_current_time();
+        } else {
+          throw response;
+        }
       } catch (error) {
         alert("Error updating time zone");
       }
