@@ -587,7 +587,7 @@ class TimeHandler(bbctrl.APIHandler):
                 stdout, stderr = result1.communicate()
 
                 if(result1.returncode == 0):
-                    self.get_log('TimeHandler').info('Result1 {} = {}'.format(result1.returncode, stdout))
+                    self.get_log('TimeHandler').info('Result1 {} : {}'.format(result1.returncode, stdout))
                 else:
                     raise Exception(stderr)
             
@@ -596,7 +596,7 @@ class TimeHandler(bbctrl.APIHandler):
                 stdout, stderr = result2.communicate()
 
                 if(result2.returncode == 0):
-                    self.get_log('TimeHandler').info('Result2 {} = {}'.format(result2.returncode, stdout))
+                    self.get_log('TimeHandler').info('Result2 {}'.format(result2.returncode))
                 else:
                     raise Exception(stderr)
 
