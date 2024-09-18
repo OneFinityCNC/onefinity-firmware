@@ -243,11 +243,6 @@ class State(object):
             if self.timeout is None:
                 self.timeout = self.ctrl.ioloop.call_later(0.25, self._notify)
 
-        # Storing origin to config
-        if name in ['offset_x', 'offset_y', 'offset_z'] and self.vars.get('cycle') == 'mdi':
-            self.ctrl.config.set('axes', {name: value})
-            self.set('cycle', 'idle')
-
         # Loading origin from config after homing 
         if load_position and self.vars.get('cycle') == 'idle':
             for axis in 'xyz':

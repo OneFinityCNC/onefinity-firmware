@@ -363,6 +363,10 @@ class Mach(Comm):
             # If homed, change the offset rather than the absolute position
             self.mdi('G92%s%f' % (axis, position))
 
+            #storing the offset to config
+            self.ctrl.config.set('axes', {'offset_' + axis : state.get(axis + 'p')})
+            self.log.info('set_position: {} = {} '.format(axis, state.get(axis + 'p')))
+
         elif state.is_axis_enabled(axis):
             if self._get_cycle() != 'idle' and not self._is_paused():
                 raise Exception('Cannot set position during ' +
