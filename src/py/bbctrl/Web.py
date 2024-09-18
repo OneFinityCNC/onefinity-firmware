@@ -481,7 +481,7 @@ class StepHandler(bbctrl.APIHandler):
 
 class PositionHandler(bbctrl.APIHandler):
     def put_ok(self, axis):
-        self.get_ctrl().mach.set_position(axis, float(self.json['position']))
+        self.get_ctrl().mach.set_position(axis, float(self.json['position']), True)
 
 
 class OverrideFeedHandler(bbctrl.APIHandler):
