@@ -270,10 +270,13 @@ script#control-view-template(type="text/x-template")
             title="{{is_running ? 'Pause' : 'Start'}} program.",
             @click="start_pause", :disabled="!state.selected",
             style="height:100px;width:100px;font-weight:normal")
-            .fa(:class="is_running ? 'fa-pause' : 'fa-play'" style="font-size:30px")
+            if is_running
+              img(src="images/pause_gcode.png" style="height: 55px;")
+            else
+              img(src="images/play_gcode.png" style="height: 55px;")
 
           button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
-            img(src="images/stop.png" style="height: 25px;")
+            img(src="images/stop.png" style="height: 55px;")
 
           button.pure-button(title="Pause program at next optional stop (M1).",
             @click="optional_pause", v-if="false", style="height:100px;width:100px;font-weight:normal")
@@ -295,7 +298,7 @@ script#control-view-template(type="text/x-template")
           
           button.pure-button(title="Upload a new GCode folder.", @click="open_folder",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            img(src="images/upload_folder.png" style="height: 40px;")
+            img(src="images/upload_folder.png" style="height: 65px;")
 
           form.gcode-folder-input.file-upload
             input#folderInput(type="file", @change="upload_folder", :disabled="!is_ready",
@@ -303,7 +306,7 @@ script#control-view-template(type="text/x-template")
           
           button.pure-button(title="Upload a new GCode program.", @click="open_file",
             :disabled="!is_ready",style="height:100px;width:100px;font-weight:normal")
-            img(src="images/upload_gcode.png" style="height: 30px;")
+            img(src="images/upload_gcode.png" style="height: 65px;")
 
           form.gcode-file-input.file-upload
             input(type="file", @change="upload_file", :disabled="!is_ready",
@@ -313,12 +316,12 @@ script#control-view-template(type="text/x-template")
               :href="'/api/file/' + state.selected",
               title="Download the selected GCode program.")
             button.pure-button(:disabled="!state.selected", style="height:100px;width:100px")
-              img(src="images/download_gcode.png" style="height: 30px;")
+              img(src="images/download_gcode.png" style="height: 65px;")
 
           button.pure-button(title="Delete current GCode program.",
             @click="deleteGCode = true",
             :disabled="!state.selected || !is_ready",style="height:100px;width:100px;font-weight:normal")
-            img(src="images/delete_gcode.png" style="height: 30px;")
+            img(src="images/delete_gcode.png" style="height: 55px;")
 
           message.error-message(:show.sync="deleteGCode")
             h3(slot="header") Select files to delete:
