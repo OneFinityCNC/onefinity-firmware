@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.6.0",
   "settings": {
     "junction-accel": 200000,
     "max-deviation": 0.05,

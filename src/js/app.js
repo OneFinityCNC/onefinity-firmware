@@ -311,6 +311,21 @@ module.exports = new Vue({
             return semverLt(this.config.full_version, this.latestVersion);
         },
 
+        toggle_rotary: async function() {
+            let motor = this.config.motors[2];
+            if(motor['axis'] == 'A'){
+                motor['axis'] = 'Y';
+            } else {
+                motor['axis'] = 'A';
+            }
+            try {
+                await api.put("config/save", this.config);
+              } catch (error) {
+                console.error("Restore failed:", error);
+                alert("Error occured");
+              }
+        },
+ 
         showShutdownDialog: function() {
             SvelteComponents.showDialog("Shutdown");
         },
