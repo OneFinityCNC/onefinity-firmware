@@ -92,7 +92,7 @@ html(lang="en")
           .whitespace
 
           div
-            button.rotary-button(:class="is_rotary_active && 'active'", @click="toggle_rotary")
+            button.rotary-button(:disabled="!enable_rotary", :class="is_rotary_active && 'active'", @click="toggle_rotary")
               img(src="/images/rotary.svg", alt="rotary", style="width:90%;")
 
           .video(title="Plug camera into USB.\n" +

@@ -110,7 +110,16 @@ tt
 
     &.active
       border 1px solid #54ed54
-      fill #ccffcb !important
+      background #ccffcb
+    
+    &:focus
+      outline none
+      box-shadow none
+    
+    &.disabled
+      opacity 0.5
+      background #e0e0e0
+      cursor not-allowed
 
   .video
     position relative
