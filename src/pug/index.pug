@@ -89,10 +89,10 @@ html(lang="en")
               v-if="80 <= state.rpi_temp",
               title="Raspberry Pi temperature too high.")
           
-          button.rotary(:class="is_rotary_active && 'active'", @click="toggle_rotary")
-            img(src="/images/rotary.svg", alt="rotary")
-
           .whitespace
+
+          button.rotary-button(:class="is_rotary_active && 'active'", @click="toggle_rotary")
+            img(src="/images/rotary.svg", alt="rotary")
 
           .video(title="Plug camera into USB.\n" +
             "Left click to toggle video size.\n" +
