@@ -236,6 +236,11 @@ module.exports = new Vue({
 
             return msgs;
         },
+
+        is_rotary_active: function() {
+            if(this.config.motors[2]['axis'] == 'Y') return false;
+            return true;
+        },
     },
 
     ready: function() {

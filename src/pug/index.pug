@@ -89,9 +89,8 @@ html(lang="en")
               v-if="80 <= state.rpi_temp",
               title="Raspberry Pi temperature too high.")
           
-          .rotary
-            button(@click="toggle_rotary")
-              img(src="/images/rotary.svg", alt="rotary")
+          button.rotary(:class="is_rotary_active && 'active'", @click="toggle_rotary")
+            img(src="/images/rotary.svg", alt="rotary")
 
           .whitespace
 
