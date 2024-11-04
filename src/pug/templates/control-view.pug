@@ -97,7 +97,25 @@ script#control-view-template(type="text/x-template")
               td(style="height:100px",align="center")
                 button(:style="getJogIncrStyle('large')", @click="jog_incr = 'large'")
                   span {{jog_incr_amounts[display_units].large}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
-            tr
+
+            tr(v-if="is_rotary_active")
+              td(style="height:100px", align="center", colspan="2")
+                button(@click="console.log('button pressed: Probe Rotary')")
+                  | Probe Rotary
+
+              td(style="height:100px", align="center", colspan="2")
+                button(@click="console.log('button pressed: A-')")
+                  | A-
+              
+              td(style="height:100px", align="center", colspan="2")
+                button(@click="console.log('button pressed: A Origin')")
+                  | A Origin
+
+              td(style="height:100px", align="center", colspan="2")
+                button(@click="console.log('button pressed: A+')")
+                  | A+
+
+            tr(v-else)
               td(style="height:100px", align="center", colspan="2")
                 button(:class="state['pw'] ? '' : 'load-on'",
                   style="height:100px;width:200px",
@@ -278,10 +296,8 @@ script#control-view-template(type="text/x-template")
             title="{{is_running ? 'Pause' : 'Start'}} program.",
             @click="start_pause", :disabled="!state.selected",
             style="height:100px;width:100px;font-weight:normal")
-            if is_running
-              img(src="images/pause_gcode.png" style="height: 55px;")
-            else
-              img(src="images/play_gcode.png" style="height: 55px;")
+            img(v-if="is_running" src="images/pause_gcode.png" style="height: 55px;")
+            img(v-else src="images/play_gcode.png" style="height: 55px;")
 
           button.pure-button(title="Stop program.", @click="stop", style="height:100px;width:100px;font-weight:normal")
             img(src="images/stop.png" style="height: 55px;")
