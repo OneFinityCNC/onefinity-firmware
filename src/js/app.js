@@ -325,10 +325,10 @@ module.exports = new Vue({
             let motor = this.config.motors[2];
             if(motor['axis'] == 'A'){
                 motor['axis'] = 'Y';
-                this.config.motors[1]['max-velocity'] /= 2; 
+                this.config.motors[1]['max-velocity'] *= 2; 
             } else {
                 motor['axis'] = 'A';
-                this.config.motors[1]['max-velocity'] *= 2;
+                this.config.motors[1]['max-velocity'] /= 2;
             }
             try {
                 await api.put("config/save", this.config);
