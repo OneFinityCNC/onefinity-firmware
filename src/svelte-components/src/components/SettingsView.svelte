@@ -67,8 +67,6 @@
 
             <h3>Probe Block</h3>
 
-            <br />
-
             {#each Object.keys(configTemplate.probe) as key}
                 {#if key !== "probe-diameter"}
                     <ConfigTemplatedInput key={`probe.${key}`} />
@@ -77,11 +75,9 @@
 
             <h3>Probe Rotary</h3>
 
-            <br />
-
             {#each Object.keys(configTemplate["probe-rotary"]) as key}
                 {#if key !== "probe-diameter"}
-                    <ConfigTemplatedInput key={`probe.${key}`} />
+                    <ConfigTemplatedInput key={`probe-rotary.${key}`} />
                 {/if}
             {/each}
         </fieldset>
