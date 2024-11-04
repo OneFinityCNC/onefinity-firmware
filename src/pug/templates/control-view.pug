@@ -99,20 +99,24 @@ script#control-view-template(type="text/x-template")
                   span {{jog_incr_amounts[display_units].large}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
 
             tr(v-if="config.motors[2]['axis'] == 'A'")
-              td(style="height:100px", align="center", colspan="2")
-                button(@click="console.log('button pressed: Probe Rotary')")
-                  | Probe Rotary
+              td(style="height:100px", align="center", colspan="1")
+                button()
+                  | Probe
+                  br
+                  | Rotary
 
-              td(style="height:100px", align="center", colspan="2")
-                button(@click="console.log('button pressed: A-')")
+              td(style="height:100px", align="center", colspan="1")
+                button()
                   | A-
               
-              td(style="height:100px", align="center", colspan="2")
-                button(@click="console.log('button pressed: A Origin')")
-                  | A Origin
+              td(style="height:100px", align="center", colspan="1")
+                button()
+                  | A
+                  br
+                  | Origin
 
-              td(style="height:100px", align="center", colspan="2")
-                button(@click="console.log('button pressed: A+')")
+              td(style="height:100px", align="center", colspan="1")
+                button()
                   | A+
 
             tr(v-else)
