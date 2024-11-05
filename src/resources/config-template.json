@@ -261,7 +261,8 @@
         "Sunfar E300 (Beta)",
         "OMRON MX2",
         "V70",
-        "PwnCNC VFD"
+        "EM60",
+        "Redline VFD"
       ],
       "default": "Disabled",
       "code": "st"

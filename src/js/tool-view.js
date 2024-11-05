@@ -28,8 +28,12 @@ module.exports = {
           name: "Laser (J Tech, etc)",
         },
         {
-          id: "pwncnc-vfd",
-          name: "PwnCNC VFD",
+          id: "em60",
+          name: "EM60",
+        },
+        {
+          id: "redline-vfd",
+          name: "Redline VFD",
         },
         {
           id: "pwm",

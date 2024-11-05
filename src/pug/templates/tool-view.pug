@@ -43,7 +43,7 @@ script#tool-view-template(type="text/x-template")
           label.units RPM
 
       fieldset.modbus-program(
-        v-if="is_modbus && tool_type != 'HUANYANG VFD' && tool_type != 'PWNCNC VFD'")
+        v-if="is_modbus && tool_type != 'HUANYANG VFD' && tool_type != 'REDLINE VFD' && tool_type != 'EM60'")
         h2 Active Modbus Program
         p(v-if="$root.modified")
           | (Click #[tt(class="save") Save] to activate the selected
