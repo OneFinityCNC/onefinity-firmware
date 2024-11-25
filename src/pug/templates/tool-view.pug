@@ -8,7 +8,7 @@ script#tool-view-template(type="text/x-template")
           label(for="tool-type") tool-type
 
           select(v-model="config.tool['selected-tool']", name="tool-type", @change="change_selected_tool")
-            option(v-for="tool in toolList", :value="tool.id", :disabled="tool.disabled") {{tool.name}}
+            option(v-for="tool in toolList", :value="tool.id", :disabled="tool.disabled", :class="{ 'heading-option': tool.disabled }") {{tool.name}}
 
         templated-input(v-for="templ in template.tool",
           :name="$key", v-if="show_tool_settings($key)"
