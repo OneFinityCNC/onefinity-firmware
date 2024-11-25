@@ -106,7 +106,7 @@ script#control-view-template(type="text/x-template")
                   | Rotary
 
               td(style="height:100px", align="center", colspan="1")
-                button()
+                button(@click="jog_fn(0,0,0,-1)")
                   | A-
               
               td(style="height:100px", align="center", colspan="1")
@@ -116,7 +116,7 @@ script#control-view-template(type="text/x-template")
                   | Origin
 
               td(style="height:100px", align="center", colspan="1")
-                button()
+                button(@click="jog_fn(0,0,0,1)")
                   | A+
 
             tr(v-else)
