@@ -4,7 +4,7 @@
     import { ControllerMethods } from "$lib/RegisterControllerMethods";
 
     export let open;
-    export let axes: "xy" | "z";
+    export let axes: "xy" | "z" | "a";
 </script>
 
 <Dialog

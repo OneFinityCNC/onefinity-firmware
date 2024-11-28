@@ -56,7 +56,7 @@
     const MoveToZeroDialogProps = writable<MoveToZeroDialogPropsType>();
     type MoveToZeroDialogPropsType = {
         open: boolean;
-        axes: "xy" | "z";
+        axes: "xy" | "z" | "a";
     };
 
     const ShutdownDialogProps = writable<ShutdownDialogPropsType>();
