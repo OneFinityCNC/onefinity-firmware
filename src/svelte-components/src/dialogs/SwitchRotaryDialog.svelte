@@ -21,7 +21,7 @@
     <Title id="switch-rotary-dialog-title">Switch Rotary Mode</Title>
 
     <Content id="switch-rotary-dialog-content">
-        {isActive ? "Enable Rotary Mode?" : "Disable Rotary Mode?"}
+        {isActive ? "Turn on Rotary box?" : "Turn off Rotary box?"}
     </Content>
 
     <Actions>

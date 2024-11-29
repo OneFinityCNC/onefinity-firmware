@@ -323,7 +323,7 @@ module.exports = new Vue({
 
         showSwitchRotaryModeDialog: function(){
             SvelteComponents.showDialog("SwitchRotary", {
-                isActive: this.is_rotary_active,
+                isActive: !this.is_rotary_active,
                 switchMode: () => this.toggle_rotary()
             });
         },
