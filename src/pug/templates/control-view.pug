@@ -106,8 +106,9 @@ script#control-view-template(type="text/x-template")
                   | Rotary
 
               td(style="height:100px", align="center", colspan="1")
-                button(@click="jog_fn(0,0,0,-1)")
+                button(@click="jog_fn(0,0,0,-1)", style="display: grid;justify-content: center;align-items: center;padding: 14px;")
                   | A-
+                  .fa.fa-rotate-left
               
               td(style="height:100px", align="center", colspan="1")
                 button(@click="showMoveToZeroDialog('a')")
@@ -116,8 +117,9 @@ script#control-view-template(type="text/x-template")
                   | Origin
 
               td(style="height:100px", align="center", colspan="1")
-                button(@click="jog_fn(0,0,0,1)")
+                button(@click="jog_fn(0,0,0,1)", style="display: grid;justify-content: center;align-items: center;padding: 14px;")
                   | A+
+                  .fa.fa-rotate-right
 
             tr(v-else)
               td(style="height:100px", align="center", colspan="2")
