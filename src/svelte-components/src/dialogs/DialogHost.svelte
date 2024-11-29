@@ -10,6 +10,7 @@
     import MoveToZeroDialog from "./MoveToZeroDialog.svelte";
     import ShutdownDialog from "./ShutdownDialog.svelte";
     import MessageDialog from "./MessageDialog.svelte";
+    import SwitchRotaryDialog from "./SwitchRotaryDialog.svelte";
 
     const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
     type HomeMachineDialogPropsType = {
@@ -72,6 +73,13 @@
         noaction: boolean;
     };
 
+    const SwitchRotaryDialogProps = writable<SwitchRotaryDialogPropsType>();
+    type SwitchRotaryDialogPropsType = {
+        open: boolean;
+        isActive: boolean;
+        switchMode: () => void;
+    };
+
     export function showDialog(
         dialog: "HomeMachine",
         props: Omit<HomeMachineDialogPropsType, "open">
@@ -122,6 +130,11 @@
         props: Omit<MessageDialogPropsType, "open">
     );
 
+    export function showDialog(
+        dialog: "SwitchRotary",
+        props: Omit<SwitchRotaryDialogPropsType, "open">
+    );
+
     export function showDialog(dialog: string, props: any) {
         switch (dialog) {
             case "HomeMachine":
@@ -161,6 +174,10 @@
                 break;
 
             case "Message":
+                MessageDialogProps.set({ ...props, open: true });
+                break;
+            
+            case "SwitchRotary":
                 MessageDialogProps.set({ ...props, open: true });
                 break;
 
@@ -242,3 +259,4 @@
 <MoveToZeroDialog {...$MoveToZeroDialogProps} />
 <ShutdownDialog {...$ShutdownDialogProps} />
 <MessageDialog {...$MessageDialogProps} />
+<SwitchRotaryDialog {...$SwitchRotaryDialogProps} />

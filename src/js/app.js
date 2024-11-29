@@ -321,6 +321,13 @@ module.exports = new Vue({
             return semverLt(this.config.full_version, this.latestVersion);
         },
 
+        showSwitchRotaryModeDialog: function(){
+            SvelteComponents.showDialog("SwitchRotary", {
+                isActive: this.is_rotary_active,
+                switchMode: () => this.toggle_rotary()
+            });
+        },
+ 
         toggle_rotary: async function() {
             let motor = this.config.motors[2];
             if(motor['axis'] == 'A'){
