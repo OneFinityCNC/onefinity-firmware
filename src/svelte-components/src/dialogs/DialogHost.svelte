@@ -178,7 +178,7 @@
                 break;
             
             case "SwitchRotary":
-                MessageDialogProps.set({ ...props, open: true });
+                SwitchRotaryDialogProps.set({ ...props, open: true });
                 break;
 
             default:
