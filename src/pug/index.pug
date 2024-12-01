@@ -94,6 +94,7 @@ html(lang="en")
           div
             button.rotary-button(:disabled="!enable_rotary", :class="is_rotary_active && 'active'", @click="showSwitchRotaryModeDialog")
               img(src="/images/rotary.svg", alt="rotary", :style="is_rotary_active ? 'width:90%;' : 'width:85%;'")
+            div.rotary-text Rotary
 
           .video(title="Plug camera into USB.\n" +
             "Left click to toggle video size.\n" +
