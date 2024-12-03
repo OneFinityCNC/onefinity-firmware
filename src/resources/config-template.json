@@ -711,6 +711,18 @@
     "offset_z": {
       "type": "float",
       "default": 0
+    },
+    "offset_a": {
+      "type": "float",
+      "default": 0
+    },
+    "offset_b": {
+      "type": "float",
+      "default": 0
+    },
+    "offset_c": {
+      "type": "float",
+      "default": 0
     }
   },
 

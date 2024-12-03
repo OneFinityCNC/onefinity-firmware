@@ -245,12 +245,12 @@ class State(object):
 
         # Loading origin from config after homing 
         if load_position and self.vars.get('cycle') == 'idle':
-            for axis in 'xyz':
+            for axis in 'xyzabc':
                 offset = self.ctrl.config.get('offset_' + axis)
                 if offset is not None and self.get('offset_'+ axis) == 0:
                     origin = offset if self.get('metric') == True else offset / 25.4
                     self.log.info('axis: {} offset: {} origin: {}'.format(axis, offset, origin))
-                    self.ctrl.mach.set_position(axis,-origin)
+                    self.ctrl.mach.set_position(axis, -origin)
             
 
     def update(self, update):
