@@ -603,6 +603,18 @@ class TimeHandler(bbctrl.APIHandler):
         except Exception as e:
             self.get_log('TimeHandler').info('Error: {}'.format(e))
 
+class RotaryHandler(bbctrl.APIHandler):
+
+    def put_ok(self):
+        status = self.json.get('status', None)
+        state = self.get_ctrl().state
+        try:
+            self.get_log('RotaryHandler').info('Status: {}'.format(status))
+            state.set("rotary", status)
+
+        except Exception as e:
+            self.get_log('RotaryHandler').info('Error: {}'.format(e))
+
 
 class RemoteDiagnosticsHandler(bbctrl.APIHandler):
 
@@ -776,6 +788,7 @@ class Web(tornado.web.Application):
             (r'/api/video', bbctrl.VideoHandler),
             (r'/api/screen-rotation', ScreenRotationHandler),
             (r'/api/time', TimeHandler),
+            (r'/api/rotary', RotaryHandler),
             (r'/api/remote-diagnostics', RemoteDiagnosticsHandler),
             (r'/(.*)', StaticFileHandler,
              {'path': bbctrl.get_resource('http/'),

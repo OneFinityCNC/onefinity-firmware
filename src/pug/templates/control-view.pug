@@ -98,7 +98,7 @@ script#control-view-template(type="text/x-template")
                 button(:style="getJogIncrStyle('large')", @click="jog_incr = 'large'")
                   span {{jog_incr_amounts[display_units].large}}#[span.jog-units {{metric ? 'mm' : 'in'}}]
 
-            tr(v-if="config.motors[2]['axis'] == 'A'")
+            tr(v-if="state['2an'] == 3")
               td(style="height:100px", align="center", colspan="1")
                 button(@click="showProbeDialog('a')")
                   | Probe

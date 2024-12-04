@@ -238,12 +238,12 @@ module.exports = new Vue({
         },
 
         is_rotary_active: function() {
-            if(this.config.motors[2]['axis'] == 'Y') return false;
+            if(this.state["2an"] == 1) return false;
             return true;
         },
 
         enable_rotary: function() {
-            if(this.config.motors[2]['axis'] == 'Y' || this.config.motors[2]['axis'] == 'A') return true;
+            if(this.state["2an"] == 1 || this.state["2an"] == 3) return true;
             return false;
         }
     },
@@ -338,6 +338,7 @@ module.exports = new Vue({
                 this.config.motors[1]['max-velocity'] /= 2;
             }
             try {
+                await api.put("rotary", {status : motor['axis'] == 'A'});
                 await api.put("config/save", this.config);
               } catch (error) {
                 console.error("Restore failed:", error);
