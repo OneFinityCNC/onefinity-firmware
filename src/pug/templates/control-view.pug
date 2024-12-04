@@ -100,7 +100,7 @@ script#control-view-template(type="text/x-template")
 
             tr(v-if="config.motors[2]['axis'] == 'A'")
               td(style="height:100px", align="center", colspan="1")
-                button()
+                button(@click="showProbeDialog('a')")
                   | Probe
                   br
                   | Rotary

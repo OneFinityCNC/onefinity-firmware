@@ -70,7 +70,7 @@
     ];
 
     export let open;
-    export let probeType: "xyz" | "z";
+    export let probeType: "xyz" | "z" | "a";
     let currentStep: Step = "None";
     let cutterDiameterString: string = "";
     let cutterDiameterMetric: number;
@@ -154,6 +154,7 @@
         switch (probeType) {
             case "xyz":
             case "z":
+            case "a":
                 break;
 
             default:
@@ -239,6 +240,10 @@
         const yOffset = probeBlockLength + cutterDiameterMetric / 2.0;
         const zOffset = probeBlockHeight;
 
+        const fastSeekRotary = $Config["probe-rotary"]["probe-fast-seek"];
+        const slowSeekRotary = $Config["probe-rotary"]["probe-slow-seek"];
+        const zOffsetRotary = $Config["probe-rotary"]["probe-zdim"];
+
         if (probeType === "z") {
             ControllerMethods.send(`
                 G21
@@ -248,6 +253,20 @@
                 G91 G1 Z 1
                 G38.2 Z -2 F${slowSeek}
                 G92 Z ${zOffset}
+            
+                G91 G0 Z 25
+
+                M2
+            `);
+        } else if(probeType === "a") {
+            ControllerMethods.send(`
+                G21
+                G92 Z0
+            
+                G38.2 Z -25.4 F${fastSeekRotary}
+                G91 G1 Z 1
+                G38.2 Z -2 F${slowSeekRotary}
+                G92 Z ${zOffsetRotary}
             
                 G91 G0 Z 25
 
@@ -323,7 +342,7 @@
                     Attach the probe magnet to the collet, then touch the probe
                     block to the bit.
                 </p>
-
+                <!-- TODO: change asset for a axis -->
                 <Icon
                     data={probeType === "xyz" ? CheckXYZ : CheckZ}
                     size="300px"
@@ -343,6 +362,7 @@
 
                 <Icon data={BitDiameter} size="150px" class="probe-icon-svg" />
             {:else if currentStep === "PlaceProbeBlock"}
+                <!-- TODO: change asset for a axis -->
                 <p>
                     {#if probeType === "xyz"}
                         Place the probe block face up, on the lower-left corner
@@ -382,7 +402,7 @@
                     </p>
                 {:else}
                     <p>Don't forget to put away the probe!</p>
-
+                    <!-- TODO: change asset for a axis -->
                     <Icon
                         data={probeType === "xyz" ? PutAwayXYZ : PutAwayZ}
                         width="329px"
