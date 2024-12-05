@@ -117,7 +117,9 @@
                 "Done",
             ].filter<Step>(isStep);
 
-            await stepCompleted("CheckProbe", probeContacted);
+            if(probeType != "a"){
+                await stepCompleted("CheckProbe", probeContacted);
+            }
 
             if (probeType === "xyz") {
                 await stepCompleted("BitDimensions", userAcknowledged);
@@ -367,6 +369,8 @@
                     {#if probeType === "xyz"}
                         Place the probe block face up, on the lower-left corner
                         of your workpiece.
+                    {:else if probeType === "a"}
+                        You are about to start the probing of rotary.
                     {:else}
                         Place the probe block face down, with the bit above the
                         recess.
@@ -401,7 +405,13 @@
                         above the probe block, and try again.
                     </p>
                 {:else}
-                    <p>Don't forget to put away the probe!</p>
+                    <p>
+                        {#if probeType === "a"}
+                            Probing complete
+                        {:else}
+                            Don't forget to put away the probe!
+                        {/if}
+                    </p>
                     <!-- TODO: change asset for a axis -->
                     <Icon
                         data={probeType === "xyz" ? PutAwayXYZ : PutAwayZ}
