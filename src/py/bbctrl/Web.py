@@ -606,14 +606,44 @@ class TimeHandler(bbctrl.APIHandler):
 class RotaryHandler(bbctrl.APIHandler):
 
     def put_ok(self):
-        status = self.json.get('status', None)
-        state = self.get_ctrl().state
         try:
-            self.get_log('RotaryHandler').info('Status: {}'.format(status))
-            state.set("rotary", status)
+            ctrl = self.get_ctrl()
+            state = ctrl.state
+            config = ctrl.config
+            path = ctrl.get_path('config.json')
+            
+            try:
+                if os.path.exists(path):
+                    with open(path, 'r') as f: config_data = json.load(f)
+                else: config_data = {'version': self.version}
 
+            except Exception: self.log.exception('Internal error: Failed to load config template')
+
+
+            motors = config_data.get("motors")
+            
+            if not motors:
+                raise ValueError("Motors data not found in configuration")
+
+
+            motor_1 = motors[1]
+            motor_2 = motors[2]
+            
+            is_axis_A = motor_2.get("axis") == "A"
+
+            motor_2["axis"] = "Y" if is_axis_A else "A"
+            motor_1["max-velocity"] *= 2 if is_axis_A else 0.5
+
+            config.save(config_data)
+
+        except FileNotFoundError:
+            self.get_log('RotaryHandler').error('Configuration file not found at {}'.format(path))
+        except KeyError as e:
+            self.get_log('RotaryHandler').error('Missing key in configuration data: {}'.format(e))
+        except ValueError as e:
+            self.get_log('RotaryHandler').error('Validation error: {}'.format(e))
         except Exception as e:
-            self.get_log('RotaryHandler').info('Error: {}'.format(e))
+            self.get_log('RotaryHandler').error('Unexpected error: {}'.format(e))
 
 
 class RemoteDiagnosticsHandler(bbctrl.APIHandler):
