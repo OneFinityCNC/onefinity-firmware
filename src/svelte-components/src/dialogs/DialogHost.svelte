@@ -77,7 +77,7 @@
     type SwitchRotaryDialogPropsType = {
         open: boolean;
         isActive: boolean;
-        switchMode: () => void;
+        switchMode: (mode: boolean) => void;
     };
 
     export function showDialog(

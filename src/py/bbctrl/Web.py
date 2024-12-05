@@ -607,10 +607,13 @@ class RotaryHandler(bbctrl.APIHandler):
 
     def put_ok(self):
         try:
+            status = self.json.get('status', None)
             ctrl = self.get_ctrl()
-            state = ctrl.state
             config = ctrl.config
             path = ctrl.get_path('config.json')
+
+            if status is None:
+                raise Exception("No status provided")
             
             try:
                 if os.path.exists(path):
@@ -630,6 +633,8 @@ class RotaryHandler(bbctrl.APIHandler):
             motor_2 = motors[2]
             
             is_axis_A = motor_2.get("axis") == "A"
+
+            if is_axis_A == status: return
 
             motor_2["axis"] = "Y" if is_axis_A else "A"
             motor_1["max-velocity"] *= 2 if is_axis_A else 0.5

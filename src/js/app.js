@@ -324,13 +324,13 @@ module.exports = new Vue({
         showSwitchRotaryModeDialog: function(){
             SvelteComponents.showDialog("SwitchRotary", {
                 isActive: !this.is_rotary_active,
-                switchMode: () => this.toggle_rotary()
+                switchMode: (isActive) => this.toggle_rotary(isActive)
             });
         },
  
-        toggle_rotary: async function() {
+        toggle_rotary: async function(isActive) {
             try {
-                await api.put("rotary");
+                await api.put("rotary", {status: isActive});
               } catch (error) {
                 console.error(error);
                 alert("Error occured");

@@ -9,7 +9,7 @@
 
     export let open: boolean;
     export let isActive: boolean;
-    export let switchMode: () => any;
+    export let switchMode: (mode: boolean) => any;
 </script>
 
 <Dialog
@@ -29,7 +29,7 @@
             <Label>No</Label>
         </Button>
 
-        <Button defaultAction use={[InitialFocus]} on:click={switchMode}>
+        <Button defaultAction use={[InitialFocus]} on:click={() =>switchMode(isActive)}>
             <Label>Yes</Label>
         </Button>
     </Actions>
