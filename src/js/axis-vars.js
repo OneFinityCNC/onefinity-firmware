@@ -53,7 +53,7 @@ module.exports = {
             const off = this.state[`offset_${axis}`];
             const motor_id = this._get_motor_id(axis);
             const motor = motor_id == -1 ? {} : this.config.motors[motor_id];
-            const enabled = typeof motor.enabled != "undefined" && motor.enabled;
+            const enabled = this._check_is_enabled(axis);
             const homingMode = motor["homing-mode"];
             const homed = this.state[`${motor_id}homed`];
             const min = this.state[`${motor_id}tn`];
@@ -191,6 +191,16 @@ module.exports = {
             }
 
             return -1;
+        },
+
+        _check_is_enabled: function(axis){
+            const axes = { x: 0, y: 1, z: 2, a: 3 };
+            for(let i = 0; i < this.config.motors.length; i++){
+                if(this.state[`${i}an`] == axes[axis]){
+                    return true;
+                }
+            }
+            return false;
         },
 
         _compute_axes: function() {

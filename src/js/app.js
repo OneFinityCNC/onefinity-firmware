@@ -329,19 +329,10 @@ module.exports = new Vue({
         },
  
         toggle_rotary: async function() {
-            let motor = this.config.motors[2];
-            if(motor['axis'] == 'A'){
-                motor['axis'] = 'Y';
-                this.config.motors[1]['max-velocity'] *= 2; 
-            } else {
-                motor['axis'] = 'A';
-                this.config.motors[1]['max-velocity'] /= 2;
-            }
             try {
-                await api.put("rotary", {status : motor['axis'] == 'A'});
-                await api.put("config/save", this.config);
+                await api.put("rotary");
               } catch (error) {
-                console.error("Restore failed:", error);
+                console.error(error);
                 alert("Error occured");
               }
         },
