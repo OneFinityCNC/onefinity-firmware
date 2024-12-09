@@ -264,14 +264,14 @@
         } else if(probeType === "a") {
             ControllerMethods.send(`
                 G21
-                G92 Z0
+                G92 A0
             
-                G38.2 Z -25.4 F${fastSeekRotary}
-                G91 G1 Z 1
-                G38.2 Z -2 F${slowSeekRotary}
-                G92 Z ${zOffsetRotary}
+                G38.2 A -25.4 F${fastSeekRotary}
+                G91 G1 A 1
+                G38.2 A -2 F${slowSeekRotary}
+                G92 A ${zOffsetRotary}
             
-                G91 G0 Z 25
+                G91 G0 A 25
 
                 M2
             `);
