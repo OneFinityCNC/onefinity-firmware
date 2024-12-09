@@ -23,13 +23,13 @@
     <Content id="switch-rotary-dialog-content">
         {#if isActive}
             <img 
-                src={"../assets/rotary_on.png"} 
+                src={"../images/rotary_on.png"} 
                 alt="Rotary On" 
                 style="width: 300px;height: auto;display: flex;margin: 10px 0 20px 0;" 
             />
         {:else}
             <img 
-                src={"../assets/rotary_off.png"} 
+                src={"../images/rotary_off.png"} 
                 alt="Rotary Off" 
                 style="width: 300px;height: auto;display: flex;margin: 10px 0 20px 0;" 
             />
