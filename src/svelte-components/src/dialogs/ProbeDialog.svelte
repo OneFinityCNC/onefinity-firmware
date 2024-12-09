@@ -344,12 +344,13 @@
                     Attach the probe magnet to the collet, then touch the probe
                     block to the bit.
                 </p>
-                <!-- TODO: change asset for a axis -->
-                <Icon
-                    data={probeType === "xyz" ? CheckXYZ : CheckZ}
-                    size="300px"
-                    class="probe-icon-svg"
-                />
+                {#if probeType !== "a"} 
+                    <Icon
+                        data={probeType === "xyz" ? CheckXYZ : CheckZ}
+                        size="300px"
+                        class="probe-icon-svg"
+                    />
+                {/if}
             {:else if currentStep === "BitDimensions"}
                 <TextFieldWithOptions
                     label="Cutter diameter"
@@ -364,7 +365,6 @@
 
                 <Icon data={BitDiameter} size="150px" class="probe-icon-svg" />
             {:else if currentStep === "PlaceProbeBlock"}
-                <!-- TODO: change asset for a axis -->
                 <p>
                     {#if probeType === "xyz"}
                         Place the probe block face up, on the lower-left corner
@@ -377,12 +377,14 @@
                     {/if}
                 </p>
 
-                <Icon
-                    data={probeType === "xyz" ? PlaceXYZ : PlaceZ}
-                    width="304px"
-                    height="129px"
-                    class="probe-icon-svg"
-                />
+                {#if probeType !== "a"} 
+                    <Icon
+                        data={probeType === "xyz" ? PlaceXYZ : PlaceZ}
+                        width="304px"
+                        height="129px"
+                        class="probe-icon-svg"
+                    />
+                {/if}
 
                 <p>
                     The probing procedure will begin as soon as you click
@@ -412,13 +414,15 @@
                             Don't forget to put away the probe!
                         {/if}
                     </p>
-                    <!-- TODO: change asset for a axis -->
-                    <Icon
-                        data={probeType === "xyz" ? PutAwayXYZ : PutAwayZ}
-                        width="329px"
-                        height="256px"
-                        class="probe-icon-svg"
-                    />
+
+                    {#if probeType !== "a"} 
+                        <Icon
+                            data={probeType === "xyz" ? PutAwayXYZ : PutAwayZ}
+                            width="329px"
+                            height="256px"
+                            class="probe-icon-svg"
+                        />
+                    {/if}
 
                     {#if probeType === "xyz"}
                         <p>The machine will now move to the XY origin.</p>
