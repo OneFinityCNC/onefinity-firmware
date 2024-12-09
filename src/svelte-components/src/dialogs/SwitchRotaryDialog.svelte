@@ -21,6 +21,20 @@
     <Title id="switch-rotary-dialog-title">Switch Rotary Mode</Title>
 
     <Content id="switch-rotary-dialog-content">
+        {#if isActive}
+            <img 
+                src={"../assets/rotary_on.png"} 
+                alt="Rotary On" 
+                style="width: 300px;height: auto;display: flex;margin: 10px 0 20px 0;" 
+            />
+        {:else}
+            <img 
+                src={"../assets/rotary_off.png"} 
+                alt="Rotary Off" 
+                style="width: 300px;height: auto;display: flex;margin: 10px 0 20px 0;" 
+            />
+        {/if}
+
         {isActive ? "Turn on Rotary box?" : "Turn off Rotary box?"}
     </Content>
 
