@@ -39,14 +39,6 @@
         return ValidSteps.includes(str);
     }
 
-    const stepLabels: Record<Step, string> = {
-        None: "",
-        CheckProbe: "Check probe",
-        BitDimensions: "Bit dimensions",
-        PlaceProbeBlock: "Place probe block",
-        Probe: "Probe",
-        Done: "Done",
-    };
 
     const cancelled = writable(false);
     const userAcknowledged = writable(false);
@@ -82,6 +74,15 @@
         allowClose: false,
     };
 
+    const stepLabels: Record<Step, string> = {
+        None: "",
+        CheckProbe: "Check probe",
+        BitDimensions: "Bit dimensions",
+        PlaceProbeBlock: probeType === "a" ? "Start Probe" : "Place probe block",
+        Probe: "Probe",
+        Done: "Done",
+    };
+
     $: metric = $Config.settings?.units === "METRIC";
     $: cutterDiameterMetric = numberWithUnit
         .parse(cutterDiameterString)
@@ -110,7 +111,7 @@
             const enableSafety = $Config.settings["probing-prompts"];
 
             steps = [
-                enableSafety ? "CheckProbe" : undefined,
+                enableSafety && probeType !== "a" ? "CheckProbe" : undefined,
                 probeType === "xyz" ? "BitDimensions" : undefined,
                 enableSafety ? "PlaceProbeBlock" : undefined,
                 "Probe",
