@@ -66,6 +66,8 @@
     let currentStep: Step = "None";
     let cutterDiameterString: string = "";
     let cutterDiameterMetric: number;
+    let cutterDiameterRotaryString: string = "";
+    let cutterDiameterRotaryMetric: number;
     let showCancelButton = true;
     let steps: Step[] = [];
     let nextButton = {
@@ -87,6 +89,10 @@
     $: cutterDiameterMetric = numberWithUnit
         .parse(cutterDiameterString)
         ?.toMetric();
+    
+    $: cutterDiameterRotaryMetric = numberWithUnit
+        .parse(cutterDiameterRotaryString)
+        ?.toMetric();
 
     $: if (open) {
         cutterDiameterString = localStorage.getItem("cutterDiameter") ?? "";
@@ -98,6 +104,19 @@
     }
 
     $: if (cutterDiameterString) {
+        updateButtons();
+    }
+
+    $: if (open) {
+        cutterDiameterRotaryString = localStorage.getItem("cutterDiameterRotary") ?? "";
+
+        // Svelte appears not to like it when you invoke
+        // an async function from a reactive statement, so we
+        // use requestAnimationFrame to call 'begin' at a later moment.
+        requestAnimationFrame(begin);
+    }
+
+    $: if (cutterDiameterRotaryString) {
         updateButtons();
     }
 
@@ -130,11 +149,19 @@
                 );
             }
 
+            if (probeType === "a") {
+                await stepCompleted("BitDimensions", userAcknowledged);
+                localStorage.setItem(
+                    "cutterDiameterRotary",
+                    numberWithUnit.normalize(cutterDiameterRotaryString)
+                );
+            }
+
             await stepCompleted("PlaceProbeBlock", userAcknowledged);
             await stepCompleted("Probe", probingComplete, probingFailed);
             await stepCompleted("Done", userAcknowledged);
 
-            if (probeType === "xyz") {
+            if (probeType === "xyz" || probeType === "a") {
                 ControllerMethods.gotoZero("xy");
             }
         } catch (err) {
@@ -216,7 +243,7 @@
                 break;
 
             case "BitDimensions":
-                nextButton.disabled = !isFinite(cutterDiameterMetric);
+                nextButton.disabled = probeType === 'xyz' ? !isFinite(cutterDiameterMetric) : !isFinite(cutterDiameterRotaryMetric);
                 break;
 
             case "Done":
@@ -231,6 +258,7 @@
     }
 
     function executeProbe() {
+        //Probe Block
         const probeBlockWidth = $Config.probe["probe-xdim"];
         const probeBlockLength = $Config.probe["probe-ydim"];
         const probeBlockHeight = $Config.probe["probe-zdim"];
@@ -243,9 +271,16 @@
         const yOffset = probeBlockLength + cutterDiameterMetric / 2.0;
         const zOffset = probeBlockHeight;
 
+        //Rotary
+        const probeRotaryWidth = $Config["probe-rotary"]["probe-xdim"];
+        const probeRotaryLength = $Config["probe-rotary"]["probe-ydim"];
+        const probeRotaryHeight = $Config["probe-rotary"]["probe-zdim"];
+
         const fastSeekRotary = $Config["probe-rotary"]["probe-fast-seek"];
         const slowSeekRotary = $Config["probe-rotary"]["probe-slow-seek"];
-        const zOffsetRotary = $Config["probe-rotary"]["probe-zdim"];
+        const xOffsetRotary = probeRotaryWidth + cutterDiameterRotaryMetric / 2.0;
+        const yOffsetRotary = probeRotaryLength + cutterDiameterRotaryMetric / 2.0;
+        const zOffsetRotary = probeRotaryHeight;
 
         if (probeType === "z") {
             ControllerMethods.send(`
@@ -262,16 +297,39 @@
                 M2
             `);
         } else if(probeType === "a") {
+            // After probing Z, we want to drop the bit down:
+            // Ideally, 12.7mm/0.5in
+            // And we don't want to be more than 90% down on the probe block
+            // Also, add zlift to compensate for the fact that we lift after probing Z
+            const plunge = Math.min(cutterLength, zOffsetRotary * 0.9) + zLift;
+
             ControllerMethods.send(`
                 G21
-                G92 A0
+                G92 X0 Y0 Z0
+                
+                G38.2 Z -25 F${fastSeekRotary}
+                G91 G1 Z 1
+                G38.2 Z -2 F${slowSeekRotary}
+                G92 Z ${zOffsetRotary}
             
-                G38.2 A -25.4 F${fastSeekRotary}
-                G91 G1 A 1
-                G38.2 A -2 F${slowSeekRotary}
-                G92 A ${zOffsetRotary}
-            
-                G91 G0 A 25
+                G91 G0 Z ${zLift}
+                G91 G0 X 20
+                G91 G0 Z ${-plunge}
+                G38.2 X -20 F${fastSeekRotary}
+                G91 G1 X 1
+                G38.2 X -2 F${slowSeekRotary}
+                G92 X ${xOffsetRotary}
+
+                G91 G0 X 1
+                G91 G0 Y 20
+                G91 G0 X -20
+                G38.2 Y -20 F${fastSeekRotary}
+                G91 G1 Y 1
+                G38.2 Y -2 F${slowSeekRotary}
+                G92 Y ${yOffsetRotary}
+
+                G91 G0 Y 3
+                G91 G0 Z 25
 
                 M2
             `);
@@ -358,9 +416,9 @@
                     variant="filled"
                     spellcheck="false"
                     style="width: 100%;"
-                    bind:value={cutterDiameterString}
+                    bind:value={probeType === 'xyz' ? cutterDiameterString : cutterDiameterRotaryString}
                     options={[imperialBits, metricBits]}
-                    valid={isFinite(cutterDiameterMetric)}
+                    valid={probeType === 'xyz' ? isFinite(cutterDiameterMetric) : isFinite(cutterDiameterRotaryMetric)}
                     helperText={`Examples: 1/2", 10 mm, 0.25 in`}
                 />
 
@@ -425,7 +483,7 @@
                         />
                     {/if}
 
-                    {#if probeType === "xyz"}
+                    {#if probeType === "xyz" || probeType === "a"}
                         <p>The machine will now move to the XY origin.</p>
 
                         <p>Watch your hands!</p>
