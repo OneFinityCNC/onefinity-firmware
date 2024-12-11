@@ -411,18 +411,33 @@
                     />
                 {/if}
             {:else if currentStep === "BitDimensions"}
-                <TextFieldWithOptions
-                    label="Cutter diameter"
-                    variant="filled"
-                    spellcheck="false"
-                    style="width: 100%;"
-                    bind:value={probeType === 'xyz' ? cutterDiameterString : cutterDiameterRotaryString}
-                    options={[imperialBits, metricBits]}
-                    valid={probeType === 'xyz' ? isFinite(cutterDiameterMetric) : isFinite(cutterDiameterRotaryMetric)}
-                    helperText={`Examples: 1/2", 10 mm, 0.25 in`}
-                />
+                {#if probeType !== "xyz"} 
+                    <TextFieldWithOptions
+                        label="Cutter diameter"
+                        variant="filled"
+                        spellcheck="false"
+                        style="width: 100%;"
+                        bind:value={cutterDiameterString}
+                        options={[imperialBits, metricBits]}
+                        valid={isFinite(cutterDiameterMetric)}
+                        helperText={`Examples: 1/2", 10 mm, 0.25 in`}
+                    />
 
-                <Icon data={BitDiameter} size="150px" class="probe-icon-svg" />
+                    <Icon data={BitDiameter} size="150px" class="probe-icon-svg" />
+                {:else}
+                    <TextFieldWithOptions
+                        label="Cutter diameter"
+                        variant="filled"
+                        spellcheck="false"
+                        style="width: 100%;"
+                        bind:value={cutterDiameterRotaryString}
+                        options={[imperialBits, metricBits]}
+                        valid={isFinite(cutterDiameterRotaryMetric)}
+                        helperText={`Examples: 1/2", 10 mm, 0.25 in`}
+                    />
+
+                    <Icon data={BitDiameter} size="150px" class="probe-icon-svg" />
+                {/if}
             {:else if currentStep === "PlaceProbeBlock"}
                 <p>
                     {#if probeType === "xyz"}
