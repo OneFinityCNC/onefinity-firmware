@@ -245,7 +245,8 @@ class State(object):
 
         # Loading origin from config after homing 
         if load_position and self.vars.get('cycle') == 'idle':
-            for axis in 'xyzabc':
+            axes = 'xyzbc' if self.vars.get('2an') == 3 else 'xyzabc'
+            for axis in axes:
                 offset = self.ctrl.config.get('offset_' + axis)
                 if offset is not None and self.get('offset_'+ axis) == 0:
                     origin = offset if self.get('metric') == True else offset / 25.4

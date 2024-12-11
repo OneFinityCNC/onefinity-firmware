@@ -749,6 +749,7 @@ module.exports = {
       if (typeof axis == "undefined") {
         api.put("home");
       } else if (this[axis].homingMode != "manual") {
+        if(this.state["2an"] == 3 && axis == "a") return;
         api.put(`home/${axis}`);
       } else {
         SvelteComponents.showDialog("ManualHomeAxis", { axis });

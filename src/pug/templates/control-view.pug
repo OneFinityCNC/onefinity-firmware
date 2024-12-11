@@ -179,7 +179,7 @@ script#control-view-template(type="text/x-template")
                    @click=`zero('${axis}')`, style="height:60px;width:60px")
                     .fa.fa-map-marker
 
-                  button.pure-button(:disabled="!is_idle && axis == 'a'", @click=`home('${axis}')`,
+                  button.pure-button(:disabled="!is_idle", @click=`home('${axis}')`,
                     title=`Home {{'${axis}' | upper}} axis.`, style="height:60px;width:60px")
                     .fa.fa-home
       
