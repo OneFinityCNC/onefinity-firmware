@@ -532,21 +532,21 @@
       "unit": "mm",
       "min": 0,
       "max": 1000,
-      "default": 53.975
+      "default": 125
     },
     "probe-ydim": {
       "type": "float",
       "unit": "mm",
       "min": 0,
       "max": 1000,
-      "default": 53.975
+      "default": 55
     },
     "probe-zdim": {
       "type": "float",
       "unit": "mm",
       "min": 0,
       "max": 1000,
-      "default": 15.4
+      "default": 35
     },
     "probe-fast-seek": {
       "type": "float",
