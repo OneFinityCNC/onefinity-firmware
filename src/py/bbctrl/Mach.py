@@ -276,7 +276,9 @@ class Mach(Comm):
     def home(self, axis, position = None):
         state = self.ctrl.state
 
-        if axis is None: axes = 'zxyabc' # TODO This should be configurable
+        if axis is None:
+            is_rotary_active = state.get('2an', None) == 3 
+            axes = 'zxybc' if is_rotary_active else 'zxyabc' # TODO This should be configurable
         else: axes = '%c' % axis
 
         for axis in axes:
