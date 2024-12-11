@@ -131,7 +131,7 @@
 
             steps = [
                 enableSafety && probeType !== "a" ? "CheckProbe" : undefined,
-                probeType === "xyz" ? "BitDimensions" : undefined,
+                probeType === "xyz" || probeType === "a" ? "BitDimensions" : undefined,
                 enableSafety ? "PlaceProbeBlock" : undefined,
                 "Probe",
                 "Done",
