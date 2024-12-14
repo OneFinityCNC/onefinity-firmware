@@ -95,7 +95,13 @@
         ?.toMetric();
 
     $: if (open) {
-        cutterDiameterString = localStorage.getItem("cutterDiameter") ?? "";
+        if(!cutterDiameterString){
+            cutterDiameterString = localStorage.getItem("cutterDiameter") ?? "";
+        }
+
+        if(!cutterDiameterRotaryString){
+            cutterDiameterRotaryString = localStorage.getItem("cutterDiameterRotary") ?? "";
+        }
 
         // Svelte appears not to like it when you invoke
         // an async function from a reactive statement, so we
@@ -105,15 +111,6 @@
 
     $: if (cutterDiameterString) {
         updateButtons();
-    }
-
-    $: if (open) {
-        cutterDiameterRotaryString = localStorage.getItem("cutterDiameterRotary") ?? "";
-
-        // Svelte appears not to like it when you invoke
-        // an async function from a reactive statement, so we
-        // use requestAnimationFrame to call 'begin' at a later moment.
-        requestAnimationFrame(begin);
     }
 
     $: if (cutterDiameterRotaryString) {
@@ -411,7 +408,7 @@
                     />
                 {/if}
             {:else if currentStep === "BitDimensions"}
-                {#if probeType !== "xyz"} 
+                {#if probeType === "xyz"} 
                     <TextFieldWithOptions
                         label="Cutter diameter"
                         variant="filled"
