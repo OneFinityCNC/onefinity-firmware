@@ -39,6 +39,14 @@
         return ValidSteps.includes(str);
     }
 
+    const stepLabels: Record<Step, string> = {
+        None: "",
+        CheckProbe: "Check probe",
+        BitDimensions: "Bit dimensions",
+        PlaceProbeBlock: "Place probe block",
+        Probe: "Probe",
+        Done: "Done",
+    };
 
     const cancelled = writable(false);
     const userAcknowledged = writable(false);
@@ -76,15 +84,6 @@
         allowClose: false,
     };
 
-    const stepLabels: Record<Step, string> = {
-        None: "",
-        CheckProbe: "Check probe",
-        BitDimensions: "Bit dimensions",
-        PlaceProbeBlock: probeType === "a" ? "Start Probe" : "Place probe block",
-        Probe: "Probe",
-        Done: "Done",
-    };
-
     $: metric = $Config.settings?.units === "METRIC";
     $: cutterDiameterMetric = numberWithUnit
         .parse(cutterDiameterString)
@@ -115,6 +114,10 @@
 
     $: if (cutterDiameterRotaryString) {
         updateButtons();
+    }
+
+    $: if(probeType === 'a'){   
+        stepLabels["PlaceProbeBlock"] = "Start Probe";
     }
 
     async function begin() {
@@ -441,7 +444,7 @@
                         Place the probe block face up, on the lower-left corner
                         of your workpiece.
                     {:else if probeType === "a"}
-                        You are about to start the probing of rotary.
+                        You are about to start the probing of rotary. <br /> <strong>Note: </strong>Position the bit above the probe and attach the probe magnet.
                     {:else}
                         Place the probe block face down, with the bit above the
                         recess.
