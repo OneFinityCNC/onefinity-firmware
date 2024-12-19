@@ -444,7 +444,7 @@
                         Place the probe block face up, on the lower-left corner
                         of your workpiece.
                     {:else if probeType === "a"}
-                        You are about to start the probing of rotary. <br /> <strong>Note: </strong>Position the bit above the probe and attach the probe magnet.
+                        You are about to start the probing of rotary. <br/><br/> <strong>Note: </strong><br/>Position the bit above the probe and attach the probe magnet.
                     {:else}
                         Place the probe block face down, with the bit above the
                         recess.
