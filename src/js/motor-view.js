@@ -85,6 +85,29 @@ module.exports = {
         stallUStepPerSec: function() {
             const ustep = this.motor["stall-microstep"];
             return this.stallRPM * this.stepsPerRev * ustep / 60;
+        },
+
+        current_axis_value: function() {
+            return this.state[this.index + 'an'];
+        },
+
+        current_max_velocity_value: function() {
+            return this.state[this.index + 'vm'];
+        }
+    },
+
+    watch: {
+        current_axis_value(new_value) {
+            const motor_axes = ["X", "Y", "Z", "A", "B", "C"] 
+            if(motor_axes[new_value] != this.motor['axis']){
+                this.motor['axis'] = motor_axes[new_value];
+            }
+        },
+
+        current_max_velocity_value(new_value) {
+            if(new_value != this.motor['max-velocity']) {
+                this.motor['max-velocity'] = new_value;
+            }
         }
     },
 
