@@ -263,7 +263,7 @@
     "probe-slow-seek": 25,
     "probe-fast-seek": 75,
     "probe-zdim": 35,
-    "probe-xdim": 125
+    "probe-xdim": -125
   },
   "outputs": {
     "load-1": "disabled",

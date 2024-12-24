@@ -530,9 +530,9 @@
     "probe-xdim": {
       "type": "float",
       "unit": "mm",
-      "min": 0,
+      "min": -1000,
       "max": 1000,
-      "default": 125
+      "default": -125
     },
     "probe-ydim": {
       "type": "float",
