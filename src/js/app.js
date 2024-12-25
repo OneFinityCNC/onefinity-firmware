@@ -238,8 +238,8 @@ module.exports = new Vue({
         },
 
         is_rotary_active: function() {
-            if(this.state["2an"] == 1) return false;
-            return true;
+            if(this.state["2an"] == 3) return true;
+            return false;
         },
 
         enable_rotary: function() {
