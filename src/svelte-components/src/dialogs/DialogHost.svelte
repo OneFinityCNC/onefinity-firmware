@@ -22,6 +22,7 @@
     type ProbeDialogPropsType = {
         open: boolean;
         probeType: "xyz" | "z";
+        isRotaryActive: boolean;
     };
 
     const ScreenRotationDialogProps = writable<ScreenRotationDialogPropsType>();

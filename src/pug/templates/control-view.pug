@@ -37,6 +37,15 @@ script#control-view-template(type="text/x-template")
       div(slot="footer")
         button.pure-button.button-error(@click="GCodeNotFound=false")
           | OK
+    
+    message(:show.sync="show_probe_dialog")
+      h3(slot="header") Probe Rotary
+      div(slot="body")
+        button.pure-button(:class="state['pw'] ? '' : 'load-on'", @click="showProbeDialog('xyz')") Probe XYZ
+        button.pure-button(:class="state['pw'] ? '' : 'load-on'", @click="showProbeDialog('z')") Probe Z
+      div(slot="footer")
+        button.pure-button(@click="show_probe_dialog=false") Cancel
+
 
     table(style="table-layout: fixed; width: 100%;")
       tr(style="height: fit-content;")
@@ -100,7 +109,7 @@ script#control-view-template(type="text/x-template")
 
             tr(v-if="state['2an'] == 3")
               td(style="height:100px", align="center", colspan="1")
-                button(@click="showProbeDialog('a')")
+                button(@click="show_probe_dialog=true")
                   | Probe
                   br
                   | Rotary

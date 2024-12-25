@@ -51,6 +51,7 @@ module.exports = {
       macrosLoading: false,
       show_gcodes: false,
       GCodeNotFound: false,
+      show_probe_dialog: false,
       filesUploaded: 0,
       totalFiles: 0,
       files_sortby: "By Upload Date",
@@ -851,7 +852,10 @@ module.exports = {
     },
 
     showProbeDialog: function (probeType) {
-      SvelteComponents.showDialog("Probe", { probeType });
+      if(this.show_probe_dialog){
+        this.show_probe_dialog = false;
+      }
+      SvelteComponents.showDialog("Probe", { probeType, isRotaryActive: this.state["2an"] == 3 });
     },
     run_macro: function (id) {
       if (this.state.macros[id].file_name == "default") {

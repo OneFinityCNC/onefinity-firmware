@@ -70,7 +70,8 @@
     ];
 
     export let open;
-    export let probeType: "xyz" | "z" | "a";
+    export let probeType: "xyz" | "z";
+    export let isRotaryActive: Boolean;
     let currentStep: Step = "None";
     let cutterDiameterString: string = "";
     let cutterDiameterMetric: number;
@@ -116,7 +117,7 @@
         updateButtons();
     }
 
-    $: if(probeType === 'a'){   
+    $: if(isRotaryActive){   
         stepLabels["PlaceProbeBlock"] = "Start Probe";
     }
 
@@ -130,14 +131,14 @@
             const enableSafety = $Config.settings["probing-prompts"];
 
             steps = [
-                enableSafety && probeType !== "a" ? "CheckProbe" : undefined,
-                probeType === "xyz" || probeType === "a" ? "BitDimensions" : undefined,
+                enableSafety && !isRotaryActive ? "CheckProbe" : undefined,
+                probeType === "xyz" || isRotaryActive ? "BitDimensions" : undefined,
                 enableSafety ? "PlaceProbeBlock" : undefined,
                 "Probe",
                 "Done",
             ].filter<Step>(isStep);
 
-            if(probeType != "a"){
+            if(!isRotaryActive){
                 await stepCompleted("CheckProbe", probeContacted);
             }
 
@@ -149,7 +150,7 @@
                 );
             }
 
-            if (probeType === "a") {
+            if (isRotaryActive) {
                 await stepCompleted("BitDimensions", userAcknowledged);
                 localStorage.setItem(
                     "cutterDiameterRotary",
@@ -161,7 +162,7 @@
             await stepCompleted("Probe", probingComplete, probingFailed);
             await stepCompleted("Done", userAcknowledged);
 
-            if (probeType === "xyz" || probeType === "a") {
+            if (probeType === "xyz" || isRotaryActive) {
                 ControllerMethods.gotoZero("xy");
             }
         } catch (err) {
@@ -184,7 +185,6 @@
         switch (probeType) {
             case "xyz":
             case "z":
-            case "a":
                 break;
 
             default:
@@ -258,29 +258,21 @@
     }
 
     function executeProbe() {
-        //Probe Block
-        const probeBlockWidth = $Config.probe["probe-xdim"];
-        const probeBlockLength = $Config.probe["probe-ydim"];
-        const probeBlockHeight = $Config.probe["probe-zdim"];
-        const slowSeek = $Config.probe["probe-slow-seek"];
-        const fastSeek = $Config.probe["probe-fast-seek"];
+
+        const config = isRotaryActive ? $Config["probe-rotary"] : $Config.probe;
+
+        const probeBlockWidth = config["probe-xdim"];
+        const probeBlockLength = config["probe-ydim"];
+        const probeBlockHeight = config["probe-zdim"];
+        const slowSeek = config["probe-slow-seek"];
+        const fastSeek = config["probe-fast-seek"];
 
         const cutterLength = 12.7;
         const zLift = 1;
-        const xOffset = probeBlockWidth + cutterDiameterMetric / 2.0;
-        const yOffset = probeBlockLength + cutterDiameterMetric / 2.0;
+        const cutterDiameter = isRotaryActive ? cutterDiameterRotaryMetric : cutterDiameterMetric;
+        const xOffset = probeBlockWidth + cutterDiameter / 2.0;
+        const yOffset = probeBlockLength + cutterDiameter / 2.0;
         const zOffset = probeBlockHeight;
-
-        //Rotary
-        const probeRotaryWidth = $Config["probe-rotary"]["probe-xdim"];
-        const probeRotaryLength = $Config["probe-rotary"]["probe-ydim"];
-        const probeRotaryHeight = $Config["probe-rotary"]["probe-zdim"];
-
-        const fastSeekRotary = $Config["probe-rotary"]["probe-fast-seek"];
-        const slowSeekRotary = $Config["probe-rotary"]["probe-slow-seek"];
-        const xOffsetRotary = probeRotaryWidth + cutterDiameterRotaryMetric / 2.0;
-        const yOffsetRotary = probeRotaryLength + cutterDiameterRotaryMetric / 2.0;
-        const zOffsetRotary = probeRotaryHeight;
 
         if (probeType === "z") {
             ControllerMethods.send(`
@@ -292,43 +284,6 @@
                 G38.2 Z -2 F${slowSeek}
                 G92 Z ${zOffset}
             
-                G91 G0 Z 25
-
-                M2
-            `);
-        } else if(probeType === "a") {
-            // After probing Z, we want to drop the bit down:
-            // Ideally, 12.7mm/0.5in
-            // And we don't want to be more than 90% down on the probe block
-            // Also, add zlift to compensate for the fact that we lift after probing Z
-            const plunge = Math.min(cutterLength, zOffsetRotary * 0.9) + zLift;
-
-            ControllerMethods.send(`
-                G21
-                G92 X0 Y0 Z0
-                
-                G38.2 Z -25 F${fastSeekRotary}
-                G91 G1 Z 1
-                G38.2 Z -2 F${slowSeekRotary}
-                G92 Z ${zOffsetRotary}
-            
-                G91 G0 Z ${zLift}
-                G91 G0 X 20
-                G91 G0 Z ${-plunge}
-                G38.2 X -20 F${fastSeekRotary}
-                G91 G1 X 1
-                G38.2 X -2 F${slowSeekRotary}
-                G92 X ${xOffsetRotary}
-
-                G91 G0 X 1
-                G91 G0 Y 20
-                G91 G0 X -20
-                G38.2 Y -20 F${fastSeekRotary}
-                G91 G1 Y 1
-                G38.2 Y -2 F${slowSeekRotary}
-                G92 Y ${yOffsetRotary}
-
-                G91 G0 Y 3
                 G91 G0 Z 25
 
                 M2
@@ -403,7 +358,7 @@
                     Attach the probe magnet to the collet, then touch the probe
                     block to the bit.
                 </p>
-                {#if probeType !== "a"} 
+                {#if !isRotaryActive} 
                     <Icon
                         data={probeType === "xyz" ? CheckXYZ : CheckZ}
                         size="300px"
@@ -443,7 +398,7 @@
                     {#if probeType === "xyz"}
                         Place the probe block face up, on the lower-left corner
                         of your workpiece.
-                    {:else if probeType === "a"}
+                    {:else if isRotaryActive}
                         You are about to start the probing of rotary. <br/><br/> <strong>Note: </strong><br/>Position the bit above the probe and attach the probe magnet.
                     {:else}
                         Place the probe block face down, with the bit above the
@@ -451,7 +406,7 @@
                     {/if}
                 </p>
 
-                {#if probeType !== "a"} 
+                {#if !isRotaryActive} 
                     <Icon
                         data={probeType === "xyz" ? PlaceXYZ : PlaceZ}
                         width="304px"
@@ -482,14 +437,14 @@
                     </p>
                 {:else}
                     <p>
-                        {#if probeType === "a"}
+                        {#if isRotaryActive}
                             Probing complete
                         {:else}
                             Don't forget to put away the probe!
                         {/if}
                     </p>
 
-                    {#if probeType !== "a"} 
+                    {#if !isRotaryActive} 
                         <Icon
                             data={probeType === "xyz" ? PutAwayXYZ : PutAwayZ}
                             width="329px"
@@ -498,7 +453,7 @@
                         />
                     {/if}
 
-                    {#if probeType === "xyz" || probeType === "a"}
+                    {#if probeType === "xyz" || isRotaryActive}
                         <p>The machine will now move to the XY origin.</p>
 
                         <p>Watch your hands!</p>
