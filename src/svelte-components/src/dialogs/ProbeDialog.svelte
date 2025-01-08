@@ -395,10 +395,10 @@
                 {/if}
             {:else if currentStep === "PlaceProbeBlock"}
                 <p>
-                    {#if probeType === "xyz"}
+                    {#if probeType === "xyz" && !isRotaryActive}
                         Place the probe block face up, on the lower-left corner
                         of your workpiece.
-                    {:else if isRotaryActive}
+                    {:else if probeType === "xyz" && isRotaryActive}
                         You are about to start the probing of rotary. <br/><br/> <strong>Note: </strong><br/>Position the bit above the probe and attach the probe magnet.
                     {:else}
                         Place the probe block face down, with the bit above the
