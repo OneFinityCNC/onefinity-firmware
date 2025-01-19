@@ -142,6 +142,22 @@
           "default": 0,
           "code": "tm"
         },
+        "min-soft-limit-backup": {
+          "type": "float",
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 0,
+          "code": "tnb"
+        },
+        "max-soft-limit-backup": {
+          "type": "float",
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 0,
+          "code": "tmb"
+        },
         "min-switch": {
           "type": "enum",
           "values": ["disabled", "normally-open", "normally-closed"],

@@ -639,6 +639,19 @@ class RotaryHandler(bbctrl.APIHandler):
             motor_2["axis"] = "Y" if is_axis_A else "A"
             motor_1["max-velocity"] *= 2 if is_axis_A else 0.5
 
+            if is_axis_A:
+                if 'min-soft-limit-backup' in motor_2 and 'max-soft-limit-backup' in motor_2:
+                    motor_2['min-soft-limit'] = motor_2['min-soft-limit-backup']
+                    motor_2['max-soft-limit'] = motor_2['max-soft-limit-backup']
+                else:
+                    raise ValueError("Backup soft limits are missing for motor_2.")
+            else:
+                motor_2['min-soft-limit-backup'] = motor_2['min-soft-limit']
+                motor_2['max-soft-limit-backup'] = motor_2['max-soft-limit']
+
+                motor_2['min-soft-limit'] = -720
+                motor_2['max-soft-limit'] = 720
+
             config.save(config_data)
 
         except FileNotFoundError:

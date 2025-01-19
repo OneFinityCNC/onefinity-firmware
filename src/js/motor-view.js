@@ -87,26 +87,46 @@ module.exports = {
             return this.stallRPM * this.stepsPerRev * ustep / 60;
         },
 
-        current_axis_value: function() {
+        current_axis: function() {
             return this.state[this.index + 'an'];
         },
 
-        current_max_velocity_value: function() {
+        current_max_velocity: function() {
             return this.state[this.index + 'vm'];
-        }
+        },
+
+        current_max_soft_limit: function() {
+            return this.state[this.index + 'tm'];
+        },
+
+        current_min_soft_limit: function() {
+            return this.state[this.index + 'tn'];
+        },
     },
 
     watch: {
-        current_axis_value(new_value) {
+        current_axis(new_value) {
             const motor_axes = ["X", "Y", "Z", "A", "B", "C"] 
             if(motor_axes[new_value] != this.motor['axis']){
                 this.motor['axis'] = motor_axes[new_value];
             }
         },
 
-        current_max_velocity_value(new_value) {
+        current_max_velocity(new_value) {
             if(new_value != this.motor['max-velocity']) {
                 this.motor['max-velocity'] = new_value;
+            }
+        },
+
+        current_max_soft_limit(new_value) {
+            if(new_value != this.motor['max-soft-limit']) {
+                this.motor['max-soft-limit'] = new_value;
+            }
+        },
+
+        current_min_soft_limit(new_value) {
+            if(new_value != this.motor['min-soft-limit']) {
+                this.motor['min-soft-limit'] = new_value;
             }
         }
     },
