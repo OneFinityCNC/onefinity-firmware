@@ -70,6 +70,7 @@
     ];
 
     export let open;
+    let initialized = false;
     export let probeType: "xyz" | "z";
     export let isRotaryActive: Boolean;
     let currentStep: Step = "None";
@@ -94,7 +95,7 @@
         .parse(cutterDiameterRotaryString)
         ?.toMetric();
 
-    $: if (open) {
+    $: if (open && !initialized) {
         if(!cutterDiameterString){
             cutterDiameterString = localStorage.getItem("cutterDiameter") ?? "";
         }
@@ -107,6 +108,11 @@
         // an async function from a reactive statement, so we
         // use requestAnimationFrame to call 'begin' at a later moment.
         requestAnimationFrame(begin);
+    }
+
+
+    $: if (!open) {
+        initialized = false;
     }
 
     $: if (cutterDiameterString) {
