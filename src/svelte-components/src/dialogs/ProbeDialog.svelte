@@ -96,6 +96,7 @@
         ?.toMetric();
 
     $: if (open && !initialized) {
+        initialized = true;
         if(!cutterDiameterString){
             cutterDiameterString = localStorage.getItem("cutterDiameter") ?? "";
         }
