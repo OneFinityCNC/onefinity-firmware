@@ -139,7 +139,7 @@
 
             steps = [
                 enableSafety && !isRotaryActive ? "CheckProbe" : undefined,
-                probeType === "xyz" || isRotaryActive ? "BitDimensions" : undefined,
+                probeType === "xyz" ? "BitDimensions" : undefined,
                 enableSafety ? "PlaceProbeBlock" : undefined,
                 "Probe",
                 "Done",
@@ -150,26 +150,26 @@
             }
 
             if (probeType === "xyz") {
-                await stepCompleted("BitDimensions", userAcknowledged);
-                localStorage.setItem(
-                    "cutterDiameter",
-                    numberWithUnit.normalize(cutterDiameterString)
-                );
-            }
-
-            if (isRotaryActive) {
-                await stepCompleted("BitDimensions", userAcknowledged);
-                localStorage.setItem(
-                    "cutterDiameterRotary",
-                    numberWithUnit.normalize(cutterDiameterRotaryString)
-                );
+                if(isRotaryActive){
+                    await stepCompleted("BitDimensions", userAcknowledged);
+                    localStorage.setItem(
+                        "cutterDiameterRotary",
+                        numberWithUnit.normalize(cutterDiameterRotaryString)
+                    );
+                } else {
+                    await stepCompleted("BitDimensions", userAcknowledged);
+                    localStorage.setItem(
+                        "cutterDiameter",
+                        numberWithUnit.normalize(cutterDiameterString)
+                    );
+                }
             }
 
             await stepCompleted("PlaceProbeBlock", userAcknowledged);
             await stepCompleted("Probe", probingComplete, probingFailed);
             await stepCompleted("Done", userAcknowledged);
 
-            if (probeType === "xyz" || isRotaryActive) {
+            if (probeType === "xyz" && !isRotaryActive) {
                 ControllerMethods.gotoZero("xy");
             }
         } catch (err) {
@@ -250,7 +250,7 @@
                 break;
 
             case "BitDimensions":
-                nextButton.disabled = probeType === 'xyz' ? !isFinite(cutterDiameterMetric) : !isFinite(cutterDiameterRotaryMetric);
+                nextButton.disabled = isRotaryActive ? !isFinite(cutterDiameterRotaryMetric) : !isFinite(cutterDiameterMetric);
                 break;
 
             case "Done":
@@ -412,7 +412,7 @@
                     />
                 {/if}
             {:else if currentStep === "BitDimensions"}
-                {#if probeType === "xyz"} 
+                {#if !isRotaryActive} 
                     <TextFieldWithOptions
                         label="Cutter diameter"
                         variant="filled"
