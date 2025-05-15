@@ -169,8 +169,12 @@
             await stepCompleted("Probe", probingComplete, probingFailed);
             await stepCompleted("Done", userAcknowledged);
 
-            if (probeType === "xyz" && !isRotaryActive) {
-                ControllerMethods.gotoZero("xy");
+            if (probeType === "xyz" ) {
+                if(isRotaryActive){
+                    executeYOrigin();
+                } else {
+                    ControllerMethods.gotoZero("xy");
+                }
             }
         } catch (err) {
             if (err.message !== "cancelled") {
@@ -280,8 +284,6 @@
         const xOffset = probeBlockWidth + cutterDiameter / 2.0;
         const yOffset = probeBlockLength + cutterDiameter / 2.0;
         const zOffset = probeBlockHeight;
-        console.log("probeBlock: ",probeBlockLength, probeBlockWidth, probeBlockHeight);
-        console.log("cutterDiameterRotaryMetric",cutterDiameterRotaryMetric,cutterDiameter)
 
         if (probeType === "z") {
             ControllerMethods.send(`
@@ -372,6 +374,14 @@
             `);
         }
       }
+    }
+
+    function executeYOrigin(){
+        ControllerMethods.send(`
+            G53 G0 Z0
+            G0 Y0
+            M2
+        `);
     }
 </script>
 
@@ -499,8 +509,16 @@
                         />
                     {/if}
 
-                    {#if probeType === "xyz" || isRotaryActive}
-                        <p>The machine will now move to the XY origin.</p>
+                    {#if probeType === "xyz"}
+                        {#if isRotaryActive}
+                            <p>
+                                The machine will now move to the Y origin.
+                            </p>
+                        {:else}
+                            <p>
+                                The machine will now move to the XY origin.
+                            </p>
+                        {/if}
 
                         <p>Watch your hands!</p>
                     {/if}
