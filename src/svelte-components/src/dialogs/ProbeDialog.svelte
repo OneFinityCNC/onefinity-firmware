@@ -280,6 +280,8 @@
         const xOffset = probeBlockWidth + cutterDiameter / 2.0;
         const yOffset = probeBlockLength + cutterDiameter / 2.0;
         const zOffset = probeBlockHeight;
+        console.log("probeBlock: ",probeBlockLength, probeBlockWidth, probeBlockHeight);
+        console.log("cutterDiameterRotaryMetric",cutterDiameterRotaryMetric,cutterDiameter)
 
         if (probeType === "z") {
             ControllerMethods.send(`
@@ -296,6 +298,42 @@
                 M2
             `);
         } else {
+            if (isRotaryActive) {
+              // Probing for rotary axis
+              const plunge = Math.min(cutterLength, zOffset * 0.9) + zLift;
+
+              ControllerMethods.send(`
+                  G21
+                  G92 X0 Y0 Z0
+
+                  G38.2 Z -25 F${fastSeek}
+                  G91 G1 Z 1
+                  G38.2 Z -2 F${slowSeek}
+                  G92 Z ${zOffset}
+              
+                  G91 G0 Z ${zLift}
+                  G91 G0 X 20
+                  G91 G0 Z ${-plunge}
+                  G38.2 X -20 F${fastSeek}
+                  G91 G1 X 1
+                  G38.2 X -2 F${slowSeek}
+                  G92 X ${xOffset}
+
+                  G91 G0 X 1
+                  G91 G0 Y 20
+                  G91 G0 X -20
+                  G38.2 Y -20 F${fastSeek}
+                  G91 G1 Y 1
+                  G38.2 Y -2 F${slowSeek}
+                  G92 Y ${yOffset}
+
+                  G91 G0 Y 3
+                  G91 G0 Z 25
+
+                  M2
+              `);
+
+          } else {
             // After probing Z, we want to drop the bit down:
             // Ideally, 12.7mm/0.5in
             // And we don't want to be more than 90% down on the probe block
@@ -333,6 +371,7 @@
                 M2
             `);
         }
+      }
     }
 </script>
 
