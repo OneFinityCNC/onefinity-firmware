@@ -643,14 +643,30 @@ class RotaryHandler(bbctrl.APIHandler):
                 if 'min-soft-limit-backup' in motor_2 and 'max-soft-limit-backup' in motor_2:
                     motor_2['min-soft-limit'] = motor_2['min-soft-limit-backup']
                     motor_2['max-soft-limit'] = motor_2['max-soft-limit-backup']
+                    motor_2['max-velocity'] = motor_2["max-velocity-backup"]
+                    motor_2['max-accel'] = motor_2["max-accel-backup"]
+                    motor_2['max-jerk'] = motor_2["max-jerk-backup"]
+                    motor_2['step-angle'] = motor_2["step-angle-backup"]
+                    motor_2['travel-per-rev'] = motor_2["travel-per-rev-backup"]
                 else:
                     raise ValueError("Backup soft limits are missing for motor_2.")
             else:
                 motor_2['min-soft-limit-backup'] = motor_2['min-soft-limit']
                 motor_2['max-soft-limit-backup'] = motor_2['max-soft-limit']
+                motor_2['max-velocity-backup'] = motor_2["max-velocity"]
+                motor_2['max-accel-backup'] = motor_2["max-accel"]
+                motor_2['max-jerk-backup'] = motor_2["max-jerk"]
+                motor_2['step-angle-backup'] = motor_2["step-angle"]
+                motor_2['travel-per-rev-backup'] = motor_2["travel-per-rev"]
 
                 motor_2['min-soft-limit'] = -720
                 motor_2['max-soft-limit'] = 720
+                motor_2['max-velocity'] = 100
+                motor_2['max-accel'] = 500
+                motor_2['max-jerk'] = 750
+                motor_2['step-angle'] = 0.25714
+                motor_2['travel-per-rev'] = 360
+
 
             config.save(config_data)
 
