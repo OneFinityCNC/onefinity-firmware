@@ -634,6 +634,7 @@ class RotaryHandler(bbctrl.APIHandler):
             
             is_axis_A = motor_2.get("axis") == "A"
 
+            self.log.info("is_axis_A: {} | status: {}".format(is_axis_A, status))
             if is_axis_A == status: return
 
             motor_2["axis"] = "Y" if is_axis_A else "A"
@@ -650,6 +651,7 @@ class RotaryHandler(bbctrl.APIHandler):
                     'travel-per-rev-backup'
                 ]
                 if all(key in motor_2 for key in required_keys):
+                    self.log.info("Restoring backup values for motor_2")
                     motor_2['min-soft-limit'] = motor_2['min-soft-limit-backup']
                     motor_2['max-soft-limit'] = motor_2['max-soft-limit-backup']
                     motor_2['max-velocity'] = motor_2["max-velocity-backup"]
@@ -675,7 +677,7 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2['max-jerk'] = 750
                 motor_2['step-angle'] = 0.25714
                 motor_2['travel-per-rev'] = 360
-
+            self.log.info("Updated motor_2: {}".format(motor_2))
 
             config.save(config_data)
 
