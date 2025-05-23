@@ -610,6 +610,7 @@ class RotaryHandler(bbctrl.APIHandler):
             status = self.json.get('status', None)
             ctrl = self.get_ctrl()
             config = ctrl.config
+            log = self.get_log('RotaryHandler')
             path = ctrl.get_path('config.json')
 
             if status is None:
@@ -620,7 +621,7 @@ class RotaryHandler(bbctrl.APIHandler):
                     with open(path, 'r') as f: config_data = json.load(f)
                 else: config_data = {'version': self.version}
 
-            except Exception: self.log.exception('Internal error: Failed to load config template')
+            except Exception: log.exception('Internal error: Failed to load config template')
 
 
             motors = config_data.get("motors")
@@ -634,7 +635,7 @@ class RotaryHandler(bbctrl.APIHandler):
             
             is_axis_A = motor_2.get("axis") == "A"
 
-            self.log.info("is_axis_A: {} | status: {}".format(is_axis_A, status))
+            log.info("is_axis_A: {} | status: {}".format(is_axis_A, status))
             if is_axis_A == status: return
 
             motor_2["axis"] = "Y" if is_axis_A else "A"
@@ -677,18 +678,18 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2['max-jerk'] = 750
                 motor_2['step-angle'] = 0.25714
                 motor_2['travel-per-rev'] = 360
-            self.log.info("Updated motor_2: {}".format(motor_2))
+            log.info("Updated motor_2: {}".format(motor_2))
 
             config.save(config_data)
 
         except FileNotFoundError:
-            self.get_log('RotaryHandler').error('Configuration file not found at {}'.format(path))
+            log.error('Configuration file not found at {}'.format(path))
         except KeyError as e:
-            self.get_log('RotaryHandler').error('Missing key in configuration data: {}'.format(e))
+            log.error('Missing key in configuration data: {}'.format(e))
         except ValueError as e:
-            self.get_log('RotaryHandler').error('Validation error: {}'.format(e))
+            log.error('Validation error: {}'.format(e))
         except Exception as e:
-            self.get_log('RotaryHandler').error('Unexpected error: {}'.format(e))
+            log.error('Unexpected error: {}'.format(e))
 
 
 class RemoteDiagnosticsHandler(bbctrl.APIHandler):
