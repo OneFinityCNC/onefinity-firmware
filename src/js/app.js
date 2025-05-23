@@ -243,7 +243,7 @@ module.exports = new Vue({
         },
 
         enable_rotary: function() {
-            if((this.state["2an"] == 1 || this.state["2an"] == 3) && this.is_idle) return true;
+            if(this.state["2an"] == 1 || this.state["2an"] == 3) return true;
             return false;
         }
     },
