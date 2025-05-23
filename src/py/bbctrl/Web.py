@@ -640,7 +640,16 @@ class RotaryHandler(bbctrl.APIHandler):
             motor_1["max-velocity"] *= 2 if is_axis_A else 0.5
 
             if is_axis_A:
-                if 'min-soft-limit-backup' in motor_2 and 'max-soft-limit-backup' in motor_2:
+                required_keys = [
+                    'min-soft-limit-backup',
+                    'max-soft-limit-backup',
+                    'max-velocity-backup',
+                    'max-accel-backup',
+                    'max-jerk-backup',
+                    'step-angle-backup',
+                    'travel-per-rev-backup'
+                ]
+                if all(key in motor_2 for key in required_keys):
                     motor_2['min-soft-limit'] = motor_2['min-soft-limit-backup']
                     motor_2['max-soft-limit'] = motor_2['max-soft-limit-backup']
                     motor_2['max-velocity'] = motor_2["max-velocity-backup"]
