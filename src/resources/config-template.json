@@ -122,6 +122,50 @@
           "scale": 25.4,
           "default": 5,
           "code": "tr"
+        },
+        "max-velocity-backup": {
+          "type": "float",
+          "min": 0,
+          "unit": "m/min",
+          "iunit": "IPM",
+          "scale": 0.0254,
+          "default": 5,
+          "code": "vmb"
+        },
+        "max-accel-backup": {
+          "type": "float",
+          "min": 0,
+          "unit": "km/min²",
+          "iunit": "g-force",
+          "scale": 35.304,
+          "default": 10,
+          "code": "amb"
+        },
+        "max-jerk-backup": {
+          "type": "float",
+          "min": 0,
+          "unit": "km/min³",
+          "iunit": "g/min",
+          "scale": 35.304,
+          "default": 50,
+          "code": "jmb"
+        },
+        "step-angle-backup": {
+          "type": "float",
+          "min": 0,
+          "max": 360,
+          "step": 0.1,
+          "unit": "degrees",
+          "default": 1.8,
+          "code": "sab"
+        },
+        "travel-per-rev-backup": {
+          "type": "float",
+          "unit": "mm",
+          "iunit": "in",
+          "scale": 25.4,
+          "default": 5,
+          "code": "trb"
         }
       },
 

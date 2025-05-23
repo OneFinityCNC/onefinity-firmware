@@ -658,7 +658,7 @@ class RotaryHandler(bbctrl.APIHandler):
                     motor_2['step-angle'] = motor_2["step-angle-backup"]
                     motor_2['travel-per-rev'] = motor_2["travel-per-rev-backup"]
                 else:
-                    raise ValueError("Backup soft limits are missing for motor_2.")
+                    raise ValueError("Backup values limits are missing for motor_2.")
             else:
                 motor_2['min-soft-limit-backup'] = motor_2['min-soft-limit']
                 motor_2['max-soft-limit-backup'] = motor_2['max-soft-limit']
