@@ -14,10 +14,18 @@ export const homeMachineComplete = writable(false);
 export function handleControllerStateUpdate(state: Record<string, any>) {
     if (!get(systemReady)) {
         systemReady.set(true);
+        probeContacted.set(false);
+        probingFailed.set(false);
+        probingStarted.set(false);
+        probingComplete.set(false);
     }
 
     if (state.xx === "READY" && !get(homeMachineComplete)) {
         homeMachineComplete.set(true);
+        probeContacted.set(false);
+        probingFailed.set(false);
+        probingStarted.set(false);
+        probingComplete.set(false);
     }
 
     if (get(probingActive) && get(systemReady) && get(homeMachineComplete)) {
@@ -27,7 +35,7 @@ export function handleControllerStateUpdate(state: Record<string, any>) {
             probingComplete.set(false);
         }
 
-        if (state.pw === 0) {
+        if (state.cycle !== "idle" && state.pw === 0) {
             probeContacted.set(true);
         }
 
