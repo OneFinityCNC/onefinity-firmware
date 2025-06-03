@@ -12,7 +12,8 @@
         probingComplete,
         probingFailed,
         probingStarted,
-        systemReady
+        systemReady,
+        homeMachineComplete
     } from "$lib/ControllerState";
     import { numberWithUnit } from "$lib/RegexHelpers";
     import TextFieldWithOptions from "$components/TextFieldWithOptions.svelte";
@@ -131,11 +132,18 @@
 
     async function begin() {
         try {
-            if (!get(systemReady)) {
+            // Wait for both system ready and home machine completion
+            if (!get(systemReady) || !get(homeMachineComplete)) {
                 await new Promise(resolve => {
-                    const unsubscribe = systemReady.subscribe(ready => {
-                        if (ready) {
-                            unsubscribe();
+                    const unsubscribeSystem = systemReady.subscribe(ready => {
+                        if (ready && get(homeMachineComplete)) {
+                            unsubscribeSystem();
+                            resolve(true);
+                        }
+                    });
+                    const unsubscribeHome = homeMachineComplete.subscribe(homeComplete => {
+                        if (homeComplete && get(systemReady)) {
+                            unsubscribeHome();
                             resolve(true);
                         }
                     });
