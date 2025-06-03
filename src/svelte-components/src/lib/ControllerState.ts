@@ -21,6 +21,12 @@ export function handleControllerStateUpdate(state: Record<string, any>) {
     }
 
     if (get(probingActive) && get(systemReady) && get(homeMachineComplete)) {
+        if (state.cycle === "idle" && !get(probingStarted)) {
+            probeContacted.set(false);
+            probingFailed.set(false);
+            probingComplete.set(false);
+        }
+
         if (state.pw === 0) {
             probeContacted.set(true);
         }
