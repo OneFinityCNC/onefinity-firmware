@@ -5,13 +5,17 @@ export const networkInfo = writable({});
 
 export const probingActive = writable(false);
 export const probeContacted = writable(false);
-export const probingStarted = writable(false);
 export const probingFailed = writable(false);
+export const probingStarted = writable(false);
 export const probingComplete = writable(false);
+export const systemReady = writable(false);
 
 export function handleControllerStateUpdate(state: Record<string, any>) {
+    if (!get(systemReady)) {
+        systemReady.set(true);
+    }
 
-    if (get(probingActive)) {
+    if (get(probingActive) && get(systemReady)) {
         if (state.pw === 0) {
             probeContacted.set(true);
         }

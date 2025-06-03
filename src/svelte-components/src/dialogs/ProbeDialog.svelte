@@ -12,6 +12,7 @@
         probingComplete,
         probingFailed,
         probingStarted,
+        systemReady
     } from "$lib/ControllerState";
     import { numberWithUnit } from "$lib/RegexHelpers";
     import TextFieldWithOptions from "$components/TextFieldWithOptions.svelte";
@@ -130,6 +131,17 @@
 
     async function begin() {
         try {
+            if (!get(systemReady)) {
+                await new Promise(resolve => {
+                    const unsubscribe = systemReady.subscribe(ready => {
+                        if (ready) {
+                            unsubscribe();
+                            resolve(true);
+                        }
+                    });
+                });
+            }
+
             $probingActive = true;
             assertValidProbeType();
 
