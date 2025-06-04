@@ -11,7 +11,7 @@
         probeContacted,
         probingComplete,
         probingFailed,
-        probingStarted
+        probingStarted,
     } from "$lib/ControllerState";
     import { numberWithUnit } from "$lib/RegexHelpers";
     import TextFieldWithOptions from "$components/TextFieldWithOptions.svelte";

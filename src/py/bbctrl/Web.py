@@ -625,7 +625,7 @@ class RotaryHandler(bbctrl.APIHandler):
 
 
             motors = config_data.get("motors")
-            motors_backup = config_data.get("motors_backup", {})
+            motors_backup = config_data.get("motors-backup", {})
             
             if not motors:
                 raise ValueError("Motors data not found in configuration")

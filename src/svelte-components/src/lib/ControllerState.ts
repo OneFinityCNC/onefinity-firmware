@@ -10,6 +10,7 @@ export const probingFailed = writable(false);
 export const probingComplete = writable(false);
 
 export function handleControllerStateUpdate(state: Record<string, any>) {
+
     if (get(probingActive)) {
         if (state.pw === 0) {
             probeContacted.set(true);
