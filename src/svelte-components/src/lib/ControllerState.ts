@@ -5,37 +5,13 @@ export const networkInfo = writable({});
 
 export const probingActive = writable(false);
 export const probeContacted = writable(false);
-export const probingFailed = writable(false);
 export const probingStarted = writable(false);
+export const probingFailed = writable(false);
 export const probingComplete = writable(false);
-export const systemReady = writable(false);
-export const homeMachineComplete = writable(false);
 
 export function handleControllerStateUpdate(state: Record<string, any>) {
-    if (!get(systemReady)) {
-        systemReady.set(true);
-        probeContacted.set(false);
-        probingFailed.set(false);
-        probingStarted.set(false);
-        probingComplete.set(false);
-    }
-
-    if (state.xx === "READY" && !get(homeMachineComplete)) {
-        homeMachineComplete.set(true);
-        probeContacted.set(false);
-        probingFailed.set(false);
-        probingStarted.set(false);
-        probingComplete.set(false);
-    }
-
-    if (get(probingActive) && get(systemReady) && get(homeMachineComplete)) {
-        if (state.cycle === "idle" && !get(probingStarted)) {
-            probeContacted.set(false);
-            probingFailed.set(false);
-            probingComplete.set(false);
-        }
-
-        if (state.cycle !== "idle" && state.pw === 0) {
+    if (get(probingActive)) {
+        if (state.pw === 0) {
             probeContacted.set(true);
         }
 

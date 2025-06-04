@@ -395,7 +395,6 @@ module.exports = new Vue({
                 update_object(this.state, e.data, false);
 
                 SvelteComponents.handleControllerStateUpdate(this.state);
-                console.log("Controller state updated:", this.state);
 
                 delete this.state.log;
 
