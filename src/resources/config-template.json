@@ -241,6 +241,72 @@
     }
   },
 
+  "motors-backup": {
+    "type": "list",
+    "index": "0123",
+    "default": [{ "axis": "X" }, { "axis": "Y" }, { "axis": "Z" }, { "axis": "A" }],
+    "template": {
+      "min-soft-limit": {
+        "type": "float",
+        "unit": "mm",
+        "iunit": "in",
+        "scale": 25.4,
+        "default": 0
+      },
+      "max-soft-limit": {
+        "type": "float",
+        "unit": "mm",
+        "iunit": "in",
+        "scale": 25.4,
+        "default": 0
+      },
+      "max-velocity": {
+        "type": "float",
+        "min": 0,
+        "unit": "m/min",
+        "iunit": "IPM",
+        "scale": 0.0254,
+        "default": 5,
+        "code": "vm"
+      },
+      "max-accel": {
+        "type": "float",
+        "min": 0,
+        "unit": "km/min²",
+        "iunit": "g-force",
+        "scale": 35.304,
+        "default": 10,
+        "code": "am"
+      },
+      "max-jerk": {
+        "type": "float",
+        "min": 0,
+        "unit": "km/min³",
+        "iunit": "g/min",
+        "scale": 35.304,
+        "default": 50,
+        "code": "jm"
+      },
+      "step-angle": {
+        "type": "float",
+        "min": 0,
+        "max": 360,
+        "step": 0.1,
+        "unit": "degrees",
+        "default": 1.8,
+        "code": "sa"
+      },
+      "travel-per-rev": {
+        "type": "float",
+        "unit": "mm",
+        "iunit": "in",
+        "scale": 25.4,
+        "default": 5,
+        "code": "tr"
+      }
+    }
+  },
+
   "tool": {
     "selected-tool": {
       "type": "string",

@@ -625,6 +625,7 @@ class RotaryHandler(bbctrl.APIHandler):
 
 
             motors = config_data.get("motors")
+            motors_backup = config_data.get("motors_backup", {})
             
             if not motors:
                 raise ValueError("Motors data not found in configuration")
@@ -632,6 +633,8 @@ class RotaryHandler(bbctrl.APIHandler):
 
             motor_1 = motors[1]
             motor_2 = motors[2]
+            motor_2_backup = motors_backup.get(2, {})
+            log.info("motor_2_backup: {}".format(motor_2_backup))
             
             is_axis_A = motor_2.get("axis") == "A"
 
@@ -668,6 +671,14 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2['max-jerk-backup'] = motor_2["max-jerk"]
                 motor_2['step-angle-backup'] = motor_2["step-angle"]
                 motor_2['travel-per-rev-backup'] = motor_2["travel-per-rev"]
+
+                motor_2_backup['min-soft-limit'] = motor_2['min-soft-limit']
+                motor_2_backup['max-soft-limit'] = motor_2['max-soft-limit']
+                motor_2_backup['max-velocity'] = motor_2["max-velocity"]
+                motor_2_backup['max-accel'] = motor_2["max-accel"]
+                motor_2_backup['max-jerk'] = motor_2["max-jerk"]
+                motor_2_backup['step-angle'] = motor_2["step-angle"]
+                motor_2_backup['travel-per-rev'] = motor_2["travel-per-rev"]
 
                 motor_2['min-soft-limit'] = -720
                 motor_2['max-soft-limit'] = 720
