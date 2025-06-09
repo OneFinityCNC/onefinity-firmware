@@ -683,8 +683,8 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2['step-angle'] = 0.25714
                 motor_2['travel-per-rev'] = 360
                 log.info("line 686")
-                log.info("Motor A : " , motor_2 )
-                log.info("Motor A  : " , motor_2_backup)
+                log.info("Motor A : {}".format(motor_2) )
+                log.info("Motor A  : {}".format(motor_2_backup))
 
             config.save(config_data)
 
