@@ -612,7 +612,7 @@ class RotaryHandler(bbctrl.APIHandler):
             config = ctrl.config
             log = self.get_log('RotaryHandler')
             path = ctrl.get_path('config.json')
-
+            log.info("RotaryHandler: Received request to change rotary axis")
             if status is None:
                 raise Exception("No status provided")
             
@@ -652,6 +652,8 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2['max-jerk'] = motor_2_backup["max-jerk"]
                 motor_2['step-angle'] = motor_2_backup["step-angle"]
                 motor_2['travel-per-rev'] = motor_2_backup["travel-per-rev"]
+                log.info("Motor Y : " , motor_2 )
+                log.info("Motor Y  : " , motor_2_backup)
             else:
                 motor_2_backup['min-soft-limit'] = motor_2['min-soft-limit']
                 motor_2_backup['max-soft-limit'] = motor_2['max-soft-limit']
@@ -668,6 +670,8 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2['max-jerk'] = 750
                 motor_2['step-angle'] = 0.25714
                 motor_2['travel-per-rev'] = 360
+                log.info("Motor A : " , motor_2 )
+                log.info("Motor A  : " , motor_2_backup)
 
             config.save(config_data)
 
