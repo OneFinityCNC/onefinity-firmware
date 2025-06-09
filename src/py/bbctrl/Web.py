@@ -644,23 +644,28 @@ class RotaryHandler(bbctrl.APIHandler):
             if is_axis_A == status: return
 
             motor_2["axis"] = "Y" if is_axis_A else "A"
+            log.info("line 647")
             motor_1["max-velocity"] *= 2 if is_axis_A else 0.5
-
+            log.info("line 648")
             if is_axis_A:
+                log.info("enter if is_axis_A")
                 motor_2['min-soft-limit'] = motor_2_backup['min-soft-limit']
                 motor_2['max-soft-limit'] = motor_2_backup['max-soft-limit']
                 motor_2['max-velocity'] = motor_2_backup["max-velocity"]
                 motor_2['max-accel'] = motor_2_backup["max-accel"]
+                log.info("Mid way if is_axis_A")
                 motor_2['max-jerk'] = motor_2_backup["max-jerk"]
                 motor_2['step-angle'] = motor_2_backup["step-angle"]
                 motor_2['travel-per-rev'] = motor_2_backup["travel-per-rev"]
                 log.info("Motor Y : " , motor_2 )
                 log.info("Motor Y  : " , motor_2_backup)
             else:
+                log.info("enter else is_axis_A")
                 motor_2_backup['min-soft-limit'] = motor_2['min-soft-limit']
                 motor_2_backup['max-soft-limit'] = motor_2['max-soft-limit']
                 motor_2_backup['max-velocity'] = motor_2["max-velocity"]
                 motor_2_backup['max-accel'] = motor_2["max-accel"]
+                log.info("Mid way else is_axis_A")
                 motor_2_backup['max-jerk'] = motor_2["max-jerk"]
                 motor_2_backup['step-angle'] = motor_2["step-angle"]
                 motor_2_backup['travel-per-rev'] = motor_2["travel-per-rev"]
