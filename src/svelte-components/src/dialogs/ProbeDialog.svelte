@@ -378,8 +378,10 @@
 
     function executeYOrigin(){
         ControllerMethods.send(`
-            G53 G0 Z0
+            G90
+            G0 Z0
             G0 Y0
+            G92 Y0 Z0
             M2
         `);
     }

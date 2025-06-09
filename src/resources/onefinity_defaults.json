@@ -376,6 +376,49 @@
       "zero-backoff": 1
     }
   ],
+  "motors-backup": [
+    {
+      "axis": "X",
+      "min-soft-limit": 0,
+      "max-soft-limit": 0,
+      "max-velocity": 10,
+      "max-accel": 750,
+      "max-jerk": 1000,
+      "step-angle": 1.8,
+      "travel-per-rev": 10
+    },
+    {
+      "axis": "Y",
+      "min-soft-limit": 0,
+      "max-soft-limit": 0,
+      "max-velocity": 10,
+      "max-accel": 750,
+      "max-jerk": 1000,
+      "step-angle": 1.8,
+      "travel-per-rev": 10
+    },
+    {
+      "axis": "Y",
+      "min-soft-limit": 0,
+      "max-soft-limit": 0,
+      "max-velocity": 10,
+      "max-accel": 750,
+      "max-jerk": 1000,
+      "step-angle": 1.8,
+      "travel-per-rev": 10
+    },
+    {
+      "axis": "Z",
+      "min-soft-limit": -133,
+      "max-soft-limit": 0,
+      "max-velocity": 3,
+      "max-accel": 750,
+      "max-jerk": 1000,
+      "step-angle": 1.8,
+      "travel-per-rev": 4
+    }
+  ],
+  
   "admin": {
     "auto-check-upgrade": true
   },
