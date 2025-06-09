@@ -607,6 +607,7 @@ class RotaryHandler(bbctrl.APIHandler):
 
     def put_ok(self):
         try:
+            log.info("RotaryHandler: Received request to change rotary axis")
             status = self.json.get('status', None)
             ctrl = self.get_ctrl()
             config = ctrl.config
