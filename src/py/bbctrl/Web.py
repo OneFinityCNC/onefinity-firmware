@@ -667,9 +667,11 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2_backup['max-accel'] = motor_2["max-accel"]
                 log.info("Mid way else is_axis_A")
                 motor_2_backup['max-jerk'] = motor_2["max-jerk"]
+                log.info("line 670")
                 motor_2_backup['step-angle'] = motor_2["step-angle"]
+                log.info("line 672")
                 motor_2_backup['travel-per-rev'] = motor_2["travel-per-rev"]
-
+                log.info("else Edge")
                 motor_2['min-soft-limit'] = -720
                 motor_2['max-soft-limit'] = 720
                 motor_2['max-velocity'] = 100
