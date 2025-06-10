@@ -647,8 +647,8 @@ class RotaryHandler(bbctrl.APIHandler):
             return motors_backup
             
         except Exception as e:
-            log.error(f"Failed to populate motors-backup: {str(e)}")
-            raise ValueError(f"Failed to populate motors-backup: {str(e)}")
+            log.error("Failed to populate motors-backup: {}".format(str(e)))
+            raise ValueError("Failed to populate motors-backup: {}".format(str(e)))
 
     def put_ok(self):
         try:
