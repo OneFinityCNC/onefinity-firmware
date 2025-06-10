@@ -604,6 +604,51 @@ class TimeHandler(bbctrl.APIHandler):
             self.get_log('TimeHandler').info('Error: {}'.format(e))
 
 class RotaryHandler(bbctrl.APIHandler):
+    def _populate_motors_backup(self, config_data):
+        """
+        Populate and return motors-backup data from onefinity defaults and config template.
+        """
+        log = self.get_log('RotaryHandler')
+        
+        try:
+            onefinity_defaults_path = bbctrl.get_resource('onefinity_defaults.json')
+            with open(onefinity_defaults_path, 'r') as f:
+                defaults = json.load(f)
+                
+            template_path = bbctrl.get_resource('config-template.json')
+            with open(template_path, 'r') as f:
+                template = json.load(f)
+            
+            motors = config_data.get('motors', [])
+            if not motors:
+                raise ValueError("Motors data not found")
+                
+            motors_backup = []
+            
+            backup_template = template.get('motors-backup', {}).get('template', {})
+            backup_defaults = defaults.get('motors-backup', [])
+            
+            for i, motor in enumerate(motors):
+                backup = {}
+                
+                for key, field in backup_template.items():
+                    backup[key] = field.get('default')
+                
+                if i < len(backup_defaults):
+                    for key, value in backup_defaults[i].items():
+                        backup[key] = value
+                
+                for key in backup_template.keys():
+                    if key not in backup and key in motor:
+                        backup[key] = motor[key]
+                        
+                motors_backup.append(backup)
+            
+            return motors_backup
+            
+        except Exception as e:
+            log.error(f"Failed to populate motors-backup: {str(e)}")
+            raise ValueError(f"Failed to populate motors-backup: {str(e)}")
 
     def put_ok(self):
         try:
@@ -612,9 +657,17 @@ class RotaryHandler(bbctrl.APIHandler):
             config = ctrl.config
             log = self.get_log('RotaryHandler')
             path = ctrl.get_path('config.json')
-            if status is None:
-                raise Exception("No status provided")
-            
+
+            rotary_config = {
+                'min-soft-limit': -720,
+                'max-soft-limit': 720,
+                'max-velocity': 100,
+                'max-accel': 500,
+                'max-jerk': 750,
+                'step-angle': 0.25714,
+                'travel-per-rev': 360
+            }
+
             try:
                 if os.path.exists(path):
                     with open(path, 'r') as f: config_data = json.load(f)
@@ -622,56 +675,52 @@ class RotaryHandler(bbctrl.APIHandler):
 
             except Exception: log.exception('Internal error: Failed to load config template')
 
-            log.info("Config data type {}".format(type(config_data)))
+            log.info('686::Config data: {}'.format(config_data))
+
             motors = config_data.get("motors")
-            log.info("config_data: {}".format(config_data))
-            motors_backup = config_data.get("motors-backup", {})
-            log.info("Overall Motors_backup: {}".format(motors_backup))
+            motors_backup = config_data.get("motors-backup")
+
+            log.info('691::Motors: {}'.format(motors))
+            log.info('692::Motors backup: {}'.format(motors_backup))
+
             if not motors:
                 raise ValueError("Motors data not found in configuration")
-
-            motor_1 = motors[1]
-            log.info("motor_1: {}".format(motor_1))
-            motor_2 = motors[2]
-            log.info("motor_2: {}".format(motor_2))
-            motor_2_backup = motors_backup[2]
-            log.info("motor_2_backup: {}".format(motor_2_backup))
             
-            is_axis_A = motor_2.get("axis") == "A"
+            if not motors_backup:
+                motors_backup = self._populate_motors_backup(config_data)
+                config_data['motors-backup'] = motors_backup
 
-            if is_axis_A == status: 
+            log.info('700::Motors backup: {}'.format(motors_backup))
+                
+            motor_1 = motors[1]
+            motor_2 = motors[2]
+            motor_2_backup = motors_backup[2]
+
+            log.info('707::Motor 1: {}'.format(motor_1))
+            log.info('708::Motor 2: {}'.format(motor_2))
+            log.info('709::Motor 2 backup: {}'.format(motor_2_backup))
+            
+            is_rotary_active = motor_2.get("axis") == "A"
+
+            log.info('713::is_rotary_active: {}'.format(is_rotary_active))
+
+            if is_rotary_active == status: 
                 return
 
-            motor_2["axis"] = "Y" if is_axis_A else "A"
-            motor_1["max-velocity"] *= 2 if is_axis_A else 0.5
-            if is_axis_A:
-                motor_2['min-soft-limit'] = motor_2_backup['min-soft-limit']
-                motor_2['max-soft-limit'] = motor_2_backup['max-soft-limit']
-                motor_2['max-velocity'] = motor_2_backup["max-velocity"]
-                motor_2['max-accel'] = motor_2_backup["max-accel"]
-                motor_2['max-jerk'] = motor_2_backup["max-jerk"]
-                motor_2['step-angle'] = motor_2_backup["step-angle"]
-                motor_2['travel-per-rev'] = motor_2_backup["travel-per-rev"]
-                log.info("Motor Y : {}".format(motor_2 ))
-                log.info("Motor Y  : {}".format(motor_2_backup))
+            motor_2["axis"] = "Y" if is_rotary_active else "A"
+            motor_1["max-velocity"] *= 2 if is_rotary_active else 0.5
+
+            if is_rotary_active:
+                for key in rotary_config.keys():
+                    motor_2[key] = motor_2_backup[key]
             else:
-                log.info("enter else is_axis_A")
-                motor_2_backup['min-soft-limit'] = motor_2['min-soft-limit']
-                motor_2_backup['max-soft-limit'] = motor_2['max-soft-limit']
-                motor_2_backup['max-velocity'] = motor_2["max-velocity"]
-                motor_2_backup['max-accel'] = motor_2["max-accel"]
-                motor_2_backup['max-jerk'] = motor_2["max-jerk"]
-                motor_2_backup['step-angle'] = motor_2["step-angle"]
-                motor_2_backup['travel-per-rev'] = motor_2["travel-per-rev"]
-                motor_2['min-soft-limit'] = -720
-                motor_2['max-soft-limit'] = 720
-                motor_2['max-velocity'] = 100
-                motor_2['max-accel'] = 500
-                motor_2['max-jerk'] = 750
-                motor_2['step-angle'] = 0.25714
-                motor_2['travel-per-rev'] = 360
-                log.info("Motor A : {}".format(motor_2) )
-                log.info("Motor A  : {}".format(motor_2_backup))
+                for key in rotary_config.keys():
+                    motor_2_backup[key] = motor_2[key]
+                
+                for key, value in rotary_config.items():
+                    motor_2[key] = value
+
+            log.info('731::config_data: {}'.format(config_data))
 
             config.save(config_data)
 
