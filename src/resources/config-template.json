@@ -246,6 +246,11 @@
     "index": "0123",
     "default": [{ "axis": "X" }, { "axis": "Y" }, { "axis": "Z" }, { "axis": "A" }],
     "template": {
+      "axis": {
+        "type": "enum",
+        "values": ["X", "Y", "Z", "A", "B", "C"],
+        "default": "X"
+      },
       "min-soft-limit": {
         "type": "float",
         "default": 0

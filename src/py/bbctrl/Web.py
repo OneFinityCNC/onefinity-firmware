@@ -611,11 +611,12 @@ class RotaryHandler(bbctrl.APIHandler):
         log = self.get_log('RotaryHandler')
         
         try:
-            onefinity_defaults_path = bbctrl.get_resource('onefinity_defaults.json')
+            onefinity_defaults_path = bbctrl.get_resource('http/onefinity_defaults.json')
+            template_path = bbctrl.get_resource('http/config-template.json')
+            
             with open(onefinity_defaults_path, 'r') as f:
                 defaults = json.load(f)
                 
-            template_path = bbctrl.get_resource('config-template.json')
             with open(template_path, 'r') as f:
                 template = json.load(f)
             
