@@ -171,7 +171,7 @@
 
             if (probeType === "xyz" ) {
                 if(isRotaryActive){
-                    executeYOrigin();
+                    ControllerMethods.gotoZero("yz");
                 } else {
                     ControllerMethods.gotoZero("xy");
                 }
@@ -374,16 +374,6 @@
             `);
         }
       }
-    }
-
-    function executeYOrigin(){
-        ControllerMethods.send(`
-            G90
-            G0 Z0
-            G0 Y0
-            G92 Y0 Z0
-            M2
-        `);
     }
 </script>
 

@@ -9,7 +9,7 @@ interface RegisterableControllerMethods {
 }
 
 interface ControllerMethods extends RegisterableControllerMethods {
-    gotoZero: (axes: "xy" | "z" | "a") => void;
+    gotoZero: (axes: "xy" | "z" | "a" | "yz") => void;
 }
 
 export let ControllerMethods: ControllerMethods;
@@ -22,7 +22,7 @@ export function registerControllerMethods(methods: Partial<RegisterableControlle
     };
 }
 
-function gotoZero(axes: "xy" | "z" | "a") {
+function gotoZero(axes: "xy" | "z" | "a" | "yz") {
     let axesClause = "";
     switch (axes.toLowerCase()) {
         case "xy":
@@ -35,6 +35,10 @@ function gotoZero(axes: "xy" | "z" | "a") {
         
         case "a":
             axesClause = "A0";
+            break;
+        
+        case "yz":
+            axesClause = "Y0Z0";
             break;
 
         default:
