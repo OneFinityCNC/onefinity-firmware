@@ -612,7 +612,6 @@ class RotaryHandler(bbctrl.APIHandler):
             config = ctrl.config
             log = self.get_log('RotaryHandler')
             path = ctrl.get_path('config.json')
-            log.info("RotaryHandler: Received request to change rotary axis")
             if status is None:
                 raise Exception("No status provided")
             
@@ -627,11 +626,9 @@ class RotaryHandler(bbctrl.APIHandler):
             motors = config_data.get("motors")
             log.info("config_data: {}".format(config_data))
             motors_backup = config_data.get("motors-backup", {})
-            log.info("line 630")
             if not motors:
                 raise ValueError("Motors data not found in configuration")
 
-            log.info("line 634")
             motor_1 = motors[1]
             log.info("motor_1: {}".format(motor_1))
             motor_2 = motors[2]
@@ -644,16 +641,12 @@ class RotaryHandler(bbctrl.APIHandler):
             if is_axis_A == status: return
 
             motor_2["axis"] = "Y" if is_axis_A else "A"
-            log.info("line 647")
             motor_1["max-velocity"] *= 2 if is_axis_A else 0.5
-            log.info("line 648")
             if is_axis_A:
-                log.info("enter if is_axis_A")
                 motor_2['min-soft-limit'] = motor_2_backup['min-soft-limit']
                 motor_2['max-soft-limit'] = motor_2_backup['max-soft-limit']
                 motor_2['max-velocity'] = motor_2_backup["max-velocity"]
                 motor_2['max-accel'] = motor_2_backup["max-accel"]
-                log.info("Mid way if is_axis_A")
                 motor_2['max-jerk'] = motor_2_backup["max-jerk"]
                 motor_2['step-angle'] = motor_2_backup["step-angle"]
                 motor_2['travel-per-rev'] = motor_2_backup["travel-per-rev"]
@@ -665,24 +658,16 @@ class RotaryHandler(bbctrl.APIHandler):
                 motor_2_backup['max-soft-limit'] = motor_2['max-soft-limit']
                 motor_2_backup['max-velocity'] = motor_2["max-velocity"]
                 motor_2_backup['max-accel'] = motor_2["max-accel"]
-                log.info("Mid way else is_axis_A")
                 motor_2_backup['max-jerk'] = motor_2["max-jerk"]
-                log.info("line 670")
                 motor_2_backup['step-angle'] = motor_2["step-angle"]
-                log.info("line 672")
                 motor_2_backup['travel-per-rev'] = motor_2["travel-per-rev"]
-                log.info("else Edge")
                 motor_2['min-soft-limit'] = -720
-                log.info("line 676")
                 motor_2['max-soft-limit'] = 720
                 motor_2['max-velocity'] = 100
-                log.info("line 679")
                 motor_2['max-accel'] = 500
                 motor_2['max-jerk'] = 750
-                log.info("line 682")
                 motor_2['step-angle'] = 0.25714
                 motor_2['travel-per-rev'] = 360
-                log.info("line 686")
                 log.info("Motor A : {}".format(motor_2) )
                 log.info("Motor A  : {}".format(motor_2_backup))
 
