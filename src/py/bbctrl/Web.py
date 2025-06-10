@@ -674,15 +674,10 @@ class RotaryHandler(bbctrl.APIHandler):
                     with open(path, 'r') as f: config_data = json.load(f)
                 else: config_data = {'version': self.version}
 
-            except Exception: log.exception('Internal error: Failed to load config template')
-
-            log.info('686::Config data: {}'.format(config_data))
+            except Exception: log.error('Internal error: Failed to load config template')
 
             motors = config_data.get("motors")
             motors_backup = config_data.get("motors-backup")
-
-            log.info('691::Motors: {}'.format(motors))
-            log.info('692::Motors backup: {}'.format(motors_backup))
 
             if not motors:
                 raise ValueError("Motors data not found in configuration")
@@ -690,20 +685,12 @@ class RotaryHandler(bbctrl.APIHandler):
             if not motors_backup:
                 motors_backup = self._populate_motors_backup(config_data)
                 config_data['motors-backup'] = motors_backup
-
-            log.info('700::Motors backup: {}'.format(motors_backup))
                 
             motor_1 = motors[1]
             motor_2 = motors[2]
             motor_2_backup = motors_backup[2]
 
-            log.info('707::Motor 1: {}'.format(motor_1))
-            log.info('708::Motor 2: {}'.format(motor_2))
-            log.info('709::Motor 2 backup: {}'.format(motor_2_backup))
-            
             is_rotary_active = motor_2.get("axis") == "A"
-
-            log.info('713::is_rotary_active: {}'.format(is_rotary_active))
 
             if is_rotary_active == status: 
                 return
@@ -720,8 +707,6 @@ class RotaryHandler(bbctrl.APIHandler):
                 
                 for key, value in rotary_config.items():
                     motor_2[key] = value
-
-            log.info('731::config_data: {}'.format(config_data))
 
             config.save(config_data)
 
