@@ -243,6 +243,7 @@
 
   "motors-backup": {
     "type": "list",
+    "index": "0123",
     "default": [{ "axis": "X" }, { "axis": "Y" }, { "axis": "Z" }, { "axis": "A" }],
     "template": {
       "min-soft-limit": {
