@@ -622,7 +622,7 @@ class RotaryHandler(bbctrl.APIHandler):
 
             except Exception: log.exception('Internal error: Failed to load config template')
 
-            log.info("Config data type ".format( type(config_data)) )
+            log.info(f"Config data type {type(config_data)}")
             motors = config_data.get("motors")
             log.info("config_data: {}".format(config_data))
             motors_backup = config_data.get("motors-backup", {})
