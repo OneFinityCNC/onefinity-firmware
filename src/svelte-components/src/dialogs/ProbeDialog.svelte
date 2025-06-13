@@ -171,7 +171,7 @@
 
             if (probeType === "xyz" ) {
                 if(isRotaryActive){
-                    ControllerMethods.gotoZero("yz");
+                    ControllerMethods.gotoZero("y");
                 } else {
                     ControllerMethods.gotoZero("xy");
                 }
