@@ -385,7 +385,8 @@
       "max-accel": 750,
       "max-jerk": 1000,
       "step-angle": 1.8,
-      "travel-per-rev": 10
+      "travel-per-rev": 10,
+      "microsteps": 16
     },
     {
       "axis": "Y",
@@ -395,7 +396,8 @@
       "max-accel": 750,
       "max-jerk": 1000,
       "step-angle": 1.8,
-      "travel-per-rev": 10
+      "travel-per-rev": 10,
+      "microsteps": 16
     },
     {
       "axis": "Y",
@@ -405,7 +407,8 @@
       "max-accel": 750,
       "max-jerk": 1000,
       "step-angle": 1.8,
-      "travel-per-rev": 10
+      "travel-per-rev": 10,
+      "microsteps": 16
     },
     {
       "axis": "Z",
@@ -415,7 +418,8 @@
       "max-accel": 750,
       "max-jerk": 1000,
       "step-angle": 1.8,
-      "travel-per-rev": 4
+      "travel-per-rev": 4,
+      "microsteps": 16
     }
   ],
   

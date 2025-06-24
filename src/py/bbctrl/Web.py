@@ -660,13 +660,14 @@ class RotaryHandler(bbctrl.APIHandler):
             path = ctrl.get_path('config.json')
 
             rotary_config = {
-                'min-soft-limit': -720,
-                'max-soft-limit': 720,
-                'max-velocity': 100,
+                'min-soft-limit': -3600,
+                'max-soft-limit': 3600,
+                'max-velocity': 6.696,
                 'max-accel': 500,
-                'max-jerk': 750,
+                'max-jerk': 1000,
                 'step-angle': 0.25714,
-                'travel-per-rev': 360
+                'travel-per-rev': 360,
+                "microsteps": 16,
             }
 
             try:
