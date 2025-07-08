@@ -651,6 +651,30 @@ class RotaryHandler(bbctrl.APIHandler):
             log.error("Failed to populate motors-backup: {}".format(str(e)))
             raise ValueError("Failed to populate motors-backup: {}".format(str(e)))
 
+    def _validate_motors_backup(self, motors_backup, rotary_config):
+        """
+        Validate that motors_backup has all required keys from rotary_config.
+        Returns True if valid, False otherwise.
+        """
+        if not motors_backup or len(motors_backup) < 3:
+            return False
+            
+        motor_2_backup = motors_backup[2]
+        if not motor_2_backup:
+            return False
+            
+        # Check if motor_2_backup has all keys from rotary_config
+        required_keys = set(rotary_config.keys())
+        backup_keys = set(motor_2_backup.keys())
+        
+        missing_keys = required_keys - backup_keys
+        if missing_keys:
+            self.get_log('RotaryHandler').warning(
+                f'motors_backup missing required keys: {missing_keys}')
+            return False
+            
+        return True
+
     def put_ok(self):
         try:
             status = self.json.get('status', None)
@@ -683,7 +707,8 @@ class RotaryHandler(bbctrl.APIHandler):
             if not motors:
                 raise ValueError("Motors data not found in configuration")
             
-            if not motors_backup:
+            # Check whether the motors_backup has all keys as in rotary_config
+            if not self._validate_motors_backup(motors_backup, rotary_config):
                 motors_backup = self._populate_motors_backup(config_data)
                 config_data['motors-backup'] = motors_backup
                 
