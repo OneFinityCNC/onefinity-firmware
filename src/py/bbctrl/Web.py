@@ -669,8 +669,7 @@ class RotaryHandler(bbctrl.APIHandler):
         
         missing_keys = required_keys - backup_keys
         if missing_keys:
-            self.get_log('RotaryHandler').warning(
-                f'motors_backup missing required keys: {missing_keys}')
+            self.get_log('RotaryHandler').warning("motors_backup missing required keys: {}".format(missing_keys))
             return False
             
         return True
