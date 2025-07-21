@@ -102,6 +102,21 @@ module.exports = {
         current_min_soft_limit: function() {
             return this.state[this.index + 'tn'];
         },
+        current_max_accel: function() {
+            return this.state[this.index + 'am'];
+        },
+        current_max_jerk: function() {
+            return this.state[this.index + 'jm'];
+        },
+        current_step_angle: function() {
+            return this.state[this.index + 'sa'];
+        },
+        current_travel_per_rev: function() {
+            return this.state[this.index + 'tr'];
+        },
+        current_microsteps: function() {
+            return this.state[this.index + 'mi'];
+        }
     },
 
     watch: {
@@ -127,6 +142,36 @@ module.exports = {
         current_min_soft_limit(new_value) {
             if(new_value != this.motor['min-soft-limit']) {
                 this.motor['min-soft-limit'] = new_value;
+            }
+        },
+
+        current_max_accel(new_value) {
+            if(new_value != this.motor['max-accel']) {
+                this.motor['max-accel'] = new_value;
+            }
+        },
+        
+        current_max_jerk(new_value) {
+            if(new_value != this.motor['max-jerk']) {
+                this.motor['max-jerk'] = new_value;
+            }
+        },
+        
+        current_step_angle(new_value) {
+            if(new_value != this.motor['step-angle']) {
+                this.motor['step-angle'] = new_value;
+            }
+        },
+        
+        current_travel_per_rev(new_value) {
+            if(new_value != this.motor['travel-per-rev']) {
+                this.motor['travel-per-rev'] = new_value;
+            }
+        },
+        
+        current_microsteps(new_value) {
+            if(new_value != this.motor['microsteps']) {
+                this.motor['microsteps'] = new_value;
             }
         }
     },
