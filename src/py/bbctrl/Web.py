@@ -733,7 +733,16 @@ class RotaryHandler(bbctrl.APIHandler):
                 for key, value in rotary_config.items():
                     motor_2[key] = value
 
+            # Save the configuration using the standard Config.save method
+            # This ensures proper encoding and state updates
             config.save(config_data)
+            
+            # Force a complete reload to ensure all values are properly encoded and sent to frontend
+            config.reload()
+            
+            # Explicitly trigger state notification to ensure frontend gets updates
+            # This forces immediate WebSocket notification of all state changes
+            ctrl.state._notify()
 
         except FileNotFoundError:
             log.error('Configuration file not found at {}'.format(path))
