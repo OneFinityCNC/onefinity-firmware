@@ -126,6 +126,15 @@ module.exports = {
     },
 
     watch: {
+        // Watch for state changes to handle late-arriving websocket data
+        state: {
+            handler: function() {
+                // Re-sync when state updates (e.g., when websocket data arrives)
+                this.syncStateToConfig();
+            },
+            deep: true
+        },
+
         current_axis(new_value) {
             const motor_axes = ["X", "Y", "Z", "A", "B", "C"] 
             if(motor_axes[new_value] != this.motor['axis']){
