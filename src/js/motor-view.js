@@ -122,20 +122,7 @@ module.exports = {
     attached: function() {
         // Sync all state values with motor config when component mounts
         // This ensures UI shows correct values even if rotary was toggled on another page
-        
-        // Debug: Log current state values before sync
-        console.log(`DEBUG: Motor ${this.index} state values on mount:`);
-        console.log(`  current_step_angle (${this.index}sa):`, this.current_step_angle);
-        console.log(`  current_microsteps (${this.index}mi):`, this.current_microsteps);
-        console.log(`  current_travel_per_rev (${this.index}tr):`, this.current_travel_per_rev);
-        
         this.syncStateToConfig();
-        
-        // Debug: Log motor config values after sync
-        console.log(`DEBUG: Motor ${this.index} config values after sync:`);
-        console.log(`  motor step-angle:`, this.motor['step-angle']);
-        console.log(`  motor microsteps:`, this.motor['microsteps']);
-        console.log(`  motor travel-per-rev:`, this.motor['travel-per-rev']);
     },
 
     watch: {
