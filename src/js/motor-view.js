@@ -119,6 +119,12 @@ module.exports = {
         }
     },
 
+    attached: function() {
+        // Sync all state values with motor config when component mounts
+        // This ensures UI shows correct values even if rotary was toggled on another page
+        this.syncStateToConfig();
+    },
+
     watch: {
         current_axis(new_value) {
             const motor_axes = ["X", "Y", "Z", "A", "B", "C"] 
@@ -203,6 +209,50 @@ module.exports = {
             }
 
             return templ.hmodes.indexOf(this.motor["homing-mode"]) != -1;
+        },
+
+        syncStateToConfig: function() {
+            // Force sync all state values to motor config
+            // This ensures the UI reflects the current state even if changes happened while component was unmounted
+            
+            const motor_axes = ["X", "Y", "Z", "A", "B", "C"];
+            
+            // Sync all motor properties that have corresponding state values
+            if (this.current_axis !== undefined && motor_axes[this.current_axis] !== this.motor['axis']) {
+                this.motor['axis'] = motor_axes[this.current_axis];
+            }
+            
+            if (this.current_max_velocity !== undefined && this.current_max_velocity !== this.motor['max-velocity']) {
+                this.motor['max-velocity'] = this.current_max_velocity;
+            }
+            
+            if (this.current_max_soft_limit !== undefined && this.current_max_soft_limit !== this.motor['max-soft-limit']) {
+                this.motor['max-soft-limit'] = this.current_max_soft_limit;
+            }
+            
+            if (this.current_min_soft_limit !== undefined && this.current_min_soft_limit !== this.motor['min-soft-limit']) {
+                this.motor['min-soft-limit'] = this.current_min_soft_limit;
+            }
+            
+            if (this.current_max_accel !== undefined && this.current_max_accel !== this.motor['max-accel']) {
+                this.motor['max-accel'] = this.current_max_accel;
+            }
+            
+            if (this.current_max_jerk !== undefined && this.current_max_jerk !== this.motor['max-jerk']) {
+                this.motor['max-jerk'] = this.current_max_jerk;
+            }
+            
+            if (this.current_step_angle !== undefined && this.current_step_angle !== this.motor['step-angle']) {
+                this.motor['step-angle'] = this.current_step_angle;
+            }
+            
+            if (this.current_travel_per_rev !== undefined && this.current_travel_per_rev !== this.motor['travel-per-rev']) {
+                this.motor['travel-per-rev'] = this.current_travel_per_rev;
+            }
+            
+            if (this.current_microsteps !== undefined && this.current_microsteps !== this.motor['microsteps']) {
+                this.motor['microsteps'] = this.current_microsteps;
+            }
         }
     }
 };
