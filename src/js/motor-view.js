@@ -122,7 +122,20 @@ module.exports = {
     attached: function() {
         // Sync all state values with motor config when component mounts
         // This ensures UI shows correct values even if rotary was toggled on another page
+        
+        // Debug: Log current state values before sync
+        console.log(`DEBUG: Motor ${this.index} state values on mount:`);
+        console.log(`  current_step_angle (${this.index}sa):`, this.current_step_angle);
+        console.log(`  current_microsteps (${this.index}mi):`, this.current_microsteps);
+        console.log(`  current_travel_per_rev (${this.index}tr):`, this.current_travel_per_rev);
+        
         this.syncStateToConfig();
+        
+        // Debug: Log motor config values after sync
+        console.log(`DEBUG: Motor ${this.index} config values after sync:`);
+        console.log(`  motor step-angle:`, this.motor['step-angle']);
+        console.log(`  motor microsteps:`, this.motor['microsteps']);
+        console.log(`  motor travel-per-rev:`, this.motor['travel-per-rev']);
     },
 
     watch: {
@@ -217,42 +230,62 @@ module.exports = {
             
             const motor_axes = ["X", "Y", "Z", "A", "B", "C"];
             
-            // Sync all motor properties that have corresponding state values
-            if (this.current_axis !== undefined && motor_axes[this.current_axis] !== this.motor['axis']) {
-                this.motor['axis'] = motor_axes[this.current_axis];
-            }
+            // Define mapping between state properties and motor config properties
+            const stateToMotorMapping = [
+                {
+                    stateKey: 'current_axis',
+                    motorKey: 'axis',
+                    transform: (value) => motor_axes[value]
+                },
+                {
+                    stateKey: 'current_max_velocity',
+                    motorKey: 'max-velocity'
+                },
+                {
+                    stateKey: 'current_max_soft_limit',
+                    motorKey: 'max-soft-limit'
+                },
+                {
+                    stateKey: 'current_min_soft_limit',
+                    motorKey: 'min-soft-limit'
+                },
+                {
+                    stateKey: 'current_max_accel',
+                    motorKey: 'max-accel'
+                },
+                {
+                    stateKey: 'current_max_jerk',
+                    motorKey: 'max-jerk'
+                },
+                {
+                    stateKey: 'current_step_angle',
+                    motorKey: 'step-angle'
+                },
+                {
+                    stateKey: 'current_travel_per_rev',
+                    motorKey: 'travel-per-rev'
+                },
+                {
+                    stateKey: 'current_microsteps',
+                    motorKey: 'microsteps'
+                }
+            ];
             
-            if (this.current_max_velocity !== undefined && this.current_max_velocity !== this.motor['max-velocity']) {
-                this.motor['max-velocity'] = this.current_max_velocity;
-            }
-            
-            if (this.current_max_soft_limit !== undefined && this.current_max_soft_limit !== this.motor['max-soft-limit']) {
-                this.motor['max-soft-limit'] = this.current_max_soft_limit;
-            }
-            
-            if (this.current_min_soft_limit !== undefined && this.current_min_soft_limit !== this.motor['min-soft-limit']) {
-                this.motor['min-soft-limit'] = this.current_min_soft_limit;
-            }
-            
-            if (this.current_max_accel !== undefined && this.current_max_accel !== this.motor['max-accel']) {
-                this.motor['max-accel'] = this.current_max_accel;
-            }
-            
-            if (this.current_max_jerk !== undefined && this.current_max_jerk !== this.motor['max-jerk']) {
-                this.motor['max-jerk'] = this.current_max_jerk;
-            }
-            
-            if (this.current_step_angle !== undefined && this.current_step_angle !== this.motor['step-angle']) {
-                this.motor['step-angle'] = this.current_step_angle;
-            }
-            
-            if (this.current_travel_per_rev !== undefined && this.current_travel_per_rev !== this.motor['travel-per-rev']) {
-                this.motor['travel-per-rev'] = this.current_travel_per_rev;
-            }
-            
-            if (this.current_microsteps !== undefined && this.current_microsteps !== this.motor['microsteps']) {
-                this.motor['microsteps'] = this.current_microsteps;
-            }
+            // Sync all properties using the mapping
+            stateToMotorMapping.forEach(({ stateKey, motorKey, transform }) => {
+                const stateValue = this[stateKey];
+                
+                if (stateValue === undefined) {
+                    return; // Skip if state value is not defined
+                }
+                
+                const transformedValue = transform ? transform(stateValue) : stateValue;
+                const currentMotorValue = this.motor[motorKey];
+                
+                if (transformedValue !== currentMotorValue) {
+                    this.motor[motorKey] = transformedValue;
+                }
+            });
         }
     }
 };

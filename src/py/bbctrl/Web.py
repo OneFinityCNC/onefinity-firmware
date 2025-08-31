@@ -740,6 +740,19 @@ class RotaryHandler(bbctrl.APIHandler):
             # Force a complete reload to ensure all values are properly encoded and sent to frontend
             config.reload()
             
+            # Debug: Log the current state values for motor 2 to verify they're being set
+            log.info(f"DEBUG: After reload - Motor 2 state values:")
+            log.info(f"  2sa (step-angle): {ctrl.state.get('2sa')}")
+            log.info(f"  2mi (microsteps): {ctrl.state.get('2mi')}")
+            log.info(f"  2tr (travel-per-rev): {ctrl.state.get('2tr')}")
+            
+            # TARGETED FIX: Explicitly ensure microsteps gets sent to state
+            # This addresses potential issues with microsteps being treated as machine variable
+            motor_2_final = motors[2]
+            ctrl.state.set('2mi', motor_2_final.get('microsteps'))
+            ctrl.state.set('2sa', motor_2_final.get('step-angle'))  
+            ctrl.state.set('2tr', motor_2_final.get('travel-per-rev'))
+            
             # Explicitly trigger state notification to ensure frontend gets updates
             # This forces immediate WebSocket notification of all state changes
             ctrl.state._notify()
