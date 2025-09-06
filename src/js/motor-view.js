@@ -120,21 +120,12 @@ module.exports = {
     },
 
     attached: function() {
-        // Sync all state values with motor config when component mounts
-        // This ensures UI shows correct values even if rotary was toggled on another page
+        // Sync all state values with motor config when component is ready
+        // This ensures UI shows correct values when component is first loaded
         this.syncStateToConfig();
     },
 
     watch: {
-        // Watch for state changes to handle late-arriving websocket data
-        state: {
-            handler: function() {
-                // Re-sync when state updates (e.g., when websocket data arrives)
-                this.syncStateToConfig();
-            },
-            deep: true
-        },
-
         current_axis(new_value) {
             const motor_axes = ["X", "Y", "Z", "A", "B", "C"] 
             if(motor_axes[new_value] != this.motor['axis']){
@@ -272,6 +263,7 @@ module.exports = {
                 const stateValue = this[stateKey];
                 
                 if (stateValue === undefined) {
+                    console.log(`State value for ${stateKey} is undefined`);
                     return; // Skip if state value is not defined
                 }
                 
