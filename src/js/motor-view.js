@@ -223,30 +223,40 @@ module.exports = {
             
             if (this.state[this.index + 'an'] != this.motor['axis']) {
                 const motor_axes = ["X", "Y", "Z", "A", "B", "C"];
+                console.log("State Axis: ", this.state[this.index + 'an'], " Motor Axis: ", this.motor['axis']);
+                
                 this.motor['axis'] = motor_axes[this.state[this.index + 'an']];
             }
             if (this.state[this.index + 'vm'] != this.motor['max-velocity']) {
+                console.log("State Max Velocity: ", this.state[this.index + 'vm'], " Motor Max Velocity: ", this.motor['max-velocity']);
                 this.motor['max-velocity'] = this.state[this.index + 'vm'];
             }
             if (this.state[this.index + 'tm'] != this.motor['max-soft-limit']) {
+                console.log("State Max Soft Limit: ", this.state[this.index + 'tm'], " Motor Max Soft Limit: ", this.motor['max-soft-limit']);
                 this.motor['max-soft-limit'] = this.state[this.index + 'tm'];
             }
             if (this.state[this.index + 'tn'] != this.motor['min-soft-limit']) {
+                console.log("State Min Soft Limit: ", this.state[this.index + 'tn'], " Motor Min Soft Limit: ", this.motor['min-soft-limit']);
                 this.motor['min-soft-limit'] = this.state[this.index + 'tn'];
             }
             if (this.state[this.index + 'am'] != this.motor['max-accel']) {
+                console.log("State Max Accel: ", this.state[this.index + 'am'], " Motor Max Accel: ", this.motor['max-accel']);
                 this.motor['max-accel'] = this.state[this.index + 'am'];
             }
             if (this.state[this.index + 'jm'] != this.motor['max-jerk']) {
+                console.log("State Max Jerk: ", this.state[this.index + 'jm'], " Motor Max Jerk: ", this.motor['max-jerk']);
                 this.motor['max-jerk'] = this.state[this.index + 'jm'];
             }
             if (this.state[this.index + 'sa'] != this.motor['step-angle']) {
+                console.log("State Step Angle: ", this.state[this.index + 'sa'], " Motor Step Angle: ", this.motor['step-angle']);
                 this.motor['step-angle'] = this.state[this.index + 'sa'];
             }
             if (this.state[this.index + 'tr'] != this.motor['travel-per-rev']) {
+                console.log("State Travel Per Rev: ", this.state[this.index + 'tr'], " Motor Travel Per Rev: ", this.motor['travel-per-rev']);
                 this.motor['travel-per-rev'] = this.state[this.index + 'tr'];
             }
             if (this.state[this.index + 'mi'] != this.motor['microsteps']) {
+                console.log("State Microsteps: ", this.state[this.index + 'mi'], " Motor Microsteps: ", this.motor['microsteps']);
                 this.motor['microsteps'] = this.state[this.index + 'mi'];
             }
         }
