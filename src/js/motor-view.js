@@ -122,6 +122,7 @@ module.exports = {
     attached: function() {
         // Sync all state values with motor config when component is ready
         // This ensures UI shows correct values when component is first loaded
+        console.log("Syncing state to motor config for motor index ",this.index);
         this.syncStateToConfig();
     },
 
