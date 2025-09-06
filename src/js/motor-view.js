@@ -215,66 +215,40 @@ module.exports = {
         syncStateToConfig: function() {
             // Force sync all state values to motor config
             // This ensures the UI reflects the current state even if changes happened while component was unmounted
+
+            if(this.state == undefined) {
+                console.log("State is undefined");
+                return;
+            }
             
-            const motor_axes = ["X", "Y", "Z", "A", "B", "C"];
-            
-            // Define mapping between state properties and motor config properties
-            const stateToMotorMapping = [
-                {
-                    stateKey: 'current_axis',
-                    motorKey: 'axis',
-                    transform: (value) => motor_axes[value]
-                },
-                {
-                    stateKey: 'current_max_velocity',
-                    motorKey: 'max-velocity'
-                },
-                {
-                    stateKey: 'current_max_soft_limit',
-                    motorKey: 'max-soft-limit'
-                },
-                {
-                    stateKey: 'current_min_soft_limit',
-                    motorKey: 'min-soft-limit'
-                },
-                {
-                    stateKey: 'current_max_accel',
-                    motorKey: 'max-accel'
-                },
-                {
-                    stateKey: 'current_max_jerk',
-                    motorKey: 'max-jerk'
-                },
-                {
-                    stateKey: 'current_step_angle',
-                    motorKey: 'step-angle'
-                },
-                {
-                    stateKey: 'current_travel_per_rev',
-                    motorKey: 'travel-per-rev'
-                },
-                {
-                    stateKey: 'current_microsteps',
-                    motorKey: 'microsteps'
-                }
-            ];
-            
-            // Sync all properties using the mapping
-            stateToMotorMapping.forEach(({ stateKey, motorKey, transform }) => {
-                const stateValue = this[stateKey];
-                
-                if (stateValue === undefined) {
-                    console.log(`State value for ${stateKey} is undefined`);
-                    return; // Skip if state value is not defined
-                }
-                
-                const transformedValue = transform ? transform(stateValue) : stateValue;
-                const currentMotorValue = this.motor[motorKey];
-                
-                if (transformedValue !== currentMotorValue) {
-                    this.motor[motorKey] = transformedValue;
-                }
-            });
+            if (this.state[this.index + 'an'] != this.motor['axis']) {
+                const motor_axes = ["X", "Y", "Z", "A", "B", "C"];
+                this.motor['axis'] = motor_axes[this.state[this.index + 'an']];
+            }
+            if (this.state[this.index + 'vm'] != this.motor['max-velocity']) {
+                this.motor['max-velocity'] = this.state[this.index + 'vm'];
+            }
+            if (this.state[this.index + 'tm'] != this.motor['max-soft-limit']) {
+                this.motor['max-soft-limit'] = this.state[this.index + 'tm'];
+            }
+            if (this.state[this.index + 'tn'] != this.motor['min-soft-limit']) {
+                this.motor['min-soft-limit'] = this.state[this.index + 'tn'];
+            }
+            if (this.state[this.index + 'am'] != this.motor['max-accel']) {
+                this.motor['max-accel'] = this.state[this.index + 'am'];
+            }
+            if (this.state[this.index + 'jm'] != this.motor['max-jerk']) {
+                this.motor['max-jerk'] = this.state[this.index + 'jm'];
+            }
+            if (this.state[this.index + 'sa'] != this.motor['step-angle']) {
+                this.motor['step-angle'] = this.state[this.index + 'sa'];
+            }
+            if (this.state[this.index + 'tr'] != this.motor['travel-per-rev']) {
+                this.motor['travel-per-rev'] = this.state[this.index + 'tr'];
+            }
+            if (this.state[this.index + 'mi'] != this.motor['microsteps']) {
+                this.motor['microsteps'] = this.state[this.index + 'mi'];
+            }
         }
     }
 };
