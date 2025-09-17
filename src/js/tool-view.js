@@ -28,22 +28,23 @@ module.exports = {
           name: "Laser (J Tech, etc)",
         },
         {
-          id: "em60",
-          name: "EM60",
-        },
-        {
           id: "redline-vfd",
           name: "Redline VFD",
         },
-        {
-          id: "pwm",
-          name: "PWM Spindle",
-        },
+        
         {
           id: "unsupported-separator",
           name: "Unsupported Tools",
           disabled: true,
           unsupported: true,
+        },
+        {
+          id: "em60",
+          name: "EM60",
+        },
+        {
+          id: "pwm",
+          name: "PWM Spindle",
         },
         {
           id: "huanyang-vfd",
