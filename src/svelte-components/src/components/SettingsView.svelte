@@ -54,6 +54,11 @@
             </div>
         </fieldset>
 
+        <h2>Easy Adapter</h2>
+        <fieldset>
+            <ConfigTemplatedInput key={`settings.easy-adapter`} />
+        </fieldset>
+
         <h2>Probing</h2>
         <fieldset>
             <ConfigTemplatedInput key={`settings.probing-prompts`} />

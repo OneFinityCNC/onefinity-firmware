@@ -4,7 +4,8 @@
     "junction-accel": 200000,
     "max-deviation": 0.05,
     "units": "METRIC",
-    "probing-prompts": true
+    "probing-prompts": true,
+    "easy-adapter": false
   },
   "tool": {
     "tool-reversed": false,

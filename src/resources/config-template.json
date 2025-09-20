@@ -25,6 +25,11 @@
       "help": "Enable or disable safety prompts during and after probing",
       "type": "bool",
       "default": true
+    },
+    "easy-adapter": {
+      "help": "Enable or disable Easy Adapter",
+      "type": "bool",
+      "default": false
     }
   },
 
