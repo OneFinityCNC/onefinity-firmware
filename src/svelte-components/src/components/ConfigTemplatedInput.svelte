@@ -25,6 +25,7 @@
     const namesByKey = {
         "units":"units",
         "probing-prompts": "Show safety prompts",
+        "easy-adapter": "Enable/Disable Easy Adapter",
         "probe-xdim": "Probe block width",
         "probe-ydim": "Probe block length",
         "probe-zdim": "Probe block height",
