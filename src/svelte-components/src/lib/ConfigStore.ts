@@ -7,14 +7,13 @@ export const Config = writable<Record<string, any>>({});
 export const DisplayUnits = writable<DisplayUnits>();
 
 let easyAdapterTimer: ReturnType<typeof setTimeout> | null = null;
-let hasShownEasyAdapter = false;
 
 export function handleConfigUpdate(config: Record<string, any>) {
     Config.set(config);
     
-    // Check if easy-adapter is enabled and show dialog on app load
-    if (config.settings && config.settings["easy-adapter"] && !hasShownEasyAdapter) {
-        hasShownEasyAdapter = true;
+    // Check if easy-adapter is enabled and show dialog if within first 90 seconds of server boot
+    // The server provides a _server_first_load flag that is true for all requests within first 90 seconds of server startup
+    if (config.settings && config.settings["easy-adapter"] && config._server_first_load) {
 
         try {
             // Clear any existing timer first
@@ -38,7 +37,6 @@ export function handleConfigUpdate(config: Record<string, any>) {
             }, 5000);
         } catch (error) {
             console.error("Failed to show EasyAdapter dialog:", error);
-            hasShownEasyAdapter = false; // Reset on error
         }
     }
 }

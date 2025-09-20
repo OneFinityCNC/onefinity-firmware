@@ -1,6 +1,7 @@
 import os
 import json
 import tornado
+import time
 import sockjs.tornado
 import datetime
 import subprocess
@@ -250,7 +251,14 @@ class PasswordHandler(bbctrl.APIHandler):
 
 class ConfigLoadHandler(bbctrl.APIHandler):
     def get(self):
-        self.write_json(self.get_ctrl().config.load())
+        config = self.get_ctrl().config.load()
+        
+        # Check if we're within the first 90 seconds of server boot
+        web_app = self.application
+        time_since_boot = time.time() - web_app.server_boot_time
+        config['_server_first_load'] = time_since_boot <= 90.0  # True if within first 90 seconds
+            
+        self.write_json(config)
 
 
 class ConfigDownloadHandler(bbctrl.APIHandler):
@@ -878,6 +886,7 @@ class Web(tornado.web.Application):
         self.args = args
         self.ioloop = ioloop
         self.ctrls = {}
+        self.server_boot_time = time.time()  # Track when server started
 
         # Init camera
         if not args.disable_camera:
