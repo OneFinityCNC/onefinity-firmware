@@ -34,7 +34,7 @@ export function handleConfigUpdate(config: Record<string, any>) {
                 } finally {
                     easyAdapterTimer = null;
                 }
-            }, 5000);
+            }, 90000);
         } catch (error) {
             console.error("Failed to show EasyAdapter dialog:", error);
         }
