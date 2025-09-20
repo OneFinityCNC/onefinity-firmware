@@ -243,9 +243,17 @@ module.exports = new Vue({
         },
 
         is_easy_adapter_active: function() {
-            console.log(this.config.settings["easy-adapter"]);
-            if(this.config.settings && this.config.settings["easy-adapter"] == true) return true;
-            return true;
+            // Access the property directly to make it reactive
+            // Vue 1 will track this dependency and re-evaluate when the property changes
+            if(!this.config.settings) {
+                return false;
+            }
+            
+            // Explicitly access the easy-adapter property to establish reactivity
+            const easyAdapterValue = this.config.settings["easy-adapter"];
+            
+            // Return true only if explicitly set to true
+            return easyAdapterValue === true;
         },
 
         enable_rotary: function() {
