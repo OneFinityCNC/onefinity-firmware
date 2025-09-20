@@ -108,7 +108,10 @@ module.exports = new Vue({
           modified: false,
           template: require("../resources/config-template.json"),
           config: {
-            settings: { units: "METRIC" },
+            settings: { 
+              units: "METRIC",
+              "easy-adapter": false
+            },
             motors: [{}, {}, {}, {}],
             version: "<loading>",
             full_version: "<loading>",
@@ -243,20 +246,10 @@ module.exports = new Vue({
         },
 
         is_easy_adapter_active: function() {
-            // Access the property directly to make it reactive
-            // Vue 1 will track this dependency and re-evaluate when the property changes
-            if(!this.config.settings) {
-                return false;
-            }
+            console.log("1", this.config.settings["easy-adapter"]);
+            console.log("2", this.config);
             
-            // Explicitly access the easy-adapter property to establish reactivity
-            const easyAdapterValue = this.config.settings["easy-adapter"];
-
-            console.log("1",easyAdapterValue);
-            console.log("2",this.config)
-            
-            // Return true only if explicitly set to true
-            return easyAdapterValue === true;
+            return this.config.settings["easy-adapter"] === true;
         },
 
         enable_rotary: function() {
