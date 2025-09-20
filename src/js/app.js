@@ -251,6 +251,9 @@ module.exports = new Vue({
             
             // Explicitly access the easy-adapter property to establish reactivity
             const easyAdapterValue = this.config.settings["easy-adapter"];
+
+            console.log("1",easyAdapterValue);
+            console.log("2",this.config)
             
             // Return true only if explicitly set to true
             return easyAdapterValue === true;
