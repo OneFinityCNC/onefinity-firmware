@@ -37,4 +37,8 @@
         width: 30vw !important;
         max-width: 50vw !important;
     }
+    
+    :global(.easy-adapter-dialog .mdc-dialog__content) {
+        margin-top: 16px !important;
+    }
 </style>
