@@ -11,11 +11,17 @@
     import ShutdownDialog from "./ShutdownDialog.svelte";
     import MessageDialog from "./MessageDialog.svelte";
     import SwitchRotaryDialog from "./SwitchRotaryDialog.svelte";
+    import EasyAdapterDialog from "./EasyAdapterDialog.svelte";
 
     const HomeMachineDialogProps = writable<HomeMachineDialogPropsType>();
     type HomeMachineDialogPropsType = {
         open: boolean;
         home: () => void;
+    };
+
+    const EasyAdapterDialogProps = writable<EasyAdapterDialogPropsType>();
+    type EasyAdapterDialogPropsType = {
+        open: boolean;
     };
 
     const ProbeDialogProps = writable<ProbeDialogPropsType>();
@@ -87,6 +93,11 @@
     );
 
     export function showDialog(
+        dialog: "EasyAdapter",
+        props: Omit<EasyAdapterDialogPropsType, "open">
+    );
+
+    export function showDialog(
         dialog: "Probe",
         props: Omit<ProbeDialogPropsType, "open">
     );
@@ -140,6 +151,10 @@
         switch (dialog) {
             case "HomeMachine":
                 HomeMachineDialogProps.set({ ...props, open: true });
+                break;
+
+            case "EasyAdapter":
+                EasyAdapterDialogProps.set({ ...props, open: true });
                 break;
 
             case "Probe":
@@ -251,6 +266,7 @@
 </script>
 
 <HomeMachineDialog {...$HomeMachineDialogProps} />
+<EasyAdapterDialog {...$EasyAdapterDialogProps} />
 <ProbeDialog {...$ProbeDialogProps} />
 <ScreenRotationDialog {...$ScreenRotationDialogProps} />
 <UploadDialog {...$UploadDialogProps} />
