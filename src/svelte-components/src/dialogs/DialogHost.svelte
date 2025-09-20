@@ -19,7 +19,7 @@
         home: () => void;
     };
 
-    const EasyAdapterDialogProps = writable<EasyAdapterDialogPropsType>();
+    export const EasyAdapterDialogProps = writable<EasyAdapterDialogPropsType>();
     type EasyAdapterDialogPropsType = {
         open: boolean;
     };
