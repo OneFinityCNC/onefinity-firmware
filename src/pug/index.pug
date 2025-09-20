@@ -89,7 +89,7 @@ html(lang="en")
               v-if="80 <= state.rpi_temp",
               title="Raspberry Pi temperature too high.")
 
-          .easy-adapter(v-if="config.settings.easy-adapter")
+          .easy-adapter(v-if="is_easy_adapter_active")
             .round-dot
             div.easy-adapter-text Easy Adapter
           

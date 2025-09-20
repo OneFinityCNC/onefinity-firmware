@@ -242,6 +242,12 @@ module.exports = new Vue({
             return false;
         },
 
+        is_easy_adapter_active: function() {
+            console.log(this.config.settings["easy-adapter"]);
+            if(this.config.settings && this.config.settings["easy-adapter"] == true) return true;
+            return false;
+        },
+
         enable_rotary: function() {
             if(this.state["2an"] == 1 || this.state["2an"] == 3) return true;
             return false;
