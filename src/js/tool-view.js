@@ -41,10 +41,12 @@ module.exports = {
         {
           id: "em60",
           name: "EM60",
+          unsupported: true,
         },
         {
           id: "pwm",
           name: "PWM Spindle",
+          unsupported: true,
         },
         {
           id: "huanyang-vfd",
