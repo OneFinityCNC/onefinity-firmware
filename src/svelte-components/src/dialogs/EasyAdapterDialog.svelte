@@ -34,5 +34,9 @@
     
     :global(.easy-adapter-dialog .mdc-dialog__surface) {
         z-index: 10002 !important;
+        width: 50vw !important;
+        height: 35vh !important;
+        max-width: 50vw !important;
+        max-height: 35vh !important;
     }
 </style>
