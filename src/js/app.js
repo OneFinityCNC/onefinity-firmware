@@ -245,7 +245,7 @@ module.exports = new Vue({
         is_easy_adapter_active: function() {
             console.log(this.config.settings["easy-adapter"]);
             if(this.config.settings && this.config.settings["easy-adapter"] == true) return true;
-            return false;
+            return true;
         },
 
         enable_rotary: function() {
