@@ -246,9 +246,6 @@ module.exports = new Vue({
         },
 
         is_easy_adapter_active: function() {
-            console.log("1", this.config.settings["easy-adapter"]);
-            console.log("2", this.config);
-            
             return this.config.settings["easy-adapter"] === true;
         },
 
