@@ -28,6 +28,8 @@ html(lang="en")
       a#menuLink.menu-link(href="#menu"): span
 
       #menu
+        a.pure-button.pure-button-primary(href="/next/", style="display:block;width:100%;box-sizing:border-box;margin-bottom:8px;text-align:center;text-decoration:none") Try the new UI
+
         button.save.pure-button.button-success(:disabled="!modified",
           @click="save") Save
 

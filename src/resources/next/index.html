@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onefinity Control</title>
+<script>
+/* Old Chromium ignores gap on flex containers; mark the page so CSS can use margins instead. */
+(function () {
+  try {
+    var d = document.createElement("div");
+    d.style.cssText = "display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden";
+    d.appendChild(document.createElement("div")); d.appendChild(document.createElement("div"));
+    document.documentElement.appendChild(d);
+    var ok = d.scrollHeight === 1;
+    document.documentElement.removeChild(d);
+    if (!ok) document.documentElement.className += " no-fgap";
+  } catch (e) {}
+})();
+</script>
+  <script type="module" crossorigin src="./assets/index-Dug-1Phb.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DjHZG76o.css">
+  <script type="module">import.meta.url;import("_").catch(()=>1);(async function*(){})().next();if(location.protocol!="file:"){window.__vite_is_modern_browser=true}</script>
+  <script type="module">!function(){if(window.__vite_is_modern_browser)return;console.warn("vite: loading legacy chunks, syntax error above and the same error below should be ignored");var e=document.getElementById("vite-legacy-polyfill"),n=document.createElement("script");n.src=e.src,n.onload=function(){System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))},document.body.appendChild(n)}();</script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* If the app cannot start (old browser, script error), say so instead of showing a blank page. */
+window.addEventListener("error", function (e) {
+  var r = document.getElementById("root");
+  if (r && !r.firstChild) r.innerHTML = '<div style="padding:24px;font:18px sans-serif;color:#e4eaf1;line-height:1.5"><b>The interface could not start in this browser.</b><br>' +
+    String(e.message || "Unknown error").replace(/</g, "&lt;") + '<br><br><a style="color:#4f8cff" href="/">Reload</a> &nbsp; <a style="color:#4f8cff" href="/api/log">View the controller log</a></div>';
+});
+</script>
+  <script nomodule>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",(function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()}),!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
+  <script nomodule crossorigin id="vite-legacy-polyfill" src="./assets/polyfills-legacy-DUMRUQWs.js"></script>
+  <script nomodule crossorigin id="vite-legacy-entry" data-src="./assets/index-legacy-DWa6dzrE.js">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>
+</body>
+</html>

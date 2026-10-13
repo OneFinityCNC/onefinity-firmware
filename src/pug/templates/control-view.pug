@@ -143,6 +143,13 @@ script#control-view-template(type="text/x-template")
                   @click="showProbeDialog('z')")
                   | Probe Z
 
+            tr(v-if="state['2an'] != 3")
+              td(style="height:100px", align="center", colspan="4")
+                button(:class="state['pw'] ? '' : 'load-on'",
+                  style="height:100px;width:420px",
+                  @click="showProbeDialog('center')")
+                  | Probe Center
+
         td(style="vertical-align: top;")
           table.axes
             tr(:class="axes.klass")

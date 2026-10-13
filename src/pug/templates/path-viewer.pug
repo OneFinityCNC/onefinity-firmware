@@ -1,6 +1,6 @@
 script#path-viewer-template(type="text/x-template")
-  .path-viewer(v-show="enabled", :class="{small: small}")
-    .path-viewer-toolbar
+  .path-viewer(v-show="enabled || noGL", :class="{small: small && !noGL}")
+    .path-viewer-toolbar(v-show="!noGL")
       .tool-button(title="Toggle path view size.",
         @click="small = !small", :class="{active: !small}")
         .fa.fa-arrows-alt
@@ -21,11 +21,17 @@ script#path-viewer-template(type="text/x-template")
         :class="{active: showIntensity}", title="Show/hide LASER intensity.")
         img(src="images/intensity.png")
 
+      .tool-button(@click="showDepth = !showDepth", :class="{active: showDepth}",
+        title="Show/hide the cut depth preview.")
+        .fa.fa-cubes
+
       each view in "isometric top front".split(" ")
         .tool-button(@click=`snap('${view}')`, title=`Snap to ${view} view.`)
           img(src=`images/${view}.png`)
 
-    .path-viewer-content
+    .path-viewer-content(v-show="!showDepth && !noGL")
+
+    cut-preview(:path="depthPath", :active="showDepth || noGL")
 
     table.path-viewer-messages(
       v-if="typeof toolpath.messages != 'undefined' && " +

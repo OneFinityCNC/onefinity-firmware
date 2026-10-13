@@ -456,7 +456,9 @@ class HomeHandler(bbctrl.APIHandler):
 
 
 class StartHandler(bbctrl.APIHandler):
-    def put_ok(self): self.get_ctrl().mach.start()
+    def put_ok(self):
+        # {"dry_lift": mm} runs the selected program as a dry run
+        self.get_ctrl().mach.start(self.json.get('dry_lift', 0))
 
 
 class EStopHandler(bbctrl.APIHandler):
@@ -511,6 +513,108 @@ class ModbusWriteHandler(bbctrl.APIHandler):
                                     int(self.json['value']))
 
 
+class NextStoreHandler(bbctrl.APIHandler):
+    # Small JSON documents for the new UI (run history, file notes), kept on
+    # the controller so every browser sees the same data.  Only whitelisted
+    # names are accepted and each document is capped in size.
+    NAMES = ('runs', 'notes', 'prefs', 'checkpoint', 'probe')
+    MAX_BYTES = 1000000
+
+    def _path(self, name):
+        if name not in self.NAMES: raise HTTPError(404)
+        d = self.get_path('next-data')
+        if not os.path.exists(d): os.makedirs(d)
+        return os.path.join(d, name + '.json')
+
+
+    def get(self, name):
+        if name == 'checkpoint':
+            cp = getattr(self.get_ctrl(), 'checkpoint', None)
+            self.write_json(cp.get() if cp else None)
+            return
+
+        path = self._path(name)
+        data = None
+        if os.path.exists(path):
+            try:
+                with open(path, 'r', encoding = 'utf-8') as f: data = json.load(f)
+            except (ValueError, OSError): data = None
+        self.write_json(data)
+
+
+    def put_ok(self, name):
+        if name == 'checkpoint':
+            # The only thing a client may do is dismiss an interrupted job.
+            cp = getattr(self.get_ctrl(), 'checkpoint', None)
+            if cp and isinstance(self.json, dict) and self.json.get('action') == 'dismiss':
+                cp.dismiss()
+            return
+
+        path = self._path(name)
+        if len(self.request.body) > self.MAX_BYTES:
+            raise HTTPError(413, 'Document too large')
+        tmp = path + '.tmp'
+        with open(tmp, 'w', encoding = 'utf-8') as f: json.dump(self.json, f)
+        os.replace(tmp, path)
+
+        if name == 'prefs':
+            cp = getattr(self.get_ctrl(), 'checkpoint', None)
+            if cp: cp.reload()
+
+
+class ResumeHandler(bbctrl.APIHandler):
+    # build: write a program that continues the interrupted job
+    # park:  stop the job, turn the spindle off and lift Z so the machine
+    #        can be powered off, to be resumed later
+    def put(self):
+        ctrl = self.get_ctrl()
+        res = getattr(ctrl, 'resume', None)
+        if res is None: raise HTTPError(503, 'Resume is not available')
+        action = self.json.get('action') if isinstance(self.json, dict) else None
+
+        try:
+            if action == 'build':
+                self.write_json(res.build(self.json.get('opts') or {}))
+            elif action == 'park':
+                res.park()
+                self.write_json('ok')
+            elif action == 'clear':
+                res.clear_park()
+                self.write_json('ok')
+            else: raise HTTPError(400, 'Unknown action')
+        except Exception as e:
+            if isinstance(e, HTTPError): raise
+            raise HTTPError(400, '%s', str(e))
+
+
+class CameraHandler(bbctrl.APIHandler):
+    # GET: is a camera connected, and its focus range and value.
+    # PUT {"focus": n} locks focus at n, {"focus": null} gives it back to
+    # autofocus.
+    def get(self):
+        cam = self.application.camera
+        self.write_json(cam.get_status() if cam else {'connected': False})
+
+
+    def put(self):
+        cam = self.application.camera
+        if cam is None: raise HTTPError(503, 'Camera is disabled')
+        focus = self.json.get('focus') if isinstance(self.json, dict) else None
+        try: cam.set_focus(None if focus is None else int(focus))
+        except (TypeError, ValueError): raise HTTPError(400, 'Bad focus value')
+        self.write_json(cam.get_status())
+
+
+class AlignHandler(bbctrl.APIHandler):
+    # Write a copy of a program rotated about its X0 Y0 (camera alignment).
+    def put(self):
+        al = getattr(self.get_ctrl(), 'align', None)
+        if al is None: raise HTTPError(503, 'Alignment is not available')
+        j = self.json if isinstance(self.json, dict) else {}
+        try: self.write_json(al.build(j.get('file'), j.get('angle')))
+        except bbctrl.AlignError as e: raise HTTPError(400, '%s', str(e))
+
+
 class JogHandler(bbctrl.APIHandler):
     def put_ok(self):
         # Handle possible out of order jog command processing
@@ -526,7 +630,27 @@ class JogHandler(bbctrl.APIHandler):
 
             if ts < last: return # Out of order
 
-        self.get_ctrl().mach.jog(self.json)
+        ctrl = self.get_ctrl()
+        ctrl.mach.jog(self.json)
+
+        # Optional dead-man watchdog.  A client that sends "keepalive" must
+        # keep re-sending its jog command.  If the updates stop (browser
+        # closed, network dropped, Wi-Fi lost) while an axis is still moving,
+        # the jog is zeroed so the machine cannot run away.
+        ioloop = self.app.ioloop
+        timer = getattr(self.app, 'jog_watchdog', None)
+        if timer is not None:
+            ioloop.remove_timeout(timer)
+            self.app.jog_watchdog = None
+
+        moving = any(self.json.get(a, 0) for a in 'xyzabc')
+        if self.json.get('keepalive') and moving:
+            def stop():
+                self.app.jog_watchdog = None
+                try: ctrl.mach.jog(dict((a, 0) for a in 'xyzabc'))
+                except Exception as e: ctrl.log.get('Web').warning('Jog watchdog: %s', e)
+
+            self.app.jog_watchdog = ioloop.call_later(0.6, stop)
 
 
 displayRotatePattern = re.compile(r'display_rotate\s*=\s*(\d)')
@@ -902,6 +1026,10 @@ class Web(tornado.web.Application):
 
         handlers = [
             (r'/websocket', WSConnection),
+            (r'/api/next-store/(runs|notes|prefs|checkpoint|probe)', NextStoreHandler),
+            (r'/api/next-resume', ResumeHandler),
+            (r'/api/next-align', AlignHandler),
+            (r'/api/camera', CameraHandler),
             (r'/api/log', LogHandler),
             (r'/api/message/(\d+)/ack', MessageAckHandler),
             (r'/api/bugreport', BugReportHandler),
@@ -941,8 +1069,14 @@ class Web(tornado.web.Application):
             (r'/api/time', TimeHandler),
             (r'/api/rotary', RotaryHandler),
             (r'/api/remote-diagnostics', RemoteDiagnosticsHandler),
+            # The React interface is the interface. Old /next/ bookmarks go to /.
+            (r'/next', tornado.web.RedirectHandler, {'url': '/'}),
+            (r'/next/(.*)', tornado.web.RedirectHandler, {'url': '/'}),
+            # Data files the interface reads from the controller's root address.
+            (r'/(config-template\.json|buildbotics\.nc|favicon\.ico|onefinity_[a-z0-9_]+\.json|images/.*|fonts/.*)',
+             StaticFileHandler, {'path': bbctrl.get_resource('http/')}),
             (r'/(.*)', StaticFileHandler,
-             {'path': bbctrl.get_resource('http/'),
+             {'path': bbctrl.get_resource('http/next/'),
               'default_filename': 'index.html'}),
             ]
 

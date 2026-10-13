@@ -1,20 +1,43 @@
 #!/bin/bash -e
 
+# Downloads the newest firmware from the latest GitHub release of
+# mikejsmith1985/onefinity-firmware and installs it.
+
 (
     flock -n 9
 
-    VERSION=$(curl -s https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/latest.txt)
-    PKG_NAME=onefinity-$VERSION
+    REPO=mikejsmith1985/onefinity-firmware
     PKG=/var/lib/bbctrl/firmware/update.tar.bz2
-    PKG_URL=https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/$PKG_NAME.tar.bz2
-
-    logger Installing onefinity firmware $VERSION
 
     cd /var/lib/bbctrl
     mkdir -p firmware
 
+    # Newest published release (drafts and pre-releases are not returned)
+    INFO=$(curl -fsSL --max-time 30 https://api.github.com/repos/$REPO/releases/latest)
+    PKG_URL=$(echo "$INFO" | python3 -c '
+import json, sys, re
+rel = json.load(sys.stdin)
+for a in rel.get("assets", []):
+    if re.match(r"^onefinity-[0-9.]+\.tar\.bz2$", a["name"]):
+        print(a["browser_download_url"])
+        break
+')
+    VERSION=$(echo "$INFO" | python3 -c 'import json,sys; print(json.load(sys.stdin)["tag_name"].lstrip("v"))')
+
+    if [ -z "$PKG_URL" ]; then
+        echo "Latest release $VERSION has no onefinity-*.tar.bz2 file attached"
+        exit 1
+    fi
+
+    logger Installing onefinity firmware $VERSION
+
     echo Downloading $PKG_URL
-    curl -s $PKG_URL > $PKG
+    rm -f $PKG
+    curl -fsSL --max-time 600 -o $PKG.part "$PKG_URL"
+
+    # Never install a partial or corrupt download
+    bzip2 -t $PKG.part
+    mv $PKG.part $PKG
 
     /usr/local/bin/update-bbctrl
 

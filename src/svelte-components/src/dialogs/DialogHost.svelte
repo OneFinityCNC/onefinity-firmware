@@ -27,7 +27,7 @@
     const ProbeDialogProps = writable<ProbeDialogPropsType>();
     type ProbeDialogPropsType = {
         open: boolean;
-        probeType: "xyz" | "z";
+        probeType: "xyz" | "z" | "center";
         isRotaryActive: boolean;
     };
 

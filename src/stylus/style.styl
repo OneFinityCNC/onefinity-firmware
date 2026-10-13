@@ -848,6 +848,71 @@ span.unit
       float right
       margin-top -88px
 
+.cut-preview
+  margin-bottom 0.5em
+
+  .cut-preview-settings
+    display flex
+    flex-wrap wrap
+    gap 0.5em 1em
+    align-items center
+    margin 0.25em 0
+
+    input[type=number]
+      width 5em
+
+  .cut-preview-stage
+    position relative
+    background #222
+
+    canvas
+      display block
+      width 100%
+      height auto
+      image-rendering pixelated
+
+      &.marker
+        position absolute
+        left 0
+        top 0
+
+    .cut-preview-busy
+      position absolute
+      left 0
+      right 0
+      top 45%
+      text-align center
+      color #fff
+      font-size 1.5em
+
+  .cut-preview-transport
+    display flex
+    gap 1em
+    align-items center
+    margin 0.5em 0
+
+    input[type=range]
+      flex 1
+
+  .cut-preview-readout
+    font-family monospace
+
+  .cut-preview-warn, .cut-preview-error
+    color #c00
+    font-weight bold
+
+  .cut-preview-legend
+    margin-top 0.25em
+
+    .bar
+      height 10px
+      background linear-gradient(to right, #fde725, #7ad151, #22a884, #2a788e, #414487, #440154)
+
+    .ticks
+      display flex
+      justify-content space-between
+      font-size 0.8em
+
 .console
   .console-wrapper
     max-height 400px

@@ -27,6 +27,7 @@
 
 import bbctrl
 from bbctrl.Comm import Comm
+from bbctrl.CoolantHold import CoolantHold
 import bbctrl.Cmd as Cmd
 
 
@@ -96,6 +97,12 @@ class Mach(Comm):
         self.unpausing = False
         self.stopping = False
 
+        # Mist (Load 1) is switched off while a job is paused and restored,
+        # after a short delay, when the operator resumes.
+        self.coolant_hold = CoolantHold(
+            self._set_mist, lambda *a, **kw: self.ctrl.ioloop.call_later(*a, **kw),
+            self.mlog)
+
         ctrl.state.set('cycle', 'idle')
 
         ctrl.state.add_listener(self._update)
@@ -117,7 +124,22 @@ class Mach(Comm):
             'User pause', 'Program pause', 'Optional pause')
 
 
-    def _set_cycle(self, cycle): self.ctrl.state.set('cycle', cycle)
+    def _is_resumable_pause(self):
+        # A pause the operator must resume by hand.  An optional pause with
+        # optional stops disabled is resumed immediately and does not count.
+        if not self._is_paused(): return False
+        if (self._get_pause_reason() == 'Optional pause' and
+            not self.ctrl.state.get('optional_pause', False)): return False
+        return True
+
+
+    def _set_mist(self, on): self._i2c_set('1oa', 1 if on else 0)
+
+
+    def _set_cycle(self, cycle):
+        # A dry run never outlives its cycle
+        if cycle == 'idle': self.planner.end_dry()
+        self.ctrl.state.set('cycle', cycle)
 
 
     def _begin_cycle(self, cycle):
@@ -130,6 +152,7 @@ class Mach(Comm):
 
         # TODO handle jogging during pause
         # if current == 'idle' or (cycle == 'jogging' and self._is_paused()):
+        self.coolant_hold.cancel()
         self._set_cycle(cycle)
 
     
@@ -183,6 +206,14 @@ class Mach(Comm):
             # Always flush queue after pause
             super().i2c_command(Cmd.FLUSH)
             super().resume()
+
+        # Turn mist off while paused.  Must never interfere with pausing.
+        try:
+            self.coolant_hold.on_update(
+                self._is_resumable_pause(),
+                bool(self.ctrl.state.get('1oa', False)))
+        except BaseException as e:
+            self.mlog.error('Coolant hold: %s' % e)
 
         # Automatically unpause after seek or stop hold
         # Must be after holding commands above
@@ -317,7 +348,9 @@ class Mach(Comm):
 
 
     def unhome(self, axis): self.mdi('G28.2 %c0' % axis)
-    def estop(self): super().estop()
+    def estop(self):
+        self.coolant_hold.cancel()
+        super().estop()
 
 
     def clear(self):
@@ -326,11 +359,23 @@ class Mach(Comm):
             super().clear()
 
 
-    def start(self):
+    def _check_dry_lift(self, lift):
+        try: lift = float(lift)
+        except (TypeError, ValueError): raise Exception('Bad dry run lift')
+        if not 5 <= lift <= 100:
+            raise Exception('Dry run lift must be between 5 and 100 mm')
+        if not self.ctrl.state.is_axis_homed('z'):
+            raise Exception('Home the machine before a dry run so the Z '
+                            'limit is known')
+        return lift
+
+
+    def start(self, dry_lift = 0):
         filename = self.ctrl.state.get('selected', '')
         if not filename: return
+        if dry_lift: dry_lift = self._check_dry_lift(dry_lift)
         self._begin_cycle('running')
-        self.planner.load(filename)
+        self.planner.load(filename, dry_lift)
         super().resume()
 
 
@@ -341,6 +386,7 @@ class Mach(Comm):
 
 
     def stop(self):
+        self.coolant_hold.cancel()
         if self._get_state() != 'jogging': self.stopping = True
         super().i2c_command(Cmd.STOP)
         
@@ -350,7 +396,7 @@ class Mach(Comm):
     def unpause(self):
         if self._is_paused():
             self.ctrl.state.set('optional_pause', False)
-            self._unpause()
+            self.coolant_hold.resume(self._unpause)
 
 
     def optional_pause(self, enable = True):

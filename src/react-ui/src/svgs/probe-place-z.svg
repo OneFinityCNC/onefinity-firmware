@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 326.35 123.59">
+    <polygon points="324.85 16.76 262.21 99.53 116.51 99.53 116.51 84.27 179.15 1.5 324.85 1.5 324.85 16.76"
+        style="fill:#fff; stroke:#231f20; stroke-miterlimit:10; stroke-width:3px;" />
+    <polygon points="206.56 67.29 185.57 36.09 197.9 27.68 210.04 45.9 256.99 10.26 266.02 22.15 206.56 67.29"
+        style="fill:#00a651;" />
+    <polyline points="324.85 1.5 262.21 84.27 116.51 84.27"
+        style="fill:none; stroke:#231f20; stroke-miterlimit:10; stroke-width:3px;" />
+    <line x1="262.21" y1="84.27" x2="262.21" y2="99.53"
+        style="fill:none; stroke:#231f20; stroke-miterlimit:10; stroke-width:3px;" />
+    <g>
+        <line x1="159.81" y1="65.69" x2="157.36" y2="66.17"
+            style="fill:none; stroke:#a7a9ac; stroke-miterlimit:10; stroke-width:3px;" />
+        <line x1="154.33" y1="66.76" x2="139.7" y2="69.61"
+            style="fill:none; stroke:#a7a9ac; stroke-dasharray:0 0 0 0 5.14 3.08 5.14 3.08; stroke-miterlimit:10; stroke-width:3px;" />
+        <line x1="138.19" y1="69.91" x2="67.04" y2="83.78"
+            style="fill:none; stroke:#a7a9ac; stroke-dasharray:0 0 0 0 0 0 5.14 3.08 5.14 3.08 5.14 3.08; stroke-miterlimit:10; stroke-width:3px;" />
+        <line x1="65.53" y1="84.07" x2="63.07" y2="84.55"
+            style="fill:none; stroke:#a7a9ac; stroke-miterlimit:10; stroke-width:3px;" />
+    </g>
+    <polyline points="151.51 61.52 163.08 65.23 155.28 73.06"
+        style="fill:none; stroke:#a7a9ac; stroke-miterlimit:10; stroke-width:3px;" />
+    <g>
+        <g>
+            <polygon
+                points="60.79 91.08 60.79 98.53 42.96 122.09 42.96 110.74 47.63 104.58 48.03 104.56 48.04 106.86 59.98 91.08 60.79 91.08"
+                style="fill:#fff;" />
+            <polygon
+                points="28.92 90.2 60.79 90.2 60.79 91.08 59.98 91.08 48.04 106.86 48.03 104.56 47.63 104.58 47.44 104.05 19.03 104.05 19.03 103.6 28.92 90.2"
+                style="fill:#8dc63f;" />
+            <polygon
+                points="47.44 104.05 47.63 104.58 42.96 110.74 21.34 110.74 1.5 110.74 19.33 87.19 28.06 87.19 15.74 104.05 19.03 104.05 47.44 104.05"
+                style="fill:#ed1c24;" />
+            <path d="M42.96,110.74v11.35H21.34v-2.56c1.73,0,3.12-1.39,3.12-3.11s-1.39-3.12-3.12-3.12v-2.56h21.62Z"
+                style="fill:#fff;" />
+            <path
+                d="M21.34,113.3c1.73,0,3.12,1.39,3.12,3.12s-1.39,3.11-3.12,3.11-3.11-1.39-3.11-3.11,1.39-3.12,3.11-3.12Z"
+                style="fill:#fff;" />
+            <path d="M21.34,119.53v2.56H1.5v-11.35H21.34v2.56c-1.72,0-3.11,1.39-3.11,3.12s1.39,3.11,3.11,3.11Z"
+                style="fill:#fff;" />
+            <polygon points="15.74 104.05 28.06 87.19 28.91 87.19 28.92 90.2 19.03 103.6 19.03 104.05 15.74 104.05"
+                style="fill:#fff;" />
+        </g>
+        <g>
+            <polygon
+                points="60.79 91.08 60.79 98.53 42.96 122.09 21.34 122.09 1.5 122.09 1.5 110.74 19.33 87.19 28.06 87.19 28.91 87.19 28.92 90.2 60.79 90.2 60.79 91.08"
+                style="fill:none; stroke:#231f20; stroke-miterlimit:10; stroke-width:3px;" />
+            <polyline points="59.98 91.08 48.04 106.86 48.03 104.56 47.63 104.58 42.96 110.74 21.34 110.74 1.5 110.74"
+                style="fill:none; stroke:#231f20; stroke-miterlimit:10; stroke-width:3px;" />
+            <line x1="42.96" y1="110.74" x2="42.96" y2="122.09"
+                style="fill:none; stroke:#231f20; stroke-miterlimit:10; stroke-width:3px;" />
+            <path
+                d="M21.34,113.3c1.73,0,3.12,1.39,3.12,3.12s-1.39,3.11-3.12,3.11-3.11-1.39-3.11-3.11,1.39-3.12,3.11-3.12Z"
+                style="fill:none; stroke:#231f20; stroke-miterlimit:10;" />
+            <polyline points="28.06 87.19 15.74 104.05 19.03 104.05 47.44 104.05"
+                style="fill:none; stroke:#231f20; stroke-miterlimit:10; stroke-width:2px;" />
+            <line x1="28.92" y1="90.2" x2="19.03" y2="103.6"
+                style="fill:none; stroke:#231f20; stroke-linecap:round; stroke-miterlimit:10; stroke-width:2px;" />
+        </g>
+    </g>
+</svg>

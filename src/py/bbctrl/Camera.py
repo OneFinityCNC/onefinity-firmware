@@ -218,6 +218,30 @@ class VideoDevice(object):
     def flush_frame(self): self._qbuf(self._dqbuf())
 
 
+    def query_ctrl(self, cid):
+        q = v4l2.v4l2_queryctrl()
+        q.id = cid
+        try: fcntl.ioctl(self, v4l2.VIDIOC_QUERYCTRL, q)
+        except OSError: return None
+        if q.flags & v4l2.V4L2_CTRL_FLAG_DISABLED: return None
+        return {'min': q.minimum, 'max': q.maximum, 'step': q.step or 1,
+                'default': q.default}
+
+
+    def get_ctrl(self, cid):
+        c = v4l2.v4l2_control()
+        c.id = cid
+        fcntl.ioctl(self, v4l2.VIDIOC_G_CTRL, c)
+        return c.value
+
+
+    def set_ctrl(self, cid, value):
+        c = v4l2.v4l2_control()
+        c.id = cid
+        c.value = int(value)
+        fcntl.ioctl(self, v4l2.VIDIOC_S_CTRL, c)
+
+
     def get_info(self):
         caps = v4l2.v4l2_capability()
         fcntl.ioctl(self, v4l2.VIDIOC_QUERYCAP, caps)
@@ -293,6 +317,11 @@ class Camera(object):
         self.clients = []
         self.path = None
         self.have_camera = False
+
+        # Focus for camera alignment.  None = leave the camera's autofocus
+        # alone; a number = autofocus off, focus locked at that value so the
+        # image scale can't drift.  Re-applied whenever the camera opens.
+        self.focus = None
 
         # Find connected cameras
         for i in range(4):
@@ -395,6 +424,7 @@ class Camera(object):
             self.dev.set_fps(self.fps)
             self.dev.create_buffers(4)
             self.dev.start()
+            self._apply_focus()
 
             self.ioloop.add_handler(self.dev, self._fd_handler,
                                     self.ioloop.READ)
@@ -405,6 +435,42 @@ class Camera(object):
         except Exception as e:
             self.log.warning('While loading camera: %s' % e)
             self._close_dev()
+
+
+    def _apply_focus(self):
+        if self.dev is None: return
+        try:
+            # Keep the frame rate steady in low light (C920 and similar)
+            if self.dev.query_ctrl(v4l2.V4L2_CID_EXPOSURE_AUTO_PRIORITY):
+                self.dev.set_ctrl(v4l2.V4L2_CID_EXPOSURE_AUTO_PRIORITY, 0)
+
+            if not self.dev.query_ctrl(v4l2.V4L2_CID_FOCUS_AUTO): return
+            if self.focus is None:
+                self.dev.set_ctrl(v4l2.V4L2_CID_FOCUS_AUTO, 1)
+            else:
+                self.dev.set_ctrl(v4l2.V4L2_CID_FOCUS_AUTO, 0)
+                self.dev.set_ctrl(v4l2.V4L2_CID_FOCUS_ABSOLUTE, self.focus)
+        except Exception as e:
+            self.log.warning('Could not set camera focus: %s' % e)
+
+
+    def set_focus(self, value):
+        """value None = autofocus, else lock at value."""
+        self.focus = None if value is None else int(value)
+        self._apply_focus()
+
+
+    def get_status(self):
+        st = {'connected': self.dev is not None, 'locked': self.focus is not None,
+              'focus': None, 'range': None}
+        if self.dev is None: return st
+        try:
+            st['range'] = self.dev.query_ctrl(v4l2.V4L2_CID_FOCUS_ABSOLUTE)
+            if st['range']:
+                st['focus'] = self.dev.get_ctrl(v4l2.V4L2_CID_FOCUS_ABSOLUTE)
+        except Exception as e:
+            self.log.warning('Could not read camera focus: %s' % e)
+        return st
 
 
     def _close_dev(self):

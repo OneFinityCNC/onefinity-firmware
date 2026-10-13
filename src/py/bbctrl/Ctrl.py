@@ -60,6 +60,21 @@ class Ctrl(object):
             if not args.demo: self.jog = bbctrl.Jog(self)
             self.pwr = bbctrl.Pwr(self)
 
+            try: self.checkpoint = bbctrl.Checkpoint(self)
+            except Exception:
+                self.checkpoint = None
+                self.log.get('Ctrl').exception('Job progress saving unavailable')
+
+            try: self.resume = bbctrl.Resume(self)
+            except Exception:
+                self.resume = None
+                self.log.get('Ctrl').exception('Resume unavailable')
+
+            try: self.align = bbctrl.Align(self)
+            except Exception:
+                self.align = None
+                self.log.get('Ctrl').exception('Alignment unavailable')
+
             self.mach.connect()
 
             self.lcd.add_new_page(bbctrl.MainLCDPage(self))

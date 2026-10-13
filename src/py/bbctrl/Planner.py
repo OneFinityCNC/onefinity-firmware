@@ -61,6 +61,8 @@ class Planner():
         self.planner = None
         self._position_dirty = False
         self.where = ''
+        self.dry_lift = 0.0   # mm. Non zero only while a dry run is planned
+        self.dry_zmax = None  # highest machine Z the dry run may reach
 
         ctrl.state.add_listener(self._update)
 
@@ -77,6 +79,54 @@ class Planner():
         if not force and not self._position_dirty: return
         self._position_dirty = False
         self.planner.set_position(self.ctrl.state.get_position())
+
+
+
+    # Dry run ------------------------------------------------------------
+    # A dry run plans the program exactly as written but sends every move to
+    # the machine dry_lift mm higher, with the spindle and outputs (mist,
+    # relays) blocked.  Nothing is stored on the controller, so there is no
+    # offset to forget to remove: the lift exists only in the commands of
+    # this one run and is dropped when the run ends.
+    def begin_dry(self, lift):
+        state = self.ctrl.state
+        self.dry_lift = float(lift)
+
+        zmax = state.get_soft_limit_vector('tm', math.inf).get('z', math.inf)
+        zmin = state.get_soft_limit_vector('tn', -math.inf).get('z', -math.inf)
+        self.dry_zmax = zmax if zmin < zmax and zmax != math.inf else None
+
+        # The planner works one lift lower than the machine really is, so
+        # that every move keeps the length the planner timed it for
+        position = state.get_position()
+        if 'z' in position: position['z'] -= self.dry_lift
+        self.planner.set_position(position)
+        self._position_dirty = True # Re-sync to the real position next time
+        state.set('dry_lift', self.dry_lift)
+        state.set('dry_run', True)
+        self.log.info('Dry run: Z lifted %.1f mm' % self.dry_lift)
+
+
+    def end_dry(self):
+        if self.dry_lift: self.log.info('Dry run ended')
+        self.dry_lift = 0.0
+        self.dry_zmax = None
+        state = self.ctrl.state
+        if state.get('dry_run', False): state.set('dry_run', False)
+        if state.get('dry_lift', 0): state.set('dry_lift', 0)
+
+
+    def is_dry(self): return 0 < self.dry_lift
+
+
+    def _dry_target(self, target):
+        target = dict(target)
+        for key in ('z', 'Z'):
+            if key in target:
+                z = target[key] + self.dry_lift
+                if self.dry_zmax is not None: z = min(z, self.dry_zmax)
+                target[key] = z
+        return target
 
 
     def get_config(self, mdi, with_limits):
@@ -245,6 +295,11 @@ class Planner():
 
         if type == 'line':
             self._enqueue_line_time(block)
+            if self.is_dry():
+                return Cmd.line(self._dry_target(block['target']),
+                                block['exit-vel'], block['max-accel'],
+                                block['max-jerk'], block['times'], [])
+
             return Cmd.line(block['target'], block['exit-vel'],
                             block['max-accel'], block['max-jerk'],
                             block['times'], block.get('speeds', []))
@@ -258,6 +313,7 @@ class Planner():
             if name in ['line', 'tool']: self._enqueue_set_cmd(id, name, value)
 
             if name == 'speed':
+                if self.is_dry(): value = 0 # Spindle stays off
                 self._enqueue_set_cmd(id, name, value)
                 return Cmd.speed(value)
 
@@ -285,6 +341,7 @@ class Planner():
             return Cmd.input(block['port'], block['mode'], block['timeout'])
 
         if type == 'output':
+            if self.is_dry(): return # Mist, relays etc. stay off
             return Cmd.output(block['port'], int(float(block['value'])))
 
         if type == 'dwell':
@@ -294,6 +351,7 @@ class Planner():
         if type == 'pause': return Cmd.pause(block['pause-type'])
 
         if type == 'seek':
+            if self.is_dry(): return # No probing in the air
             sw = self.ctrl.state.get_switch_id(block['switch'])
             return Cmd.seek(sw, block['active'], block['error'])
 
@@ -329,6 +387,7 @@ class Planner():
         if stop:
             self.ctrl.mach.stop()
 
+        self.end_dry()
         self.planner = gplan.Planner()
         self.planner.set_resolver(self._get_var_cb)
         # TODO logger is global and will not work correctly in demo mode
@@ -350,17 +409,20 @@ class Planner():
         self.reset_times()
 
 
-    def load(self, path):
+    def load(self, path, dry_lift = 0):
         self.where = path
         path = self.ctrl.get_path('upload', path)
         self.log.info('GCode:' + path)
+        self.end_dry()
         self._sync_position()
+        if dry_lift: self.begin_dry(dry_lift)
         self.planner.load(path, self.get_config(False, True))
         self.reset_times()
 
 
     def stop(self):
         try:
+            self.end_dry()
             self.planner.stop()
             self.cmdq.clear()
 
@@ -373,6 +435,8 @@ class Planner():
         try:
             id = self.ctrl.state.get('id')
             position = self.ctrl.state.get_position()
+            if self.is_dry() and 'z' in position:
+                position['z'] -= self.dry_lift # Planner frame, see begin_dry()
 
             self.log.info('Planner restart: %d %s' % (id, log_json(position)))
 

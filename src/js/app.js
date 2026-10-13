@@ -189,11 +189,13 @@ module.exports = new Vue({
 
         check: async function() {
             try {
-                const response = await fetch("https://raw.githubusercontent.com/OneFinityCNC/onefinity-release/master/latest.txt", {
+                const response = await fetch("https://api.github.com/repos/mikejsmith1985/onefinity-firmware/releases/latest", {
                     cache: "no-cache"
                 });
+                const rel = await response.json();
+                const hasPackage = (rel.assets || []).some(a => /^onefinity-[0-9.]+\.tar\.bz2$/.test(a.name));
 
-                this.latestVersion = (await response.text()).trim();
+                this.latestVersion = hasPackage ? String(rel.tag_name).replace(/^v/, "") : "";
             } catch (err) {
                 this.latestVersion = "";
             }
